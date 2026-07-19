@@ -168,8 +168,8 @@ mod tests {
     use std::io::{self, Write};
 
     use super::{
-        RunMetadata, RunResult, SamplingParams, ScenarioOutcome, ServerMetadata, Status, Totals,
-        atomic_write_with, write_result_atomic,
+        atomic_write_with, write_result_atomic, RunMetadata, RunResult, SamplingParams,
+        ScenarioOutcome, ServerMetadata, Status, Totals,
     };
     use crate::ScenarioCategory;
 
@@ -290,14 +290,12 @@ mod tests {
             skipped: 1,
         };
         write_result_atomic(&destination, &result).expect("write result");
-        let document: serde_json::Value = serde_json::from_slice(
-            &fs::read(&destination).expect("read generated result"),
-        )
-        .expect("parse generated result");
-        let schema: serde_json::Value = serde_json::from_str(include_str!(
-            "../../../schemas/result-v1.schema.json"
-        ))
-        .expect("parse checked-in schema");
+        let document: serde_json::Value =
+            serde_json::from_slice(&fs::read(&destination).expect("read generated result"))
+                .expect("parse generated result");
+        let schema: serde_json::Value =
+            serde_json::from_str(include_str!("../../../schemas/result-v1.schema.json"))
+                .expect("parse checked-in schema");
         let validator = jsonschema::validator_for(&schema).expect("compile result schema");
 
         validator

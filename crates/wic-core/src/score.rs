@@ -22,9 +22,8 @@ pub fn score_calls(
 
     let mut parsed = Vec::with_capacity(actual.len());
     for call in actual {
-        let arguments: Value = serde_json::from_str(&call.arguments).map_err(|error| {
-            format!("arguments not valid JSON for '{}': {error}", call.name)
-        })?;
+        let arguments: Value = serde_json::from_str(&call.arguments)
+            .map_err(|error| format!("arguments not valid JSON for '{}': {error}", call.name))?;
         let tool = tools
             .iter()
             .find(|tool| tool.name == call.name)
@@ -47,14 +46,7 @@ pub fn score_calls(
     }
 
     let mut used = vec![false; actual.len()];
-    if has_complete_match(
-        expected,
-        actual,
-        &parsed,
-        default_policy,
-        0,
-        &mut used,
-    ) {
+    if has_complete_match(expected, actual, &parsed, default_policy, 0, &mut used) {
         return Ok(());
     }
 
@@ -115,13 +107,8 @@ fn has_complete_match(
     for actual_index in 0..actual.len() {
         if used[actual_index]
             || actual[actual_index].name != expected_call.name
-            || compare_arguments(
-                &expected_call.arguments,
-                &parsed[actual_index],
-                policy,
-                "",
-            )
-            .is_err()
+            || compare_arguments(&expected_call.arguments, &parsed[actual_index], policy, "")
+                .is_err()
         {
             continue;
         }
@@ -167,7 +154,10 @@ fn validate_schema(schema: &Value, value: &Value, path: &str) -> Result<(), Stri
     }
 
     if let Some(allowed) = schema.get("enum").and_then(Value::as_array) {
-        if !allowed.iter().any(|candidate| values_equal(candidate, value)) {
+        if !allowed
+            .iter()
+            .any(|candidate| values_equal(candidate, value))
+        {
             let location = if path.is_empty() { "value" } else { path };
             return Err(format!(
                 "schema violation: value for '{location}' is not in enum"
@@ -248,9 +238,7 @@ fn compare_arguments(
                     Value::Array(actual.clone())
                 ));
             }
-            for (index, (expected_item, actual_item)) in
-                expected.iter().zip(actual).enumerate()
-            {
+            for (index, (expected_item, actual_item)) in expected.iter().zip(actual).enumerate() {
                 let item_path = if path.is_empty() {
                     format!("[{index}]")
                 } else {
@@ -272,9 +260,7 @@ fn compare_arguments(
 
 fn values_equal(expected: &Value, actual: &Value) -> bool {
     match (expected, actual) {
-        (Value::Number(expected), Value::Number(actual)) => {
-            expected.as_f64() == actual.as_f64()
-        }
+        (Value::Number(expected), Value::Number(actual)) => expected.as_f64() == actual.as_f64(),
         (Value::String(expected), Value::String(actual)) => {
             expected.nfc().collect::<String>().trim() == actual.nfc().collect::<String>().trim()
         }
@@ -291,7 +277,11 @@ fn join_path(path: &str, field: &str) -> String {
 }
 
 fn display_path(path: &str) -> &str {
-    if path.is_empty() { "arguments" } else { path }
+    if path.is_empty() {
+        "arguments"
+    } else {
+        path
+    }
 }
 
 fn display_value(value: &Value) -> String {

@@ -4,7 +4,7 @@ mod support;
 use std::fs;
 use std::process::Command;
 
-use serde_json::{Value, json};
+use serde_json::{json, Value};
 use support::{MockServer, ScriptedResponse};
 use wic_core::result::{RunResult, Status};
 
@@ -111,11 +111,7 @@ async fn happy_run_passes_all_scenarios_and_writes_a_valid_result() {
             Value::Null,
         )),
         ScriptedResponse::Json(completion(
-            json!([call(
-                "call-weather",
-                "get_weather",
-                r#"{"city":"Boston"}"#
-            )]),
+            json!([call("call-weather", "get_weather", r#"{"city":"Boston"}"#)]),
             Value::Null,
         )),
         ScriptedResponse::Sse(streaming_call(
@@ -156,17 +152,23 @@ async fn happy_run_passes_all_scenarios_and_writes_a_valid_result() {
     assert_eq!(result.schema_version, 1);
     assert_eq!(result.totals.passed, 5);
     assert_eq!(result.totals.failed, 0);
-    assert!(result.scenarios.iter().all(|outcome| outcome.status == Status::Pass));
+    assert!(result
+        .scenarios
+        .iter()
+        .all(|outcome| outcome.status == Status::Pass));
     let report = String::from_utf8_lossy(&output.stdout);
     assert!(report.contains("multi_turn        1 passed  0 failed  0 errors"));
     assert!(report.contains("TOTAL 5 passed  0 failed  0 errors  0 skipped  5 total"));
-    assert!(!report.contains('\u{1b}'), "non-TTY output must not contain color");
+    assert!(
+        !report.contains('\u{1b}'),
+        "non-TTY output must not contain color"
+    );
 
     let requests = server.requests();
     let second_turn_messages = requests[1]["messages"].as_array().expect("messages array");
-    assert!(second_turn_messages.iter().any(|message| {
-        message["role"] == "tool" && message["tool_call_id"] == "call-geocode"
-    }));
+    assert!(second_turn_messages
+        .iter()
+        .any(|message| { message["role"] == "tool" && message["tool_call_id"] == "call-geocode" }));
 
     let validation = run_binary(vec![
         "validate".to_owned(),
@@ -185,7 +187,10 @@ async fn happy_run_passes_all_scenarios_and_writes_a_valid_result() {
 async fn json_mode_is_clean_json_and_records_the_selected_preset() {
     let server = MockServer::start_scripted(
         "fixture-model",
-        vec![ScriptedResponse::Json(completion(json!([]), json!("ready")))],
+        vec![ScriptedResponse::Json(completion(
+            json!([]),
+            json!("ready"),
+        ))],
     )
     .await;
     let directory = tempfile::tempdir().expect("temp directory");
@@ -235,7 +240,11 @@ content = "Reply ready."
     .await;
 
     assert_eq!(output.status.code(), Some(0));
-    assert!(output.stderr.is_empty(), "{}", String::from_utf8_lossy(&output.stderr));
+    assert!(
+        output.stderr.is_empty(),
+        "{}",
+        String::from_utf8_lossy(&output.stderr)
+    );
     let result: RunResult = serde_json::from_slice(&output.stdout).expect("stdout is only JSON");
     assert_eq!(result.metadata.server.preset_name, "ollama");
     assert_eq!(
@@ -310,11 +319,7 @@ async fn known_broken_double_encoded_arguments_are_red_with_a_precise_reason() {
     let server = MockServer::start_scripted(
         "fixture-model",
         vec![ScriptedResponse::Json(completion(
-            json!([call(
-                "call-broken",
-                "get_weather",
-                &double_encoded
-            )]),
+            json!([call("call-broken", "get_weather", &double_encoded)]),
             Value::Null,
         ))],
     )
@@ -372,7 +377,12 @@ city = "Boston"
     ])
     .await;
 
-    assert_eq!(output.status.code(), Some(1), "{}", String::from_utf8_lossy(&output.stderr));
+    assert_eq!(
+        output.status.code(),
+        Some(1),
+        "{}",
+        String::from_utf8_lossy(&output.stderr)
+    );
     let result: RunResult =
         serde_json::from_slice(&fs::read(output_path).expect("result file")).expect("valid result");
     assert_eq!(result.scenarios[0].status, Status::Fail);
@@ -380,12 +390,14 @@ city = "Boston"
         result.scenarios[0].failure_reason.as_deref(),
         Some("schema violation: expected object, got string")
     );
-    assert!(
-        String::from_utf8_lossy(&output.stdout).contains(
-            "FAIL  known-broken-double-encoded: schema violation: expected object, got string"
-        )
+    assert!(String::from_utf8_lossy(&output.stdout).contains(
+        "FAIL  known-broken-double-encoded: schema violation: expected object, got string"
+    ));
+    assert_eq!(
+        server.requests().len(),
+        1,
+        "parsed bad answers are not retried"
     );
-    assert_eq!(server.requests().len(), 1, "parsed bad answers are not retried");
 }
 
 #[tokio::test(flavor = "multi_thread", worker_threads = 2)]

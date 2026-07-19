@@ -4,7 +4,7 @@ use std::time::Duration;
 
 use reqwest::StatusCode;
 use serde::Deserialize;
-use serde_json::{Map, Value, json};
+use serde_json::{json, Map, Value};
 
 use crate::result::SamplingParams;
 use crate::{Scenario, ToolChoice};
@@ -80,9 +80,9 @@ impl EndpointClient {
                 .get("data")
                 .and_then(Value::as_array)
                 .ok_or_else(|| "invalid /models response: missing data array".to_owned())?;
-            let model_found = models.iter().any(|entry| {
-                entry.get("id").and_then(Value::as_str) == Some(self.model.as_str())
-            });
+            let model_found = models
+                .iter()
+                .any(|entry| entry.get("id").and_then(Value::as_str) == Some(self.model.as_str()));
             return if model_found {
                 Ok(())
             } else {
@@ -93,7 +93,10 @@ impl EndpointClient {
             };
         }
 
-        if matches!(status, StatusCode::NOT_FOUND | StatusCode::METHOD_NOT_ALLOWED) {
+        if matches!(
+            status,
+            StatusCode::NOT_FOUND | StatusCode::METHOD_NOT_ALLOWED
+        ) {
             return self.preflight_chat_completion().await;
         }
 
@@ -337,13 +340,17 @@ pub fn parse_non_streaming(bytes: &[u8]) -> Result<AssistantResponse, String> {
 }
 
 pub fn parse_sse_data(bytes: &[u8]) -> Result<Vec<String>, String> {
-    let text = str::from_utf8(bytes).map_err(|error| format!("SSE response is not UTF-8: {error}"))?;
+    let text =
+        str::from_utf8(bytes).map_err(|error| format!("SSE response is not UTF-8: {error}"))?;
     let normalized = text.replace("\r\n", "\n");
     let mut payloads = Vec::new();
     for event in normalized.split("\n\n") {
         let data = event
             .lines()
-            .filter_map(|line| line.strip_prefix("data:").map(|data| data.strip_prefix(' ').unwrap_or(data)))
+            .filter_map(|line| {
+                line.strip_prefix("data:")
+                    .map(|data| data.strip_prefix(' ').unwrap_or(data))
+            })
             .collect::<Vec<_>>();
         if !data.is_empty() {
             payloads.push(data.join("\n"));

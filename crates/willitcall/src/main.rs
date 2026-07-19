@@ -6,12 +6,8 @@ use std::process::ExitCode;
 use std::time::Duration;
 
 use clap::{Args, Parser, Subcommand, ValueEnum};
-use wic_core::result::{
-    exit_code_for_totals, parse_and_validate_result, write_result_atomic,
-};
-use wic_core::runner::{
-    RunConfig, ServerConfig, ServerVersionProbe, preflight, run_scenarios,
-};
+use wic_core::result::{exit_code_for_totals, parse_and_validate_result, write_result_atomic};
+use wic_core::runner::{preflight, run_scenarios, RunConfig, ServerConfig, ServerVersionProbe};
 use wic_core::{load_embedded_scenarios, load_scenarios_from_dir};
 
 const EXIT_USAGE: u8 = 2;
@@ -151,13 +147,11 @@ async fn execute(cli: Cli) -> Result<u8, ExecuteError> {
                 None => load_embedded_scenarios(),
             }
             .map_err(|error| ExecuteError::Usage(error.to_string()))?;
-            let endpoint = resolve_endpoint(args.server, args.endpoint)
-                .map_err(ExecuteError::Usage)?;
+            let endpoint =
+                resolve_endpoint(args.server, args.endpoint).map_err(ExecuteError::Usage)?;
             let config = RunConfig::new(endpoint, args.model, Duration::from_secs(args.timeout))
                 .with_server(args.server.config());
-            preflight(&config)
-                .await
-                .map_err(ExecuteError::Preflight)?;
+            preflight(&config).await.map_err(ExecuteError::Preflight)?;
             let result = run_scenarios(&config, &scenarios).await;
             write_result_atomic(&args.out, &result).map_err(|error| {
                 ExecuteError::Harness(format!(
@@ -171,8 +165,8 @@ async fn execute(cli: Cli) -> Result<u8, ExecuteError> {
                 })?;
                 println!("{document}");
             } else {
-                let color = std::io::stdout().is_terminal()
-                    && std::env::var_os("NO_COLOR").is_none();
+                let color =
+                    std::io::stdout().is_terminal() && std::env::var_os("NO_COLOR").is_none();
                 print!("{}", report::render_report(&result, color));
             }
             Ok(exit_code_for_totals(&result.totals))
@@ -235,12 +229,12 @@ mod tests {
     use std::path::PathBuf;
 
     use clap::Parser;
-    use wic_core::ScenarioCategory;
     use wic_core::result::{
         RunMetadata, RunResult, SamplingParams, ScenarioOutcome, ServerMetadata, Status, Totals,
     };
+    use wic_core::ScenarioCategory;
 
-    use super::{Cli, Command, ServerPreset, resolve_endpoint};
+    use super::{resolve_endpoint, Cli, Command, ServerPreset};
 
     #[test]
     fn run_subcommand_parses_m0_arguments() {
@@ -262,10 +256,7 @@ mod tests {
         let Command::Run(args) = cli.command else {
             panic!("expected run command");
         };
-        assert_eq!(
-            args.endpoint.as_deref(),
-            Some("http://127.0.0.1:8080/v1")
-        );
+        assert_eq!(args.endpoint.as_deref(), Some("http://127.0.0.1:8080/v1"));
         assert_eq!(args.model, "local-model");
         assert_eq!(args.scenarios, Some(PathBuf::from("corpus")));
         assert_eq!(args.out, PathBuf::from("result.json"));
@@ -382,13 +373,9 @@ mod tests {
 
         assert!(rendered.contains("single_call       1 passed  1 failed  0 errors"));
         assert!(rendered.contains("streaming         0 passed  0 failed  1 errors"));
-        assert!(rendered.contains(
-            "FAIL  single-bad: wrong tool call: expected 'a', got 'b'"
-        ));
+        assert!(rendered.contains("FAIL  single-bad: wrong tool call: expected 'a', got 'b'"));
         assert!(rendered.contains("ERROR stream-error: request timed out after 60s"));
-        assert!(rendered.ends_with(
-            "TOTAL 1 passed  1 failed  1 errors  0 skipped  3 total\n"
-        ));
+        assert!(rendered.ends_with("TOTAL 1 passed  1 failed  1 errors  0 skipped  3 total\n"));
         assert!(!rendered.contains('\u{1b}'));
     }
 
@@ -444,7 +431,10 @@ mod tests {
             .expect_err("help exits through clap")
             .to_string();
         for code in 0..=4 {
-            assert!(help.contains(&format!("{code}  ")), "missing exit code {code}");
+            assert!(
+                help.contains(&format!("{code}  ")),
+                "missing exit code {code}"
+            );
         }
     }
 }

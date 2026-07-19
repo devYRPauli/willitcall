@@ -77,7 +77,10 @@ fn invalid_argument_json_has_a_precise_reason() {
     )
     .expect_err("invalid arguments must fail");
 
-    assert!(error.starts_with("arguments not valid JSON for 'get_weather':"), "{error}");
+    assert!(
+        error.starts_with("arguments not valid JSON for 'get_weather':"),
+        "{error}"
+    );
 }
 
 #[test]
@@ -115,10 +118,7 @@ fn validates_required_nested_array_and_enum_schema_keywords() {
 fn exact_subset_ignore_and_per_call_override_are_honored() {
     let tools = [weather_tool()];
     let expected_call = expected("get_weather", json!({"city": "Boston"}));
-    let with_extra = [actual(
-        "get_weather",
-        r#"{"city":"Boston","days":[1]}"#,
-    )];
+    let with_extra = [actual("get_weather", r#"{"city":"Boston","days":[1]}"#)];
 
     assert_eq!(
         score_calls(
@@ -160,10 +160,7 @@ fn strings_trim_numbers_compare_numerically_and_case_remains_significant() {
         &tools,
         &expected,
         ArgumentsMatch::Exact,
-        &[actual(
-            "get_weather",
-            r#"{"city":" Boston ","days":[1.0]}"#,
-        )],
+        &[actual("get_weather", r#"{"city":" Boston ","days":[1.0]}"#,)],
     )
     .is_ok());
 
@@ -171,16 +168,10 @@ fn strings_trim_numbers_compare_numerically_and_case_remains_significant() {
         &tools,
         &expected,
         ArgumentsMatch::Exact,
-        &[actual(
-            "get_weather",
-            r#"{"city":"boston","days":[1]}"#,
-        )],
+        &[actual("get_weather", r#"{"city":"boston","days":[1]}"#)],
     )
     .expect_err("case mismatch must fail");
-    assert_eq!(
-        error,
-        "wrong value for 'city': expected Boston, got boston"
-    );
+    assert_eq!(error, "wrong value for 'city': expected Boston, got boston");
 }
 
 #[test]
@@ -213,23 +204,11 @@ fn unordered_matching_finds_a_complete_match_with_mixed_policies() {
     let tools = [weather_tool()];
     let mut subset = expected("get_weather", json!({"city": "Boston"}));
     subset.arguments_match = Some(ArgumentsMatch::Subset);
-    let exact = expected(
-        "get_weather",
-        json!({"city": "Boston", "days": [1]}),
-    );
+    let exact = expected("get_weather", json!({"city": "Boston", "days": [1]}));
     let actual = [
-        actual(
-            "get_weather",
-            r#"{"city":"Boston","days":[1]}"#,
-        ),
+        actual("get_weather", r#"{"city":"Boston","days":[1]}"#),
         actual("get_weather", r#"{"city":"Boston"}"#),
     ];
 
-    assert!(score_calls(
-        &tools,
-        &[subset, exact],
-        ArgumentsMatch::Exact,
-        &actual,
-    )
-    .is_ok());
+    assert!(score_calls(&tools, &[subset, exact], ArgumentsMatch::Exact, &actual,).is_ok());
 }

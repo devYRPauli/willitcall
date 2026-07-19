@@ -3,11 +3,11 @@ use std::fmt;
 use std::fs;
 use std::path::{Path, PathBuf};
 
-use include_dir::{Dir, include_dir};
+use include_dir::{include_dir, Dir};
 use serde::{Deserialize, Serialize};
 
-pub mod result;
 pub mod client;
+pub mod result;
 pub mod runner;
 pub mod score;
 
@@ -151,13 +151,16 @@ pub fn load_scenarios_from_dir(path: &Path) -> Result<Vec<Scenario>, ScenarioLoa
     })?;
     let mut paths = entries
         .map(|entry| {
-            entry
-                .map(|entry| entry.path())
-                .map_err(|error| ScenarioLoadError(format!("failed to read directory entry: {error}")))
+            entry.map(|entry| entry.path()).map_err(|error| {
+                ScenarioLoadError(format!("failed to read directory entry: {error}"))
+            })
         })
         .collect::<Result<Vec<PathBuf>, _>>()?;
     paths.retain(|path| {
-        path.is_file() && path.extension().is_some_and(|extension| extension == "toml")
+        path.is_file()
+            && path
+                .extension()
+                .is_some_and(|extension| extension == "toml")
     });
     paths.sort();
 
@@ -173,9 +176,7 @@ pub fn load_scenarios_from_dir(path: &Path) -> Result<Vec<Scenario>, ScenarioLoa
     parse_scenarios(documents)
 }
 
-fn parse_scenarios(
-    documents: Vec<(String, String)>,
-) -> Result<Vec<Scenario>, ScenarioLoadError> {
+fn parse_scenarios(documents: Vec<(String, String)>) -> Result<Vec<Scenario>, ScenarioLoadError> {
     let mut ids = HashSet::new();
     let mut scenarios = Vec::with_capacity(documents.len());
 
@@ -216,7 +217,7 @@ mod tests {
     use std::collections::HashSet;
     use std::fs;
 
-    use super::{ScenarioCategory, load_embedded_scenarios, load_scenarios_from_dir};
+    use super::{load_embedded_scenarios, load_scenarios_from_dir, ScenarioCategory};
 
     const VALID_SCENARIO: &str = r#"
 id = "single-weather"
@@ -249,21 +250,16 @@ city = "Boston"
     #[test]
     fn embedded_corpus_has_fifty_scenarios_across_all_categories() {
         let scenarios = load_embedded_scenarios().expect("embedded scenarios should load");
-        let categories: HashSet<_> = scenarios
-            .iter()
-            .map(|scenario| scenario.category)
-            .collect();
+        let categories: HashSet<_> = scenarios.iter().map(|scenario| scenario.category).collect();
 
         assert_eq!(scenarios.len(), 50);
         assert_eq!(categories.len(), 6);
         assert!(categories.contains(&ScenarioCategory::ParallelCalls));
         assert!(categories.contains(&ScenarioCategory::ToolChoiceModes));
         assert!(categories.contains(&ScenarioCategory::MultiTurn));
-        assert!(
-            scenarios
-                .iter()
-                .any(|scenario| scenario.arguments_match == super::ArgumentsMatch::Subset)
-        );
+        assert!(scenarios
+            .iter()
+            .any(|scenario| scenario.arguments_match == super::ArgumentsMatch::Subset));
     }
 
     #[test]

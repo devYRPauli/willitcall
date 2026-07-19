@@ -6,7 +6,7 @@ use std::sync::{Arc, Mutex};
 
 use axum::body::Body;
 use axum::extract::{Json, State};
-use axum::http::{Response, StatusCode, header};
+use axum::http::{header, Response, StatusCode};
 use axum::routing::{get, post};
 use axum::Router;
 use tokio::task::JoinHandle;
@@ -69,9 +69,7 @@ impl MockServer {
             .route("/version", get(server_version))
             .with_state(Arc::clone(&state));
         let task = tokio::spawn(async move {
-            axum::serve(listener, app)
-                .await
-                .expect("run mock server");
+            axum::serve(listener, app).await.expect("run mock server");
         });
 
         Self {

@@ -3,12 +3,16 @@ use std::fs;
 
 use wic_core::client::ToolCall;
 use wic_core::score::score_calls;
-use wic_core::{Scenario, ScenarioCategory, load_embedded_scenarios};
+use wic_core::{load_embedded_scenarios, Scenario, ScenarioCategory};
 
 #[test]
 fn embedded_corpus_is_integral_and_covers_every_category() {
     let scenarios = load_embedded_scenarios().expect("embedded scenarios should load");
-    assert!((45..=55).contains(&scenarios.len()), "scenario count: {}", scenarios.len());
+    assert!(
+        (45..=55).contains(&scenarios.len()),
+        "scenario count: {}",
+        scenarios.len()
+    );
 
     let ids = scenarios
         .iter()
@@ -71,7 +75,10 @@ fn assert_filename_matches_id(scenario: &Scenario) {
         .unwrap_or_else(|error| panic!("scenario id has no matching file {path}: {error}"));
     let from_file: Scenario = toml::from_str(&contents)
         .unwrap_or_else(|error| panic!("failed to parse matching file {path}: {error}"));
-    assert_eq!(from_file.id, scenario.id, "filename slug must equal scenario id");
+    assert_eq!(
+        from_file.id, scenario.id,
+        "filename slug must equal scenario id"
+    );
     if !contents.is_ascii() {
         assert_eq!(
             scenario.id, "negative-unicode-argument",

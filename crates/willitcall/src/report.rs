@@ -1,5 +1,5 @@
-use wic_core::ScenarioCategory;
 use wic_core::result::{RunResult, Status};
+use wic_core::ScenarioCategory;
 
 const CATEGORIES: [ScenarioCategory; 6] = [
     ScenarioCategory::SingleCall,
@@ -38,7 +38,10 @@ pub fn render_report(result: &RunResult, color: bool) -> String {
             .count();
         rendered.push_str(&format!(
             "{:<18}{} passed  {} failed  {} errors\n",
-            category.to_string(), passed, failed, errors
+            category.to_string(),
+            passed,
+            failed,
+            errors
         ));
     }
 
@@ -61,7 +64,10 @@ pub fn render_report(result: &RunResult, color: bool) -> String {
             .as_deref()
             .unwrap_or("no failure reason recorded");
         if color {
-            rendered.push_str(&format!("\x1b[31m{label}\x1b[0m {}: {reason}\n", outcome.id));
+            rendered.push_str(&format!(
+                "\x1b[31m{label}\x1b[0m {}: {reason}\n",
+                outcome.id
+            ));
         } else {
             rendered.push_str(&format!("{label} {}: {reason}\n", outcome.id));
         }

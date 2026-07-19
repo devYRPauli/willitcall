@@ -52,8 +52,7 @@ async fn mock_server_replays_sse_fixture_intact() {
 fn known_broken_fixture_contains_malformed_tool_arguments() {
     let fixture: serde_json::Value =
         serde_json::from_str(MALFORMED_FIXTURE).expect("valid response envelope");
-    let arguments = fixture["choices"][0]["message"]["tool_calls"][0]["function"]
-        ["arguments"]
+    let arguments = fixture["choices"][0]["message"]["tool_calls"][0]["function"]["arguments"]
         .as_str()
         .expect("arguments string");
 

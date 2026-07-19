@@ -38,8 +38,14 @@ fn reassembles_missing_indices_and_mid_argument_splits_byte_exactly() {
     let response = reassemble_sse_payloads(&payloads).expect("valid stream payloads");
 
     assert_eq!(response.tool_calls.len(), 1);
-    assert_eq!(response.tool_calls[0].id.as_deref(), Some("call_weather_split"));
-    assert_eq!(response.tool_calls[0].arguments.as_bytes(), br#"{"city":"Boston"}"#);
+    assert_eq!(
+        response.tool_calls[0].id.as_deref(),
+        Some("call_weather_split")
+    );
+    assert_eq!(
+        response.tool_calls[0].arguments.as_bytes(),
+        br#"{"city":"Boston"}"#
+    );
 }
 
 #[test]
