@@ -1,6 +1,7 @@
 id = "tool-choice-required-empty"
 category = "tool_choice_modes"
 description = "Require a call to an empty-argument function."
+rationale = "This asserts honoring required tool choice with an empty schema. The API request enforces at least one call, current_sequence is the only offered tool, and its schema permits no arguments, removing model discretion."
 
 [[tools]]
 name = "current_sequence"

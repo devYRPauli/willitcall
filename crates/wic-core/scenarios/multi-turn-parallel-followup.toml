@@ -1,6 +1,7 @@
 id = "multi-turn-parallel-followup"
 category = "multi_turn"
 description = "Feed two parallel results into one follow-up call."
+rationale = "This asserts combining two parallel lookup results in one follow-up call; the city order is defined by the prompt and schema descriptions, and the values come verbatim from tool-result JSON. Turn 1 expects only lookups because the temperatures are not known yet, so an early comparison would invent them."
 
 [[tools]]
 name = "get_temperature"
@@ -19,10 +20,12 @@ type = "object"
 required = ["first_city", "first_value", "second_city", "second_value"]
 [tools.parameters.properties.first_city]
 type = "string"
+description = "The city the user mentioned first."
 [tools.parameters.properties.first_value]
 type = "number"
 [tools.parameters.properties.second_city]
 type = "string"
+description = "The city the user mentioned second."
 [tools.parameters.properties.second_value]
 type = "number"
 

@@ -1,6 +1,7 @@
 id = "negative-plain-text"
 category = "negative_trap"
 description = "Use a plain text reply instead of an unrelated tool."
+rationale = "This asserts choosing plain text for an explanatory question. The prompt explicitly says not to send email, and the only offered tool sends email rather than answering the question, so a correct response cannot call it."
 
 [[tools]]
 name = "send_email"

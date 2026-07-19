@@ -1,6 +1,7 @@
 id = "negative-auto-knowledge"
 category = "negative_trap"
 description = "Do not call an irrelevant tool for a general knowledge reply."
+rationale = "This asserts abstaining from tool use for general knowledge. The prompt explicitly says not to use a tool, and the only offered order lookup cannot answer the ocean question, so every correct response has no call."
 
 [[tools]]
 name = "lookup_order"

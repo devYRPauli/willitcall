@@ -1,6 +1,7 @@
 id = "single-integer-limit"
 category = "single_call"
 description = "Call one tool with an integer argument."
+rationale = "This asserts encoding an exact integer limit in a mailbox call. The prompt names the support mailbox and says exactly 12, so both expected values are literal and no open-ended text is compared."
 
 [[tools]]
 name = "list_messages"

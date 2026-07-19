@@ -197,6 +197,7 @@ async fn json_mode_is_clean_json_and_records_the_selected_preset() {
 id = "json-clean"
 category = "negative_trap"
 description = "Produce no tool call."
+rationale = "This fixture asserts a no-call result; tool_choice none forbids the only offered tool."
 
 [[tools]]
 name = "get_weather"
@@ -272,7 +273,7 @@ async fn validator_rejects_a_wrong_schema_version_with_a_precise_message() {
       "temperature": 0.0,
       "top_p": 1.0,
       "seed": 42,
-      "max_tokens": 256
+      "max_tokens": 1024
     }
   },
   "scenarios": [],
@@ -327,6 +328,7 @@ async fn known_broken_double_encoded_arguments_are_red_with_a_precise_reason() {
 id = "known-broken-double-encoded"
 category = "single_call"
 description = "Detect double encoded arguments."
+rationale = "This fixture asserts schema rejection of a double encoded call, while Boston is literal in the prompt."
 
 [[tools]]
 name = "get_weather"
@@ -405,6 +407,7 @@ async fn server_error_is_retried_once_and_recorded_in_the_outcome() {
 id = "retry-negative"
 category = "negative_trap"
 description = "Retry a transient server failure."
+rationale = "This fixture asserts retry behavior; tool_choice none pins the successful response to no tool calls."
 
 [[tools]]
 name = "get_weather"

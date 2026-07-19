@@ -1,6 +1,7 @@
 id = "streaming-array-arguments"
 category = "streaming"
 description = "Stream a tool call with an array argument."
+rationale = "This asserts reconstructing an ordered array from streamed arguments. Array comparison is positional, the prompt supplies all opaque record ids verbatim and says in that order, and the API request enforces the named tool."
 stream = true
 
 [[tools]]

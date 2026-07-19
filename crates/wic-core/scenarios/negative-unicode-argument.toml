@@ -1,6 +1,7 @@
 id = "negative-unicode-argument"
 category = "negative_trap"
 description = "Preserve a non-ASCII city argument."
+rationale = "This asserts copying the exact city spelling supplied verbatim in the prompt. The scorer compares strings in NFC and uses subset matching for the optional country code, so an NFD-emitting model or one adding that optional field is not failed."
 arguments_match = "subset"
 
 [[tools]]

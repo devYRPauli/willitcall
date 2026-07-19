@@ -1,6 +1,7 @@
 id = "multi-turn-two-hop-chain"
 category = "multi_turn"
 description = "Complete a two-hop chain across three tool calls."
+rationale = "This asserts a three-call dependency chain. The email is literal in the prompt, and each opaque downstream id must be copied verbatim from the immediately preceding tool-result JSON, so no correct alternative value exists."
 
 [[tools]]
 name = "find_user"

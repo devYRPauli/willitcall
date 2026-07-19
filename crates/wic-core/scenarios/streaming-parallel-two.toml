@@ -1,6 +1,7 @@
 id = "streaming-parallel-two"
 category = "streaming"
 description = "Stream two different tool calls."
+rationale = "This asserts reconstructing two parallel calls from one streamed response, so sequential-only calling is a true red. The prompt explicitly maps literal Prague to weather and Manila to time, pinning both tool-argument pairs."
 stream = true
 
 [[tools]]

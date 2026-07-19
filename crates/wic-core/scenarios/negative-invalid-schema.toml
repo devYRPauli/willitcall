@@ -1,6 +1,7 @@
 id = "negative-invalid-schema"
 category = "negative_trap"
 description = "Refuse a tool call when the requested value is outside its schema."
+rationale = "This asserts refusing to fabricate a schema-valid call for an unsupported value. Kelvin is absent from the celsius-or-fahrenheit enum, and the prompt explicitly requires plain text without a call when the schema cannot express it."
 
 [[tools]]
 name = "set_temperature_unit"

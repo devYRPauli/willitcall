@@ -19,6 +19,7 @@ pub struct Scenario {
     pub id: String,
     pub category: ScenarioCategory,
     pub description: String,
+    pub rationale: String,
     #[serde(default)]
     pub stream: bool,
     #[serde(default)]
@@ -221,6 +222,7 @@ mod tests {
 id = "single-weather"
 category = "single_call"
 description = "Call the weather tool."
+rationale = "The prompt names Boston verbatim, which pins the exact city argument."
 
 [[tools]]
 name = "get_weather"

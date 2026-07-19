@@ -1,6 +1,7 @@
 id = "streaming-parallel-three"
 category = "streaming"
 description = "Stream three calls to the same tool."
+rationale = "This asserts reconstructing three parallel calls from one streamed response, so sequential-only calling is a true red. Accra, Kyoto, and Quito are supplied verbatim, and the prompt explicitly requests three calls."
 stream = true
 
 [[tools]]

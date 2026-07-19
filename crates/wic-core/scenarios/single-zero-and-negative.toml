@@ -1,6 +1,7 @@
 id = "single-zero-and-negative"
 category = "single_call"
 description = "Call one tool with zero and a negative number."
+rationale = "This asserts preserving zero and a negative decimal in distinct numeric fields. The prompt says from -12.5 to 0, and the named minimum and maximum parameters force which literal occupies each position."
 
 [[tools]]
 name = "set_axis_range"

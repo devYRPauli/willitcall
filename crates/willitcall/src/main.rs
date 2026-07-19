@@ -340,7 +340,7 @@ mod tests {
                     temperature: Some(0.0),
                     top_p: Some(1.0),
                     seed: Some(42),
-                    max_tokens: Some(256),
+                    max_tokens: Some(1024),
                 },
             },
             scenarios: vec![

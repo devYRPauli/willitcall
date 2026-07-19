@@ -1,6 +1,7 @@
 id = "single-empty-arguments"
 category = "single_call"
 description = "Call a function that accepts no arguments."
+rationale = "This asserts calling an empty-argument function. The API request enforces required tool use, only get_service_status is offered, and its object schema defines no properties, so the empty argument object is forced."
 
 [[tools]]
 name = "get_service_status"

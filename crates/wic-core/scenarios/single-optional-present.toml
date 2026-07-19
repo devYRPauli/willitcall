@@ -1,6 +1,7 @@
 id = "single-optional-present"
 category = "single_call"
 description = "Include an optional argument when explicitly provided."
+rationale = "This asserts including an optional limit when the user supplies it. The prompt gives brass compass verbatim as the search query and says exactly 4 results, which pins both expected arguments."
 
 [[tools]]
 name = "search_catalog"

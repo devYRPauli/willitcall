@@ -1,6 +1,7 @@
 id = "tool-choice-auto-no-call"
 category = "tool_choice_modes"
 description = "Use auto tool choice without calling an irrelevant tool."
+rationale = "This asserts declining an irrelevant tool under auto choice, where the API leaves call-or-text discretion to the model. The prompt requests literal text and the only tool fetches temperatures, while response wording is not scored."
 
 [[tools]]
 name = "get_temperature"

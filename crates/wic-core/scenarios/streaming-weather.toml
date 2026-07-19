@@ -1,6 +1,7 @@
 id = "streaming-weather"
 category = "streaming"
 description = "Stream one weather tool call."
+rationale = "This asserts reconstructing a basic tool call from streamed output. The API request enforces the named get_weather tool, and the prompt supplies Seattle verbatim as its only required argument."
 stream = true
 
 [[tools]]

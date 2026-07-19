@@ -1,6 +1,7 @@
 id = "multi-turn-calendar-followup"
 category = "multi_turn"
 description = "Use a calendar lookup result in a follow-up event call."
+rationale = "This asserts using a calendar result in a later create_event call. The date and title are literal in the prompt, and the time is copied verbatim from the prior tool-result JSON."
 
 [[tools]]
 name = "get_calendar"

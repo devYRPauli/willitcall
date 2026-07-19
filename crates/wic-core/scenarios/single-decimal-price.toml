@@ -1,6 +1,7 @@
 id = "single-decimal-price"
 category = "single_call"
 description = "Call one tool with a decimal number."
+rationale = "This asserts preserving a decimal numeric argument in a price call. The opaque SKU AX-9 and exact value 19.95 are supplied verbatim in the prompt, so neither field admits a legitimate rewording."
 
 [[tools]]
 name = "set_price"

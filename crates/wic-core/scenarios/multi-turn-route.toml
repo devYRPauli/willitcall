@@ -1,6 +1,7 @@
 id = "multi-turn-route"
 category = "multi_turn"
 description = "Use a geocode result in a follow-up route call."
+rationale = "This asserts passing exact geocode coordinates into a follow-up route call. Turn 1 ignores arguments because a correct model may geocode Fenway Park, Boston, MA, while turn 2 is pinned verbatim by the tool-result JSON."
 
 [[tools]]
 name = "geocode"
@@ -38,6 +39,7 @@ content = "Find a route to Fenway Park."
 
 [[turns.expected_calls]]
 name = "geocode"
+arguments_match = "ignore"
 
 [turns.expected_calls.arguments]
 place = "Fenway Park"

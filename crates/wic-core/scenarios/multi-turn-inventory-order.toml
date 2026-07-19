@@ -1,6 +1,7 @@
 id = "multi-turn-inventory-order"
 category = "multi_turn"
 description = "Use an inventory result in a follow-up order call."
+rationale = "This asserts checking availability before placing an order. The opaque SKU and exact quantity are literal in the prompt, and the prior tool-result JSON establishes that stock is available."
 
 [[tools]]
 name = "check_inventory"

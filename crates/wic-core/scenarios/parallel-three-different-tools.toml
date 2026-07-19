@@ -1,6 +1,7 @@
 id = "parallel-three-different-tools"
 category = "parallel_calls"
 description = "Call three different tools in parallel."
+rationale = "This asserts emitting three distinct tool calls in one response, so sequential-only calling is a true red. The prompt explicitly pairs Rome with weather, Nairobi with time, and the literal amount and currency codes with conversion."
 
 [[tools]]
 name = "get_weather"

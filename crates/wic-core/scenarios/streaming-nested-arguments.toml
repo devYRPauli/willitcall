@@ -1,6 +1,7 @@
 id = "streaming-nested-arguments"
 category = "streaming"
 description = "Stream a tool call with nested arguments."
+rationale = "This asserts reconstructing a nested object from streamed argument fragments. The opaque marker name and both signed coordinates are literal prompt values, and the schema uniquely assigns x and y within position."
 stream = true
 
 [[tools]]

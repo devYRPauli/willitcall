@@ -1,6 +1,7 @@
 id = "single-date-range"
 category = "single_call"
 description = "Call one tool with multiple required arguments."
+rationale = "This asserts populating all fields of an inclusive date-range call. Denver and both ISO dates are supplied verbatim, while from and through map unambiguously to the named start_date and end_date parameters."
 
 [[tools]]
 name = "find_events"

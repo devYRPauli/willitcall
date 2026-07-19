@@ -1,6 +1,7 @@
 id = "parallel-city-time"
 category = "parallel_calls"
 description = "Call the time tool for two cities in parallel."
+rationale = "This asserts emitting both city-time calls in one response, so a model that can only call sequentially genuinely lacks the measured capability. Boston and Tokyo are literal prompt values that pin both arguments."
 
 [[tools]]
 name = "get_time"

@@ -1,6 +1,7 @@
 id = "single-string-list"
 category = "single_call"
 description = "Call one tool with an ordered array argument."
+rationale = "This asserts preserving an ordered array of opaque track ids. Array comparison is positional, and the prompt supplies the playlist name and every id verbatim while saying in that order."
 
 [[tools]]
 name = "create_playlist"

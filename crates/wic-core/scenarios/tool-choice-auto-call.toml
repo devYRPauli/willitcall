@@ -1,6 +1,7 @@
 id = "tool-choice-auto-call"
 category = "tool_choice_modes"
 description = "Use auto tool choice when a tool is clearly needed."
+rationale = "This asserts choosing a needed lookup under auto tool choice, where the API leaves call-or-text discretion to the model. The requested temperature requires the only offered tool, and Helsinki is supplied verbatim as its city argument."
 
 [[tools]]
 name = "get_temperature"

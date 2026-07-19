@@ -1,6 +1,7 @@
 id = "single-weather"
 category = "single_call"
 description = "Call one weather tool with a city argument."
+rationale = "This asserts selecting the weather tool with one city argument. Boston appears verbatim in the prompt, the schema requires only city, and no generated natural-language answer is compared."
 
 [[tools]]
 name = "get_weather"

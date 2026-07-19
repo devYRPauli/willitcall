@@ -1,6 +1,7 @@
 id = "parallel-three-cities"
 category = "parallel_calls"
 description = "Call the same tool three times in parallel."
+rationale = "This asserts emitting three weather calls in one response, so a model that calls them only sequentially genuinely lacks the capability. Austin, Dublin, and Seoul are supplied verbatim and the prompt explicitly requests three calls."
 
 [[tools]]
 name = "get_weather"

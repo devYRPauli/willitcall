@@ -1,6 +1,7 @@
 id = "single-boolean-flag"
 category = "single_call"
 description = "Call one tool with a boolean argument."
+rationale = "This asserts encoding a disabled state as the boolean false. The opaque feature name audit-log is supplied verbatim, and the imperative Disable pins the boolean without relying on a paraphrasable text answer."
 
 [[tools]]
 name = "set_feature"

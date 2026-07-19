@@ -65,7 +65,7 @@ fn request_payload_contains_tools_choice_messages_stream_and_sampling() {
             temperature: Some(0.0),
             top_p: Some(1.0),
             seed: Some(42),
-            max_tokens: Some(256),
+            max_tokens: Some(1024),
         },
     );
 
@@ -78,5 +78,5 @@ fn request_payload_contains_tools_choice_messages_stream_and_sampling() {
     assert_eq!(payload["temperature"], 0.0);
     assert_eq!(payload["top_p"], 1.0);
     assert_eq!(payload["seed"], 42);
-    assert_eq!(payload["max_tokens"], 256);
+    assert_eq!(payload["max_tokens"], 1024);
 }

@@ -1,6 +1,7 @@
 id = "tool-choice-named-empty"
 category = "tool_choice_modes"
 description = "Force a named empty-argument function."
+rationale = "This asserts honoring a named tool choice when another tool is offered. The API request enforces current_region, and its schema has no properties, so the model has no discretion over the tool or arguments."
 
 [[tools]]
 name = "current_region"

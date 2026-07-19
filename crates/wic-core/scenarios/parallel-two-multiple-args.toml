@@ -1,6 +1,7 @@
 id = "parallel-two-multiple-args"
 category = "parallel_calls"
 description = "Call two different tools with multiple arguments."
+rationale = "This asserts emitting the room and car calls together in one response, so sequential-only calling is a true red. Each room, city, date, and hour is supplied verbatim and mapped to a distinct named tool by the prompt."
 
 [[tools]]
 name = "book_room"

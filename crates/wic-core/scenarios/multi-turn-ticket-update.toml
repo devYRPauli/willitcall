@@ -1,6 +1,7 @@
 id = "multi-turn-ticket-update"
 category = "multi_turn"
 description = "Use a ticket lookup result in a follow-up update call."
+rationale = "This asserts looking up a ticket before updating its priority; EXT-55 and high are literal in the prompt, and ticket-902 comes verbatim from the tool-result JSON. Turn 1 expects only the lookup because emitting the update before receiving the internal id would require inventing it."
 
 [[tools]]
 name = "find_ticket"

@@ -1,6 +1,7 @@
 id = "streaming-boolean-argument"
 category = "streaming"
 description = "Stream a tool call with a boolean argument."
+rationale = "This asserts reconstructing a boolean argument from a streamed tool call. The prompt supplies billing verbatim and the imperative Enable pins enabled to true, so no paraphrasable response text is scored."
 stream = true
 
 [[tools]]

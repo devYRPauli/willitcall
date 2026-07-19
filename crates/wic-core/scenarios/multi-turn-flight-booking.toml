@@ -1,6 +1,7 @@
 id = "multi-turn-flight-booking"
 category = "multi_turn"
 description = "Use a flight search result in a follow-up booking call."
+rationale = "This asserts chaining a flight search into a booking. The route and date are literal in the prompt, while the opaque flight id is copied verbatim from the prior tool-result JSON."
 
 [[tools]]
 name = "find_flight"

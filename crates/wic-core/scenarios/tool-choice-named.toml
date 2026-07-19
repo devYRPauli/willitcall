@@ -1,6 +1,7 @@
 id = "tool-choice-named"
 category = "tool_choice_modes"
 description = "Force one named function from two available tools."
+rationale = "This asserts honoring a named tool choice among two tools. The API request enforces search_contacts rather than leaving tool selection to the model, and the opaque name Ada Stone is supplied verbatim for the required argument."
 
 [[tools]]
 name = "search_files"

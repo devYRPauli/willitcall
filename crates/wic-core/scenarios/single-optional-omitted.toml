@@ -1,6 +1,7 @@
 id = "single-optional-omitted"
 category = "single_call"
 description = "Omit an optional argument that the prompt does not provide."
+rationale = "This asserts omitting an optional schema field rather than inventing it. The prompt gives the exact search query and explicitly says not to set a result limit, so the exact expected object is complete."
 
 [[tools]]
 name = "search_catalog"

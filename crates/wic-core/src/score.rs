@@ -1,4 +1,5 @@
 use serde_json::Value;
+use unicode_normalization::UnicodeNormalization;
 
 use crate::client::ToolCall;
 use crate::{ArgumentsMatch, ExpectedCall, ToolDefinition};
@@ -274,7 +275,9 @@ fn values_equal(expected: &Value, actual: &Value) -> bool {
         (Value::Number(expected), Value::Number(actual)) => {
             expected.as_f64() == actual.as_f64()
         }
-        (Value::String(expected), Value::String(actual)) => expected.trim() == actual.trim(),
+        (Value::String(expected), Value::String(actual)) => {
+            expected.nfc().collect::<String>().trim() == actual.nfc().collect::<String>().trim()
+        }
         _ => expected == actual,
     }
 }
@@ -306,5 +309,18 @@ fn value_type(value: &Value) -> &'static str {
         Value::String(_) => "string",
         Value::Array(_) => "array",
         Value::Object(_) => "object",
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use serde_json::json;
+
+    use super::values_equal;
+
+    #[test]
+    fn string_values_compare_in_nfc() {
+        assert!(values_equal(&json!("München"), &json!("Mu\u{308}nchen")));
+        assert!(!values_equal(&json!("München"), &json!("Munchen")));
     }
 }

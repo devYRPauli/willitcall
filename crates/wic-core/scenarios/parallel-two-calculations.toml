@@ -1,19 +1,20 @@
 id = "parallel-two-calculations"
 category = "parallel_calls"
 description = "Call the same arithmetic tool twice in parallel."
+rationale = "This asserts emitting both division calls in one response, so sequential-only calling is a true red. Division is non-commutative, and the named dividend and divisor parameters plus the literal prompt wording force operand position."
 
 [[tools]]
-name = "multiply"
-description = "Multiply two numbers."
+name = "divide"
+description = "Divide one number by another."
 
 [tools.parameters]
 type = "object"
-required = ["left", "right"]
+required = ["dividend", "divisor"]
 
-[tools.parameters.properties.left]
+[tools.parameters.properties.dividend]
 type = "number"
 
-[tools.parameters.properties.right]
+[tools.parameters.properties.divisor]
 type = "number"
 
 [tool_choice]
@@ -22,16 +23,16 @@ mode = "required"
 [[turns]]
 [[turns.messages]]
 role = "user"
-content = "Use separate calls to multiply 6 by 7 and 2.5 by 4."
+content = "Use separate calls to divide 42 by 6 and divide 10 by 4."
 
 [[turns.expected_calls]]
-name = "multiply"
+name = "divide"
 [turns.expected_calls.arguments]
-left = 6
-right = 7
+dividend = 42
+divisor = 6
 
 [[turns.expected_calls]]
-name = "multiply"
+name = "divide"
 [turns.expected_calls.arguments]
-left = 2.5
-right = 4
+dividend = 10
+divisor = 4

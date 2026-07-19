@@ -1,6 +1,7 @@
 id = "streaming-empty-arguments"
 category = "streaming"
 description = "Stream a call to a function with no arguments."
+rationale = "This asserts reconstructing an empty argument object from a streamed call. The API request requires tool use, get_uptime is the only offered tool, and its schema has no properties, so the expected call is forced."
 stream = true
 
 [[tools]]

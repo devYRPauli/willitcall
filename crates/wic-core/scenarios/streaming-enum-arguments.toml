@@ -1,6 +1,7 @@
 id = "streaming-enum-arguments"
 category = "streaming"
 description = "Stream a tool call with an enum argument."
+rationale = "This asserts reconstructing an enum argument from streamed fragments. The prompt supplies payments and warn verbatim, and warn exactly matches a supported schema enum value, leaving no valid alternative."
 stream = true
 
 [[tools]]

@@ -1,6 +1,7 @@
 id = "negative-long-argument"
 category = "negative_trap"
 description = "Preserve one long ASCII argument exactly."
+rationale = "This asserts exact transport of the 256-character token supplied verbatim in the prompt. The named tool choice fixes the tool, and the run-path max_tokens default is large enough that a correct model is not truncated."
 
 [[tools]]
 name = "store_token"

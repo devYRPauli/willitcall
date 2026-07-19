@@ -1,6 +1,7 @@
 id = "tool-choice-none"
 category = "tool_choice_modes"
 description = "Forbid tool calls for a direct text response."
+rationale = "This asserts honoring tool_choice none. The API request forbids every offered tool call, so the model has discretion only over its direct text response, whose contents are not compared by the scorer."
 
 [[tools]]
 name = "get_weather"

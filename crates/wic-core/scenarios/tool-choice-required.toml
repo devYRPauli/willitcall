@@ -1,6 +1,7 @@
 id = "tool-choice-required"
 category = "tool_choice_modes"
 description = "Require one tool call with explicit arguments."
+rationale = "This asserts honoring required tool choice with an explicit argument. The API request enforces a call, lookup_order is the only offered tool, and opaque order id ORD-204 appears verbatim in the prompt."
 
 [[tools]]
 name = "lookup_order"

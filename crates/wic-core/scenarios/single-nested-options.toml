@@ -1,6 +1,7 @@
 id = "single-nested-options"
 category = "single_call"
 description = "Call one tool with nested option arguments."
+rationale = "This asserts constructing the required nested options object with numeric and boolean fields. The quoted prompt, dimensions, and enabled transparency state supply every expected value explicitly, so the nested structure follows directly from the schema."
 
 [[tools]]
 name = "render_image"

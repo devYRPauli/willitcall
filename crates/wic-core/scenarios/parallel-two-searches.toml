@@ -1,6 +1,7 @@
 id = "parallel-two-searches"
 category = "parallel_calls"
 description = "Call the same search tool twice with distinct queries."
+rationale = "This asserts emitting two search calls in one response, so a model that only calls sequentially genuinely lacks the capability. Both exact query strings appear verbatim in quotes and the prompt explicitly requests separate searches."
 
 [[tools]]
 name = "search_docs"

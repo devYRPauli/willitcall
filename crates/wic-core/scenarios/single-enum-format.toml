@@ -1,6 +1,7 @@
 id = "single-enum-format"
 category = "single_call"
 description = "Call one tool with an enum argument."
+rationale = "This asserts selecting a schema enum value alongside an opaque report id. The prompt supplies quarterly-7 and csv verbatim, and csv is the exact supported enum spelling, leaving no valid alternate serialization."
 
 [[tools]]
 name = "export_report"

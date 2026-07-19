@@ -1,6 +1,7 @@
 id = "parallel-weather-and-time"
 category = "parallel_calls"
 description = "Call weather and time tools for the same city."
+rationale = "This asserts emitting weather and time calls together in one response, so sequential-only calling is a true red even under auto choice. The prompt explicitly requests both tools and supplies Denver verbatim for each argument."
 
 [[tools]]
 name = "get_weather"

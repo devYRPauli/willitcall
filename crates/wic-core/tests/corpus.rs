@@ -48,6 +48,19 @@ fn embedded_corpus_is_integral_and_covers_every_category() {
     }
 }
 
+#[test]
+fn every_embedded_scenario_has_a_substantive_rationale() {
+    let scenarios = load_embedded_scenarios().expect("embedded scenarios should load");
+
+    for scenario in scenarios {
+        assert!(
+            scenario.rationale.trim().chars().count() >= 40,
+            "{} rationale must contain at least 40 characters",
+            scenario.id
+        );
+    }
+}
+
 fn assert_filename_matches_id(scenario: &Scenario) {
     let path = format!(
         "{}/scenarios/{}.toml",

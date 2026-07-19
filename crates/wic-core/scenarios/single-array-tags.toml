@@ -1,6 +1,7 @@
 id = "single-array-tags"
 category = "single_call"
 description = "Call one tool with an array of strings."
+rationale = "This asserts an exact string-array argument for document doc-17. Array comparison is positional, and the prompt supplies every literal tag and says in that order, so the expected sequence is fully pinned."
 
 [[tools]]
 name = "tag_document"
@@ -25,7 +26,7 @@ mode = "auto"
 [[turns]]
 [[turns.messages]]
 role = "user"
-content = "Tag document doc-17 with exactly alpha, beta, and gamma."
+content = "Tag document doc-17 with exactly alpha, beta, and gamma in that order."
 
 [[turns.expected_calls]]
 name = "tag_document"
