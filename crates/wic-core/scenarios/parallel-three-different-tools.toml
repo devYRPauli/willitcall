@@ -1,0 +1,59 @@
+id = "parallel-three-different-tools"
+category = "parallel_calls"
+description = "Call three different tools in parallel."
+
+[[tools]]
+name = "get_weather"
+description = "Get weather for a city."
+[tools.parameters]
+type = "object"
+required = ["city"]
+[tools.parameters.properties.city]
+type = "string"
+
+[[tools]]
+name = "get_time"
+description = "Get local time for a city."
+[tools.parameters]
+type = "object"
+required = ["city"]
+[tools.parameters.properties.city]
+type = "string"
+
+[[tools]]
+name = "convert_currency"
+description = "Convert an exact currency amount."
+[tools.parameters]
+type = "object"
+required = ["amount", "from", "to"]
+[tools.parameters.properties.amount]
+type = "number"
+[tools.parameters.properties.from]
+type = "string"
+[tools.parameters.properties.to]
+type = "string"
+
+[tool_choice]
+mode = "required"
+
+[[turns]]
+[[turns.messages]]
+role = "user"
+content = "Get weather in Rome, time in Nairobi, and convert 25 USD to EUR."
+
+[[turns.expected_calls]]
+name = "get_weather"
+[turns.expected_calls.arguments]
+city = "Rome"
+
+[[turns.expected_calls]]
+name = "get_time"
+[turns.expected_calls.arguments]
+city = "Nairobi"
+
+[[turns.expected_calls]]
+name = "convert_currency"
+[turns.expected_calls.arguments]
+amount = 25
+from = "USD"
+to = "EUR"

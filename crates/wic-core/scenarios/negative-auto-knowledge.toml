@@ -1,0 +1,22 @@
+id = "negative-auto-knowledge"
+category = "negative_trap"
+description = "Do not call an irrelevant tool for a general knowledge reply."
+
+[[tools]]
+name = "lookup_order"
+description = "Look up an order by exact id."
+
+[tools.parameters]
+type = "object"
+required = ["order_id"]
+
+[tools.parameters.properties.order_id]
+type = "string"
+
+[tool_choice]
+mode = "auto"
+
+[[turns]]
+[[turns.messages]]
+role = "user"
+content = "Name the largest ocean on Earth. Do not use a tool."

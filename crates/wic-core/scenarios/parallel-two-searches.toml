@@ -1,0 +1,32 @@
+id = "parallel-two-searches"
+category = "parallel_calls"
+description = "Call the same search tool twice with distinct queries."
+
+[[tools]]
+name = "search_docs"
+description = "Search documents for an exact query."
+
+[tools.parameters]
+type = "object"
+required = ["query"]
+
+[tools.parameters.properties.query]
+type = "string"
+
+[tool_choice]
+mode = "required"
+
+[[turns]]
+[[turns.messages]]
+role = "user"
+content = "Run separate document searches for 'alpha protocol' and 'beta protocol'."
+
+[[turns.expected_calls]]
+name = "search_docs"
+[turns.expected_calls.arguments]
+query = "alpha protocol"
+
+[[turns.expected_calls]]
+name = "search_docs"
+[turns.expected_calls.arguments]
+query = "beta protocol"

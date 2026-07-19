@@ -1,0 +1,32 @@
+id = "single-optional-present"
+category = "single_call"
+description = "Include an optional argument when explicitly provided."
+
+[[tools]]
+name = "search_catalog"
+description = "Search a catalog with an optional result limit."
+
+[tools.parameters]
+type = "object"
+required = ["query"]
+
+[tools.parameters.properties.query]
+type = "string"
+
+[tools.parameters.properties.limit]
+type = "integer"
+
+[tool_choice]
+mode = "auto"
+
+[[turns]]
+[[turns.messages]]
+role = "user"
+content = "Search the catalog for brass compass and return exactly 4 results."
+
+[[turns.expected_calls]]
+name = "search_catalog"
+
+[turns.expected_calls.arguments]
+query = "brass compass"
+limit = 4

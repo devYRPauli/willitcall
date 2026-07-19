@@ -1,0 +1,32 @@
+id = "single-boolean-flag"
+category = "single_call"
+description = "Call one tool with a boolean argument."
+
+[[tools]]
+name = "set_feature"
+description = "Enable or disable a feature."
+
+[tools.parameters]
+type = "object"
+required = ["feature", "enabled"]
+
+[tools.parameters.properties.feature]
+type = "string"
+
+[tools.parameters.properties.enabled]
+type = "boolean"
+
+[tool_choice]
+mode = "auto"
+
+[[turns]]
+[[turns.messages]]
+role = "user"
+content = "Disable the feature named audit-log."
+
+[[turns.expected_calls]]
+name = "set_feature"
+
+[turns.expected_calls.arguments]
+feature = "audit-log"
+enabled = false

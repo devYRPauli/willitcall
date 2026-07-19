@@ -1,0 +1,48 @@
+id = "parallel-two-multiple-args"
+category = "parallel_calls"
+description = "Call two different tools with multiple arguments."
+
+[[tools]]
+name = "book_room"
+description = "Book a room for an exact date and hour."
+[tools.parameters]
+type = "object"
+required = ["room", "date", "hour"]
+[tools.parameters.properties.room]
+type = "string"
+[tools.parameters.properties.date]
+type = "string"
+[tools.parameters.properties.hour]
+type = "integer"
+
+[[tools]]
+name = "reserve_car"
+description = "Reserve a car in a city for an exact date."
+[tools.parameters]
+type = "object"
+required = ["city", "date"]
+[tools.parameters.properties.city]
+type = "string"
+[tools.parameters.properties.date]
+type = "string"
+
+[tool_choice]
+mode = "required"
+
+[[turns]]
+[[turns.messages]]
+role = "user"
+content = "Book room Cedar on 2026-09-02 at hour 14 and reserve a car in Boise on 2026-09-03."
+
+[[turns.expected_calls]]
+name = "book_room"
+[turns.expected_calls.arguments]
+room = "Cedar"
+date = "2026-09-02"
+hour = 14
+
+[[turns.expected_calls]]
+name = "reserve_car"
+[turns.expected_calls.arguments]
+city = "Boise"
+date = "2026-09-03"

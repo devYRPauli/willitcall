@@ -1,0 +1,46 @@
+id = "single-nested-options"
+category = "single_call"
+description = "Call one tool with nested option arguments."
+
+[[tools]]
+name = "render_image"
+description = "Render an image with explicit options."
+
+[tools.parameters]
+type = "object"
+required = ["prompt", "options"]
+
+[tools.parameters.properties.prompt]
+type = "string"
+
+[tools.parameters.properties.options]
+type = "object"
+required = ["width", "height", "transparent"]
+
+[tools.parameters.properties.options.properties.width]
+type = "integer"
+
+[tools.parameters.properties.options.properties.height]
+type = "integer"
+
+[tools.parameters.properties.options.properties.transparent]
+type = "boolean"
+
+[tool_choice]
+mode = "auto"
+
+[[turns]]
+[[turns.messages]]
+role = "user"
+content = "Render 'red circle' at width 640 and height 480 with transparency enabled."
+
+[[turns.expected_calls]]
+name = "render_image"
+
+[turns.expected_calls.arguments]
+prompt = "red circle"
+
+[turns.expected_calls.arguments.options]
+width = 640
+height = 480
+transparent = true

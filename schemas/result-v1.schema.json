@@ -1,0 +1,175 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://willitcall.dev/schemas/result-v1.schema.json",
+  "title": "willitcall result v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "metadata", "scenarios", "totals"],
+  "properties": {
+    "schema_version": {
+      "const": 1
+    },
+    "metadata": {
+      "$ref": "#/$defs/run_metadata"
+    },
+    "scenarios": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/scenario_outcome"
+      }
+    },
+    "totals": {
+      "$ref": "#/$defs/totals"
+    }
+  },
+  "$defs": {
+    "run_metadata": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "timestamp",
+        "willitcall_version",
+        "endpoint",
+        "model_id",
+        "declared_quant",
+        "server",
+        "sampling"
+      ],
+      "properties": {
+        "timestamp": {
+          "type": "string"
+        },
+        "willitcall_version": {
+          "type": "string"
+        },
+        "endpoint": {
+          "type": "string"
+        },
+        "model_id": {
+          "type": "string"
+        },
+        "declared_quant": {
+          "type": ["string", "null"]
+        },
+        "server": {
+          "$ref": "#/$defs/server_metadata"
+        },
+        "sampling": {
+          "$ref": "#/$defs/sampling_params"
+        }
+      }
+    },
+    "server_metadata": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["preset_name", "reported_version", "quirk_flags"],
+      "properties": {
+        "preset_name": {
+          "type": "string"
+        },
+        "reported_version": {
+          "type": ["string", "null"]
+        },
+        "quirk_flags": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "sampling_params": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["temperature", "top_p", "seed", "max_tokens"],
+      "properties": {
+        "temperature": {
+          "type": ["number", "null"]
+        },
+        "top_p": {
+          "type": ["number", "null"]
+        },
+        "seed": {
+          "type": ["integer", "null"],
+          "minimum": 0
+        },
+        "max_tokens": {
+          "type": ["integer", "null"],
+          "minimum": 0,
+          "maximum": 4294967295
+        }
+      }
+    },
+    "scenario_outcome": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "category",
+        "status",
+        "failure_reason",
+        "evidence_hash",
+        "retried"
+      ],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "category": {
+          "enum": [
+            "single_call",
+            "parallel_calls",
+            "streaming",
+            "tool_choice_modes",
+            "multi_turn",
+            "negative_trap"
+          ]
+        },
+        "status": {
+          "enum": ["pass", "fail", "error", "skipped"]
+        },
+        "failure_reason": {
+          "type": ["string", "null"]
+        },
+        "evidence_hash": {
+          "type": ["string", "null"]
+        },
+        "retried": {
+          "type": "boolean"
+        }
+      }
+    },
+    "totals": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["total", "passed", "failed", "errors", "skipped"],
+      "properties": {
+        "total": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4294967295
+        },
+        "passed": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4294967295
+        },
+        "failed": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4294967295
+        },
+        "errors": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4294967295
+        },
+        "skipped": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4294967295
+        }
+      }
+    }
+  }
+}

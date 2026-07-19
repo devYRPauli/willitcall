@@ -1,0 +1,31 @@
+id = "streaming-weather"
+category = "streaming"
+description = "Stream one weather tool call."
+stream = true
+
+[[tools]]
+name = "get_weather"
+description = "Get the current weather for a city."
+
+[tools.parameters]
+type = "object"
+required = ["city"]
+
+[tools.parameters.properties.city]
+type = "string"
+
+[tool_choice]
+mode = "named"
+name = "get_weather"
+
+[[turns]]
+
+[[turns.messages]]
+role = "user"
+content = "Use get_weather for Seattle."
+
+[[turns.expected_calls]]
+name = "get_weather"
+
+[turns.expected_calls.arguments]
+city = "Seattle"

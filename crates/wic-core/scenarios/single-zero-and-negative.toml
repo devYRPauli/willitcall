@@ -1,0 +1,32 @@
+id = "single-zero-and-negative"
+category = "single_call"
+description = "Call one tool with zero and a negative number."
+
+[[tools]]
+name = "set_axis_range"
+description = "Set an axis range."
+
+[tools.parameters]
+type = "object"
+required = ["minimum", "maximum"]
+
+[tools.parameters.properties.minimum]
+type = "number"
+
+[tools.parameters.properties.maximum]
+type = "number"
+
+[tool_choice]
+mode = "auto"
+
+[[turns]]
+[[turns.messages]]
+role = "user"
+content = "Set the axis range from -12.5 to 0."
+
+[[turns.expected_calls]]
+name = "set_axis_range"
+
+[turns.expected_calls.arguments]
+minimum = -12.5
+maximum = 0

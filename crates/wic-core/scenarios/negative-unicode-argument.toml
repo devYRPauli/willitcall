@@ -1,0 +1,32 @@
+id = "negative-unicode-argument"
+category = "negative_trap"
+description = "Preserve a non-ASCII city argument."
+arguments_match = "subset"
+
+[[tools]]
+name = "get_weather"
+description = "Get weather for a city with an optional country code."
+
+[tools.parameters]
+type = "object"
+required = ["city"]
+
+[tools.parameters.properties.city]
+type = "string"
+
+[tools.parameters.properties.country_code]
+type = "string"
+
+[tool_choice]
+mode = "auto"
+
+[[turns]]
+[[turns.messages]]
+role = "user"
+content = "Get the weather for the exact city name München."
+
+[[turns.expected_calls]]
+name = "get_weather"
+
+[turns.expected_calls.arguments]
+city = "München"

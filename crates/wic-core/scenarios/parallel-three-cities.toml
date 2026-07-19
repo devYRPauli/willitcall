@@ -1,0 +1,37 @@
+id = "parallel-three-cities"
+category = "parallel_calls"
+description = "Call the same tool three times in parallel."
+
+[[tools]]
+name = "get_weather"
+description = "Get weather for a city."
+
+[tools.parameters]
+type = "object"
+required = ["city"]
+
+[tools.parameters.properties.city]
+type = "string"
+
+[tool_choice]
+mode = "required"
+
+[[turns]]
+[[turns.messages]]
+role = "user"
+content = "Get weather for Austin, Dublin, and Seoul with three calls."
+
+[[turns.expected_calls]]
+name = "get_weather"
+[turns.expected_calls.arguments]
+city = "Austin"
+
+[[turns.expected_calls]]
+name = "get_weather"
+[turns.expected_calls.arguments]
+city = "Dublin"
+
+[[turns.expected_calls]]
+name = "get_weather"
+[turns.expected_calls.arguments]
+city = "Seoul"

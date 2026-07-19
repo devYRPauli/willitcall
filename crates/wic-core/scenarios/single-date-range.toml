@@ -1,0 +1,36 @@
+id = "single-date-range"
+category = "single_call"
+description = "Call one tool with multiple required arguments."
+
+[[tools]]
+name = "find_events"
+description = "Find events in an inclusive date range."
+
+[tools.parameters]
+type = "object"
+required = ["city", "start_date", "end_date"]
+
+[tools.parameters.properties.city]
+type = "string"
+
+[tools.parameters.properties.start_date]
+type = "string"
+
+[tools.parameters.properties.end_date]
+type = "string"
+
+[tool_choice]
+mode = "auto"
+
+[[turns]]
+[[turns.messages]]
+role = "user"
+content = "Find events in Denver from 2026-08-03 through 2026-08-05."
+
+[[turns.expected_calls]]
+name = "find_events"
+
+[turns.expected_calls.arguments]
+city = "Denver"
+start_date = "2026-08-03"
+end_date = "2026-08-05"

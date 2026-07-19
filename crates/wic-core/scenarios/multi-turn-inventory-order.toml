@@ -1,0 +1,48 @@
+id = "multi-turn-inventory-order"
+category = "multi_turn"
+description = "Use an inventory result in a follow-up order call."
+
+[[tools]]
+name = "check_inventory"
+description = "Check inventory for a SKU."
+[tools.parameters]
+type = "object"
+required = ["sku"]
+[tools.parameters.properties.sku]
+type = "string"
+
+[[tools]]
+name = "create_order"
+description = "Create an order for a SKU and quantity."
+[tools.parameters]
+type = "object"
+required = ["sku", "quantity"]
+[tools.parameters.properties.sku]
+type = "string"
+[tools.parameters.properties.quantity]
+type = "integer"
+
+[tool_choice]
+mode = "auto"
+
+[[turns]]
+[[turns.messages]]
+role = "user"
+content = "Check inventory for SKU QZ-4 and order exactly 3 if available."
+
+[[turns.expected_calls]]
+name = "check_inventory"
+[turns.expected_calls.arguments]
+sku = "QZ-4"
+
+[[turns]]
+[[turns.messages]]
+role = "tool"
+content = '{"sku":"QZ-4","available":12}'
+tool_call_ref = 0
+
+[[turns.expected_calls]]
+name = "create_order"
+[turns.expected_calls.arguments]
+sku = "QZ-4"
+quantity = 3

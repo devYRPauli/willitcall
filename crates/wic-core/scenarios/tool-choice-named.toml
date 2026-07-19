@@ -1,0 +1,36 @@
+id = "tool-choice-named"
+category = "tool_choice_modes"
+description = "Force one named function from two available tools."
+
+[[tools]]
+name = "search_files"
+description = "Search files for an exact phrase."
+[tools.parameters]
+type = "object"
+required = ["phrase"]
+[tools.parameters.properties.phrase]
+type = "string"
+
+[[tools]]
+name = "search_contacts"
+description = "Search contacts for an exact name."
+[tools.parameters]
+type = "object"
+required = ["name"]
+[tools.parameters.properties.name]
+type = "string"
+
+[tool_choice]
+mode = "named"
+name = "search_contacts"
+
+[[turns]]
+[[turns.messages]]
+role = "user"
+content = "Search contacts for Ada Stone."
+
+[[turns.expected_calls]]
+name = "search_contacts"
+
+[turns.expected_calls.arguments]
+name = "Ada Stone"

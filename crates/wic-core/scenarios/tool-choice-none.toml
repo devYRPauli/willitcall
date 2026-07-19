@@ -1,0 +1,22 @@
+id = "tool-choice-none"
+category = "tool_choice_modes"
+description = "Forbid tool calls for a direct text response."
+
+[[tools]]
+name = "get_weather"
+description = "Get weather for a city."
+
+[tools.parameters]
+type = "object"
+required = ["city"]
+
+[tools.parameters.properties.city]
+type = "string"
+
+[tool_choice]
+mode = "none"
+
+[[turns]]
+[[turns.messages]]
+role = "user"
+content = "Reply with the exact text: no tools"

@@ -1,0 +1,64 @@
+id = "multi-turn-parallel-followup"
+category = "multi_turn"
+description = "Feed two parallel results into one follow-up call."
+
+[[tools]]
+name = "get_temperature"
+description = "Get the temperature for a city."
+[tools.parameters]
+type = "object"
+required = ["city"]
+[tools.parameters.properties.city]
+type = "string"
+
+[[tools]]
+name = "compare_temperatures"
+description = "Compare two named city temperatures."
+[tools.parameters]
+type = "object"
+required = ["first_city", "first_value", "second_city", "second_value"]
+[tools.parameters.properties.first_city]
+type = "string"
+[tools.parameters.properties.first_value]
+type = "number"
+[tools.parameters.properties.second_city]
+type = "string"
+[tools.parameters.properties.second_value]
+type = "number"
+
+[tool_choice]
+mode = "auto"
+
+[[turns]]
+[[turns.messages]]
+role = "user"
+content = "Get temperatures for Boston and Tokyo, then compare the returned values."
+
+[[turns.expected_calls]]
+name = "get_temperature"
+[turns.expected_calls.arguments]
+city = "Boston"
+
+[[turns.expected_calls]]
+name = "get_temperature"
+[turns.expected_calls.arguments]
+city = "Tokyo"
+
+[[turns]]
+[[turns.messages]]
+role = "tool"
+content = '{"city":"Boston","temperature":21}'
+tool_call_ref = 0
+
+[[turns.messages]]
+role = "tool"
+content = '{"city":"Tokyo","temperature":28}'
+tool_call_ref = 1
+
+[[turns.expected_calls]]
+name = "compare_temperatures"
+[turns.expected_calls.arguments]
+first_city = "Boston"
+first_value = 21
+second_city = "Tokyo"
+second_value = 28

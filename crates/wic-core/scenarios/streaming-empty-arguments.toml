@@ -1,0 +1,24 @@
+id = "streaming-empty-arguments"
+category = "streaming"
+description = "Stream a call to a function with no arguments."
+stream = true
+
+[[tools]]
+name = "get_uptime"
+description = "Get service uptime."
+
+[tools.parameters]
+type = "object"
+
+[tool_choice]
+mode = "required"
+
+[[turns]]
+[[turns.messages]]
+role = "user"
+content = "Get the service uptime."
+
+[[turns.expected_calls]]
+name = "get_uptime"
+
+[turns.expected_calls.arguments]

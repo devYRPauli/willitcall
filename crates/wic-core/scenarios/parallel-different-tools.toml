@@ -1,0 +1,45 @@
+id = "parallel-different-tools"
+category = "parallel_calls"
+description = "Call two different tools in parallel."
+
+[[tools]]
+name = "get_weather"
+description = "Get weather for a city."
+
+[tools.parameters]
+type = "object"
+required = ["city"]
+
+[tools.parameters.properties.city]
+type = "string"
+
+[[tools]]
+name = "get_time"
+description = "Get local time for a city."
+
+[tools.parameters]
+type = "object"
+required = ["city"]
+
+[tools.parameters.properties.city]
+type = "string"
+
+[tool_choice]
+mode = "required"
+
+[[turns]]
+[[turns.messages]]
+role = "user"
+content = "Get the weather in Oslo and the local time in Cairo."
+
+[[turns.expected_calls]]
+name = "get_weather"
+
+[turns.expected_calls.arguments]
+city = "Oslo"
+
+[[turns.expected_calls]]
+name = "get_time"
+
+[turns.expected_calls.arguments]
+city = "Cairo"

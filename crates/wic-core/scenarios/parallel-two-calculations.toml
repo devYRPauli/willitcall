@@ -1,0 +1,37 @@
+id = "parallel-two-calculations"
+category = "parallel_calls"
+description = "Call the same arithmetic tool twice in parallel."
+
+[[tools]]
+name = "multiply"
+description = "Multiply two numbers."
+
+[tools.parameters]
+type = "object"
+required = ["left", "right"]
+
+[tools.parameters.properties.left]
+type = "number"
+
+[tools.parameters.properties.right]
+type = "number"
+
+[tool_choice]
+mode = "required"
+
+[[turns]]
+[[turns.messages]]
+role = "user"
+content = "Use separate calls to multiply 6 by 7 and 2.5 by 4."
+
+[[turns.expected_calls]]
+name = "multiply"
+[turns.expected_calls.arguments]
+left = 6
+right = 7
+
+[[turns.expected_calls]]
+name = "multiply"
+[turns.expected_calls.arguments]
+left = 2.5
+right = 4

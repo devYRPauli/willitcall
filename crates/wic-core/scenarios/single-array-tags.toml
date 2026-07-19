@@ -1,0 +1,35 @@
+id = "single-array-tags"
+category = "single_call"
+description = "Call one tool with an array of strings."
+
+[[tools]]
+name = "tag_document"
+description = "Apply tags to a document."
+
+[tools.parameters]
+type = "object"
+required = ["document_id", "tags"]
+
+[tools.parameters.properties.document_id]
+type = "string"
+
+[tools.parameters.properties.tags]
+type = "array"
+
+[tools.parameters.properties.tags.items]
+type = "string"
+
+[tool_choice]
+mode = "auto"
+
+[[turns]]
+[[turns.messages]]
+role = "user"
+content = "Tag document doc-17 with exactly alpha, beta, and gamma."
+
+[[turns.expected_calls]]
+name = "tag_document"
+
+[turns.expected_calls.arguments]
+document_id = "doc-17"
+tags = ["alpha", "beta", "gamma"]

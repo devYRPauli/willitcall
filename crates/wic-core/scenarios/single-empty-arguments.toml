@@ -1,0 +1,23 @@
+id = "single-empty-arguments"
+category = "single_call"
+description = "Call a function that accepts no arguments."
+
+[[tools]]
+name = "get_service_status"
+description = "Get the current service status."
+
+[tools.parameters]
+type = "object"
+
+[tool_choice]
+mode = "required"
+
+[[turns]]
+[[turns.messages]]
+role = "user"
+content = "Get the current service status now."
+
+[[turns.expected_calls]]
+name = "get_service_status"
+
+[turns.expected_calls.arguments]

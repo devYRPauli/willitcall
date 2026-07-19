@@ -1,0 +1,35 @@
+id = "single-string-list"
+category = "single_call"
+description = "Call one tool with an ordered array argument."
+
+[[tools]]
+name = "create_playlist"
+description = "Create a playlist from ordered track ids."
+
+[tools.parameters]
+type = "object"
+required = ["name", "track_ids"]
+
+[tools.parameters.properties.name]
+type = "string"
+
+[tools.parameters.properties.track_ids]
+type = "array"
+
+[tools.parameters.properties.track_ids.items]
+type = "string"
+
+[tool_choice]
+mode = "auto"
+
+[[turns]]
+[[turns.messages]]
+role = "user"
+content = "Create playlist road-test with tracks t-3, t-1, and t-8 in that order."
+
+[[turns.expected_calls]]
+name = "create_playlist"
+
+[turns.expected_calls.arguments]
+name = "road-test"
+track_ids = ["t-3", "t-1", "t-8"]

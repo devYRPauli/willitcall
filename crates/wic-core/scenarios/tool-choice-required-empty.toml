@@ -1,0 +1,23 @@
+id = "tool-choice-required-empty"
+category = "tool_choice_modes"
+description = "Require a call to an empty-argument function."
+
+[[tools]]
+name = "current_sequence"
+description = "Get the current sequence number."
+
+[tools.parameters]
+type = "object"
+
+[tool_choice]
+mode = "required"
+
+[[turns]]
+[[turns.messages]]
+role = "user"
+content = "Get the current sequence number."
+
+[[turns.expected_calls]]
+name = "current_sequence"
+
+[turns.expected_calls.arguments]

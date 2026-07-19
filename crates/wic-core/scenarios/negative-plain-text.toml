@@ -1,0 +1,25 @@
+id = "negative-plain-text"
+category = "negative_trap"
+description = "Use a plain text reply instead of an unrelated tool."
+
+[[tools]]
+name = "send_email"
+description = "Send an email to an exact address."
+
+[tools.parameters]
+type = "object"
+required = ["address", "body"]
+
+[tools.parameters.properties.address]
+type = "string"
+
+[tools.parameters.properties.body]
+type = "string"
+
+[tool_choice]
+mode = "auto"
+
+[[turns]]
+[[turns.messages]]
+role = "user"
+content = "In one plain text sentence, explain why leaves are green. Do not send email."

@@ -1,0 +1,29 @@
+id = "single-weather"
+category = "single_call"
+description = "Call one weather tool with a city argument."
+
+[[tools]]
+name = "get_weather"
+description = "Get the current weather for a city."
+
+[tools.parameters]
+type = "object"
+required = ["city"]
+
+[tools.parameters.properties.city]
+type = "string"
+
+[tool_choice]
+mode = "auto"
+
+[[turns]]
+
+[[turns.messages]]
+role = "user"
+content = "What is the weather in Boston?"
+
+[[turns.expected_calls]]
+name = "get_weather"
+
+[turns.expected_calls.arguments]
+city = "Boston"

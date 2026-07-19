@@ -1,0 +1,65 @@
+id = "multi-turn-two-hop-chain"
+category = "multi_turn"
+description = "Complete a two-hop chain across three tool calls."
+
+[[tools]]
+name = "find_user"
+description = "Find a user id by exact email."
+[tools.parameters]
+type = "object"
+required = ["email"]
+[tools.parameters.properties.email]
+type = "string"
+
+[[tools]]
+name = "find_account"
+description = "Find an account id for a user id."
+[tools.parameters]
+type = "object"
+required = ["user_id"]
+[tools.parameters.properties.user_id]
+type = "string"
+
+[[tools]]
+name = "archive_account"
+description = "Archive an account by exact id."
+[tools.parameters]
+type = "object"
+required = ["account_id"]
+[tools.parameters.properties.account_id]
+type = "string"
+
+[tool_choice]
+mode = "auto"
+
+[[turns]]
+[[turns.messages]]
+role = "user"
+content = "Archive the account owned by sam@example.test. Resolve each required id first."
+
+[[turns.expected_calls]]
+name = "find_user"
+[turns.expected_calls.arguments]
+email = "sam@example.test"
+
+[[turns]]
+[[turns.messages]]
+role = "tool"
+content = '{"user_id":"user-41"}'
+tool_call_ref = 0
+
+[[turns.expected_calls]]
+name = "find_account"
+[turns.expected_calls.arguments]
+user_id = "user-41"
+
+[[turns]]
+[[turns.messages]]
+role = "tool"
+content = '{"account_id":"account-73"}'
+tool_call_ref = 0
+
+[[turns.expected_calls]]
+name = "archive_account"
+[turns.expected_calls.arguments]
+account_id = "account-73"

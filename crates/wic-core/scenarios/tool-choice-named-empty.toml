@@ -1,0 +1,29 @@
+id = "tool-choice-named-empty"
+category = "tool_choice_modes"
+description = "Force a named empty-argument function."
+
+[[tools]]
+name = "current_region"
+description = "Get the current deployment region."
+[tools.parameters]
+type = "object"
+
+[[tools]]
+name = "current_zone"
+description = "Get the current deployment zone."
+[tools.parameters]
+type = "object"
+
+[tool_choice]
+mode = "named"
+name = "current_region"
+
+[[turns]]
+[[turns.messages]]
+role = "user"
+content = "Get the current deployment region."
+
+[[turns.expected_calls]]
+name = "current_region"
+
+[turns.expected_calls.arguments]

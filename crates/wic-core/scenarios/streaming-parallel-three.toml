@@ -1,0 +1,38 @@
+id = "streaming-parallel-three"
+category = "streaming"
+description = "Stream three calls to the same tool."
+stream = true
+
+[[tools]]
+name = "get_time"
+description = "Get local time for a city."
+
+[tools.parameters]
+type = "object"
+required = ["city"]
+
+[tools.parameters.properties.city]
+type = "string"
+
+[tool_choice]
+mode = "required"
+
+[[turns]]
+[[turns.messages]]
+role = "user"
+content = "Get local time for Accra, Kyoto, and Quito with three calls."
+
+[[turns.expected_calls]]
+name = "get_time"
+[turns.expected_calls.arguments]
+city = "Accra"
+
+[[turns.expected_calls]]
+name = "get_time"
+[turns.expected_calls.arguments]
+city = "Kyoto"
+
+[[turns.expected_calls]]
+name = "get_time"
+[turns.expected_calls.arguments]
+city = "Quito"

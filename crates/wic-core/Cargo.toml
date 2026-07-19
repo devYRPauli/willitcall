@@ -1,0 +1,21 @@
+[package]
+name = "wic-core"
+version.workspace = true
+edition.workspace = true
+
+[dependencies]
+include_dir.workspace = true
+reqwest.workspace = true
+ring.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+tempfile.workspace = true
+tokio.workspace = true
+toml.workspace = true
+
+[dev-dependencies]
+axum.workspace = true
+jsonschema.workspace = true
+
+[lints]
+workspace = true

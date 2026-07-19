@@ -1,0 +1,44 @@
+id = "streaming-nested-arguments"
+category = "streaming"
+description = "Stream a tool call with nested arguments."
+stream = true
+
+[[tools]]
+name = "create_marker"
+description = "Create a named map marker."
+
+[tools.parameters]
+type = "object"
+required = ["name", "position"]
+
+[tools.parameters.properties.name]
+type = "string"
+
+[tools.parameters.properties.position]
+type = "object"
+required = ["x", "y"]
+
+[tools.parameters.properties.position.properties.x]
+type = "number"
+
+[tools.parameters.properties.position.properties.y]
+type = "number"
+
+[tool_choice]
+mode = "named"
+name = "create_marker"
+
+[[turns]]
+[[turns.messages]]
+role = "user"
+content = "Create marker origin-shift at x 4.5 and y -3.25."
+
+[[turns.expected_calls]]
+name = "create_marker"
+
+[turns.expected_calls.arguments]
+name = "origin-shift"
+
+[turns.expected_calls.arguments.position]
+x = 4.5
+y = -3.25

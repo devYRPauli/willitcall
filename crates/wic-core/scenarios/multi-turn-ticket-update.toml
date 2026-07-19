@@ -1,0 +1,49 @@
+id = "multi-turn-ticket-update"
+category = "multi_turn"
+description = "Use a ticket lookup result in a follow-up update call."
+
+[[tools]]
+name = "find_ticket"
+description = "Find a ticket by exact external reference."
+[tools.parameters]
+type = "object"
+required = ["external_ref"]
+[tools.parameters.properties.external_ref]
+type = "string"
+
+[[tools]]
+name = "set_ticket_priority"
+description = "Set ticket priority by internal id."
+[tools.parameters]
+type = "object"
+required = ["ticket_id", "priority"]
+[tools.parameters.properties.ticket_id]
+type = "string"
+[tools.parameters.properties.priority]
+type = "string"
+enum = ["low", "normal", "high"]
+
+[tool_choice]
+mode = "auto"
+
+[[turns]]
+[[turns.messages]]
+role = "user"
+content = "Find ticket EXT-55 and set its priority to high."
+
+[[turns.expected_calls]]
+name = "find_ticket"
+[turns.expected_calls.arguments]
+external_ref = "EXT-55"
+
+[[turns]]
+[[turns.messages]]
+role = "tool"
+content = '{"ticket_id":"ticket-902"}'
+tool_call_ref = 0
+
+[[turns.expected_calls]]
+name = "set_ticket_priority"
+[turns.expected_calls.arguments]
+ticket_id = "ticket-902"
+priority = "high"

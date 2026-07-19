@@ -1,0 +1,32 @@
+id = "single-integer-limit"
+category = "single_call"
+description = "Call one tool with an integer argument."
+
+[[tools]]
+name = "list_messages"
+description = "List a fixed number of messages."
+
+[tools.parameters]
+type = "object"
+required = ["mailbox", "limit"]
+
+[tools.parameters.properties.mailbox]
+type = "string"
+
+[tools.parameters.properties.limit]
+type = "integer"
+
+[tool_choice]
+mode = "auto"
+
+[[turns]]
+[[turns.messages]]
+role = "user"
+content = "List exactly 12 messages from the support mailbox."
+
+[[turns.expected_calls]]
+name = "list_messages"
+
+[turns.expected_calls.arguments]
+mailbox = "support"
+limit = 12

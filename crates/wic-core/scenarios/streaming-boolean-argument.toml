@@ -1,0 +1,33 @@
+id = "streaming-boolean-argument"
+category = "streaming"
+description = "Stream a tool call with a boolean argument."
+stream = true
+
+[[tools]]
+name = "set_maintenance"
+description = "Enable or disable maintenance mode."
+
+[tools.parameters]
+type = "object"
+required = ["service", "enabled"]
+
+[tools.parameters.properties.service]
+type = "string"
+
+[tools.parameters.properties.enabled]
+type = "boolean"
+
+[tool_choice]
+mode = "auto"
+
+[[turns]]
+[[turns.messages]]
+role = "user"
+content = "Enable maintenance mode for the billing service."
+
+[[turns.expected_calls]]
+name = "set_maintenance"
+
+[turns.expected_calls.arguments]
+service = "billing"
+enabled = true

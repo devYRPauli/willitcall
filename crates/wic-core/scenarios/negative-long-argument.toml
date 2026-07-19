@@ -1,0 +1,29 @@
+id = "negative-long-argument"
+category = "negative_trap"
+description = "Preserve one long ASCII argument exactly."
+
+[[tools]]
+name = "store_token"
+description = "Store one exact token."
+
+[tools.parameters]
+type = "object"
+required = ["token"]
+
+[tools.parameters.properties.token]
+type = "string"
+
+[tool_choice]
+mode = "named"
+name = "store_token"
+
+[[turns]]
+[[turns.messages]]
+role = "user"
+content = "Store this exact token: abcdefghijklmnopqrstuvwxyz0123456789-ABCDEFGHIJKLMNOPQRSTUVWXYZ-abcdefghijklmnopqrstuvwxyz0123456789-ABCDEFGHIJKLMNOPQRSTUVWXYZ-abcdefghijklmnopqrstuvwxyz0123456789-ABCDEFGHIJKLMNOPQRSTUVWXYZ-abcdefghijklmnopqrstuvwxyz0123456789-ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+
+[[turns.expected_calls]]
+name = "store_token"
+
+[turns.expected_calls.arguments]
+token = "abcdefghijklmnopqrstuvwxyz0123456789-ABCDEFGHIJKLMNOPQRSTUVWXYZ-abcdefghijklmnopqrstuvwxyz0123456789-ABCDEFGHIJKLMNOPQRSTUVWXYZ-abcdefghijklmnopqrstuvwxyz0123456789-ABCDEFGHIJKLMNOPQRSTUVWXYZ-abcdefghijklmnopqrstuvwxyz0123456789-ABCDEFGHIJKLMNOPQRSTUVWXYZ"

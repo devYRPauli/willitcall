@@ -1,0 +1,39 @@
+id = "parallel-weather-and-time"
+category = "parallel_calls"
+description = "Call weather and time tools for the same city."
+
+[[tools]]
+name = "get_weather"
+description = "Get weather for a city."
+[tools.parameters]
+type = "object"
+required = ["city"]
+[tools.parameters.properties.city]
+type = "string"
+
+[[tools]]
+name = "get_time"
+description = "Get local time for a city."
+[tools.parameters]
+type = "object"
+required = ["city"]
+[tools.parameters.properties.city]
+type = "string"
+
+[tool_choice]
+mode = "auto"
+
+[[turns]]
+[[turns.messages]]
+role = "user"
+content = "Get both the weather and local time for Denver."
+
+[[turns.expected_calls]]
+name = "get_weather"
+[turns.expected_calls.arguments]
+city = "Denver"
+
+[[turns.expected_calls]]
+name = "get_time"
+[turns.expected_calls.arguments]
+city = "Denver"

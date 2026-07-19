@@ -1,0 +1,28 @@
+id = "tool-choice-required"
+category = "tool_choice_modes"
+description = "Require one tool call with explicit arguments."
+
+[[tools]]
+name = "lookup_order"
+description = "Look up an order by exact id."
+
+[tools.parameters]
+type = "object"
+required = ["order_id"]
+
+[tools.parameters.properties.order_id]
+type = "string"
+
+[tool_choice]
+mode = "required"
+
+[[turns]]
+[[turns.messages]]
+role = "user"
+content = "Look up order ORD-204."
+
+[[turns.expected_calls]]
+name = "lookup_order"
+
+[turns.expected_calls.arguments]
+order_id = "ORD-204"

@@ -1,0 +1,23 @@
+id = "negative-invalid-schema"
+category = "negative_trap"
+description = "Refuse a tool call when the requested value is outside its schema."
+
+[[tools]]
+name = "set_temperature_unit"
+description = "Set one supported temperature unit."
+
+[tools.parameters]
+type = "object"
+required = ["unit"]
+
+[tools.parameters.properties.unit]
+type = "string"
+enum = ["celsius", "fahrenheit"]
+
+[tool_choice]
+mode = "auto"
+
+[[turns]]
+[[turns.messages]]
+role = "user"
+content = "Set the temperature unit to kelvin. If the schema cannot express it, explain that in plain text without calling a tool."

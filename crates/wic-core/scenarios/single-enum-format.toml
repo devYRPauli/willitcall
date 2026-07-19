@@ -1,0 +1,33 @@
+id = "single-enum-format"
+category = "single_call"
+description = "Call one tool with an enum argument."
+
+[[tools]]
+name = "export_report"
+description = "Export a report in a supported format."
+
+[tools.parameters]
+type = "object"
+required = ["report_id", "format"]
+
+[tools.parameters.properties.report_id]
+type = "string"
+
+[tools.parameters.properties.format]
+type = "string"
+enum = ["csv", "json", "pdf"]
+
+[tool_choice]
+mode = "auto"
+
+[[turns]]
+[[turns.messages]]
+role = "user"
+content = "Export report quarterly-7 as csv."
+
+[[turns.expected_calls]]
+name = "export_report"
+
+[turns.expected_calls.arguments]
+report_id = "quarterly-7"
+format = "csv"

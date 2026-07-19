@@ -1,0 +1,34 @@
+id = "streaming-enum-arguments"
+category = "streaming"
+description = "Stream a tool call with an enum argument."
+stream = true
+
+[[tools]]
+name = "set_log_level"
+description = "Set a supported log level."
+
+[tools.parameters]
+type = "object"
+required = ["service", "level"]
+
+[tools.parameters.properties.service]
+type = "string"
+
+[tools.parameters.properties.level]
+type = "string"
+enum = ["debug", "info", "warn", "error"]
+
+[tool_choice]
+mode = "auto"
+
+[[turns]]
+[[turns.messages]]
+role = "user"
+content = "Set the log level for payments to warn."
+
+[[turns.expected_calls]]
+name = "set_log_level"
+
+[turns.expected_calls.arguments]
+service = "payments"
+level = "warn"

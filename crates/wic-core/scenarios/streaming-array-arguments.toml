@@ -1,0 +1,33 @@
+id = "streaming-array-arguments"
+category = "streaming"
+description = "Stream a tool call with an array argument."
+stream = true
+
+[[tools]]
+name = "fetch_records"
+description = "Fetch records by exact ids."
+
+[tools.parameters]
+type = "object"
+required = ["record_ids"]
+
+[tools.parameters.properties.record_ids]
+type = "array"
+
+[tools.parameters.properties.record_ids.items]
+type = "string"
+
+[tool_choice]
+mode = "named"
+name = "fetch_records"
+
+[[turns]]
+[[turns.messages]]
+role = "user"
+content = "Fetch record ids r-2, r-5, and r-9 in that order."
+
+[[turns.expected_calls]]
+name = "fetch_records"
+
+[turns.expected_calls.arguments]
+record_ids = ["r-2", "r-5", "r-9"]

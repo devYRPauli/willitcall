@@ -1,0 +1,32 @@
+id = "single-decimal-price"
+category = "single_call"
+description = "Call one tool with a decimal number."
+
+[[tools]]
+name = "set_price"
+description = "Set the price of a product."
+
+[tools.parameters]
+type = "object"
+required = ["sku", "price"]
+
+[tools.parameters.properties.sku]
+type = "string"
+
+[tools.parameters.properties.price]
+type = "number"
+
+[tool_choice]
+mode = "auto"
+
+[[turns]]
+[[turns.messages]]
+role = "user"
+content = "Set the price of SKU AX-9 to exactly 19.95."
+
+[[turns.expected_calls]]
+name = "set_price"
+
+[turns.expected_calls.arguments]
+sku = "AX-9"
+price = 19.95

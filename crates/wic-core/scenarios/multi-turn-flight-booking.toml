@@ -1,0 +1,51 @@
+id = "multi-turn-flight-booking"
+category = "multi_turn"
+description = "Use a flight search result in a follow-up booking call."
+
+[[tools]]
+name = "find_flight"
+description = "Find a flight for an exact route and date."
+[tools.parameters]
+type = "object"
+required = ["origin", "destination", "date"]
+[tools.parameters.properties.origin]
+type = "string"
+[tools.parameters.properties.destination]
+type = "string"
+[tools.parameters.properties.date]
+type = "string"
+
+[[tools]]
+name = "book_flight"
+description = "Book a flight by exact id."
+[tools.parameters]
+type = "object"
+required = ["flight_id"]
+[tools.parameters.properties.flight_id]
+type = "string"
+
+[tool_choice]
+mode = "auto"
+
+[[turns]]
+[[turns.messages]]
+role = "user"
+content = "Find a flight from BOS to DEN on 2026-10-04, then book the returned flight."
+
+[[turns.expected_calls]]
+name = "find_flight"
+[turns.expected_calls.arguments]
+origin = "BOS"
+destination = "DEN"
+date = "2026-10-04"
+
+[[turns]]
+[[turns.messages]]
+role = "tool"
+content = '{"flight_id":"FL-808"}'
+tool_call_ref = 0
+
+[[turns.expected_calls]]
+name = "book_flight"
+[turns.expected_calls.arguments]
+flight_id = "FL-808"
