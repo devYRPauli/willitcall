@@ -1,10 +1,10 @@
 {
   "schema_version": 1,
   "metadata": {
-    "timestamp": "2026-07-19T23:08:57Z",
+    "timestamp": "2026-07-19T23:34:46Z",
     "willitcall_version": "0.1.0",
     "endpoint": "http://localhost:11434/v1",
-    "model_id": "qwen2.5:0.5b-instruct",
+    "model_id": "qwen2.5:7b-instruct",
     "declared_quant": null,
     "server": {
       "preset_name": "ollama",
@@ -15,64 +15,64 @@
       "temperature": 0.0,
       "top_p": 1.0,
       "seed": 42,
-      "max_tokens": 256
+      "max_tokens": 1024
     }
   },
   "scenarios": [
     {
       "id": "multi-turn-calendar-followup",
       "category": "multi_turn",
-      "status": "fail",
-      "failure_reason": "turn 1: unexpected extra tool call: 'create_event'",
-      "evidence_hash": "sha256:d0034440df8bff5caee7a32ab36fe23aa807ccec671ce0fbe2b712fbd19a0310",
+      "status": "pass",
+      "failure_reason": null,
+      "evidence_hash": "sha256:49f860996afbae99e0da5df7980aa477f4cf4262c71695cfbd9e931ae41d3b24",
       "retried": false
     },
     {
       "id": "multi-turn-flight-booking",
       "category": "multi_turn",
-      "status": "fail",
-      "failure_reason": "turn 2: no tool call emitted",
-      "evidence_hash": "sha256:9aa5527e601f3b5f4d5043712bbe801dc47a9fadc0b64f07d550e75acb4ed9c0",
+      "status": "pass",
+      "failure_reason": null,
+      "evidence_hash": "sha256:d31e2159834b713aaadea1b8f6cb3b9a5efb3a73a0f5cc2415f9605c1fd5e79d",
       "retried": false
     },
     {
       "id": "multi-turn-inventory-order",
       "category": "multi_turn",
-      "status": "fail",
-      "failure_reason": "turn 2: no tool call emitted",
-      "evidence_hash": "sha256:f3f6c3e43fa7c958469c117d32b1a0c74a3e24e5de59df64ad667a12cfd393cc",
+      "status": "pass",
+      "failure_reason": null,
+      "evidence_hash": "sha256:fa5cce93bd968927d16c5c9b3aa79834fab7608400c4684441ecc6a34b981bf1",
       "retried": false
     },
     {
       "id": "multi-turn-parallel-followup",
       "category": "multi_turn",
-      "status": "fail",
-      "failure_reason": "turn 2: no tool call emitted",
-      "evidence_hash": "sha256:68b33e4ce6aa85e6df1a13c80447a670f4d62e0b68db550839333345c22f027a",
+      "status": "pass",
+      "failure_reason": null,
+      "evidence_hash": "sha256:73467600dbd510dad0447e27c0f2fbfddc153b46f20ad7ce02c854d1063cd1e4",
       "retried": false
     },
     {
       "id": "multi-turn-route",
       "category": "multi_turn",
-      "status": "fail",
-      "failure_reason": "turn 1: no tool call emitted",
-      "evidence_hash": "sha256:34a35a91f03b4ac78b14d001c0d8ac3fe5ec50a7e555a1abe5475c22d5eda780",
+      "status": "pass",
+      "failure_reason": null,
+      "evidence_hash": "sha256:81122c2e57c3445f896e886e52f52ed7fbedf07d3ad75bbef300872f3e490062",
       "retried": false
     },
     {
       "id": "multi-turn-ticket-update",
       "category": "multi_turn",
       "status": "fail",
-      "failure_reason": "turn 2: no tool call emitted",
-      "evidence_hash": "sha256:924a419ff005ae61ae60be68f5ec1e1750801917b4abd4dfa8b7fc049dacff0f",
+      "failure_reason": "turn 1: unexpected extra tool call: 'set_ticket_priority'",
+      "evidence_hash": "sha256:9ce645998bf8aa855a5b925e792e0d001730dd962f7c53d2b75f0a8779925b74",
       "retried": false
     },
     {
       "id": "multi-turn-two-hop-chain",
       "category": "multi_turn",
-      "status": "fail",
-      "failure_reason": "turn 1: no tool call emitted",
-      "evidence_hash": "sha256:6033f7d4881294f5a6be5445020f9f463454a09399e4a2ceb4550bf1023524e7",
+      "status": "pass",
+      "failure_reason": null,
+      "evidence_hash": "sha256:987f54ebb71c460d0dff2327253d2e33df546ade886b0964da47bfb887885342",
       "retried": false
     },
     {
@@ -80,7 +80,7 @@
       "category": "negative_trap",
       "status": "pass",
       "failure_reason": null,
-      "evidence_hash": "sha256:cae3832f4702ef5dd1df7028da3bc95a7d5fc99123acf8c2117577bb2367aec8",
+      "evidence_hash": "sha256:f4a717f47db9f8b514ff0c1302d6361be118440cac1cf5c91e90820c6d39e718",
       "retried": false
     },
     {
@@ -88,7 +88,7 @@
       "category": "negative_trap",
       "status": "pass",
       "failure_reason": null,
-      "evidence_hash": "sha256:da76746c9e68c78d30d62afc27aa34edb37ec1c857048c290386fd40a88edd18",
+      "evidence_hash": "sha256:5d695c3368cbc8f3d26eb16bbdf7b8ed2efd5c3577e353c11c38fab4dce7a17d",
       "retried": false
     },
     {
@@ -96,23 +96,23 @@
       "category": "negative_trap",
       "status": "pass",
       "failure_reason": null,
-      "evidence_hash": "sha256:9551d101f36ab334c134a3a4d5aa2b17115a3304396b80ffb303e1de7caf2577",
+      "evidence_hash": "sha256:42b0d80203b3f40136e950532606549148b4e4181848f82dd57dedaa6ed8caf8",
       "retried": false
     },
     {
       "id": "negative-invalid-schema",
       "category": "negative_trap",
-      "status": "fail",
-      "failure_reason": "unexpected tool call emitted: 'set_temperature_unit'",
-      "evidence_hash": "sha256:0663441cec0507f0d60d52709e7ec6130545f8429913d51a19e6f13a3f6b1a9b",
+      "status": "pass",
+      "failure_reason": null,
+      "evidence_hash": "sha256:1e5862650c5d4035d321acf70b2759c5c1e724afa58d2ae14b70ee738f378a90",
       "retried": false
     },
     {
       "id": "negative-long-argument",
       "category": "negative_trap",
-      "status": "pass",
-      "failure_reason": null,
-      "evidence_hash": "sha256:9685fdcfa82d6c70046038cbe8b187cabfb403236281c0334f63e91f57e528f0",
+      "status": "fail",
+      "failure_reason": "wrong value for 'token': expected abcdefghijklmnopqrstuvwxyz0123456789-ABCDEFGHIJKLMNOPQRSTUVWXYZ-abcdefghijklmnopqrstuvwxyz0123456789-ABCDEFGHIJKLMNOPQRSTUVWXYZ-abcdefghijklmnopqrstuvwxyz0123456789-ABCDEFGHIJKLMNOPQRSTUVWXYZ-abcdefghijklmnopqrstuvwxyz0123456789-ABCDEFGHIJKLMNOPQRSTUVWXYZ, got abcdefghijklmnopqrstuvwx0123456789-ABCDEFGHIJKLMNOPQRSTUVWXYZ-abcdefghijklmnopqrstuvwxyz0123456789-ABCDEFGHIJKLMNOPQRSTUVWXYZ-abcdefghijklmnopqrstuvwxyz0123456789-ABCDEFGHIJKLMNOPQRSTUVWXYZ-abcdefghijklmnopqrstuvwxyz0123456789-ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+      "evidence_hash": "sha256:bb3bccea3f32dc4422844781eb80a28fe372b7b99c54b790fa2d9288f36c4903",
       "retried": false
     },
     {
@@ -120,7 +120,7 @@
       "category": "negative_trap",
       "status": "pass",
       "failure_reason": null,
-      "evidence_hash": "sha256:cf44874fae1dc082a7fda26b3e358cfcb889e1d43d79b5bfbb98648b66fb4a07",
+      "evidence_hash": "sha256:1283df7311eac4310cff6fd53fec44e28180bd2348966a1679b0c1aa1d220841",
       "retried": false
     },
     {
@@ -128,7 +128,7 @@
       "category": "negative_trap",
       "status": "pass",
       "failure_reason": null,
-      "evidence_hash": "sha256:e131b29ed8b4a5970ab8c99c9295fb578412f61f50261ccff48f302df9f5a110",
+      "evidence_hash": "sha256:eadca0b3998b171b897114f015817b8401646e3f5f3f421ccba21332fc08d7eb",
       "retried": false
     },
     {
@@ -136,7 +136,7 @@
       "category": "parallel_calls",
       "status": "pass",
       "failure_reason": null,
-      "evidence_hash": "sha256:44376208ee791d504283223d2173623129cfbbce7d09a026352da40a3d876202",
+      "evidence_hash": "sha256:a543c35b8db3828d55f55a77398e5c8f6946576ff06ab297c9d503bdd9d1430f",
       "retried": false
     },
     {
@@ -144,23 +144,23 @@
       "category": "parallel_calls",
       "status": "pass",
       "failure_reason": null,
-      "evidence_hash": "sha256:c750e8a7699d2ff3b12efb8f5215cb502b49803029a232f07765709fa6a4ad06",
+      "evidence_hash": "sha256:f64230402893b1459a20de9a57c3cb7f670e8171ffcc51ba15c572634ebc3c64",
       "retried": false
     },
     {
       "id": "parallel-three-cities",
       "category": "parallel_calls",
-      "status": "fail",
-      "failure_reason": "no tool call emitted",
-      "evidence_hash": "sha256:7b01db97614929cab0ab964f34eb4be93fe094acd3c22136d1892103474506c0",
+      "status": "pass",
+      "failure_reason": null,
+      "evidence_hash": "sha256:3cab4d43cc63ac96e5b0cb8900fb071faf7ac88200f11b8694bbffd58901e2f2",
       "retried": false
     },
     {
       "id": "parallel-three-different-tools",
       "category": "parallel_calls",
-      "status": "fail",
-      "failure_reason": "schema violation: missing required field 'amount'",
-      "evidence_hash": "sha256:82cdc57766683e95b7784f56bef17611ed5e7562ae7182669dce726e7fc2155f",
+      "status": "pass",
+      "failure_reason": null,
+      "evidence_hash": "sha256:c2b3a784ca8870775bac6271e1e45c0c7121c6f8bb2313f46d77a3cf817fdd0a",
       "retried": false
     },
     {
@@ -168,7 +168,7 @@
       "category": "parallel_calls",
       "status": "pass",
       "failure_reason": null,
-      "evidence_hash": "sha256:4b5893e2df1abe586395c5426a2b852e6c34c7c1b65901c52cb7085f91577ce9",
+      "evidence_hash": "sha256:c34ee9a85741f71967c0ba0bd97d494c4733a9c607d33fc610b998323d482b50",
       "retried": false
     },
     {
@@ -176,7 +176,7 @@
       "category": "parallel_calls",
       "status": "pass",
       "failure_reason": null,
-      "evidence_hash": "sha256:98dcc5ce86f30d585240082269e1782373eb6542126010ee260a467e3e910ce4",
+      "evidence_hash": "sha256:c295107f2c70948a92924ecbd2992f6b5ea7ec075147a65fa1be369db1b0953b",
       "retried": false
     },
     {
@@ -184,7 +184,7 @@
       "category": "parallel_calls",
       "status": "pass",
       "failure_reason": null,
-      "evidence_hash": "sha256:5648f64c8fcc1cca4f4dac08ff7cf9d7b21baea2abdd7153e614701f3746b9f6",
+      "evidence_hash": "sha256:d2f20f45ed161012eb5f6540ae7306bb1474fc0645ac0bbe7026f0baaaeb9d6e",
       "retried": false
     },
     {
@@ -192,7 +192,7 @@
       "category": "parallel_calls",
       "status": "pass",
       "failure_reason": null,
-      "evidence_hash": "sha256:bdd568655c8a82ce73f7cc4bd26d28112459eaa8a96e7dacb849c782e1dd6b17",
+      "evidence_hash": "sha256:8d8430b0dc3f95239795ed52ddda488bea95422469681af87a8e6ef72bc70034",
       "retried": false
     },
     {
@@ -200,15 +200,15 @@
       "category": "single_call",
       "status": "fail",
       "failure_reason": "no tool call emitted",
-      "evidence_hash": "sha256:fc82ee4e88037d687dc621a8b58bf1f5ddeaa5b5a634347226832b6752eb470a",
+      "evidence_hash": "sha256:03ca1e47f43664a3f5388ae3a95ab8cbd7da7da372198f0ed83ac5ba3b0de3b8",
       "retried": false
     },
     {
       "id": "single-boolean-flag",
       "category": "single_call",
-      "status": "fail",
-      "failure_reason": "schema violation: missing required field 'feature'",
-      "evidence_hash": "sha256:7dc7056bfc5b2e9bc987d083bdd7db197d35537d67432db29c7759ac67d414bd",
+      "status": "pass",
+      "failure_reason": null,
+      "evidence_hash": "sha256:293bfe1dd236c6550356137d537f4a31205d8e16310b13c1fc9ea106785b355c",
       "retried": false
     },
     {
@@ -216,7 +216,7 @@
       "category": "single_call",
       "status": "pass",
       "failure_reason": null,
-      "evidence_hash": "sha256:53f85b3302e8a2a1935dd6a214755f14a9377d2b5d7490eb3362a0e545bbf616",
+      "evidence_hash": "sha256:4244e5d0212be74fd7c9dc2c9d5a7e164773772bc364ace5e0218f6cec5cee1a",
       "retried": false
     },
     {
@@ -224,7 +224,7 @@
       "category": "single_call",
       "status": "pass",
       "failure_reason": null,
-      "evidence_hash": "sha256:4ee2f732979ef3fcafa7197bcfd19aaf9f5d445fec7e01817321d16f6aba92a4",
+      "evidence_hash": "sha256:5d2bbff4d083920682c0673c408d07cba4a998ee1ebbbead6109f69de0936383",
       "retried": false
     },
     {
@@ -232,7 +232,7 @@
       "category": "single_call",
       "status": "pass",
       "failure_reason": null,
-      "evidence_hash": "sha256:18d6c411abbd2d10560e47c03991402dce316c0095f95963214409048b2e7ab6",
+      "evidence_hash": "sha256:33c82914a1bfdb69f9f3620312f9e9adfac014df914c68ad22cc609f83135ad0",
       "retried": false
     },
     {
@@ -240,7 +240,7 @@
       "category": "single_call",
       "status": "pass",
       "failure_reason": null,
-      "evidence_hash": "sha256:61ce4937b49a8f815100b81f6a7e2eaa9c36ce911abbc9d8d2c481b5a427c6b8",
+      "evidence_hash": "sha256:35c799f94f741091684635923facb7fc6d836197db8efb768c62632ec5db8a2e",
       "retried": false
     },
     {
@@ -248,15 +248,15 @@
       "category": "single_call",
       "status": "pass",
       "failure_reason": null,
-      "evidence_hash": "sha256:41be75c4025f973cd22072423f11cacb906c3f0646855daa05bb7abc8e7f181a",
+      "evidence_hash": "sha256:aa61957206faa83b88c35333dd1ee28e97ef26c8a00ef089eb30d0ee745c0445",
       "retried": false
     },
     {
       "id": "single-nested-options",
       "category": "single_call",
       "status": "fail",
-      "failure_reason": "schema violation: missing required field 'prompt'",
-      "evidence_hash": "sha256:0a56a78b893a70359aaf62c75bfd23a1861ae7128d69c204f37b43a43496df37",
+      "failure_reason": "schema violation: missing required field 'options'",
+      "evidence_hash": "sha256:ea115070a39ac3252fb8b8d170c0b549d8f0ca2d7a87c342865fef645dd98e3b",
       "retried": false
     },
     {
@@ -264,7 +264,7 @@
       "category": "single_call",
       "status": "pass",
       "failure_reason": null,
-      "evidence_hash": "sha256:153c8b4f4213dd3563db0d4baa5d996c982f420e57df380b147fb046a0901671",
+      "evidence_hash": "sha256:e43d7dc1c59ee39d84a16d598be0bbd6bb0701f8a5fb3c3064731d4b537ec205",
       "retried": false
     },
     {
@@ -272,15 +272,15 @@
       "category": "single_call",
       "status": "pass",
       "failure_reason": null,
-      "evidence_hash": "sha256:4ef8d64b01c783249aeb6dc275f7619be0b9a57223102ac23f6e13f8fdb837c8",
+      "evidence_hash": "sha256:4e89176730d328c928efcb066b0d426778b3767ce1eb7d1133ca99bc3a579c31",
       "retried": false
     },
     {
       "id": "single-string-list",
       "category": "single_call",
-      "status": "fail",
-      "failure_reason": "schema violation: missing required field 'name'",
-      "evidence_hash": "sha256:84018fe9a2bd2b6df95c3fd08429f4cecb29f575f9bead7f729ae8c1d9d15af2",
+      "status": "pass",
+      "failure_reason": null,
+      "evidence_hash": "sha256:8d61d94ad9f977719e3c418f8b626bbaa60df6e32f9934c7ab3b804c72a66be9",
       "retried": false
     },
     {
@@ -288,7 +288,7 @@
       "category": "single_call",
       "status": "pass",
       "failure_reason": null,
-      "evidence_hash": "sha256:041b35cb695c5021dff7e6c30d54b2a97dc18de6da73fdc684c13e9483510e4e",
+      "evidence_hash": "sha256:6d4134ef7916cf2f1190df3d2aff5edab45bb78bb670e7ca25c687deba516ae7",
       "retried": false
     },
     {
@@ -296,7 +296,7 @@
       "category": "single_call",
       "status": "pass",
       "failure_reason": null,
-      "evidence_hash": "sha256:ac5f6c81e79365c3e00066c903fea80793abacc3291386f2f98c1b6a9541cca7",
+      "evidence_hash": "sha256:3eba5c340daebd3893557ea44d558ff1ad73271326f4c2f2c462dd416b3ac56f",
       "retried": false
     },
     {
@@ -304,15 +304,15 @@
       "category": "streaming",
       "status": "pass",
       "failure_reason": null,
-      "evidence_hash": "sha256:7f6e56b4a9cb155d297e49c45dbdfbfc1d12b63777c5b99f0568028b42a7658d",
+      "evidence_hash": "sha256:c5123eef5962d8365528e2059c061c1f887c60c66ef9a7399768d2ab84d2f859",
       "retried": false
     },
     {
       "id": "streaming-boolean-argument",
       "category": "streaming",
-      "status": "fail",
-      "failure_reason": "schema violation: missing required field 'enabled'",
-      "evidence_hash": "sha256:322678d8da256c0252d4bb5843d3e3fca359f920f818238fb3d2d9786df14031",
+      "status": "pass",
+      "failure_reason": null,
+      "evidence_hash": "sha256:5a4c4c81a891a1a607f371ac0dd914b43c373cbe47668c2e5b24090785d12a99",
       "retried": false
     },
     {
@@ -320,7 +320,7 @@
       "category": "streaming",
       "status": "pass",
       "failure_reason": null,
-      "evidence_hash": "sha256:220500712d2129368f535403e8b552a74253258d117e1cf80eb76e0829d10524",
+      "evidence_hash": "sha256:bf2b82fa635f3833323a8dfbdb9a3e53c2e04e7b354533133bca8c577cbabee5",
       "retried": false
     },
     {
@@ -328,7 +328,7 @@
       "category": "streaming",
       "status": "pass",
       "failure_reason": null,
-      "evidence_hash": "sha256:1641a430b394d390a4765297944a27988c53e2287aefbbf4bc855bea822cece3",
+      "evidence_hash": "sha256:6e54422eb046a889f888dd0e248f66c0a198b01712ff822caa28fc0eed7e40a3",
       "retried": false
     },
     {
@@ -336,15 +336,15 @@
       "category": "streaming",
       "status": "pass",
       "failure_reason": null,
-      "evidence_hash": "sha256:fea87667b1dd53f0e8c7d5c60418ff2dd428b3bea1c1685f32d049098be4e124",
+      "evidence_hash": "sha256:80f80ecafbdcb03e70cc3d0b043d50fedbeb28a960dc853343d80cb916c5cca9",
       "retried": false
     },
     {
       "id": "streaming-parallel-three",
       "category": "streaming",
-      "status": "fail",
-      "failure_reason": "no tool call emitted",
-      "evidence_hash": "sha256:640274f99ab6cb81b30224a300bf688e576ad4446e1cad971ab28dfb32e17237",
+      "status": "pass",
+      "failure_reason": null,
+      "evidence_hash": "sha256:c0a6123d16e3c753d6a5cea89123cc7c4bc8dfcf98cf1ff32666b9ae55a73be2",
       "retried": false
     },
     {
@@ -352,7 +352,7 @@
       "category": "streaming",
       "status": "pass",
       "failure_reason": null,
-      "evidence_hash": "sha256:98c9aa605cbd5c7d7efbce52a2b7212b65f2d5b4689d02da0ee3e5de3d7c1e64",
+      "evidence_hash": "sha256:42ed8057b44350c99265ac9725be9acfdd7b3add9c13e90ffff3b516cfa6de6d",
       "retried": false
     },
     {
@@ -360,7 +360,7 @@
       "category": "streaming",
       "status": "pass",
       "failure_reason": null,
-      "evidence_hash": "sha256:eb67cb521ae2822d5d0785cafe7533a7e3d37ab1685d4212a18dab19eaa2fca1",
+      "evidence_hash": "sha256:1db8cd0582341ad95329bf659f8baf8bae8431445c9eaf0de75c681352139862",
       "retried": false
     },
     {
@@ -368,7 +368,7 @@
       "category": "tool_choice_modes",
       "status": "pass",
       "failure_reason": null,
-      "evidence_hash": "sha256:69882e662da01aca6fbcae008aa65aa76ff328ab29ac0f43a1cb30bb326e009e",
+      "evidence_hash": "sha256:feece52c2ca7b52fda62d467c85544500e4f040b51a0f43905f1ae4c8ca568ec",
       "retried": false
     },
     {
@@ -376,7 +376,7 @@
       "category": "tool_choice_modes",
       "status": "pass",
       "failure_reason": null,
-      "evidence_hash": "sha256:0231a9d1d4573716a8eb3475082ac77cc635df1e0effd5e117097f98b5d2240c",
+      "evidence_hash": "sha256:40a503dfd6c03191bff72749f6991d91fa1b1e4b9a09deb049855432aae4703b",
       "retried": false
     },
     {
@@ -384,7 +384,7 @@
       "category": "tool_choice_modes",
       "status": "pass",
       "failure_reason": null,
-      "evidence_hash": "sha256:3a05d6a604a5f6a17df86cf796a5757946f26fd4583902db4f126789ca339560",
+      "evidence_hash": "sha256:384e436b2c24acf06159e0133b1cf7fc53a10d38843596c22acd9cc1bc2dd105",
       "retried": false
     },
     {
@@ -392,7 +392,7 @@
       "category": "tool_choice_modes",
       "status": "pass",
       "failure_reason": null,
-      "evidence_hash": "sha256:4c36836db9724e0785afd1bf14a094442acbb3a6deddd3219f291ff65495ec09",
+      "evidence_hash": "sha256:41fa048f722e49d07d1e8e1eb8657d12d9e91d363b69186ecb088d2d34ac3415",
       "retried": false
     },
     {
@@ -400,7 +400,7 @@
       "category": "tool_choice_modes",
       "status": "pass",
       "failure_reason": null,
-      "evidence_hash": "sha256:e772175f0db8f25adb3cc882db503466048deb9adcf8450370eac40710b85505",
+      "evidence_hash": "sha256:fefb0eec64f62af22e46098b3858b4e7b913d8a0b8cccec8bee17c2ffa23ccd9",
       "retried": false
     },
     {
@@ -408,7 +408,7 @@
       "category": "tool_choice_modes",
       "status": "pass",
       "failure_reason": null,
-      "evidence_hash": "sha256:d77965d794bb12039672b7d679903fb51b871e285acf5c916638c2ffacbcf14d",
+      "evidence_hash": "sha256:390d4d96edcfbab9c35b49acdf3ca4946248256ddc414c04e644dbe8584823e2",
       "retried": false
     },
     {
@@ -416,14 +416,14 @@
       "category": "tool_choice_modes",
       "status": "pass",
       "failure_reason": null,
-      "evidence_hash": "sha256:f9b4d17483ae9008d1ef050196dac60bd4dba252a22335e0f69f6d330c9cc13f",
+      "evidence_hash": "sha256:36eeaeee3308bf23af34895b3a373652af8a398f153a6498cad84b69f61d2931",
       "retried": false
     }
   ],
   "totals": {
     "total": 50,
-    "passed": 34,
-    "failed": 16,
+    "passed": 46,
+    "failed": 4,
     "errors": 0,
     "skipped": 0
   }

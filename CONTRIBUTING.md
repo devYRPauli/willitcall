@@ -6,7 +6,7 @@ Run all checks from the repository root:
 
 ```sh
 cargo test --workspace
-cargo fmt --check
+cargo fmt --all -- --check
 cargo clippy --workspace --all-targets -- -D warnings
 ```
 

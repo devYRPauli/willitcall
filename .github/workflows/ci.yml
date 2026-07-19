@@ -1,0 +1,65 @@
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  rust:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt, clippy
+      - uses: Swatinem/rust-cache@v2
+      - name: Format
+        run: cargo fmt --all -- --check
+      - name: Clippy
+        run: cargo clippy --workspace --all-targets -- -D warnings
+      - name: Test
+        run: cargo test --workspace
+
+  results:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install jsonschema
+        run: pip install jsonschema
+      - name: Validate submitted result files
+        run: |
+          shopt -s nullglob
+          files=(results/*.json)
+          if [ ${#files[@]} -eq 0 ]; then
+            echo "no result files to validate"
+            exit 0
+          fi
+          python - "${files[@]}" <<'PY'
+          import json, sys
+          from jsonschema import Draft202012Validator
+
+          with open("schemas/result-v1.schema.json") as handle:
+              schema = json.load(handle)
+          validator = Draft202012Validator(schema)
+
+          failed = False
+          for path in sys.argv[1:]:
+              with open(path) as handle:
+                  document = json.load(handle)
+              errors = sorted(validator.iter_errors(document), key=lambda e: e.path)
+              if errors:
+                  failed = True
+                  for error in errors:
+                      location = "/".join(str(part) for part in error.path)
+                      print(f"{path}: {location}: {error.message}")
+              else:
+                  print(f"{path}: ok")
+          sys.exit(1 if failed else 0)
+          PY
