@@ -1,6 +1,6 @@
 use serde_json::json;
 use wic_core::client::ToolCall;
-use wic_core::score::score_calls;
+use wic_core::score::{score_calls, score_response};
 use wic_core::{ArgumentsMatch, ExpectedCall, ToolDefinition};
 
 fn weather_tool() -> ToolDefinition {
@@ -65,6 +65,38 @@ fn required_call_reports_when_no_call_was_emitted() {
     .expect_err("missing call must fail");
 
     assert_eq!(error, "no tool call emitted");
+}
+
+#[test]
+fn empty_response_is_distinct_from_text_without_a_tool_call() {
+    let tools = [weather_tool()];
+    let expected = [expected("get_weather", json!({"city": "Boston"}))];
+
+    for content in [None, Some("")] {
+        let failure = score_response(&tools, &expected, ArgumentsMatch::Exact, content, &[])
+            .expect_err("empty response must fail");
+        assert_eq!(
+            failure.reason,
+            "empty response: no content and no tool call"
+        );
+        assert_eq!(failure.failure_class.as_deref(), Some("empty_response"));
+    }
+
+    let failure = score_response(
+        &tools,
+        &expected,
+        ArgumentsMatch::Exact,
+        Some("I cannot call that tool."),
+        &[],
+    )
+    .expect_err("missing call must fail");
+    assert_eq!(failure.reason, "no tool call emitted");
+    assert_eq!(failure.failure_class, None);
+}
+
+#[test]
+fn empty_response_preserves_a_negative_trap_pass() {
+    assert!(score_response(&[weather_tool()], &[], ArgumentsMatch::Exact, None, &[]).is_ok());
 }
 
 #[test]

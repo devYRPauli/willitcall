@@ -136,6 +136,12 @@
         "failure_reason": {
           "type": ["string", "null"]
         },
+        "failure_class": {
+          "enum": ["empty_response"]
+        },
+        "cause": {
+          "$ref": "#/$defs/cause"
+        },
         "evidence_hash": {
           "description": "SHA-256 of the bytes of the referenced transcript file, prefixed with sha256:.",
           "type": ["string", "null"]
@@ -146,6 +152,22 @@
         },
         "retried": {
           "type": "boolean"
+        }
+      }
+    },
+    "cause": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "reference", "note"],
+      "properties": {
+        "kind": {
+          "enum": ["server-defect", "unknown"]
+        },
+        "reference": {
+          "type": ["string", "null"]
+        },
+        "note": {
+          "type": ["string", "null"]
         }
       }
     },

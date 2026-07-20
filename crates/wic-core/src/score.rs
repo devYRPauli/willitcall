@@ -4,6 +4,30 @@ use unicode_normalization::UnicodeNormalization;
 use crate::client::ToolCall;
 use crate::{ArgumentsMatch, ExpectedCall, ToolDefinition};
 
+#[derive(Debug, Eq, PartialEq)]
+pub struct ScoreFailure {
+    pub reason: String,
+    pub failure_class: Option<String>,
+}
+
+pub fn score_response(
+    tools: &[ToolDefinition],
+    expected: &[ExpectedCall],
+    default_policy: ArgumentsMatch,
+    content: Option<&str>,
+    actual: &[ToolCall],
+) -> Result<(), ScoreFailure> {
+    let empty_response = actual.is_empty() && matches!(content, None | Some(""));
+    score_calls(tools, expected, default_policy, actual).map_err(|reason| ScoreFailure {
+        reason: if empty_response {
+            "empty response: no content and no tool call".to_owned()
+        } else {
+            reason
+        },
+        failure_class: empty_response.then(|| "empty_response".to_owned()),
+    })
+}
+
 pub fn score_calls(
     tools: &[ToolDefinition],
     expected: &[ExpectedCall],

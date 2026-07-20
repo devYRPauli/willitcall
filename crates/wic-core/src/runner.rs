@@ -13,7 +13,7 @@ use crate::result::{
     SamplingParams, ScenarioOutcome, ServerMetadata, Status, Totals, Transcript,
     RESULT_SCHEMA_VERSION,
 };
-use crate::score::score_calls;
+use crate::score::score_response;
 use crate::{Message, MessageRole, Scenario};
 
 #[derive(Clone, Debug)]
@@ -208,21 +208,24 @@ async fn run_scenario(
             }
         };
 
-        if let Err(reason) = score_calls(
+        if let Err(failure) = score_response(
             &scenario.tools,
             &turn.expected_calls,
             scenario.arguments_match,
+            response.content.as_deref(),
             &response.tool_calls,
         ) {
-            return outcome(
+            let mut result = outcome(
                 scenario,
                 Status::Fail,
-                Some(turn_reason(scenario, turn_index, reason)),
+                Some(turn_reason(scenario, turn_index, failure.reason)),
                 &evidence,
                 retried,
                 run_id,
                 result_parent,
-            );
+            )?;
+            result.failure_class = failure.failure_class;
+            return Ok(result);
         }
 
         previous_calls = response.tool_calls.clone();
@@ -336,6 +339,8 @@ fn outcome(
         category: scenario.category,
         status,
         failure_reason,
+        failure_class: None,
+        cause: None,
         evidence_hash,
         evidence_path,
         retried,

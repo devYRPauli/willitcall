@@ -57,10 +57,29 @@ pub struct ScenarioOutcome {
     pub category: ScenarioCategory,
     pub status: Status,
     pub failure_reason: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub failure_class: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub cause: Option<Cause>,
     pub evidence_hash: Option<String>,
     #[serde(default)]
     pub evidence_path: Option<String>,
     pub retried: bool,
+}
+
+#[derive(Clone, Debug, Deserialize, Serialize)]
+#[serde(deny_unknown_fields)]
+pub struct Cause {
+    pub kind: CauseKind,
+    pub reference: Option<String>,
+    pub note: Option<String>,
+}
+
+#[derive(Clone, Copy, Debug, Deserialize, Eq, PartialEq, Serialize)]
+#[serde(rename_all = "kebab-case")]
+pub enum CauseKind {
+    ServerDefect,
+    Unknown,
 }
 
 #[derive(Clone, Debug)]
@@ -372,8 +391,8 @@ mod tests {
     use std::io::{self, Write};
 
     use super::{
-        atomic_write_with, write_result_atomic, RunMetadata, RunResult, SamplingParams,
-        ScenarioOutcome, ServerMetadata, Status, Totals,
+        atomic_write_with, write_result_atomic, Cause, CauseKind, RunMetadata, RunResult,
+        SamplingParams, ScenarioOutcome, ServerMetadata, Status, Totals,
     };
     use crate::ScenarioCategory;
 
@@ -404,6 +423,8 @@ mod tests {
                 category: ScenarioCategory::SingleCall,
                 status: Status::Pass,
                 failure_reason: None,
+                failure_class: None,
+                cause: None,
                 evidence_hash: Some("sha256:abc123".to_owned()),
                 evidence_path: Some(
                     "evidence/20260719T120000Z-1234abcd/single-weather.json".to_owned(),
@@ -433,6 +454,27 @@ mod tests {
             .map(|status| serde_json::to_value(status).expect("serialize status"));
 
         assert_eq!(values, ["pass", "fail", "error", "skipped"]);
+    }
+
+    #[test]
+    fn failure_class_and_cause_serialize_and_round_trip() {
+        let mut result = sample_result();
+        result.scenarios[0].failure_class = Some("empty_response".to_owned());
+        result.scenarios[0].cause = Some(Cause {
+            kind: CauseKind::ServerDefect,
+            reference: Some("ollama/ollama#12345".to_owned()),
+            note: None,
+        });
+
+        let json = serde_json::to_string(&result).expect("serialize annotated result");
+        let parsed: RunResult = serde_json::from_str(&json).expect("parse annotated result");
+        let outcome = &parsed.scenarios[0];
+
+        assert_eq!(outcome.failure_class.as_deref(), Some("empty_response"));
+        let cause = outcome.cause.as_ref().expect("cause");
+        assert_eq!(cause.kind, CauseKind::ServerDefect);
+        assert_eq!(cause.reference.as_deref(), Some("ollama/ollama#12345"));
+        assert_eq!(cause.note, None);
     }
 
     #[test]
@@ -486,6 +528,12 @@ mod tests {
             status,
             failure_reason: matches!(status, Status::Fail | Status::Error)
                 .then(|| "fixture failure".to_owned()),
+            failure_class: matches!(status, Status::Fail).then(|| "empty_response".to_owned()),
+            cause: matches!(status, Status::Fail).then_some(Cause {
+                kind: CauseKind::Unknown,
+                reference: None,
+                note: None,
+            }),
             evidence_hash: None,
             evidence_path: None,
             retried: false,
