@@ -94,13 +94,31 @@ sample and does not hold. The description is not the variable.
 Ollama's native `/api/chat` fails identically, so the defect is below the
 OpenAI-compat layer, in the shared template-and-parse path.
 
-## Secondary finding: `tool_choice` is ignored
+## Secondary finding: `tool_choice` is ignored (not a defect - retracted)
 
 Ollama accepted `tool_choice: "required"` and returned a response with no tool
-call and no error. Per the OpenAI API contract this must either force a tool
-call or fail. Silently ignoring it means a harness cannot distinguish "model
-declined to call" from "server dropped the call" -- exactly the ambiguity that
-made this bug read as a model failure for a whole milestone.
+call and no error. This was originally written up here as a second defect, on
+the reasoning that the OpenAI API contract requires the parameter to either
+force a tool call or fail. That framing was wrong and is retracted.
+
+A controlled test on 2026-07-20 settled it. Run against `qwen3:4b`, a model
+whose tool calls Ollama parses correctly (verified: `tool_choice: "auto"`
+returns a real `tool_calls` array), `tool_choice: "required"` was ignored 3/3 --
+the model answered a question that needed no tool and emitted no call,
+indistinguishable from `"auto"`. So the behavior is genuinely independent of the
+parser drop rather than a consequence of it.
+
+That independence is what disqualifies it. Ollama documents `tool_choice` as
+unsupported, and maintainer `rick-github` states in `#14967` that it "is
+accepted because it's part of the OpenAI API specification but is currently
+ignored," and that "there is no mechanism for forcing a model to use a tool."
+This is documented, intended behavior, not a bug, and it was deliberately left
+out of `#17274`.
+
+The consequence for willitcall stands even though the defect claim does not: a
+harness cannot use `tool_choice: "required"` on Ollama to distinguish "model
+declined to call" from "server dropped the call." That ambiguity is real, and it
+is what made this bug read as a model failure for a whole milestone.
 
 ## Why this matters for willitcall
 
@@ -119,16 +137,30 @@ Two consequences for the corpus:
    is worth surfacing in the matrix as a separate class from a real refusal.
    Not implemented; noted for M4.
 
-## Candidate upstream issue
+## Upstream issue: filed as ollama/ollama#17274
 
-Repo: `ollama/ollama`. NOT filed from this session. Per the verify-dupes rule
-a fresh dedicated pass must search existing issues first -- an empty-tool-call
-bug is a likely duplicate, and the useful contribution may be adding the
-controlled llama.cpp comparison and the `eval_count` contradiction to an
-existing thread rather than opening a new one.
+Filed 2026-07-20: https://github.com/ollama/ollama/issues/17274
 
-A separate candidate is the `tool_choice: "required"` no-op, which is a
-distinct bug from the parser drop.
+The dedicated verify-dupes pass ran on 2026-07-20 and cleared all three gates:
+
+1. **Latest version.** 0.32.1 was itself the newest release (2026-07-16), so the
+   measured version was the current one. No "fixed upstream" exit existed.
+2. **Dupe search.** Two passes, the second briefed adversarially to disqualify
+   the filing. Novel. `#16932` shares the symptoms but was root-caused by a
+   maintainer to the ministral parser, which qwen2.5 never reaches; its fix PR
+   `#16942` was rejected in review. `#12174` is the closest prior report
+   (qwen2.5-coder, array parameter) but shows a non-empty `content` carrying
+   leaked JSON, and its thread stalled on "the model is unreliable" -- the
+   llama.cpp and `raw: true` cross-checks are the evidence that reading lacks,
+   so the issue cites it directly. No merged-but-unreleased fix touches the
+   qwen2.5 path.
+3. **Independent re-verification.** Every row of the table above was re-run from
+   scratch on macstudio without trusting the M3 session. All confirmed, no
+   discrepancies; the llama.cpp side came back 12/12 across both tool
+   descriptions.
+
+The `eval_count` contradiction was folded into the same issue rather than filed
+separately: it cannot occur independently of the drop.
 
 ## Reproducing
 
