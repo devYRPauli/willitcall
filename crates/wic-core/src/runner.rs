@@ -1,5 +1,6 @@
 use std::fs;
 use std::io;
+use std::net::{Ipv4Addr, SocketAddr};
 use std::path::Path;
 use std::time::{Duration, SystemTime, UNIX_EPOCH};
 
@@ -70,6 +71,66 @@ pub async fn preflight(config: &RunConfig) -> Result<(), String> {
     client(config).preflight().await
 }
 
+#[derive(Debug)]
+pub struct OccupiedEndpoint {
+    pub endpoint: String,
+    pub server: String,
+}
+
+pub async fn contention_preflight(
+    endpoint: &str,
+    known_servers: &[(u16, &str)],
+) -> Result<Vec<OccupiedEndpoint>, String> {
+    const CONNECT_TIMEOUT: Duration = Duration::from_millis(300);
+
+    let url = reqwest::Url::parse(endpoint)
+        .map_err(|error| format!("invalid target endpoint: {error}"))?;
+    let host = url
+        .host_str()
+        .ok_or_else(|| "invalid target endpoint: missing host".to_owned())?;
+    let port = url
+        .port_or_known_default()
+        .ok_or_else(|| "invalid target endpoint: missing port".to_owned())?;
+    let target_addresses =
+        tokio::time::timeout(CONNECT_TIMEOUT, tokio::net::lookup_host((host, port)))
+            .await
+            .map_err(|_| "timed out resolving target endpoint".to_owned())?
+            .map_err(|error| format!("failed to resolve target endpoint: {error}"))?
+            .collect::<Vec<_>>();
+
+    let mut probes = known_servers
+        .iter()
+        .map(|(port, server)| {
+            (
+                SocketAddr::from((Ipv4Addr::LOCALHOST, *port)),
+                Some(*server),
+            )
+        })
+        .collect::<Vec<_>>();
+    for address in &target_addresses {
+        if !probes.iter().any(|(candidate, _)| candidate == address) {
+            probes.push((*address, None));
+        }
+    }
+
+    let mut occupied = Vec::new();
+    for (address, server) in probes {
+        let responding =
+            tokio::time::timeout(CONNECT_TIMEOUT, tokio::net::TcpStream::connect(address))
+                .await
+                .is_ok_and(|result| result.is_ok());
+        if responding && !target_addresses.contains(&address) {
+            if let Some(server) = server {
+                occupied.push(OccupiedEndpoint {
+                    endpoint: address.to_string(),
+                    server: server.to_owned(),
+                });
+            }
+        }
+    }
+    Ok(occupied)
+}
+
 pub async fn run_scenarios(
     config: &RunConfig,
     scenarios: &[Scenario],
@@ -113,6 +174,7 @@ pub async fn run_scenarios(
                 quirk_flags: config.server.quirk_flags.clone(),
             },
             sampling: config.sampling.clone(),
+            preflight_override: None,
         },
         scenarios: outcomes,
         totals,
@@ -419,6 +481,61 @@ fn civil_from_days(days_since_epoch: i64) -> (i64, i64, i64) {
 
 #[cfg(test)]
 mod tests {
+    use tokio::net::TcpListener;
+
+    async fn unused_port() -> u16 {
+        let listener = TcpListener::bind("127.0.0.1:0")
+            .await
+            .expect("bind ephemeral listener");
+        listener.local_addr().expect("listener address").port()
+    }
+
+    #[tokio::test]
+    async fn contention_probe_all_clear_proceeds() {
+        let port = unused_port().await;
+
+        let occupied =
+            super::contention_preflight("http://127.0.0.1:65535/v1", &[(port, "Test server")])
+                .await
+                .expect("probe succeeds");
+
+        assert!(occupied.is_empty());
+    }
+
+    #[tokio::test]
+    async fn contention_probe_ignores_the_responding_target_port() {
+        let listener = TcpListener::bind("127.0.0.1:0")
+            .await
+            .expect("bind target listener");
+        let port = listener.local_addr().expect("listener address").port();
+
+        let occupied = super::contention_preflight(
+            &format!("http://127.0.0.1:{port}/v1"),
+            &[(port, "Test server")],
+        )
+        .await
+        .expect("probe succeeds");
+
+        assert!(occupied.is_empty());
+    }
+
+    #[tokio::test]
+    async fn contention_probe_reports_a_responding_foreign_port() {
+        let listener = TcpListener::bind("127.0.0.1:0")
+            .await
+            .expect("bind foreign listener");
+        let port = listener.local_addr().expect("listener address").port();
+
+        let occupied =
+            super::contention_preflight("http://127.0.0.1:65535/v1", &[(port, "Test server")])
+                .await
+                .expect("probe succeeds");
+
+        assert_eq!(occupied.len(), 1);
+        assert_eq!(occupied[0].endpoint, format!("127.0.0.1:{port}"));
+        assert_eq!(occupied[0].server, "Test server");
+    }
+
     #[test]
     fn run_id_uses_compact_timestamp_and_metadata_hash_prefix() {
         assert_eq!(

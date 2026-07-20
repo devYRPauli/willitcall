@@ -31,6 +31,15 @@ pub struct RunMetadata {
     pub declared_quant: Option<String>,
     pub server: ServerMetadata,
     pub sampling: SamplingParams,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub preflight_override: Option<PreflightOverride>,
+}
+
+#[derive(Clone, Debug, Deserialize, Serialize)]
+#[serde(deny_unknown_fields)]
+pub struct PreflightOverride {
+    pub forced: bool,
+    pub foreign_endpoints: Vec<String>,
 }
 
 #[derive(Clone, Debug, Deserialize, Serialize)]
@@ -417,6 +426,7 @@ mod tests {
                     seed: Some(42),
                     max_tokens: Some(1024),
                 },
+                preflight_override: None,
             },
             scenarios: vec![ScenarioOutcome {
                 id: "single-weather".to_owned(),
@@ -446,6 +456,7 @@ mod tests {
         let json = serde_json::to_string(&sample_result()).expect("serialize result");
 
         assert!(json.starts_with("{\"schema_version\":2,"));
+        assert!(!json.contains("preflight_override"));
     }
 
     #[test]
@@ -512,6 +523,10 @@ mod tests {
         let directory = tempfile::tempdir().expect("temp directory");
         let destination = directory.path().join("result.json");
         let mut result = sample_result();
+        result.metadata.preflight_override = Some(super::PreflightOverride {
+            forced: true,
+            foreign_endpoints: vec!["127.0.0.1:11434".to_owned()],
+        });
         result.scenarios = [
             (ScenarioCategory::SingleCall, Status::Pass),
             (ScenarioCategory::ParallelCalls, Status::Fail),

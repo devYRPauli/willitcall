@@ -1,5 +1,9 @@
 mod report;
 
+#[cfg(test)]
+#[path = "../../wic-core/tests/support/mod.rs"]
+mod support;
+
 use std::io::IsTerminal;
 use std::path::{Path, PathBuf};
 use std::process::ExitCode;
@@ -11,9 +15,11 @@ use wic_core::client::{
 };
 use wic_core::result::{
     exit_code_for_totals, parse_and_validate_result, validate_result, write_result_atomic, Cause,
-    CauseKind, RunResult, Status,
+    CauseKind, PreflightOverride, RunResult, Status,
 };
-use wic_core::runner::{preflight, run_scenarios, RunConfig, ServerConfig, ServerVersionProbe};
+use wic_core::runner::{
+    contention_preflight, preflight, run_scenarios, RunConfig, ServerConfig, ServerVersionProbe,
+};
 use wic_core::score::is_empty_response;
 use wic_core::{load_embedded_scenarios, load_scenarios_from_dir};
 
@@ -21,6 +27,12 @@ const EXIT_USAGE: u8 = 2;
 const EXIT_PREFLIGHT: u8 = 3;
 const EXIT_HARNESS: u8 = 4;
 const EXIT_CODE_HELP: &str = "Exit codes:\n  0  all scenarios passed\n  1  at least one model-answer failure\n  2  usage or scenario configuration error\n  3  endpoint preflight failure\n  4  harness error during the run";
+const KNOWN_INFERENCE_SERVERS: &[(u16, &str)] = &[
+    (11434, "Ollama"),
+    (8080, "llama.cpp"),
+    (1234, "LM Studio"),
+    (8000, "vLLM"),
+];
 
 #[derive(Debug, Parser)]
 #[command(name = "willitcall", after_long_help = EXIT_CODE_HELP)]
@@ -54,6 +66,8 @@ struct RunArgs {
     timeout: u64,
     #[arg(long)]
     json: bool,
+    #[arg(long)]
+    force: bool,
 }
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq, ValueEnum)]
@@ -310,6 +324,13 @@ fn rescore(args: RescoreArgs) -> Result<(usize, Vec<String>), ExecuteError> {
 }
 
 async fn execute(cli: Cli) -> Result<u8, ExecuteError> {
+    execute_with_known_servers(cli, KNOWN_INFERENCE_SERVERS).await
+}
+
+async fn execute_with_known_servers(
+    cli: Cli,
+    known_servers: &[(u16, &str)],
+) -> Result<u8, ExecuteError> {
     match cli.command {
         Command::Run(args) => {
             let scenarios = match args.scenarios {
@@ -319,10 +340,28 @@ async fn execute(cli: Cli) -> Result<u8, ExecuteError> {
             .map_err(|error| ExecuteError::Usage(error.to_string()))?;
             let endpoint =
                 resolve_endpoint(args.server, args.endpoint).map_err(ExecuteError::Usage)?;
+            let occupied = contention_preflight(&endpoint, known_servers)
+                .await
+                .map_err(ExecuteError::Preflight)?;
+            if !occupied.is_empty() && !args.force {
+                let endpoints = occupied
+                    .iter()
+                    .map(|endpoint| format!("{} ({})", endpoint.endpoint, endpoint.server))
+                    .collect::<Vec<_>>()
+                    .join(", ");
+                let stop = if occupied.len() == 1 {
+                    "stop it"
+                } else {
+                    "stop them"
+                };
+                return Err(ExecuteError::Preflight(format!(
+                    "another inference server is responding on {endpoints}; {stop}, or re-run with --force"
+                )));
+            }
             let config = RunConfig::new(endpoint, args.model, Duration::from_secs(args.timeout))
                 .with_server(args.server.config());
             preflight(&config).await.map_err(ExecuteError::Preflight)?;
-            let result = run_scenarios(&config, &scenarios, &args.out)
+            let mut result = run_scenarios(&config, &scenarios, &args.out)
                 .await
                 .map_err(|error| {
                     ExecuteError::Harness(format!(
@@ -330,6 +369,15 @@ async fn execute(cli: Cli) -> Result<u8, ExecuteError> {
                         args.out.display()
                     ))
                 })?;
+            if args.force && !occupied.is_empty() {
+                result.metadata.preflight_override = Some(PreflightOverride {
+                    forced: true,
+                    foreign_endpoints: occupied
+                        .into_iter()
+                        .map(|endpoint| endpoint.endpoint)
+                        .collect(),
+                });
+            }
             write_result_atomic(&args.out, &result).map_err(|error| {
                 ExecuteError::Harness(format!(
                     "failed to write result {}: {error}",
@@ -432,7 +480,9 @@ mod tests {
     };
     use wic_core::ScenarioCategory;
 
-    use super::{resolve_endpoint, Cli, Command, ServerPreset};
+    use super::{
+        execute_with_known_servers, resolve_endpoint, Cli, Command, ExecuteError, ServerPreset,
+    };
 
     #[test]
     fn run_subcommand_parses_m0_arguments() {
@@ -448,6 +498,7 @@ mod tests {
             "--out",
             "result.json",
             "--json",
+            "--force",
         ])
         .expect("run arguments should parse");
 
@@ -460,6 +511,93 @@ mod tests {
         assert_eq!(args.out, PathBuf::from("result.json"));
         assert_eq!(args.timeout, 60);
         assert!(args.json);
+        assert!(args.force);
+    }
+
+    #[tokio::test]
+    async fn contention_refusal_is_exit_three_and_writes_no_result() {
+        let target = tokio::net::TcpListener::bind("127.0.0.1:0")
+            .await
+            .expect("bind target listener");
+        let target_port = target.local_addr().expect("target address").port();
+        let foreign = tokio::net::TcpListener::bind("127.0.0.1:0")
+            .await
+            .expect("bind foreign listener");
+        let foreign_port = foreign.local_addr().expect("foreign address").port();
+        let directory = tempfile::tempdir().expect("temp directory");
+        let output_path = directory.path().join("result.json");
+        let cli = Cli::try_parse_from([
+            "willitcall".to_owned(),
+            "run".to_owned(),
+            "--endpoint".to_owned(),
+            format!("http://127.0.0.1:{target_port}/v1"),
+            "--model".to_owned(),
+            "fixture-model".to_owned(),
+            "--out".to_owned(),
+            output_path.display().to_string(),
+        ])
+        .expect("run arguments should parse");
+
+        let error = execute_with_known_servers(cli, &[(foreign_port, "Test server")])
+            .await
+            .expect_err("foreign listener should refuse the run");
+
+        assert!(matches!(error, ExecuteError::Preflight(_)));
+        assert_eq!(super::EXIT_PREFLIGHT, 3);
+        let ExecuteError::Preflight(message) = error else {
+            unreachable!("checked preflight error")
+        };
+        assert!(message.contains(&format!("127.0.0.1:{foreign_port}")));
+        assert!(message.contains("Test server"));
+        assert!(message.contains("stop it"));
+        assert!(message.contains("--force"));
+        assert!(!output_path.exists());
+    }
+
+    #[tokio::test(flavor = "multi_thread", worker_threads = 2)]
+    async fn force_records_the_contention_override_in_the_result() {
+        let server = crate::support::MockServer::start().await;
+        let foreign = tokio::net::TcpListener::bind("127.0.0.1:0")
+            .await
+            .expect("bind foreign listener");
+        let foreign_port = foreign.local_addr().expect("foreign address").port();
+        let directory = tempfile::tempdir().expect("temp directory");
+        let scenario_path = directory.path().join("scenarios");
+        std::fs::create_dir(&scenario_path).expect("scenario directory");
+        std::fs::write(
+            scenario_path.join("single-weather.toml"),
+            include_str!("../../wic-core/scenarios/single-weather.toml"),
+        )
+        .expect("write scenario");
+        let output_path = directory.path().join("result.json");
+        let cli = Cli::try_parse_from([
+            "willitcall".to_owned(),
+            "run".to_owned(),
+            "--endpoint".to_owned(),
+            server.endpoint(),
+            "--model".to_owned(),
+            "fixture-model".to_owned(),
+            "--scenarios".to_owned(),
+            scenario_path.display().to_string(),
+            "--out".to_owned(),
+            output_path.display().to_string(),
+            "--force".to_owned(),
+        ])
+        .expect("run arguments should parse");
+
+        let code = execute_with_known_servers(cli, &[(foreign_port, "Test server")])
+            .await
+            .expect("force should allow the run");
+
+        assert_eq!(code, 0);
+        let document: serde_json::Value =
+            serde_json::from_slice(&std::fs::read(output_path).expect("result file"))
+                .expect("valid result JSON");
+        assert_eq!(document["metadata"]["preflight_override"]["forced"], true);
+        assert_eq!(
+            document["metadata"]["preflight_override"]["foreign_endpoints"],
+            serde_json::json!([format!("127.0.0.1:{foreign_port}")])
+        );
     }
 
     #[test]
@@ -532,6 +670,7 @@ mod tests {
                     seed: Some(42),
                     max_tokens: Some(1024),
                 },
+                preflight_override: None,
             },
             scenarios: vec![
                 ScenarioOutcome {
@@ -609,6 +748,7 @@ mod tests {
                     seed: None,
                     max_tokens: None,
                 },
+                preflight_override: None,
             },
             scenarios: Vec::new(),
             totals: Totals {

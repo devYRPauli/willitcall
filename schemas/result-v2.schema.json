@@ -60,6 +60,25 @@
         },
         "sampling": {
           "$ref": "#/$defs/sampling_params"
+        },
+        "preflight_override": {
+          "$ref": "#/$defs/preflight_override"
+        }
+      }
+    },
+    "preflight_override": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["forced", "foreign_endpoints"],
+      "properties": {
+        "forced": {
+          "const": true
+        },
+        "foreign_endpoints": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
         }
       }
     },
