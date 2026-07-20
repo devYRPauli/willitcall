@@ -1,0 +1,65 @@
+{
+  "schema_version": 1,
+  "run_id": "20260720T021238Z-9bd3f76b",
+  "scenario_id": "negative-unicode-argument",
+  "turns": [
+    {
+      "index": 0,
+      "request": {
+        "method": "POST",
+        "url": "http://localhost:11434/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "Get the weather for the exact city name München.",
+              "role": "user"
+            }
+          ],
+          "model": "qwen3:4b",
+          "seed": 42,
+          "stream": false,
+          "temperature": 0.0,
+          "tool_choice": "auto",
+          "tools": [
+            {
+              "function": {
+                "description": "Get weather for a city with an optional country code.",
+                "name": "get_weather",
+                "parameters": {
+                  "properties": {
+                    "city": {
+                      "type": "string"
+                    },
+                    "country_code": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "city"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-type": "application/json",
+          "date": "Mon, 20 Jul 2026 02:17:19 GMT",
+          "transfer-encoding": "chunked"
+        },
+        "body_raw": "{\"id\":\"chatcmpl-570\",\"object\":\"chat.completion\",\"created\":1784513839,\"model\":\"qwen3:4b\",\"system_fingerprint\":\"fp_ollama\",\"choices\":[{\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"\",\"reasoning\":\"Okay, the user wants the weather for the exact city name München. Let me check the tools provided.\\n\\nThe function is get_weather, which takes city and optional country code. The city here is München. Wait, München is the German name for Munich. So the city is München, but in some contexts, it might be written as Munich. But the user specified \\\"exact city name München\\\", so I should use that.\\n\\nThe function requires the city as a string. The country code is optional. Since München is in Germany, the country code would be DE. But the user didn't specify the country, just the city name. However, the function might handle it if the city name is unique enough. But in this case, München is a city in Germany, so maybe including the country code DE would be better to avoid ambiguity.\\n\\nWait, the user says \\\"exact city name München\\\". So they want the city name as München, not the English name. So the function call should have city: \\\"München\\\", and maybe country_code: \\\"DE\\\" to specify Germany. But the problem says the user wants the exact city name, so maybe the country code is optional here. Let me see.\\n\\nThe function's parameters are city (string) and country_code (optional string). The user says \\\"exact city name München\\\", so they probably mean the city in Germany. So the correct call would be city: \\\"München\\\", country_code: \\\"DE\\\". But does the function require the country code? The user didn't specify, but since München is a city in Germany, including the country code might be necessary to get the correct weather. However, the function's description says \\\"optional country code\\\", so maybe it's better to include it to avoid ambiguity.\\n\\nWait, but the user says \\\"exact city name München\\\". So they might not care about the country code, but the function might need it. Hmm. Let me think. If I just call get_weather with city \\\"München\\\", the function might still work because München is a well-known city in Germany. But to be precise, maybe the country code is needed. However, the user didn't specify the country, so perhaps the function can handle it without the country code. But in some cases, there might be multiple cities with the same name. For example, München is in Germany, but there's also a München in Austria? Wait, no, München is the German name for Munich, which is in Germany. The Austrian city is called Münich. So probably, the city name \\\"München\\\" is unique to Germany.\\n\\nSo maybe the function call can be made with just the city name \\\"München\\\" and no country code. But the problem says the user wants the exact city name, so the country code is optional. Let me check the function definition again.\\n\\nThe function is get_weather with parameters city (string) and country_code (optional string). So the user says \\\"exact city name München\\\", so the city parameter is \\\"München\\\". The country code is optional. Since the user didn't specify the country, but München is in Germany, maybe the function expects the country code to be DE. But the user didn't mention it, so perhaps the function can handle it without. However, to be safe, including the country code DE might be better.\\n\\nWait, the problem says \\\"exact city name München\\\". So the user is specifying the city name as München, so the country code is not part of the city name. So the function call should have city: \\\"München\\\", and country_code: \\\"DE\\\" to specify Germany. But the user didn't mention the country, so maybe the function can handle it without. Hmm.\\n\\nAlternatively, maybe the function is designed to take the city name in the local language, so München is the German name, so the country code DE is necessary. Let me think. For example, if you call get_weather for \\\"Munich\\\" without country code, it might default to the US, but in this case, the user specified the exact city name as München, which is German. So the country code DE is probably needed.\\n\\nBut the user's instruction says \\\"exact city name München\\\", so they want the city name as München, not the English name. So the function call should be city: \\\"München\\\", country_code: \\\"DE\\\".\\n\\nWait, but the problem says \\\"you may call one or more functions\\\". So I need to make sure. Let me check the function parameters again.\\n\\nThe function get_weather has parameters city (string) and country_code (optional string). So the user wants the city name München. So the arguments would be {\\\"city\\\": \\\"München\\\"} and maybe country_code \\\"DE\\\".\\n\\nBut the user didn't specify the country, so perhaps the function can handle it without. However, in practice, weather APIs often require country codes for cities with the same name. But München is unique to Germany. So maybe it's safe to include DE.\\n\\nAlternatively, the function might not require the country code here because the\"},\"finish_reason\":\"length\"}],\"usage\":{\"prompt_tokens\":152,\"completion_tokens\":1024,\"total_tokens\":1176}}\n"
+      },
+      "retried": false
+    }
+  ]
+}

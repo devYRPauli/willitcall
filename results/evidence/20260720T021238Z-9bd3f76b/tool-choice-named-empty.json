@@ -1,0 +1,69 @@
+{
+  "schema_version": 1,
+  "run_id": "20260720T021238Z-9bd3f76b",
+  "scenario_id": "tool-choice-named-empty",
+  "turns": [
+    {
+      "index": 0,
+      "request": {
+        "method": "POST",
+        "url": "http://localhost:11434/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "Get the current deployment region.",
+              "role": "user"
+            }
+          ],
+          "model": "qwen3:4b",
+          "seed": 42,
+          "stream": false,
+          "temperature": 0.0,
+          "tool_choice": {
+            "function": {
+              "name": "current_region"
+            },
+            "type": "function"
+          },
+          "tools": [
+            {
+              "function": {
+                "description": "Get the current deployment region.",
+                "name": "current_region",
+                "parameters": {
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            },
+            {
+              "function": {
+                "description": "Get the current deployment zone.",
+                "name": "current_zone",
+                "parameters": {
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-length": "1609",
+          "content-type": "application/json",
+          "date": "Mon, 20 Jul 2026 02:22:27 GMT"
+        },
+        "body_raw": "{\"id\":\"chatcmpl-846\",\"object\":\"chat.completion\",\"created\":1784514147,\"model\":\"qwen3:4b\",\"system_fingerprint\":\"fp_ollama\",\"choices\":[{\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"\",\"reasoning\":\"Okay, the user is asking for the current deployment region. Let me check the tools provided.\\n\\nLooking at the tools section, there's a function called current_region that gets the current deployment region. The function signature shows it takes no arguments. The other function is current_zone, but the user wants region, so I don't need that.\\n\\nSo I should call current_region with empty arguments. The tool response is supposed to be a JSON object with the function name and arguments. Since there are no arguments needed, the arguments part will be an empty object.\\n\\nWait, the example in the tools shows the function as {object \\u003cnil\\u003e \\u003cnil\\u003e [] {}} which probably means it's a function that takes no arguments. So the arguments should be {}.\\n\\nI need to make sure to structure the tool_call correctly. The user just wants the region, so I don't need to call current_zone. Just the current_region function.\\n\\nSo the tool_call should be a JSON object with name \\\"current_region\\\" and arguments {}.\\n\\nLet me double-check. The user says \\\"Get the current deployment region.\\\" The function current_region is exactly for that. Yep, so that's the one to call.\\n\",\"tool_calls\":[{\"id\":\"call_aqje0wah\",\"index\":0,\"type\":\"function\",\"function\":{\"name\":\"current_region\",\"arguments\":\"{}\"}}]},\"finish_reason\":\"tool_calls\"}],\"usage\":{\"prompt_tokens\":158,\"completion_tokens\":258,\"total_tokens\":416}}\n"
+      },
+      "retried": false
+    }
+  ]
+}

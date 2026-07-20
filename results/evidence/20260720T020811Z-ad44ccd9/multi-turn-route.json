@@ -1,0 +1,84 @@
+{
+  "schema_version": 1,
+  "run_id": "20260720T020811Z-ad44ccd9",
+  "scenario_id": "multi-turn-route",
+  "turns": [
+    {
+      "index": 0,
+      "request": {
+        "method": "POST",
+        "url": "http://localhost:11434/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "Find a route to Fenway Park.",
+              "role": "user"
+            }
+          ],
+          "model": "qwen3:0.6b",
+          "seed": 42,
+          "stream": false,
+          "temperature": 0.0,
+          "tool_choice": "auto",
+          "tools": [
+            {
+              "function": {
+                "description": "Resolve a place to coordinates.",
+                "name": "geocode",
+                "parameters": {
+                  "properties": {
+                    "place": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "place"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            },
+            {
+              "function": {
+                "description": "Get a route to coordinates.",
+                "name": "get_route",
+                "parameters": {
+                  "properties": {
+                    "latitude": {
+                      "type": "number"
+                    },
+                    "longitude": {
+                      "type": "number"
+                    }
+                  },
+                  "required": [
+                    "latitude",
+                    "longitude"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-length": "1246",
+          "content-type": "application/json",
+          "date": "Mon, 20 Jul 2026 02:08:31 GMT"
+        },
+        "body_raw": "{\"id\":\"chatcmpl-762\",\"object\":\"chat.completion\",\"created\":1784513311,\"model\":\"qwen3:0.6b\",\"system_fingerprint\":\"fp_ollama\",\"choices\":[{\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"\",\"reasoning\":\"Okay, the user is asking to find a route to Fenway Park. Let me think about how to approach this.\\n\\nFirst, I need to figure out the coordinates of Fenway Park. If I can get the latitude and longitude, I can use the get_route function to provide the route. But wait, do I have that information already? Let me check my knowledge. Fenway Park is located in Massachusetts, USA. The coordinates are approximately 42.36 degrees north and 71.05 degrees west. \\n\\nSo, I should use the get_route function with these coordinates. The function requires latitude and longitude as parameters. I'll format the arguments correctly, making sure they are numbers. Once I send that, the tool should return the route details. I don't see any issues here. Let me structure the tool call accordingly.\\n\",\"tool_calls\":[{\"id\":\"call_7wb95zmb\",\"index\":0,\"type\":\"function\",\"function\":{\"name\":\"get_route\",\"arguments\":\"{\\\"longitude\\\":-71.05,\\\"latitude\\\":42.36}\"}}]},\"finish_reason\":\"tool_calls\"}],\"usage\":{\"prompt_tokens\":183,\"completion_tokens\":210,\"total_tokens\":393}}\n"
+      },
+      "retried": false
+    }
+  ]
+}

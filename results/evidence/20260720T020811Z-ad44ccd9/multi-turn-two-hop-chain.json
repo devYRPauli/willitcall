@@ -1,0 +1,98 @@
+{
+  "schema_version": 1,
+  "run_id": "20260720T020811Z-ad44ccd9",
+  "scenario_id": "multi-turn-two-hop-chain",
+  "turns": [
+    {
+      "index": 0,
+      "request": {
+        "method": "POST",
+        "url": "http://localhost:11434/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "Archive the account owned by sam@example.test. Resolve each required id first.",
+              "role": "user"
+            }
+          ],
+          "model": "qwen3:0.6b",
+          "seed": 42,
+          "stream": false,
+          "temperature": 0.0,
+          "tool_choice": "auto",
+          "tools": [
+            {
+              "function": {
+                "description": "Find a user id by exact email.",
+                "name": "find_user",
+                "parameters": {
+                  "properties": {
+                    "email": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "email"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            },
+            {
+              "function": {
+                "description": "Find an account id for a user id.",
+                "name": "find_account",
+                "parameters": {
+                  "properties": {
+                    "user_id": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "user_id"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            },
+            {
+              "function": {
+                "description": "Archive an account by exact id.",
+                "name": "archive_account",
+                "parameters": {
+                  "properties": {
+                    "account_id": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "account_id"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-type": "application/json",
+          "date": "Mon, 20 Jul 2026 02:08:36 GMT",
+          "transfer-encoding": "chunked"
+        },
+        "body_raw": "{\"id\":\"chatcmpl-898\",\"object\":\"chat.completion\",\"created\":1784513316,\"model\":\"qwen3:0.6b\",\"system_fingerprint\":\"fp_ollama\",\"choices\":[{\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"\",\"reasoning\":\"Okay, let's see. The user wants to archive the account owned by sam@example.test. First, I need to figure out the required IDs. The user mentioned resolving each required id first, so maybe they need to find the user id and then the account id.\\n\\nFirst, I should find the user id by their email. The function is find_user, which takes an email. So I'll call that with email sam@example.test. Then, once I have the user id, I need to find the account id using find_account with the user_id. After that, I can use archive_account with the account id. But wait, the user just said to resolve each required id first, so maybe they need to first get the user and account IDs before archiving. So the steps are: find user, find account, archive. But the user's message is a single command, so maybe they want to do all three steps in one go. But the tools are separate functions. So first, call find_user on sam@example.test, then find_account with the user id, then archive_account with the account id. But the user's message is a single instruction, so maybe they just need to perform all three steps. But the assistant's response should be to call each function in order. So the answer should be to first call find_user, then find_account, then archive_account. But the user's message is a single command, so maybe they just need to perform all three steps. So the final answer would be to call each function in sequence.\\n\",\"tool_calls\":[{\"id\":\"call_ul6htg8k\",\"index\":0,\"type\":\"function\",\"function\":{\"name\":\"find_user\",\"arguments\":\"{\\\"email\\\":\\\"sam@example.test\\\"}\"}},{\"id\":\"call_oqw6mkl3\",\"index\":1,\"type\":\"function\",\"function\":{\"name\":\"find_account\",\"arguments\":\"{\\\"user_id\\\":\\\"sam@example.test\\\"}\"}},{\"id\":\"call_urnnwplr\",\"index\":2,\"type\":\"function\",\"function\":{\"name\":\"archive_account\",\"arguments\":\"{\\\"account_id\\\":\\\"sam@example.test\\\"}\"}}]},\"finish_reason\":\"tool_calls\"}],\"usage\":{\"prompt_tokens\":231,\"completion_tokens\":385,\"total_tokens\":616}}\n"
+      },
+      "retried": false
+    }
+  ]
+}

@@ -1,0 +1,66 @@
+{
+  "schema_version": 1,
+  "run_id": "20260720T021238Z-9bd3f76b",
+  "scenario_id": "negative-invalid-schema",
+  "turns": [
+    {
+      "index": 0,
+      "request": {
+        "method": "POST",
+        "url": "http://localhost:11434/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "Set the temperature unit to kelvin. If the schema cannot express it, explain that in plain text without calling a tool.",
+              "role": "user"
+            }
+          ],
+          "model": "qwen3:4b",
+          "seed": 42,
+          "stream": false,
+          "temperature": 0.0,
+          "tool_choice": "auto",
+          "tools": [
+            {
+              "function": {
+                "description": "Set one supported temperature unit.",
+                "name": "set_temperature_unit",
+                "parameters": {
+                  "properties": {
+                    "unit": {
+                      "enum": [
+                        "celsius",
+                        "fahrenheit"
+                      ],
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "unit"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-length": "1081",
+          "content-type": "application/json",
+          "date": "Mon, 20 Jul 2026 02:16:22 GMT"
+        },
+        "body_raw": "{\"id\":\"chatcmpl-816\",\"object\":\"chat.completion\",\"created\":1784513782,\"model\":\"qwen3:4b\",\"system_fingerprint\":\"fp_ollama\",\"choices\":[{\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"The function `set_temperature_unit` only supports Celsius (\\\"celsius\\\") and Fahrenheit (\\\"fahrenheit\\\") as temperature units. Kelvin is not among the supported units, so I cannot set the temperature unit to kelvin using this tool.\",\"reasoning\":\"Okay, let's see. The user wants to set the temperature unit to kelvin. But looking at the tools provided, the function set_temperature_unit only supports celsius or fahrenheit as the unit. The enum for the unit is [\\\"celsius\\\", \\\"fahrenheit\\\"]. Kelvin isn't listed there.\\n\\nSo, I can't use the tool because the tool doesn't support kelvin. I need to explain that in plain text. The user might not know that the available units are only celsius and fahrenheit. I should mention that the function doesn't support kelvin and list the available units.\\n\"},\"finish_reason\":\"stop\"}],\"usage\":{\"prompt_tokens\":165,\"completion_tokens\":170,\"total_tokens\":335}}\n"
+      },
+      "retried": false
+    }
+  ]
+}

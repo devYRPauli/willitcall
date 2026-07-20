@@ -1,0 +1,69 @@
+{
+  "schema_version": 1,
+  "run_id": "20260720T020938Z-e62601da",
+  "scenario_id": "tool-choice-named-empty",
+  "turns": [
+    {
+      "index": 0,
+      "request": {
+        "method": "POST",
+        "url": "http://localhost:11434/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "Get the current deployment region.",
+              "role": "user"
+            }
+          ],
+          "model": "qwen3:1.7b",
+          "seed": 42,
+          "stream": false,
+          "temperature": 0.0,
+          "tool_choice": {
+            "function": {
+              "name": "current_region"
+            },
+            "type": "function"
+          },
+          "tools": [
+            {
+              "function": {
+                "description": "Get the current deployment region.",
+                "name": "current_region",
+                "parameters": {
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            },
+            {
+              "function": {
+                "description": "Get the current deployment zone.",
+                "name": "current_zone",
+                "parameters": {
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-length": "887",
+          "content-type": "application/json",
+          "date": "Mon, 20 Jul 2026 02:12:22 GMT"
+        },
+        "body_raw": "{\"id\":\"chatcmpl-747\",\"object\":\"chat.completion\",\"created\":1784513542,\"model\":\"qwen3:1.7b\",\"system_fingerprint\":\"fp_ollama\",\"choices\":[{\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"\",\"reasoning\":\"Okay, the user is asking to get the current deployment region. Let me check the available tools. There's a function called current_region that retrieves the current region. I need to call that function. Since the user didn't specify any particular parameters, I'll just call the function without any arguments. The response should be a JSON object with the function name and empty arguments. I'll make sure to format it correctly within the tool_call tags.\\n\",\"tool_calls\":[{\"id\":\"call_zgio4dra\",\"index\":0,\"type\":\"function\",\"function\":{\"name\":\"current_region\",\"arguments\":\"{}\"}}]},\"finish_reason\":\"tool_calls\"}],\"usage\":{\"prompt_tokens\":158,\"completion_tokens\":109,\"total_tokens\":267}}\n"
+      },
+      "retried": false
+    }
+  ]
+}

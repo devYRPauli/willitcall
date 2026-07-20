@@ -1,0 +1,66 @@
+{
+  "schema_version": 1,
+  "run_id": "20260720T023249Z-83fa5c19",
+  "scenario_id": "single-decimal-price",
+  "turns": [
+    {
+      "index": 0,
+      "request": {
+        "method": "POST",
+        "url": "http://localhost:11434/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "Set the price of SKU AX-9 to exactly 19.95.",
+              "role": "user"
+            }
+          ],
+          "model": "llama3.1:8b",
+          "seed": 42,
+          "stream": false,
+          "temperature": 0.0,
+          "tool_choice": "auto",
+          "tools": [
+            {
+              "function": {
+                "description": "Set the price of a product.",
+                "name": "set_price",
+                "parameters": {
+                  "properties": {
+                    "price": {
+                      "type": "number"
+                    },
+                    "sku": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "sku",
+                    "price"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-length": "441",
+          "content-type": "application/json",
+          "date": "Mon, 20 Jul 2026 02:34:18 GMT"
+        },
+        "body_raw": "{\"id\":\"chatcmpl-811\",\"object\":\"chat.completion\",\"created\":1784514858,\"model\":\"llama3.1:8b\",\"system_fingerprint\":\"fp_ollama\",\"choices\":[{\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"\",\"tool_calls\":[{\"id\":\"call_qjn6upn5\",\"index\":0,\"type\":\"function\",\"function\":{\"name\":\"set_price\",\"arguments\":\"{\\\"sku\\\":\\\"AX-9\\\",\\\"price\\\":19.95}\"}}]},\"finish_reason\":\"tool_calls\"}],\"usage\":{\"prompt_tokens\":174,\"completion_tokens\":27,\"total_tokens\":201}}\n"
+      },
+      "retried": false
+    }
+  ]
+}

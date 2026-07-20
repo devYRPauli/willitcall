@@ -1,0 +1,66 @@
+{
+  "schema_version": 1,
+  "run_id": "20260720T022254Z-1c879a7b",
+  "scenario_id": "single-zero-and-negative",
+  "turns": [
+    {
+      "index": 0,
+      "request": {
+        "method": "POST",
+        "url": "http://localhost:11434/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "Set the axis range from -12.5 to 0.",
+              "role": "user"
+            }
+          ],
+          "model": "qwen3:8b",
+          "seed": 42,
+          "stream": false,
+          "temperature": 0.0,
+          "tool_choice": "auto",
+          "tools": [
+            {
+              "function": {
+                "description": "Set an axis range.",
+                "name": "set_axis_range",
+                "parameters": {
+                  "properties": {
+                    "maximum": {
+                      "type": "number"
+                    },
+                    "minimum": {
+                      "type": "number"
+                    }
+                  },
+                  "required": [
+                    "minimum",
+                    "maximum"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-length": "998",
+          "content-type": "application/json",
+          "date": "Mon, 20 Jul 2026 02:31:07 GMT"
+        },
+        "body_raw": "{\"id\":\"chatcmpl-911\",\"object\":\"chat.completion\",\"created\":1784514667,\"model\":\"qwen3:8b\",\"system_fingerprint\":\"fp_ollama\",\"choices\":[{\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"\",\"reasoning\":\"Okay, the user wants to set the axis range from -12.5 to 0. Let me check the available tools. There's a function called set_axis_range that takes minimum and maximum parameters. The arguments should be numbers. So I need to call that function with minimum as -12.5 and maximum as 0. Let me make sure the JSON structure is correct. The function name is set_axis_range, and the arguments should be a JSON object with \\\"minimum\\\" and \\\"maximum\\\" keys. Yep, that's right. No other tools are needed here. I'll format the tool call accordingly.\\n\",\"tool_calls\":[{\"id\":\"call_z7dkenpw\",\"index\":0,\"type\":\"function\",\"function\":{\"name\":\"set_axis_range\",\"arguments\":\"{\\\"minimum\\\":-12.5,\\\"maximum\\\":0}\"}}]},\"finish_reason\":\"tool_calls\"}],\"usage\":{\"prompt_tokens\":151,\"completion_tokens\":160,\"total_tokens\":311}}\n"
+      },
+      "retried": false
+    }
+  ]
+}

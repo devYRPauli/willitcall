@@ -1,0 +1,84 @@
+{
+  "schema_version": 1,
+  "run_id": "20260720T022254Z-1c879a7b",
+  "scenario_id": "multi-turn-inventory-order",
+  "turns": [
+    {
+      "index": 0,
+      "request": {
+        "method": "POST",
+        "url": "http://localhost:11434/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "Check inventory for SKU QZ-4 and order exactly 3 if available.",
+              "role": "user"
+            }
+          ],
+          "model": "qwen3:8b",
+          "seed": 42,
+          "stream": false,
+          "temperature": 0.0,
+          "tool_choice": "auto",
+          "tools": [
+            {
+              "function": {
+                "description": "Check inventory for a SKU.",
+                "name": "check_inventory",
+                "parameters": {
+                  "properties": {
+                    "sku": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "sku"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            },
+            {
+              "function": {
+                "description": "Create an order for a SKU and quantity.",
+                "name": "create_order",
+                "parameters": {
+                  "properties": {
+                    "quantity": {
+                      "type": "integer"
+                    },
+                    "sku": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "sku",
+                    "quantity"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-type": "application/json",
+          "date": "Mon, 20 Jul 2026 02:24:49 GMT",
+          "transfer-encoding": "chunked"
+        },
+        "body_raw": "{\"id\":\"chatcmpl-607\",\"object\":\"chat.completion\",\"created\":1784514289,\"model\":\"qwen3:8b\",\"system_fingerprint\":\"fp_ollama\",\"choices\":[{\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"\",\"reasoning\":\"Okay, let's see. The user wants to check the inventory for SKU QZ-4 and order exactly 3 if available. So first, I need to figure out which functions to use here. The available tools are check_inventory and create_order.\\n\\nFirst step is to check the inventory for SKU QZ-4. The check_inventory function takes the sku as an argument. So I should call that function with sku \\\"QZ-4\\\". Once I get the inventory status, I need to determine if there's enough stock. If the quantity available is 3 or more, then proceed to create the order. \\n\\nBut wait, the user specified \\\"order exactly 3 if available\\\". So even if there's more than 3, they want exactly 3. So after checking, if the inventory is sufficient, then call create_order with sku QZ-4 and quantity 3. \\n\\nHowever, the problem is that the functions are separate. The check_inventory might return the current stock, but the user's instruction is to first check and then order if possible. But since the functions are separate, I need to handle this in steps. \\n\\nBut in the current setup, each tool call is separate. So first, I need to call check_inventory for QZ-4. Then, based on the result, decide whether to call create_order. However, in the context of this system, each turn might require a single tool call. Wait, the user's message is a single query, so maybe I need to handle both steps in one go? But the functions are separate. \\n\\nWait, the user's instruction is to check inventory and then order if available. So the correct approach is first check the inventory. If the inventory is sufficient, then create the order. But since the functions are separate, I need to first call check_inventory. However, in the current setup, the assistant can only make one tool call per response. So perhaps the user expects that the assistant will first check the inventory, and then if available, create the order. But since the assistant can't execute multiple steps in one response, maybe the user's query is to be handled in two steps. \\n\\nBut the user is asking for a single action: check inventory and order if possible. However, the functions are separate. So the correct approach is to first check the inventory. If the inventory is sufficient, then create the order. But since the assistant can only make one tool call at a time, perhaps the user's query is to be split into two steps. However, the user might be expecting that both actions are performed. \\n\\nWait, looking back at the problem, the user says \\\"Check inventory for SKU QZ-4 and order exactly 3 if available.\\\" So the user wants both actions: check and order. But the functions are separate. So the assistant needs to first check the inventory. If the inventory is sufficient, then proceed to create the order. However, since the assistant can't know the result of the check_inventory before calling it, the first step is to call check_inventory. Then, based on the result, decide whether to call create_order. \\n\\nBut in the context of this problem, the assistant is supposed to generate the tool calls. So the first step is to call check_inventory for SKU QZ-4. Then, if the inventory is sufficient, call create_order. But since the assistant can only make one tool call per response, perhaps the user's query is to be handled in two steps. However, the user's message is a single query, so maybe the assistant is supposed to chain the calls. \\n\\nBut according to the instructions, the assistant can call one or more functions. Wait, the initial instructions say \\\"You may call one or more functions to assist with the user query.\\\" So the assistant can make multiple function calls in one response. Wait, no. Wait, the user's message is a single query, and the assistant is supposed to generate the tool calls. But in the example, each tool call is in its own XML tag. So perhaps the assistant can make multiple tool calls in one response. \\n\\nWait, looking at the example in the tools section, the user might have multiple steps. For example, first check inventory, then create order. So the assistant would first call check_inventory, then if the result is sufficient, call create_order. But since the assistant can't know the result of check_inventory before making the call, perhaps the assistant needs to make both calls. But that's not possible. \\n\\nAlternatively, maybe the assistant is supposed to first check the inventory, and then based on that, decide to create the order. However, since the assistant can't execute multiple steps, perhaps the correct approach is to first call check_inventory, and then in a subsequent step, call create_order if needed. But the user's query is a single request. \\n\\nHmm, this is a bit confusing. Let me re-examine the problem. The user wants to check inventory for SKU QZ-4 and order exactly 3\"},\"finish_reason\":\"length\"}],\"usage\":{\"prompt_tokens\":194,\"completion_tokens\":1024,\"total_tokens\":1218}}\n"
+      },
+      "retried": false
+    }
+  ]
+}

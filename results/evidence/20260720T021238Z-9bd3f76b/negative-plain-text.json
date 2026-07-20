@@ -1,0 +1,66 @@
+{
+  "schema_version": 1,
+  "run_id": "20260720T021238Z-9bd3f76b",
+  "scenario_id": "negative-plain-text",
+  "turns": [
+    {
+      "index": 0,
+      "request": {
+        "method": "POST",
+        "url": "http://localhost:11434/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "In one plain text sentence, explain why leaves are green. Do not send email.",
+              "role": "user"
+            }
+          ],
+          "model": "qwen3:4b",
+          "seed": 42,
+          "stream": false,
+          "temperature": 0.0,
+          "tool_choice": "auto",
+          "tools": [
+            {
+              "function": {
+                "description": "Send an email to an exact address.",
+                "name": "send_email",
+                "parameters": {
+                  "properties": {
+                    "address": {
+                      "type": "string"
+                    },
+                    "body": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "address",
+                    "body"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-length": "1887",
+          "content-type": "application/json",
+          "date": "Mon, 20 Jul 2026 02:16:52 GMT"
+        },
+        "body_raw": "{\"id\":\"chatcmpl-26\",\"object\":\"chat.completion\",\"created\":1784513812,\"model\":\"qwen3:4b\",\"system_fingerprint\":\"fp_ollama\",\"choices\":[{\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"Leaves are green because they contain chlorophyll, a pigment that reflects green light while absorbing other wavelengths for photosynthesis.\",\"reasoning\":\"Okay, the user wants a plain text sentence explaining why leaves are green without sending an email. Let me check the tools provided. The only tool available is send_email, which requires an address and body. But the user said not to send an email, so I shouldn't use that function. The task is to explain why leaves are green in one sentence.\\n\\nHmm, the answer should be straightforward. Leaves are green because of chlorophyll, which absorbs red and blue light and reflects green. So the sentence would be something like: \\\"Leaves are green because they contain chlorophyll, a pigment that reflects green light and absorbs other wavelengths for photosynthesis.\\\"\\n\\nWait, the user said \\\"in one plain text sentence\\\" and \\\"do not send email\\\". Since the tools don't have any other functions besides send_email, and the user specified not to send an email, I don't need to call any tool. Just provide the answer directly. The instructions say to call functions if needed, but here it's not needed. So I should output the sentence without any tool calls.\\n\\nLet me make sure. The user says \\\"Do not send email\\\", so the assistant shouldn't use the send_email function. The tools section shows that send_email is the only function, but since the user doesn't want an email, I don't have to call it. So the response is just the sentence.\\n\\nYes, so the answer is the sentence explaining chlorophyll and photosynthesis. Let me phrase it concisely.\\n\"},\"finish_reason\":\"stop\"}],\"usage\":{\"prompt_tokens\":156,\"completion_tokens\":332,\"total_tokens\":488}}\n"
+      },
+      "retried": false
+    }
+  ]
+}

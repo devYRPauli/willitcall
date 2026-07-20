@@ -1,0 +1,92 @@
+{
+  "schema_version": 1,
+  "run_id": "20260720T020811Z-ad44ccd9",
+  "scenario_id": "parallel-two-multiple-args",
+  "turns": [
+    {
+      "index": 0,
+      "request": {
+        "method": "POST",
+        "url": "http://localhost:11434/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "Book room Cedar on 2026-09-02 at hour 14 and reserve a car in Boise on 2026-09-03.",
+              "role": "user"
+            }
+          ],
+          "model": "qwen3:0.6b",
+          "seed": 42,
+          "stream": false,
+          "temperature": 0.0,
+          "tool_choice": "required",
+          "tools": [
+            {
+              "function": {
+                "description": "Book a room for an exact date and hour.",
+                "name": "book_room",
+                "parameters": {
+                  "properties": {
+                    "date": {
+                      "type": "string"
+                    },
+                    "hour": {
+                      "type": "integer"
+                    },
+                    "room": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "room",
+                    "date",
+                    "hour"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            },
+            {
+              "function": {
+                "description": "Reserve a car in a city for an exact date.",
+                "name": "reserve_car",
+                "parameters": {
+                  "properties": {
+                    "city": {
+                      "type": "string"
+                    },
+                    "date": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "city",
+                    "date"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-length": "1570",
+          "content-type": "application/json",
+          "date": "Mon, 20 Jul 2026 02:08:54 GMT"
+        },
+        "body_raw": "{\"id\":\"chatcmpl-850\",\"object\":\"chat.completion\",\"created\":1784513334,\"model\":\"qwen3:0.6b\",\"system_fingerprint\":\"fp_ollama\",\"choices\":[{\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"\",\"reasoning\":\"Okay, let me break this down. The user wants to book a room at Cedar on 2026-09-02 at 14:00 and reserve a car in Boise on 2026-09-03. \\n\\nFirst, I need to check the available functions. There's a book_room function that takes a date and hour, and a reserve_car function that takes a city and date. Both functions require exact dates and times. \\n\\nFor the room booking at Cedar, the date is 2026-09-02 and the hour is 14. The function needs the date and hour as parameters. The reserve_car function requires the city and date. The user specified both, so I should handle each separately.\\n\\nWait, the user mentioned both actions, so I need to make two separate tool calls. Each function call should be in its own XML tag. Let me structure each one correctly. \\n\\nFirst, call book_room with date \\\"2026-09-02\\\" and hour 14. Then, call reserve_car with city \\\"Boise\\\" and date \\\"2026-09-03\\\". Make sure the JSON is properly formatted with the correct keys and values.\\n\",\"tool_calls\":[{\"id\":\"call_dni94pc8\",\"index\":0,\"type\":\"function\",\"function\":{\"name\":\"book_room\",\"arguments\":\"{\\\"date\\\":\\\"2026-09-02\\\",\\\"hour\\\":14}\"}},{\"id\":\"call_kc57j4no\",\"index\":1,\"type\":\"function\",\"function\":{\"name\":\"reserve_car\",\"arguments\":\"{\\\"date\\\":\\\"2026-09-03\\\",\\\"city\\\":\\\"Boise\\\"}\"}}]},\"finish_reason\":\"tool_calls\"}],\"usage\":{\"prompt_tokens\":237,\"completion_tokens\":338,\"total_tokens\":575}}\n"
+      },
+      "retried": false
+    }
+  ]
+}

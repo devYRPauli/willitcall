@@ -1,0 +1,62 @@
+{
+  "schema_version": 1,
+  "run_id": "20260720T020811Z-ad44ccd9",
+  "scenario_id": "negative-auto-arithmetic",
+  "turns": [
+    {
+      "index": 0,
+      "request": {
+        "method": "POST",
+        "url": "http://localhost:11434/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "What is 19 plus 23? Answer without using a tool.",
+              "role": "user"
+            }
+          ],
+          "model": "qwen3:0.6b",
+          "seed": 42,
+          "stream": false,
+          "temperature": 0.0,
+          "tool_choice": "auto",
+          "tools": [
+            {
+              "function": {
+                "description": "Get weather for a city.",
+                "name": "get_weather",
+                "parameters": {
+                  "properties": {
+                    "city": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "city"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-length": "633",
+          "content-type": "application/json",
+          "date": "Mon, 20 Jul 2026 02:08:37 GMT"
+        },
+        "body_raw": "{\"id\":\"chatcmpl-972\",\"object\":\"chat.completion\",\"created\":1784513317,\"model\":\"qwen3:0.6b\",\"system_fingerprint\":\"fp_ollama\",\"choices\":[{\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"42\",\"reasoning\":\"Okay, the user is asking, \\\"What is 19 plus 23? Answer without using a tool.\\\" Let me think. They want the sum of 19 and 23, and they specified not to use any tools. Since there's no math tool provided, I need to calculate it directly. Adding 19 and 23 would give 42. I should just state the answer without using any functions.\\n\"},\"finish_reason\":\"stop\"}],\"usage\":{\"prompt_tokens\":146,\"completion_tokens\":97,\"total_tokens\":243}}\n"
+      },
+      "retried": false
+    }
+  ]
+}

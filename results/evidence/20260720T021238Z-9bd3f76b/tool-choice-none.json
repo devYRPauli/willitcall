@@ -1,0 +1,62 @@
+{
+  "schema_version": 1,
+  "run_id": "20260720T021238Z-9bd3f76b",
+  "scenario_id": "tool-choice-none",
+  "turns": [
+    {
+      "index": 0,
+      "request": {
+        "method": "POST",
+        "url": "http://localhost:11434/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "Reply with the exact text: no tools",
+              "role": "user"
+            }
+          ],
+          "model": "qwen3:4b",
+          "seed": 42,
+          "stream": false,
+          "temperature": 0.0,
+          "tool_choice": "none",
+          "tools": [
+            {
+              "function": {
+                "description": "Get weather for a city.",
+                "name": "get_weather",
+                "parameters": {
+                  "properties": {
+                    "city": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "city"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-length": "1175",
+          "content-type": "application/json",
+          "date": "Mon, 20 Jul 2026 02:22:33 GMT"
+        },
+        "body_raw": "{\"id\":\"chatcmpl-698\",\"object\":\"chat.completion\",\"created\":1784514153,\"model\":\"qwen3:4b\",\"system_fingerprint\":\"fp_ollama\",\"choices\":[{\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"no tools\",\"reasoning\":\"Okay, let's see. The user wants me to reply with the exact text \\\"no tools\\\". Hmm, the tools provided here are for getting weather for a city. But the user isn't asking for weather; they just want that specific text.\\n\\nWait, the instructions say I can call one or more functions if needed. But in this case, the user isn't requesting any weather data. They're explicitly telling me to reply with \\\"no tools\\\". So I shouldn't use any of the functions. The function available is get_weather, but since the user isn't asking for that, I don't need to call it. \\n\\nThe problem says to reply with the exact text \\\"no tools\\\". So I should just output that without using any tools. The tools section shows a function, but the user's query doesn't require it. Therefore, I don't need to make any tool calls here. The correct response is to say \\\"no tools\\\" as instructed.\\n\"},\"finish_reason\":\"stop\"}],\"usage\":{\"prompt_tokens\":138,\"completion_tokens\":199,\"total_tokens\":337}}\n"
+      },
+      "retried": false
+    }
+  ]
+}

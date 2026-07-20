@@ -1,0 +1,180 @@
+{
+  "schema_version": 1,
+  "run_id": "20260720T022254Z-1c879a7b",
+  "scenario_id": "multi-turn-route",
+  "turns": [
+    {
+      "index": 0,
+      "request": {
+        "method": "POST",
+        "url": "http://localhost:11434/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "Find a route to Fenway Park.",
+              "role": "user"
+            }
+          ],
+          "model": "qwen3:8b",
+          "seed": 42,
+          "stream": false,
+          "temperature": 0.0,
+          "tool_choice": "auto",
+          "tools": [
+            {
+              "function": {
+                "description": "Resolve a place to coordinates.",
+                "name": "geocode",
+                "parameters": {
+                  "properties": {
+                    "place": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "place"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            },
+            {
+              "function": {
+                "description": "Get a route to coordinates.",
+                "name": "get_route",
+                "parameters": {
+                  "properties": {
+                    "latitude": {
+                      "type": "number"
+                    },
+                    "longitude": {
+                      "type": "number"
+                    }
+                  },
+                  "required": [
+                    "latitude",
+                    "longitude"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-length": "1338",
+          "content-type": "application/json",
+          "date": "Mon, 20 Jul 2026 02:25:30 GMT"
+        },
+        "body_raw": "{\"id\":\"chatcmpl-205\",\"object\":\"chat.completion\",\"created\":1784514330,\"model\":\"qwen3:8b\",\"system_fingerprint\":\"fp_ollama\",\"choices\":[{\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"\",\"reasoning\":\"Okay, the user wants to find a route to Fenway Park. Let me think about how to approach this. First, I need to figure out the coordinates of Fenway Park. The tools provided include a geocode function that resolves a place to coordinates. So I should start by using that. The geocode function takes a place name as a string. Once I have the coordinates, I can then use the get_route function to get the route. But wait, the get_route function requires latitude and longitude as numbers. So the steps are: call geocode with \\\"Fenway Park\\\" to get the coordinates, then pass those coordinates to get_route. But the user's query is just asking for a route, so maybe I need to first get the coordinates. Let me check if there's any ambiguity. Fenway Park is a specific location in Boston, so the geocode should resolve it correctly. Alright, first tool call is geocode with place \\\"Fenway Park\\\".\\n\",\"tool_calls\":[{\"id\":\"call_c3dv985v\",\"index\":0,\"type\":\"function\",\"function\":{\"name\":\"geocode\",\"arguments\":\"{\\\"place\\\":\\\"Fenway Park\\\"}\"}}]},\"finish_reason\":\"tool_calls\"}],\"usage\":{\"prompt_tokens\":183,\"completion_tokens\":226,\"total_tokens\":409}}\n"
+      },
+      "retried": false
+    },
+    {
+      "index": 1,
+      "request": {
+        "method": "POST",
+        "url": "http://localhost:11434/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "Find a route to Fenway Park.",
+              "role": "user"
+            },
+            {
+              "content": "",
+              "role": "assistant",
+              "tool_calls": [
+                {
+                  "function": {
+                    "arguments": "{\"place\":\"Fenway Park\"}",
+                    "name": "geocode"
+                  },
+                  "id": "call_c3dv985v",
+                  "type": "function"
+                }
+              ]
+            },
+            {
+              "content": "{\"latitude\":42.3467,\"longitude\":-71.0972}",
+              "role": "tool",
+              "tool_call_id": "call_c3dv985v"
+            }
+          ],
+          "model": "qwen3:8b",
+          "seed": 42,
+          "stream": false,
+          "temperature": 0.0,
+          "tool_choice": "auto",
+          "tools": [
+            {
+              "function": {
+                "description": "Resolve a place to coordinates.",
+                "name": "geocode",
+                "parameters": {
+                  "properties": {
+                    "place": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "place"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            },
+            {
+              "function": {
+                "description": "Get a route to coordinates.",
+                "name": "get_route",
+                "parameters": {
+                  "properties": {
+                    "latitude": {
+                      "type": "number"
+                    },
+                    "longitude": {
+                      "type": "number"
+                    }
+                  },
+                  "required": [
+                    "latitude",
+                    "longitude"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-length": "1138",
+          "content-type": "application/json",
+          "date": "Mon, 20 Jul 2026 02:25:40 GMT"
+        },
+        "body_raw": "{\"id\":\"chatcmpl-325\",\"object\":\"chat.completion\",\"created\":1784514340,\"model\":\"qwen3:8b\",\"system_fingerprint\":\"fp_ollama\",\"choices\":[{\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"\",\"reasoning\":\"Okay, the user asked for a route to Fenway Park. First, I needed to get the coordinates of Fenway Park. So I called the geocode function with \\\"Fenway Park\\\" as the place. The response gave me the latitude 42.3467 and longitude -71.0972. Now that I have the coordinates, the next step is to use the get_route function. I should pass these coordinates as arguments. Let me make sure the parameters are in the correct order: latitude first, then longitude. Yep, that's right. So I'll structure the tool call with those values. The user probably wants directions, so this should provide the necessary info. I'll format the JSON properly and enclose it in the tool_call tags.\\n\",\"tool_calls\":[{\"id\":\"call_tf13zjij\",\"index\":0,\"type\":\"function\",\"function\":{\"name\":\"get_route\",\"arguments\":\"{\\\"latitude\\\":42.3467,\\\"longitude\\\":-71.0972}\"}}]},\"finish_reason\":\"tool_calls\"}],\"usage\":{\"prompt_tokens\":238,\"completion_tokens\":199,\"total_tokens\":437}}\n"
+      },
+      "retried": false
+    }
+  ]
+}

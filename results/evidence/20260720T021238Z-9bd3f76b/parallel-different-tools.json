@@ -1,0 +1,80 @@
+{
+  "schema_version": 1,
+  "run_id": "20260720T021238Z-9bd3f76b",
+  "scenario_id": "parallel-different-tools",
+  "turns": [
+    {
+      "index": 0,
+      "request": {
+        "method": "POST",
+        "url": "http://localhost:11434/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "Get the weather in Oslo and the local time in Cairo.",
+              "role": "user"
+            }
+          ],
+          "model": "qwen3:4b",
+          "seed": 42,
+          "stream": false,
+          "temperature": 0.0,
+          "tool_choice": "required",
+          "tools": [
+            {
+              "function": {
+                "description": "Get weather for a city.",
+                "name": "get_weather",
+                "parameters": {
+                  "properties": {
+                    "city": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "city"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            },
+            {
+              "function": {
+                "description": "Get local time for a city.",
+                "name": "get_time",
+                "parameters": {
+                  "properties": {
+                    "city": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "city"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-type": "application/json",
+          "date": "Mon, 20 Jul 2026 02:17:40 GMT",
+          "transfer-encoding": "chunked"
+        },
+        "body_raw": "{\"id\":\"chatcmpl-370\",\"object\":\"chat.completion\",\"created\":1784513860,\"model\":\"qwen3:4b\",\"system_fingerprint\":\"fp_ollama\",\"choices\":[{\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"\",\"reasoning\":\"Okay, let's see. The user wants the weather in Oslo and the local time in Cairo. I need to check the tools provided.\\n\\nFirst, there's the get_weather function which takes a city as a string. So for Oslo, I should call get_weather with city \\\"Oslo\\\".\\n\\nThen, the get_time function also takes a city. For Cairo, I need to call get_time with city \\\"Cairo\\\".\\n\\nWait, the tools are two separate functions. So I need to make two tool calls here. Let me make sure the parameters are correct.\\n\\nThe user said \\\"Get the weather in Oslo and the local time in Cairo.\\\" So two separate requests. Each function call needs to be in its own tool_call tag.\\n\\nFirst tool call: get_weather with city Oslo.\\n\\nSecond tool call: get_time with city Cairo.\\n\\nI should structure each as a JSON object inside the tool_call tags. Let me check the function definitions again.\\n\\nThe get_weather function has arguments { \\\"city\\\": \\\"string\\\" }, same for get_time. So the arguments are just the city names.\\n\\nSo for Oslo: {\\\"city\\\": \\\"Oslo\\\"}\\n\\nFor Cairo: {\\\"city\\\": \\\"Cairo\\\"}\\n\\nI need to output two tool_call blocks. Each with the respective function name and arguments.\\n\\nWait, the user might have meant the local time in Cairo, so the city is Cairo. Yes.\\n\\nSo the two tool calls are:\\n\\n1. get_weather with city Oslo\\n\\n2. get: get_time with city Cairo\\n\\nI think that's it. Let me write the JSON for each.\\n\\nFirst tool_call:\\n\\n{\\n  \\\"name\\\": \\\"get_weather\\\",\\n  \\\"arguments\\\": {\\n    \\\"city\\\": \\\"Oslo\\\"\\n  }\\n}\\n\\nSecond tool_call:\\n\\n{\\n  \\\"name\\\": \\\"get_time\\\",\\n  \\\"arguments\\\": {\\n    \\\"city\\\": \\\"Cairo\\\"\\n  }\\n}\\n\\nYes, that should do it. Let me make sure the JSON is correctly formatted. The city names are in the correct case, Oslo and Cairo. The functions are named correctly as per the tools provided.\\n\\nNo other parameters needed. So the answer should be two tool_call blocks.\\n\",\"tool_calls\":[{\"id\":\"call_13e37ly7\",\"index\":0,\"type\":\"function\",\"function\":{\"name\":\"get_weather\",\"arguments\":\"{\\\"city\\\":\\\"Oslo\\\"}\"}},{\"id\":\"call_jnxybuq0\",\"index\":1,\"type\":\"function\",\"function\":{\"name\":\"get_time\",\"arguments\":\"{\\\"city\\\":\\\"Cairo\\\"}\"}}]},\"finish_reason\":\"tool_calls\"}],\"usage\":{\"prompt_tokens\":181,\"completion_tokens\":474,\"total_tokens\":655}}\n"
+      },
+      "retried": false
+    }
+  ]
+}

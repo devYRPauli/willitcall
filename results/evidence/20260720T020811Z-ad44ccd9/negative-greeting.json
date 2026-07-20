@@ -1,0 +1,62 @@
+{
+  "schema_version": 1,
+  "run_id": "20260720T020811Z-ad44ccd9",
+  "scenario_id": "negative-greeting",
+  "turns": [
+    {
+      "index": 0,
+      "request": {
+        "method": "POST",
+        "url": "http://localhost:11434/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "Say hello in one short sentence.",
+              "role": "user"
+            }
+          ],
+          "model": "qwen3:0.6b",
+          "seed": 42,
+          "stream": false,
+          "temperature": 0.0,
+          "tool_choice": "none",
+          "tools": [
+            {
+              "function": {
+                "description": "Get the current weather for a city.",
+                "name": "get_weather",
+                "parameters": {
+                  "properties": {
+                    "city": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "city"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-length": "721",
+          "content-type": "application/json",
+          "date": "Mon, 20 Jul 2026 02:08:38 GMT"
+        },
+        "body_raw": "{\"id\":\"chatcmpl-723\",\"object\":\"chat.completion\",\"created\":1784513318,\"model\":\"qwen3:0.6b\",\"system_fingerprint\":\"fp_ollama\",\"choices\":[{\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"Hello! 🌟 How can I assist you today?\",\"reasoning\":\"Okay, the user wants to say hello in one short sentence. Let me think. The tools provided are for getting the current weather, so maybe I should use that. But the user's request is just a greeting. Wait, the tools only include the weather function. There's no other tool here. So I can't use any other functions. I need to respond directly. Just say \\\"Hello!\\\" in one sentence.\\n\"},\"finish_reason\":\"stop\"}],\"usage\":{\"prompt_tokens\":139,\"completion_tokens\":102,\"total_tokens\":241}}\n"
+      },
+      "retried": false
+    }
+  ]
+}

@@ -1,0 +1,54 @@
+{
+  "schema_version": 1,
+  "run_id": "20260720T020811Z-ad44ccd9",
+  "scenario_id": "tool-choice-required-empty",
+  "turns": [
+    {
+      "index": 0,
+      "request": {
+        "method": "POST",
+        "url": "http://localhost:11434/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "Get the current sequence number.",
+              "role": "user"
+            }
+          ],
+          "model": "qwen3:0.6b",
+          "seed": 42,
+          "stream": false,
+          "temperature": 0.0,
+          "tool_choice": "required",
+          "tools": [
+            {
+              "function": {
+                "description": "Get the current sequence number.",
+                "name": "current_sequence",
+                "parameters": {
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-length": "1219",
+          "content-type": "application/json",
+          "date": "Mon, 20 Jul 2026 02:09:28 GMT"
+        },
+        "body_raw": "{\"id\":\"chatcmpl-214\",\"object\":\"chat.completion\",\"created\":1784513368,\"model\":\"qwen3:0.6b\",\"system_fingerprint\":\"fp_ollama\",\"choices\":[{\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"\",\"reasoning\":\"Okay, the user is asking to get the current sequence number. Let me check the tools provided. There's a function called Get the current sequence number, which takes an object as an argument. But wait, the user hasn't provided any specific parameters for that function. The function's description just says to get the current number, so maybe there's no need to call it unless there's an argument. Since the user's query is a general request, perhaps they just want to know the current value without any parameters. But the function expects an object. Maybe the default is empty? Or maybe the function is designed to return a nil, indicating no data. Wait, the example in the tools shows an empty array. So perhaps the function returns an empty array by default. Therefore, the correct action is to call the function with an empty array as the arguments. That way, it gives the current sequence number as requested.\\n\"},\"finish_reason\":\"stop\"}],\"usage\":{\"prompt_tokens\":128,\"completion_tokens\":208,\"total_tokens\":336}}\n"
+      },
+      "retried": false
+    }
+  ]
+}

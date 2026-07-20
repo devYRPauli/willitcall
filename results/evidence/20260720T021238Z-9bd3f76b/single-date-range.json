@@ -1,0 +1,70 @@
+{
+  "schema_version": 1,
+  "run_id": "20260720T021238Z-9bd3f76b",
+  "scenario_id": "single-date-range",
+  "turns": [
+    {
+      "index": 0,
+      "request": {
+        "method": "POST",
+        "url": "http://localhost:11434/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "Find events in Denver from 2026-08-03 through 2026-08-05.",
+              "role": "user"
+            }
+          ],
+          "model": "qwen3:4b",
+          "seed": 42,
+          "stream": false,
+          "temperature": 0.0,
+          "tool_choice": "auto",
+          "tools": [
+            {
+              "function": {
+                "description": "Find events in an inclusive date range.",
+                "name": "find_events",
+                "parameters": {
+                  "properties": {
+                    "city": {
+                      "type": "string"
+                    },
+                    "end_date": {
+                      "type": "string"
+                    },
+                    "start_date": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "city",
+                    "start_date",
+                    "end_date"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-length": "1899",
+          "content-type": "application/json",
+          "date": "Mon, 20 Jul 2026 02:19:11 GMT"
+        },
+        "body_raw": "{\"id\":\"chatcmpl-934\",\"object\":\"chat.completion\",\"created\":1784513951,\"model\":\"qwen3:4b\",\"system_fingerprint\":\"fp_ollama\",\"choices\":[{\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"\",\"reasoning\":\"Okay, let's see. The user wants to find events in Denver from August 3rd to August 5th, 2026. I need to use the provided function to get that info.\\n\\nFirst, check the function signature. The function is called find_events, and it takes city, start_date, and end_date as parameters. The parameters are all required except maybe the end_date? Wait, the description says [city start_date end_date], so all three are needed.\\n\\nThe user specified Denver as the city. The dates are from 2026-08-03 to 2026-08-05. So start_date is 2026-08-03 and end_date is 2026-08-05.\\n\\nWait, the function's parameters: city is a string, start_date and end_date are strings. The user's query says \\\"through\\\" which usually means inclusive. So the end_date should be 2026-08-05.\\n\\nI need to make sure the dates are in the correct format. The example uses YYYY-MM-DD, so 2026-08-03 and 2026-08-05.\\n\\nSo the arguments would be city: \\\"Denver\\\", start_date: \\\"2026-08-03\\\", end_date: \\\"2026-08-05\\\".\\n\\nLet me structure the tool call. The function name is find_events. The arguments JSON should have those three fields.\\n\\nDouble-checking: the function's parameters are city (string), start_date (string), end_date (string). The user's query is for Denver, dates from 2026-08-03 to 2026-08-05 inclusive. So the tool call should be correct.\\n\\nI think that's it. No other functions are provided, so just this one call.\\n\",\"tool_calls\":[{\"id\":\"call_r1h81v9q\",\"index\":0,\"type\":\"function\",\"function\":{\"name\":\"find_events\",\"arguments\":\"{\\\"city\\\":\\\"Denver\\\",\\\"start_date\\\":\\\"2026-08-03\\\",\\\"end_date\\\":\\\"2026-08-05\\\"}\"}}]},\"finish_reason\":\"tool_calls\"}],\"usage\":{\"prompt_tokens\":179,\"completion_tokens\":464,\"total_tokens\":643}}\n"
+      },
+      "retried": false
+    }
+  ]
+}

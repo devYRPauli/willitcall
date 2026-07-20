@@ -1,0 +1,62 @@
+{
+  "schema_version": 1,
+  "run_id": "20260720T020938Z-e62601da",
+  "scenario_id": "tool-choice-none",
+  "turns": [
+    {
+      "index": 0,
+      "request": {
+        "method": "POST",
+        "url": "http://localhost:11434/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "Reply with the exact text: no tools",
+              "role": "user"
+            }
+          ],
+          "model": "qwen3:1.7b",
+          "seed": 42,
+          "stream": false,
+          "temperature": 0.0,
+          "tool_choice": "none",
+          "tools": [
+            {
+              "function": {
+                "description": "Get weather for a city.",
+                "name": "get_weather",
+                "parameters": {
+                  "properties": {
+                    "city": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "city"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-length": "881",
+          "content-type": "application/json",
+          "date": "Mon, 20 Jul 2026 02:12:24 GMT"
+        },
+        "body_raw": "{\"id\":\"chatcmpl-578\",\"object\":\"chat.completion\",\"created\":1784513544,\"model\":\"qwen3:1.7b\",\"system_fingerprint\":\"fp_ollama\",\"choices\":[{\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"no tools\",\"reasoning\":\"Okay, the user wants me to reply with the exact text \\\"no tools\\\". Let me check the tools provided. The only tool available is the get_weather function, which requires a city parameter. But the user isn't asking for weather; they just want a specific response. Since there's no tool that can generate the exact text \\\"no tools\\\", I should proceed to reply directly without using any functions. I need to make sure I don't call any tools here because the task doesn't require any external data retrieval. So, the correct response is to send the exact text as requested.\\n\"},\"finish_reason\":\"stop\"}],\"usage\":{\"prompt_tokens\":138,\"completion_tokens\":125,\"total_tokens\":263}}\n"
+      },
+      "retried": false
+    }
+  ]
+}

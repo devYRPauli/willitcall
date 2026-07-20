@@ -1,0 +1,82 @@
+{
+  "schema_version": 1,
+  "run_id": "20260720T021238Z-9bd3f76b",
+  "scenario_id": "single-nested-options",
+  "turns": [
+    {
+      "index": 0,
+      "request": {
+        "method": "POST",
+        "url": "http://localhost:11434/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "Render 'red circle' at width 640 and height 480 with transparency enabled.",
+              "role": "user"
+            }
+          ],
+          "model": "qwen3:4b",
+          "seed": 42,
+          "stream": false,
+          "temperature": 0.0,
+          "tool_choice": "auto",
+          "tools": [
+            {
+              "function": {
+                "description": "Render an image with explicit options.",
+                "name": "render_image",
+                "parameters": {
+                  "properties": {
+                    "options": {
+                      "properties": {
+                        "height": {
+                          "type": "integer"
+                        },
+                        "transparent": {
+                          "type": "boolean"
+                        },
+                        "width": {
+                          "type": "integer"
+                        }
+                      },
+                      "required": [
+                        "width",
+                        "height",
+                        "transparent"
+                      ],
+                      "type": "object"
+                    },
+                    "prompt": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "prompt",
+                    "options"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-type": "application/json",
+          "date": "Mon, 20 Jul 2026 02:19:56 GMT",
+          "transfer-encoding": "chunked"
+        },
+        "body_raw": "{\"id\":\"chatcmpl-708\",\"object\":\"chat.completion\",\"created\":1784513996,\"model\":\"qwen3:4b\",\"system_fingerprint\":\"fp_ollama\",\"choices\":[{\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"\",\"reasoning\":\"Okay, let's see. The user wants me to render a 'red circle' at width 640 and height 480 with transparency enabled.\\n\\nFirst, I need to check the available tools. The provided function is called render_image. The function requires width, height, transparent, and a prompt. The prompt is a string here.\\n\\nThe user specified 'red circle' as the prompt. The width is 640, height 480, and transparency is enabled (so transparent should be true).\\n\\nWait, the function's required fields are width, height, transparent. The prompt is a string. So I need to structure the arguments correctly.\\n\\nSo the function name is render_image. The arguments should be:\\n\\n- prompt: \\\"red circle\\\"\\n- width: 641? Wait, no, the user said 640. Wait, the parameters are integers. So width: 640, height: 480, transparent: true.\\n\\nWait, the function's options object has required [\\\"width\\\", \\\"height\\\", \\\"transparent\\\"], so those three are required. The prompt is a string.\\n\\nSo the tool call should be:\\n\\n{\\n  \\\"name\\\": \\\"render_image\\\",\\n  \\\"arguments\\\": {\\n    \\\"prompt\\\": \\\"red circle\\\",\\n    \\\"options\\\": {\\n      \\\"width\\\": 640,\\n      \\\"height\\\": 480,\\n      \\\"transparent\\\": true\\n    }\\n  }\\n}\\n\\nWait, but looking at the function definition: the function's options is an object with properties height, transparent, width. The required fields are width, height, transparent.\\n\\nWait, the function's options object is defined as:\\n\\n{\\n  \\\"type\\\": \\\"object\\\",\\n  \\\"properties\\\": {\\n    \\\"height\\\": {\\\"type\\\": \\\"integer\\\"},\\n    \\\"transparent\\\": {\\\"type\\\": \\\"boolean\\\"},\\n    \\\"width\\\": {\\\"type\\\": \\\"integer\\\"}\\n  },\\n  \\\"required\\\": [\\\"width\\\", \\\"height\\\", \\\"transparent\\\"]\\n}\\n\\nSo the arguments for the function should have the options object with those three fields, and the prompt as a string.\\n\\nSo the tool call JSON should be:\\n\\n{\\n  \\\"name\\\": \\\"render_image\\\",\\n  \\\"arguments\\\": {\\n    \\\"prompt\\\": \\\"red circle\\\",\\n    \\\"options\\\": {\\n      \\\"width\\\": 640,\\n      \\\"height\\\": 480,\\n      \\\"transparent\\\": true\\n    }\\n  }\\n}\\n\\nYes, that seems right. The user said \\\"with transparency enabled\\\", so transparent is true.\\n\\nI need to make sure the JSON is correctly formatted. Let me check again.\\n\\nThe function's prompt is a string, so the prompt is \\\"red circle\\\". The options have width 640, height 480, transparent true.\\n\\nYes, that's correct. So the tool call should be as above.\\n\",\"tool_calls\":[{\"id\":\"call_524i8jie\",\"index\":0,\"type\":\"function\",\"function\":{\"name\":\"render_image\",\"arguments\":\"{\\\"prompt\\\":\\\"red circle\\\",\\\"options\\\":{\\\"height\\\":480,\\\"transparent\\\":true,\\\"width\\\":640}}\"}}]},\"finish_reason\":\"tool_calls\"}],\"usage\":{\"prompt_tokens\":189,\"completion_tokens\":618,\"total_tokens\":807}}\n"
+      },
+      "retried": false
+    }
+  ]
+}

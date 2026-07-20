@@ -1,0 +1,62 @@
+{
+  "schema_version": 1,
+  "run_id": "20260720T022254Z-1c879a7b",
+  "scenario_id": "parallel-two-searches",
+  "turns": [
+    {
+      "index": 0,
+      "request": {
+        "method": "POST",
+        "url": "http://localhost:11434/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "Run separate document searches for 'alpha protocol' and 'beta protocol'.",
+              "role": "user"
+            }
+          ],
+          "model": "qwen3:8b",
+          "seed": 42,
+          "stream": false,
+          "temperature": 0.0,
+          "tool_choice": "required",
+          "tools": [
+            {
+              "function": {
+                "description": "Search documents for an exact query.",
+                "name": "search_docs",
+                "parameters": {
+                  "properties": {
+                    "query": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "query"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-length": "1083",
+          "content-type": "application/json",
+          "date": "Mon, 20 Jul 2026 02:29:26 GMT"
+        },
+        "body_raw": "{\"id\":\"chatcmpl-654\",\"object\":\"chat.completion\",\"created\":1784514566,\"model\":\"qwen3:8b\",\"system_fingerprint\":\"fp_ollama\",\"choices\":[{\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"\",\"reasoning\":\"Okay, the user wants me to run separate document searches for 'alpha protocol' and 'beta protocol'. Let me check the tools available. There's a search_docs function that takes a query parameter. Since they need two separate searches, I should call the function twice, once for each query. I'll make sure to structure the tool calls correctly in JSON within the XML tags. First, handle 'alpha protocol', then 'beta protocol'. No need for any other functions here. Let me format the responses properly.\\n\",\"tool_calls\":[{\"id\":\"call_dlqpukzq\",\"index\":0,\"type\":\"function\",\"function\":{\"name\":\"search_docs\",\"arguments\":\"{\\\"query\\\":\\\"alpha protocol\\\"}\"}},{\"id\":\"call_quisps06\",\"index\":1,\"type\":\"function\",\"function\":{\"name\":\"search_docs\",\"arguments\":\"{\\\"query\\\":\\\"beta protocol\\\"}\"}}]},\"finish_reason\":\"tool_calls\"}],\"usage\":{\"prompt_tokens\":145,\"completion_tokens\":149,\"total_tokens\":294}}\n"
+      },
+      "retried": false
+    }
+  ]
+}

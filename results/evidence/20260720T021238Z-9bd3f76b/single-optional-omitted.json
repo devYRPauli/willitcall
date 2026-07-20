@@ -1,0 +1,65 @@
+{
+  "schema_version": 1,
+  "run_id": "20260720T021238Z-9bd3f76b",
+  "scenario_id": "single-optional-omitted",
+  "turns": [
+    {
+      "index": 0,
+      "request": {
+        "method": "POST",
+        "url": "http://localhost:11434/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "Search the catalog for brass compass. Do not set a result limit.",
+              "role": "user"
+            }
+          ],
+          "model": "qwen3:4b",
+          "seed": 42,
+          "stream": false,
+          "temperature": 0.0,
+          "tool_choice": "auto",
+          "tools": [
+            {
+              "function": {
+                "description": "Search a catalog with an optional result limit.",
+                "name": "search_catalog",
+                "parameters": {
+                  "properties": {
+                    "limit": {
+                      "type": "integer"
+                    },
+                    "query": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "query"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-type": "application/json",
+          "date": "Mon, 20 Jul 2026 02:20:09 GMT",
+          "transfer-encoding": "chunked"
+        },
+        "body_raw": "{\"id\":\"chatcmpl-105\",\"object\":\"chat.completion\",\"created\":1784514009,\"model\":\"qwen3:4b\",\"system_fingerprint\":\"fp_ollama\",\"choices\":[{\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"\",\"reasoning\":\"Okay, let's see. The user wants to search the catalog for \\\"brass compass\\\" and they don't want a result limit. The function provided is search_catalog, which takes a query and an optional limit.\\n\\nFirst, I need to check the function parameters. The function has a query (string) and a limit (integer, optional). The user said not to set a result limit, so the limit should be omitted. That means the arguments would be {\\\"query\\\": \\\"brass compass\\\"}.\\n\\nWait, the function's description says the limit is optional. So if the user says \\\"do not set a result limit\\\", I should not include the limit parameter. The function's arguments are a JSON object with query and limit. Since the user doesn't want a limit, I'll just pass the query.\\n\\nSo the tool call should be search_catalog with query \\\"brass compass\\\" and no limit. The function's parameters in the tool definition show that the limit is an optional integer. So the correct JSON for arguments is {\\\"query\\\": \\\"bras compass\\\"}? Wait, the user said \\\"brass compass\\\", so the query string is \\\"brass compass\\\".\\n\\nWait, the function's query parameter is a string. So the arguments should be {\\\"query\\\": \\\"brass compass\\\"}. Since the user says not to set a result limit, the limit is omitted. The function's tool definition shows that the limit is optional, so we don't include it.\\n\\nSo the tool call is search_catalog with arguments {\\\"query\\\": \\\"brass compass\\\"}.\\n\\nI need to make sure the JSON is correctly formatted. The function name is search_catalog. The arguments are a JSON object with the query key and the value as the string.\\n\\nYes, that's right. So the tool_call JSON should be {\\\"name\\\": \\\"search_catalog\\\", \\\"arguments\\\": {\\\"query\\\": \\\"brass compass\\\"}}.\\n\\nWait, the user wrote \\\"brass compass\\\" so the query is exactly that. No typos. Let me check again.\\n\\nYes, the user says \\\"Search the catalog for brass compass. Do not set a result limit.\\\" So the query is \\\"brass compass\\\", and no limit. So the tool call is correct.\\n\",\"tool_calls\":[{\"id\":\"call_3xbqts59\",\"index\":0,\"type\":\"function\",\"function\":{\"name\":\"search_catalog\",\"arguments\":\"{\\\"query\\\":\\\"brass compass\\\"}\"}}]},\"finish_reason\":\"tool_calls\"}],\"usage\":{\"prompt_tokens\":153,\"completion_tokens\":471,\"total_tokens\":624}}\n"
+      },
+      "retried": false
+    }
+  ]
+}

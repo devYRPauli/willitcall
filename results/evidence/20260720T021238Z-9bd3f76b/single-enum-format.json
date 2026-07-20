@@ -1,0 +1,71 @@
+{
+  "schema_version": 1,
+  "run_id": "20260720T021238Z-9bd3f76b",
+  "scenario_id": "single-enum-format",
+  "turns": [
+    {
+      "index": 0,
+      "request": {
+        "method": "POST",
+        "url": "http://localhost:11434/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "Export report quarterly-7 as csv.",
+              "role": "user"
+            }
+          ],
+          "model": "qwen3:4b",
+          "seed": 42,
+          "stream": false,
+          "temperature": 0.0,
+          "tool_choice": "auto",
+          "tools": [
+            {
+              "function": {
+                "description": "Export a report in a supported format.",
+                "name": "export_report",
+                "parameters": {
+                  "properties": {
+                    "format": {
+                      "enum": [
+                        "csv",
+                        "json",
+                        "pdf"
+                      ],
+                      "type": "string"
+                    },
+                    "report_id": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "report_id",
+                    "format"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-length": "1390",
+          "content-type": "application/json",
+          "date": "Mon, 20 Jul 2026 02:19:29 GMT"
+        },
+        "body_raw": "{\"id\":\"chatcmpl-343\",\"object\":\"chat.completion\",\"created\":1784513969,\"model\":\"qwen3:4b\",\"system_fingerprint\":\"fp_ollama\",\"choices\":[{\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"\",\"reasoning\":\"Okay, let's see. The user wants to export a report called \\\"quarterly-7\\\" as a CSV file. I need to check the available functions to see how to do this.\\n\\nLooking at the tools provided, there's a function called export_report. The parameters it takes are report_id and format. The format has to be one of \\\"csv\\\", \\\"json\\\", or \\\"pdf\\\". The user specified \\\"csv\\\", so that's good.\\n\\nThe report_id here is \\\"quarterly-7\\\". I should make sure that the report_id is a string. The user wrote \\\"quarterly-7\\\" with a hyphen, so that's probably the correct ID.\\n\\nSo the function call should be export_report with report_id \\\"quarterly-7\\\" and format \\\"csv\\\". Let me double-check the parameters. The function's arguments are report_id (string) and format (string with enum values). Yep, that matches.\\n\\nI don't see any other functions here, so this is the right one to use. I'll structure the tool_call JSON accordingly.\\n\",\"tool_calls\":[{\"id\":\"call_6imjfevw\",\"index\":0,\"type\":\"function\",\"function\":{\"name\":\"export_report\",\"arguments\":\"{\\\"report_id\\\":\\\"quarterly-7\\\",\\\"format\\\":\\\"csv\\\"}\"}}]},\"finish_reason\":\"tool_calls\"}],\"usage\":{\"prompt_tokens\":158,\"completion_tokens\":247,\"total_tokens\":405}}\n"
+      },
+      "retried": false
+    }
+  ]
+}

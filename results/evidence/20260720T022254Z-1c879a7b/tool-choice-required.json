@@ -1,0 +1,62 @@
+{
+  "schema_version": 1,
+  "run_id": "20260720T022254Z-1c879a7b",
+  "scenario_id": "tool-choice-required",
+  "turns": [
+    {
+      "index": 0,
+      "request": {
+        "method": "POST",
+        "url": "http://localhost:11434/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "Look up order ORD-204.",
+              "role": "user"
+            }
+          ],
+          "model": "qwen3:8b",
+          "seed": 42,
+          "stream": false,
+          "temperature": 0.0,
+          "tool_choice": "required",
+          "tools": [
+            {
+              "function": {
+                "description": "Look up an order by exact id.",
+                "name": "lookup_order",
+                "parameters": {
+                  "properties": {
+                    "order_id": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "order_id"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-length": "888",
+          "content-type": "application/json",
+          "date": "Mon, 20 Jul 2026 02:32:34 GMT"
+        },
+        "body_raw": "{\"id\":\"chatcmpl-607\",\"object\":\"chat.completion\",\"created\":1784514754,\"model\":\"qwen3:8b\",\"system_fingerprint\":\"fp_ollama\",\"choices\":[{\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"\",\"reasoning\":\"Okay, the user wants to look up an order with the ID \\\"ORD-204\\\". Let me check the tools provided. There's a function called lookup_order that takes an order_id as a parameter. The function's description says it looks up an order by exact ID. So I need to call this function with the order_id set to \\\"ORD-204\\\". I should make sure the arguments are in JSON format and the key is \\\"order_id\\\". Let me structure the tool_call accordingly.\\n\",\"tool_calls\":[{\"id\":\"call_8v382cz1\",\"index\":0,\"type\":\"function\",\"function\":{\"name\":\"lookup_order\",\"arguments\":\"{\\\"order_id\\\":\\\"ORD-204\\\"}\"}}]},\"finish_reason\":\"tool_calls\"}],\"usage\":{\"prompt_tokens\":143,\"completion_tokens\":132,\"total_tokens\":275}}\n"
+      },
+      "retried": false
+    }
+  ]
+}

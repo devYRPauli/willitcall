@@ -1,0 +1,62 @@
+{
+  "schema_version": 1,
+  "run_id": "20260720T022254Z-1c879a7b",
+  "scenario_id": "negative-auto-arithmetic",
+  "turns": [
+    {
+      "index": 0,
+      "request": {
+        "method": "POST",
+        "url": "http://localhost:11434/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "What is 19 plus 23? Answer without using a tool.",
+              "role": "user"
+            }
+          ],
+          "model": "qwen3:8b",
+          "seed": 42,
+          "stream": false,
+          "temperature": 0.0,
+          "tool_choice": "auto",
+          "tools": [
+            {
+              "function": {
+                "description": "Get weather for a city.",
+                "name": "get_weather",
+                "parameters": {
+                  "properties": {
+                    "city": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "city"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-length": "766",
+          "content-type": "application/json",
+          "date": "Mon, 20 Jul 2026 02:27:12 GMT"
+        },
+        "body_raw": "{\"id\":\"chatcmpl-725\",\"object\":\"chat.completion\",\"created\":1784514432,\"model\":\"qwen3:8b\",\"system_fingerprint\":\"fp_ollama\",\"choices\":[{\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"19 plus 23 equals 42.\",\"reasoning\":\"Okay, the user is asking what 19 plus 23 is. Let me check if I need to use any tools here. The problem is a simple arithmetic question. The tools provided are for getting weather, but that's not relevant here. Since the user told me to answer without using a tool, I should just calculate it.\\n\\nAdding 19 and 23: 19 + 20 is 39, then +3 more makes 42. So the answer is 42. I don't need to call any functions, just provide the answer directly.\\n\"},\"finish_reason\":\"stop\"}],\"usage\":{\"prompt_tokens\":146,\"completion_tokens\":138,\"total_tokens\":284}}\n"
+      },
+      "retried": false
+    }
+  ]
+}

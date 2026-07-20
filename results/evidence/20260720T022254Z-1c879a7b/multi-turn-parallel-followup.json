@@ -1,0 +1,213 @@
+{
+  "schema_version": 1,
+  "run_id": "20260720T022254Z-1c879a7b",
+  "scenario_id": "multi-turn-parallel-followup",
+  "turns": [
+    {
+      "index": 0,
+      "request": {
+        "method": "POST",
+        "url": "http://localhost:11434/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "Get temperatures for Boston and Tokyo, then compare the returned values.",
+              "role": "user"
+            }
+          ],
+          "model": "qwen3:8b",
+          "seed": 42,
+          "stream": false,
+          "temperature": 0.0,
+          "tool_choice": "auto",
+          "tools": [
+            {
+              "function": {
+                "description": "Get the temperature for a city.",
+                "name": "get_temperature",
+                "parameters": {
+                  "properties": {
+                    "city": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "city"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            },
+            {
+              "function": {
+                "description": "Compare two named city temperatures.",
+                "name": "compare_temperatures",
+                "parameters": {
+                  "properties": {
+                    "first_city": {
+                      "description": "The city the user mentioned first.",
+                      "type": "string"
+                    },
+                    "first_value": {
+                      "type": "number"
+                    },
+                    "second_city": {
+                      "description": "The city the user mentioned second.",
+                      "type": "string"
+                    },
+                    "second_value": {
+                      "type": "number"
+                    }
+                  },
+                  "required": [
+                    "first_city",
+                    "first_value",
+                    "second_city",
+                    "second_value"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-type": "application/json",
+          "date": "Mon, 20 Jul 2026 02:25:08 GMT",
+          "transfer-encoding": "chunked"
+        },
+        "body_raw": "{\"id\":\"chatcmpl-336\",\"object\":\"chat.completion\",\"created\":1784514308,\"model\":\"qwen3:8b\",\"system_fingerprint\":\"fp_ollama\",\"choices\":[{\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"\",\"reasoning\":\"Okay, let me figure out how to handle this user query. The user wants the temperatures for Boston and Tokyo and then to compare them. \\n\\nFirst, I need to check the available tools. There's the get_temperature function which takes a city name. So I should call that twice, once for Boston and once for Tokyo. Each call will return the temperature for that city.\\n\\nOnce I have both temperatures, the next step is to compare them. The compare_temperatures function requires the names of both cities and their respective temperatures. So I'll need to structure the arguments correctly, making sure to include the city names and the numerical values from the previous calls.\\n\\nWait, the user said \\\"then compare the returned values,\\\" so I should first retrieve both temperatures. Let me make sure the order is correct. The user mentioned Boston first, then Tokyo, so the first_city would be Boston and the second_city Tokyo. The values will be the numbers retrieved from the get_temperature calls.\\n\\nI need to ensure that the parameters passed to compare_temperatures are in the right format. The first_city and second_city are strings, while first_value and second_value are numbers. So after getting the temperatures, I'll plug those into the compare function.\\n\\nI should also check if there are any potential errors, like if a city isn't found, but the tools don't mention error handling, so maybe I don't need to worry about that here. Just proceed with the calls as per the user's request.\\n\\nSo the plan is: call get_temperature for Boston, then for Tokyo. Then use the results in compare_temperatures. Each step requires a separate tool call. Let me structure the JSON for each tool call correctly.\\n\",\"tool_calls\":[{\"id\":\"call_kv1bpafm\",\"index\":0,\"type\":\"function\",\"function\":{\"name\":\"get_temperature\",\"arguments\":\"{\\\"city\\\":\\\"Boston\\\"}\"}},{\"id\":\"call_p6l20juz\",\"index\":1,\"type\":\"function\",\"function\":{\"name\":\"get_temperature\",\"arguments\":\"{\\\"city\\\":\\\"Tokyo\\\"}\"}}]},\"finish_reason\":\"tool_calls\"}],\"usage\":{\"prompt_tokens\":233,\"completion_tokens\":390,\"total_tokens\":623}}\n"
+      },
+      "retried": false
+    },
+    {
+      "index": 1,
+      "request": {
+        "method": "POST",
+        "url": "http://localhost:11434/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "Get temperatures for Boston and Tokyo, then compare the returned values.",
+              "role": "user"
+            },
+            {
+              "content": "",
+              "role": "assistant",
+              "tool_calls": [
+                {
+                  "function": {
+                    "arguments": "{\"city\":\"Boston\"}",
+                    "name": "get_temperature"
+                  },
+                  "id": "call_kv1bpafm",
+                  "type": "function"
+                },
+                {
+                  "function": {
+                    "arguments": "{\"city\":\"Tokyo\"}",
+                    "name": "get_temperature"
+                  },
+                  "id": "call_p6l20juz",
+                  "type": "function"
+                }
+              ]
+            },
+            {
+              "content": "{\"city\":\"Boston\",\"temperature\":21}",
+              "role": "tool",
+              "tool_call_id": "call_kv1bpafm"
+            },
+            {
+              "content": "{\"city\":\"Tokyo\",\"temperature\":28}",
+              "role": "tool",
+              "tool_call_id": "call_p6l20juz"
+            }
+          ],
+          "model": "qwen3:8b",
+          "seed": 42,
+          "stream": false,
+          "temperature": 0.0,
+          "tool_choice": "auto",
+          "tools": [
+            {
+              "function": {
+                "description": "Get the temperature for a city.",
+                "name": "get_temperature",
+                "parameters": {
+                  "properties": {
+                    "city": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "city"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            },
+            {
+              "function": {
+                "description": "Compare two named city temperatures.",
+                "name": "compare_temperatures",
+                "parameters": {
+                  "properties": {
+                    "first_city": {
+                      "description": "The city the user mentioned first.",
+                      "type": "string"
+                    },
+                    "first_value": {
+                      "type": "number"
+                    },
+                    "second_city": {
+                      "description": "The city the user mentioned second.",
+                      "type": "string"
+                    },
+                    "second_value": {
+                      "type": "number"
+                    }
+                  },
+                  "required": [
+                    "first_city",
+                    "first_value",
+                    "second_city",
+                    "second_value"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-length": "1305",
+          "content-type": "application/json",
+          "date": "Mon, 20 Jul 2026 02:25:19 GMT"
+        },
+        "body_raw": "{\"id\":\"chatcmpl-339\",\"object\":\"chat.completion\",\"created\":1784514319,\"model\":\"qwen3:8b\",\"system_fingerprint\":\"fp_ollama\",\"choices\":[{\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"\",\"reasoning\":\"Okay, so the user asked for the temperatures of Boston and Tokyo and then to compare them. First, I need to call the get_temperature function for each city. I'll start with Boston. The function requires the city name as an argument. Then I'll do the same for Tokyo. Once I have both temperatures, I should use the compare_temperatures function. The parameters for that function are first_city, first_value, second_city, and second_value. I'll plug in Boston as the first city with its temperature, then Tokyo as the second. Wait, the temperatures from the responses were 21 for Boston and 28 for Tokyo. So the comparison should show Tokyo is warmer. Let me make sure the arguments are correctly formatted as numbers. Yep, 21 and 28 are numbers. Alright, the tool call should work.\\n\",\"tool_calls\":[{\"id\":\"call_dx5yp6jx\",\"index\":0,\"type\":\"function\",\"function\":{\"name\":\"compare_temperatures\",\"arguments\":\"{\\\"first_city\\\":\\\"Boston\\\",\\\"first_value\\\":21,\\\"second_city\\\":\\\"Tokyo\\\",\\\"second_value\\\":28}\"}}]},\"finish_reason\":\"tool_calls\"}],\"usage\":{\"prompt_tokens\":309,\"completion_tokens\":217,\"total_tokens\":526}}\n"
+      },
+      "retried": false
+    }
+  ]
+}

@@ -1,0 +1,62 @@
+{
+  "schema_version": 1,
+  "run_id": "20260720T022254Z-1c879a7b",
+  "scenario_id": "parallel-three-cities",
+  "turns": [
+    {
+      "index": 0,
+      "request": {
+        "method": "POST",
+        "url": "http://localhost:11434/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "Get weather for Austin, Dublin, and Seoul with three calls.",
+              "role": "user"
+            }
+          ],
+          "model": "qwen3:8b",
+          "seed": 42,
+          "stream": false,
+          "temperature": 0.0,
+          "tool_choice": "required",
+          "tools": [
+            {
+              "function": {
+                "description": "Get weather for a city.",
+                "name": "get_weather",
+                "parameters": {
+                  "properties": {
+                    "city": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "city"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-length": "1152",
+          "content-type": "application/json",
+          "date": "Mon, 20 Jul 2026 02:28:31 GMT"
+        },
+        "body_raw": "{\"id\":\"chatcmpl-851\",\"object\":\"chat.completion\",\"created\":1784514511,\"model\":\"qwen3:8b\",\"system_fingerprint\":\"fp_ollama\",\"choices\":[{\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"\",\"reasoning\":\"Okay, the user wants the weather for Austin, Dublin, and Seoul. Let me check the tools available. There's a get_weather function that takes a city parameter. Since the user specified three cities, I need to make three separate function calls. Each call should have one city. Let me structure each tool_call properly. First for Austin, then Dublin, and finally Seoul. Make sure the JSON format is correct for each. Alright, that should cover all the cities requested.\\n\",\"tool_calls\":[{\"id\":\"call_q4jmjlr6\",\"index\":0,\"type\":\"function\",\"function\":{\"name\":\"get_weather\",\"arguments\":\"{\\\"city\\\":\\\"Austin\\\"}\"}},{\"id\":\"call_hfn70n2f\",\"index\":1,\"type\":\"function\",\"function\":{\"name\":\"get_weather\",\"arguments\":\"{\\\"city\\\":\\\"Dublin\\\"}\"}},{\"id\":\"call_ucda8601\",\"index\":2,\"type\":\"function\",\"function\":{\"name\":\"get_weather\",\"arguments\":\"{\\\"city\\\":\\\"Seoul\\\"}\"}}]},\"finish_reason\":\"tool_calls\"}],\"usage\":{\"prompt_tokens\":143,\"completion_tokens\":162,\"total_tokens\":305}}\n"
+      },
+      "retried": false
+    }
+  ]
+}

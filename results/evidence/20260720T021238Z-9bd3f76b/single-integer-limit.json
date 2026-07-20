@@ -1,0 +1,66 @@
+{
+  "schema_version": 1,
+  "run_id": "20260720T021238Z-9bd3f76b",
+  "scenario_id": "single-integer-limit",
+  "turns": [
+    {
+      "index": 0,
+      "request": {
+        "method": "POST",
+        "url": "http://localhost:11434/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "List exactly 12 messages from the support mailbox.",
+              "role": "user"
+            }
+          ],
+          "model": "qwen3:4b",
+          "seed": 42,
+          "stream": false,
+          "temperature": 0.0,
+          "tool_choice": "auto",
+          "tools": [
+            {
+              "function": {
+                "description": "List a fixed number of messages.",
+                "name": "list_messages",
+                "parameters": {
+                  "properties": {
+                    "limit": {
+                      "type": "integer"
+                    },
+                    "mailbox": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "mailbox",
+                    "limit"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-length": "1946",
+          "content-type": "application/json",
+          "date": "Mon, 20 Jul 2026 02:19:39 GMT"
+        },
+        "body_raw": "{\"id\":\"chatcmpl-373\",\"object\":\"chat.completion\",\"created\":1784513979,\"model\":\"qwen3:4b\",\"system_fingerprint\":\"fp_ollama\",\"choices\":[{\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"\",\"reasoning\":\"Okay, the user wants me to list exactly 12 messages from the support mailbox. Let me check the tools provided.\\n\\nThe tool given is list_messages, which takes a mailbox and a limit. The parameters are mailbox (string) and limit (integer). The user specified \\\"support mailbox\\\" so the mailbox should be \\\"support\\\". They want exactly 12 messages, so limit is 12.\\n\\nWait, the function's description says \\\"List a fixed number of messages\\\". The parameters are mailbox and limit. The example shows the limit is an integer. So I need to set mailbox to \\\"support\\\" and limit to 12.\\n\\nI should make sure the function name is correct. The tool's function name is list_messages. The arguments are mailbox and limit. So the tool call should be list_messages with arguments {\\\"mailbox\\\": \\\"support\\\", \\\"limit\\\": 12}.\\n\\nLet me double-check. The user says \\\"exactly 12 messages from the support mailbox\\\". So yes, that's the right parameters. No other parameters needed. The function expects a limit as integer and mailbox as string.\\n\\nSo the tool call JSON should be {\\\"name\\\": \\\"list_messages\\\", \\\"arguments\\\": {\\\"mailbox\\\": \\\"support\\\", \\\"limit\\\": 1: 12}} Wait, no, the limit is 12, so it's {\\\"limit\\\": 12}. Wait, in JSON, the key is \\\"limit\\\" with value 12.\\n\\nYes, so the arguments object is {\\\"mailbox\\\": \\\"support\\\", \\\"limit\\\": 12}. I need to make sure the JSON is correctly formatted.\\n\\nSo the tool_call XML should have the name as list_messages and arguments as that JSON object.\\n\",\"tool_calls\":[{\"id\":\"call_qd7gdqkv\",\"index\":0,\"type\":\"function\",\"function\":{\"name\":\"list_messages\",\"arguments\":\"{\\\"mailbox\\\":\\\"support\\\",\\\"limit\\\":12}\"}}]},\"finish_reason\":\"tool_calls\"}],\"usage\":{\"prompt_tokens\":149,\"completion_tokens\":376,\"total_tokens\":525}}\n"
+      },
+      "retried": false
+    }
+  ]
+}

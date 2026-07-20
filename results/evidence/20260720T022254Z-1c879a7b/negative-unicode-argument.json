@@ -1,0 +1,65 @@
+{
+  "schema_version": 1,
+  "run_id": "20260720T022254Z-1c879a7b",
+  "scenario_id": "negative-unicode-argument",
+  "turns": [
+    {
+      "index": 0,
+      "request": {
+        "method": "POST",
+        "url": "http://localhost:11434/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "Get the weather for the exact city name München.",
+              "role": "user"
+            }
+          ],
+          "model": "qwen3:8b",
+          "seed": 42,
+          "stream": false,
+          "temperature": 0.0,
+          "tool_choice": "auto",
+          "tools": [
+            {
+              "function": {
+                "description": "Get weather for a city with an optional country code.",
+                "name": "get_weather",
+                "parameters": {
+                  "properties": {
+                    "city": {
+                      "type": "string"
+                    },
+                    "country_code": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "city"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-length": "892",
+          "content-type": "application/json",
+          "date": "Mon, 20 Jul 2026 02:28:00 GMT"
+        },
+        "body_raw": "{\"id\":\"chatcmpl-661\",\"object\":\"chat.completion\",\"created\":1784514480,\"model\":\"qwen3:8b\",\"system_fingerprint\":\"fp_ollama\",\"choices\":[{\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"\",\"reasoning\":\"Okay, the user wants the weather for München. Let me check the tools provided. There's a get_weather function that takes a city and an optional country code. Since München is a city in Germany, I should specify the country code as DE. But the user mentioned the exact city name, so I'll use \\\"München\\\" as the city parameter and add the country code DE to be precise. That should fetch the correct weather information.\\n\",\"tool_calls\":[{\"id\":\"call_2n41bxch\",\"index\":0,\"type\":\"function\",\"function\":{\"name\":\"get_weather\",\"arguments\":\"{\\\"city\\\":\\\"München\\\",\\\"country_code\\\":\\\"DE\\\"}\"}}]},\"finish_reason\":\"tool_calls\"}],\"usage\":{\"prompt_tokens\":152,\"completion_tokens\":121,\"total_tokens\":273}}\n"
+      },
+      "retried": false
+    }
+  ]
+}

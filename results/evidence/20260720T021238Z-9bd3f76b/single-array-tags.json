@@ -1,0 +1,69 @@
+{
+  "schema_version": 1,
+  "run_id": "20260720T021238Z-9bd3f76b",
+  "scenario_id": "single-array-tags",
+  "turns": [
+    {
+      "index": 0,
+      "request": {
+        "method": "POST",
+        "url": "http://localhost:11434/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "Tag document doc-17 with exactly alpha, beta, and gamma in that order.",
+              "role": "user"
+            }
+          ],
+          "model": "qwen3:4b",
+          "seed": 42,
+          "stream": false,
+          "temperature": 0.0,
+          "tool_choice": "auto",
+          "tools": [
+            {
+              "function": {
+                "description": "Apply tags to a document.",
+                "name": "tag_document",
+                "parameters": {
+                  "properties": {
+                    "document_id": {
+                      "type": "string"
+                    },
+                    "tags": {
+                      "items": {
+                        "type": "string"
+                      },
+                      "type": "array"
+                    }
+                  },
+                  "required": [
+                    "document_id",
+                    "tags"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-type": "application/json",
+          "date": "Mon, 20 Jul 2026 02:18:52 GMT",
+          "transfer-encoding": "chunked"
+        },
+        "body_raw": "{\"id\":\"chatcmpl-618\",\"object\":\"chat.completion\",\"created\":1784513932,\"model\":\"qwen3:4b\",\"system_fingerprint\":\"fp_ollama\",\"choices\":[{\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"\",\"reasoning\":\"Okay, let's see. The user wants to tag document doc-17 with exactly alpha, beta, and gamma in that order.\\n\\nFirst, I need to check the available tools. The provided function is called tag_document. The parameters it needs are document_id and tags, which is an array of strings.\\n\\nThe user specified the document ID as doc-17. The tags should be exactly alpha, beta, gamma in order. So the tags array should be [\\\"alpha\\\", \\\"beta\\\", \\\"gamma\\\"].\\n\\nI need to make sure the function is called correctly. The function expects a document_id (string) and tags (array of strings). The user said \\\"exactly alpha, beta, and gamma in that order\\\", so the order matters here. The tags array should be in the order alpha first, then beta, then gamma.\\n\\nSo the arguments would be document_id: \\\"doc-17\\\" and tags: [\\\"alpha\\\", \\\"beta\\\", \\\"gamma\\\"].\\n\\nI should structure the tool call as a JSON object with the function name \\\"tag_document\\\" and the arguments. Let me double-check the function definition. The function's parameters are document_id (string) and tags (array of strings). Yep, that's correct.\\n\\nNo other functions are provided, so this is the only tool to use. The user didn't mention any other constraints, so I think this is straightforward.\\n\\nWait, the user said \\\"exactly alpha, beta, and gamma in that order\\\". So the tags array must be in that specific order. The function should accept the array as is. So the tool call should have the tags as [\\\"alpha\\\", \\\"beta\\\",, \\\"gamma\\\"].\\n\\nI think that's all. Let me format the tool_call JSON correctly.\\n\",\"tool_calls\":[{\"id\":\"call_ll0nillx\",\"index\":0,\"type\":\"function\",\"function\":{\"name\":\"tag_document\",\"arguments\":\"{\\\"document_id\\\":\\\"doc-17\\\",\\\"tags\\\":[\\\"alpha\\\",\\\"beta\\\",\\\"gamma\\\"]}\"}}]},\"finish_reason\":\"tool_calls\"}],\"usage\":{\"prompt_tokens\":163,\"completion_tokens\":393,\"total_tokens\":556}}\n"
+      },
+      "retried": false
+    }
+  ]
+}

@@ -1,0 +1,62 @@
+{
+  "schema_version": 1,
+  "run_id": "20260720T022254Z-1c879a7b",
+  "scenario_id": "tool-choice-none",
+  "turns": [
+    {
+      "index": 0,
+      "request": {
+        "method": "POST",
+        "url": "http://localhost:11434/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "Reply with the exact text: no tools",
+              "role": "user"
+            }
+          ],
+          "model": "qwen3:8b",
+          "seed": 42,
+          "stream": false,
+          "temperature": 0.0,
+          "tool_choice": "none",
+          "tools": [
+            {
+              "function": {
+                "description": "Get weather for a city.",
+                "name": "get_weather",
+                "parameters": {
+                  "properties": {
+                    "city": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "city"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-length": "656",
+          "content-type": "application/json",
+          "date": "Mon, 20 Jul 2026 02:32:28 GMT"
+        },
+        "body_raw": "{\"id\":\"chatcmpl-287\",\"object\":\"chat.completion\",\"created\":1784514747,\"model\":\"qwen3:8b\",\"system_fingerprint\":\"fp_ollama\",\"choices\":[{\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"no tools\",\"reasoning\":\"Okay, the user wants me to reply with the exact text \\\"no tools\\\". Let me check the instructions again. They mentioned that if no functions are needed, I should just output that phrase. Since the query doesn't require any tool calls, I should comply directly. No need to use the weather function here. Just respond with \\\"no tools\\\" as specified.\\n\"},\"finish_reason\":\"stop\"}],\"usage\":{\"prompt_tokens\":138,\"completion_tokens\":80,\"total_tokens\":218}}\n"
+      },
+      "retried": false
+    }
+  ]
+}

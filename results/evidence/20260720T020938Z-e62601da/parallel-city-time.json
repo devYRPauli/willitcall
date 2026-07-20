@@ -1,0 +1,62 @@
+{
+  "schema_version": 1,
+  "run_id": "20260720T020938Z-e62601da",
+  "scenario_id": "parallel-city-time",
+  "turns": [
+    {
+      "index": 0,
+      "request": {
+        "method": "POST",
+        "url": "http://localhost:11434/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "What time is it in Boston and Tokyo?",
+              "role": "user"
+            }
+          ],
+          "model": "qwen3:1.7b",
+          "seed": 42,
+          "stream": false,
+          "temperature": 0.0,
+          "tool_choice": "required",
+          "tools": [
+            {
+              "function": {
+                "description": "Get the local time for a city.",
+                "name": "get_time",
+                "parameters": {
+                  "properties": {
+                    "city": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "city"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-length": "1012",
+          "content-type": "application/json",
+          "date": "Mon, 20 Jul 2026 02:11:04 GMT"
+        },
+        "body_raw": "{\"id\":\"chatcmpl-976\",\"object\":\"chat.completion\",\"created\":1784513464,\"model\":\"qwen3:1.7b\",\"system_fingerprint\":\"fp_ollama\",\"choices\":[{\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"\",\"reasoning\":\"Okay, the user is asking for the current time in Boston and Tokyo. Let me check the tools available. There's a function called get_time that takes a city parameter. I need to call this function twice: once for Boston and once for Tokyo. Let me make sure the parameters are correct. For Boston, the city name is \\\"Boston\\\", and for Tokyo, it's \\\"Tokyo\\\". I'll structure the tool calls accordingly. Alright, I'll generate the JSON objects for each city.\\n\",\"tool_calls\":[{\"id\":\"call_wm2x9r27\",\"index\":0,\"type\":\"function\",\"function\":{\"name\":\"get_time\",\"arguments\":\"{\\\"city\\\":\\\"Boston\\\"}\"}},{\"id\":\"call_9yis6309\",\"index\":1,\"type\":\"function\",\"function\":{\"name\":\"get_time\",\"arguments\":\"{\\\"city\\\":\\\"Tokyo\\\"}\"}}]},\"finish_reason\":\"tool_calls\"}],\"usage\":{\"prompt_tokens\":141,\"completion_tokens\":145,\"total_tokens\":286}}\n"
+      },
+      "retried": false
+    }
+  ]
+}

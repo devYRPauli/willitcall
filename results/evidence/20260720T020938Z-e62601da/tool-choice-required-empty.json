@@ -1,0 +1,54 @@
+{
+  "schema_version": 1,
+  "run_id": "20260720T020938Z-e62601da",
+  "scenario_id": "tool-choice-required-empty",
+  "turns": [
+    {
+      "index": 0,
+      "request": {
+        "method": "POST",
+        "url": "http://localhost:11434/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "Get the current sequence number.",
+              "role": "user"
+            }
+          ],
+          "model": "qwen3:1.7b",
+          "seed": 42,
+          "stream": false,
+          "temperature": 0.0,
+          "tool_choice": "required",
+          "tools": [
+            {
+              "function": {
+                "description": "Get the current sequence number.",
+                "name": "current_sequence",
+                "parameters": {
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-length": "795",
+          "content-type": "application/json",
+          "date": "Mon, 20 Jul 2026 02:12:28 GMT"
+        },
+        "body_raw": "{\"id\":\"chatcmpl-599\",\"object\":\"chat.completion\",\"created\":1784513548,\"model\":\"qwen3:1.7b\",\"system_fingerprint\":\"fp_ollama\",\"choices\":[{\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"\",\"reasoning\":\"Okay, the user is asking for the current sequence number. Let me check the tools provided. There's a function called Get the current sequence number, and it's supposed to return the current sequence number. The tool's description says it returns an object with the sequence number. Since the user didn't specify any particular context, I just need to call that function. I don't see any other functions available, so I'll go with that. The answer should be the result of that function call.\\n\"},\"finish_reason\":\"stop\"}],\"usage\":{\"prompt_tokens\":128,\"completion_tokens\":123,\"total_tokens\":251}}\n"
+      },
+      "retried": false
+    }
+  ]
+}
