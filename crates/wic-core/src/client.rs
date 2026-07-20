@@ -2,11 +2,12 @@ use std::collections::BTreeMap;
 use std::str;
 use std::time::Duration;
 
-use reqwest::StatusCode;
+use reqwest::header::HeaderMap;
+use reqwest::{Request, StatusCode};
 use serde::Deserialize;
 use serde_json::{json, Map, Value};
 
-use crate::result::SamplingParams;
+use crate::result::{CapturedRequest, CapturedResponse, CapturedTurn, SamplingParams};
 use crate::{Scenario, ToolChoice};
 
 #[derive(Clone, Debug, Eq, PartialEq)]
@@ -27,18 +28,26 @@ pub enum CompletionResult {
     Parsed {
         response: AssistantResponse,
         raw_bytes: Vec<u8>,
+        turns: Vec<CapturedTurn>,
         retried: bool,
     },
     Invalid {
         reason: String,
         raw_bytes: Vec<u8>,
+        turns: Vec<CapturedTurn>,
         retried: bool,
     },
     Error {
         reason: String,
         raw_bytes: Vec<u8>,
+        turns: Vec<CapturedTurn>,
         retried: bool,
     },
+}
+
+enum RecordedAttemptError {
+    Timeout(CapturedTurn),
+    Transport(reqwest::Error, CapturedTurn),
 }
 
 #[derive(Clone)]
@@ -48,6 +57,7 @@ pub struct EndpointClient {
     model: String,
     timeout: Duration,
     sampling: SamplingParams,
+    request_headers: HeaderMap,
 }
 
 impl EndpointClient {
@@ -57,12 +67,23 @@ impl EndpointClient {
         timeout: Duration,
         sampling: SamplingParams,
     ) -> Self {
+        Self::new_with_headers(endpoint, model, timeout, sampling, HeaderMap::new())
+    }
+
+    pub(crate) fn new_with_headers(
+        endpoint: String,
+        model: String,
+        timeout: Duration,
+        sampling: SamplingParams,
+        request_headers: HeaderMap,
+    ) -> Self {
         Self {
             http: reqwest::Client::new(),
             endpoint: endpoint.trim_end_matches('/').to_owned(),
             model,
             timeout,
             sampling,
+            request_headers,
         }
     }
 
@@ -144,49 +165,77 @@ impl EndpointClient {
     pub async fn complete(&self, scenario: &Scenario, messages: &[Value]) -> CompletionResult {
         let payload = build_request_payload(scenario, &self.model, messages, &self.sampling);
         let mut retry_raw = Vec::new();
+        let mut turns = Vec::new();
 
         for attempt in 0..=1 {
-            let attempted = tokio::time::timeout(self.timeout, self.send_raw(&payload)).await;
-            let (status, body) = match attempted {
+            let (request, captured_request) = match self.recorded_request(&payload) {
+                Ok(prepared) => prepared,
                 Err(_) if attempt == 0 => continue,
-                Err(_) => {
+                Err(error) => {
+                    return CompletionResult::Error {
+                        reason: format!("transport error after retry: {error}"),
+                        raw_bytes: retry_raw,
+                        turns,
+                        retried: true,
+                    };
+                }
+            };
+            let (status, body) = match self
+                .send_recorded(request, captured_request, attempt > 0)
+                .await
+            {
+                Err(RecordedAttemptError::Timeout(turn)) => {
+                    turns.push(turn);
+                    if attempt == 0 {
+                        continue;
+                    }
                     return CompletionResult::Error {
                         reason: format!(
                             "request timed out after {}s (retry also failed)",
                             self.timeout.as_secs()
                         ),
                         raw_bytes: retry_raw,
+                        turns,
                         retried: true,
                     };
                 }
-                Ok(Err(_)) if attempt == 0 => continue,
-                Ok(Err(error)) => {
+                Err(RecordedAttemptError::Transport(_, turn)) if attempt == 0 => {
+                    turns.push(turn);
+                    continue;
+                }
+                Err(RecordedAttemptError::Transport(error, turn)) => {
+                    turns.push(turn);
                     return CompletionResult::Error {
                         reason: format!("transport error after retry: {error}"),
                         raw_bytes: retry_raw,
+                        turns,
                         retried: true,
                     };
                 }
-                Ok(Ok(result)) => result,
+                Ok((status, body, turn)) => {
+                    retry_raw.extend_from_slice(&body);
+                    turns.push(turn);
+                    (status, body)
+                }
             };
 
             if status.is_server_error() {
-                retry_raw.extend_from_slice(&body);
                 if attempt == 0 {
                     continue;
                 }
                 return CompletionResult::Error {
                     reason: format!("server returned HTTP {status} after retry"),
                     raw_bytes: retry_raw,
+                    turns,
                     retried: true,
                 };
             }
 
-            retry_raw.extend_from_slice(&body);
             if !status.is_success() {
                 return CompletionResult::Error {
                     reason: format!("server returned HTTP {status}"),
                     raw_bytes: retry_raw,
+                    turns,
                     retried: attempt > 0,
                 };
             }
@@ -200,11 +249,13 @@ impl EndpointClient {
                 Ok(response) => CompletionResult::Parsed {
                     response,
                     raw_bytes: retry_raw,
+                    turns,
                     retried: attempt > 0,
                 },
                 Err(reason) => CompletionResult::Invalid {
                     reason,
                     raw_bytes: retry_raw,
+                    turns,
                     retried: attempt > 0,
                 },
             };
@@ -213,9 +264,109 @@ impl EndpointClient {
         unreachable!("the retry loop always returns")
     }
 
+    fn recorded_request(
+        &self,
+        payload: &Value,
+    ) -> Result<(Request, CapturedRequest), reqwest::Error> {
+        let url = format!("{}/chat/completions", self.endpoint);
+        let request = self
+            .http
+            .post(url)
+            .headers(self.request_headers.clone())
+            .json(payload)
+            .build()?;
+        let captured = CapturedRequest {
+            method: request.method().to_string(),
+            url: request.url().to_string(),
+            headers: recorded_headers(request.headers()),
+            body: payload.clone(),
+        };
+        Ok((request, captured))
+    }
+
+    async fn send_recorded(
+        &self,
+        request: Request,
+        captured_request: CapturedRequest,
+        retried: bool,
+    ) -> Result<(StatusCode, Vec<u8>, CapturedTurn), RecordedAttemptError> {
+        let deadline = tokio::time::Instant::now() + self.timeout;
+        let mut response = match tokio::time::timeout_at(deadline, self.http.execute(request)).await
+        {
+            Err(_) => {
+                return Err(RecordedAttemptError::Timeout(CapturedTurn {
+                    request: captured_request,
+                    response: None,
+                    retried,
+                }));
+            }
+            Ok(Err(error)) => {
+                return Err(RecordedAttemptError::Transport(
+                    error,
+                    CapturedTurn {
+                        request: captured_request,
+                        response: None,
+                        retried,
+                    },
+                ));
+            }
+            Ok(Ok(response)) => response,
+        };
+        let status = response.status();
+        let headers = recorded_headers(response.headers());
+        let mut body = Vec::new();
+        loop {
+            match tokio::time::timeout_at(deadline, response.chunk()).await {
+                Err(_) => {
+                    return Err(RecordedAttemptError::Timeout(CapturedTurn {
+                        request: captured_request,
+                        response: Some(CapturedResponse {
+                            status: status.as_u16(),
+                            headers,
+                            body,
+                        }),
+                        retried,
+                    }));
+                }
+                Ok(Ok(Some(chunk))) => body.extend_from_slice(&chunk),
+                Ok(Ok(None)) => break,
+                Ok(Err(error)) => {
+                    return Err(RecordedAttemptError::Transport(
+                        error,
+                        CapturedTurn {
+                            request: captured_request,
+                            response: Some(CapturedResponse {
+                                status: status.as_u16(),
+                                headers,
+                                body,
+                            }),
+                            retried,
+                        },
+                    ));
+                }
+            }
+        }
+        let turn = CapturedTurn {
+            request: captured_request,
+            response: Some(CapturedResponse {
+                status: status.as_u16(),
+                headers,
+                body: body.clone(),
+            }),
+            retried,
+        };
+        Ok((status, body, turn))
+    }
+
     async fn send_raw(&self, payload: &Value) -> Result<(StatusCode, Vec<u8>), reqwest::Error> {
         let url = format!("{}/chat/completions", self.endpoint);
-        let mut response = self.http.post(url).json(payload).send().await?;
+        let mut response = self
+            .http
+            .post(url)
+            .headers(self.request_headers.clone())
+            .json(payload)
+            .send()
+            .await?;
         let status = response.status();
         let mut body = Vec::new();
         while let Some(chunk) = response.chunk().await? {
@@ -225,7 +376,12 @@ impl EndpointClient {
     }
 
     async fn get_raw(&self, url: &str) -> Result<(StatusCode, Vec<u8>), reqwest::Error> {
-        let mut response = self.http.get(url).send().await?;
+        let mut response = self
+            .http
+            .get(url)
+            .headers(self.request_headers.clone())
+            .send()
+            .await?;
         let status = response.status();
         let mut body = Vec::new();
         while let Some(chunk) = response.chunk().await? {
@@ -233,6 +389,34 @@ impl EndpointClient {
         }
         Ok((status, body))
     }
+}
+
+fn recorded_headers(headers: &HeaderMap) -> BTreeMap<String, String> {
+    let mut recorded = BTreeMap::new();
+    for (name, value) in headers {
+        let value = match str::from_utf8(value.as_bytes()) {
+            Ok(value) => value.to_owned(),
+            Err(_) => format!("hex:{}", hex(value.as_bytes())),
+        };
+        recorded
+            .entry(name.as_str().to_owned())
+            .and_modify(|existing: &mut String| {
+                existing.push('\n');
+                existing.push_str(&value);
+            })
+            .or_insert(value);
+    }
+    recorded
+}
+
+fn hex(bytes: &[u8]) -> String {
+    const DIGITS: &[u8; 16] = b"0123456789abcdef";
+    let mut encoded = String::with_capacity(bytes.len() * 2);
+    for byte in bytes {
+        encoded.push(DIGITS[(byte >> 4) as usize] as char);
+        encoded.push(DIGITS[(byte & 0x0f) as usize] as char);
+    }
+    encoded
 }
 
 pub fn build_request_payload(

@@ -1,11 +1,16 @@
+use std::fs;
+use std::io;
+use std::path::Path;
 use std::time::{Duration, SystemTime, UNIX_EPOCH};
 
+use reqwest::header::HeaderMap;
 use ring::digest::{digest, SHA256};
 use serde_json::{json, Map, Value};
 
 use crate::client::{AssistantResponse, CompletionResult, EndpointClient, ToolCall};
 use crate::result::{
-    RunMetadata, RunResult, SamplingParams, ScenarioOutcome, ServerMetadata, Status, Totals,
+    redact_transcript_turn, write_transcript_atomic, CapturedTurn, RunMetadata, RunResult,
+    SamplingParams, ScenarioOutcome, ServerMetadata, Status, Totals, Transcript,
     RESULT_SCHEMA_VERSION,
 };
 use crate::score::score_calls;
@@ -18,6 +23,7 @@ pub struct RunConfig {
     pub timeout: Duration,
     pub sampling: SamplingParams,
     pub server: ServerConfig,
+    pub request_headers: HeaderMap,
 }
 
 #[derive(Clone, Debug)]
@@ -50,6 +56,7 @@ impl RunConfig {
                 quirk_flags: Vec::new(),
                 version_probe: None,
             },
+            request_headers: HeaderMap::new(),
         }
     }
 
@@ -63,7 +70,11 @@ pub async fn preflight(config: &RunConfig) -> Result<(), String> {
     client(config).preflight().await
 }
 
-pub async fn run_scenarios(config: &RunConfig, scenarios: &[Scenario]) -> RunResult {
+pub async fn run_scenarios(
+    config: &RunConfig,
+    scenarios: &[Scenario],
+    result_path: &Path,
+) -> io::Result<RunResult> {
     let endpoint_client = client(config);
     let reported_version = match config.server.version_probe {
         Some(probe) => {
@@ -75,16 +86,23 @@ pub async fn run_scenarios(config: &RunConfig, scenarios: &[Scenario]) -> RunRes
     };
     let mut ordered = scenarios.iter().collect::<Vec<_>>();
     ordered.sort_by(|left, right| left.id.cmp(&right.id));
+    let timestamp = utc_timestamp();
+    let run_id = run_id(&timestamp, &config.endpoint, &config.model);
+    let result_parent = match result_path.parent() {
+        Some(parent) if !parent.as_os_str().is_empty() => parent,
+        _ => Path::new("."),
+    };
     let mut outcomes = Vec::with_capacity(ordered.len());
     for scenario in ordered {
-        outcomes.push(run_scenario(&endpoint_client, scenario).await);
+        outcomes.push(run_scenario(&endpoint_client, scenario, &run_id, result_parent).await?);
     }
 
     let totals = totals(&outcomes);
-    RunResult {
+    Ok(RunResult {
         schema_version: RESULT_SCHEMA_VERSION,
         metadata: RunMetadata {
-            timestamp: utc_timestamp(),
+            run_id,
+            timestamp,
             willitcall_version: env!("CARGO_PKG_VERSION").to_owned(),
             endpoint: config.endpoint.clone(),
             model_id: config.model.clone(),
@@ -98,19 +116,25 @@ pub async fn run_scenarios(config: &RunConfig, scenarios: &[Scenario]) -> RunRes
         },
         scenarios: outcomes,
         totals,
-    }
+    })
 }
 
 fn client(config: &RunConfig) -> EndpointClient {
-    EndpointClient::new(
+    EndpointClient::new_with_headers(
         config.endpoint.clone(),
         config.model.clone(),
         config.timeout,
         config.sampling.clone(),
+        config.request_headers.clone(),
     )
 }
 
-async fn run_scenario(client: &EndpointClient, scenario: &Scenario) -> ScenarioOutcome {
+async fn run_scenario(
+    client: &EndpointClient,
+    scenario: &Scenario,
+    run_id: &str,
+    result_parent: &Path,
+) -> io::Result<ScenarioOutcome> {
     let mut messages = Vec::new();
     let mut previous_calls = Vec::new();
     let mut evidence = Vec::new();
@@ -127,6 +151,8 @@ async fn run_scenario(client: &EndpointClient, scenario: &Scenario) -> ScenarioO
                         Some(turn_reason(scenario, turn_index, reason)),
                         &evidence,
                         retried,
+                        run_id,
+                        result_parent,
                     );
                 }
             }
@@ -136,19 +162,21 @@ async fn run_scenario(client: &EndpointClient, scenario: &Scenario) -> ScenarioO
         let response = match completion {
             CompletionResult::Parsed {
                 response,
-                raw_bytes,
+                raw_bytes: _,
+                turns,
                 retried: completion_retried,
             } => {
-                evidence.extend_from_slice(&raw_bytes);
+                evidence.extend(turns);
                 retried |= completion_retried;
                 response
             }
             CompletionResult::Invalid {
                 reason,
-                raw_bytes,
+                raw_bytes: _,
+                turns,
                 retried: completion_retried,
             } => {
-                evidence.extend_from_slice(&raw_bytes);
+                evidence.extend(turns);
                 retried |= completion_retried;
                 return outcome(
                     scenario,
@@ -156,14 +184,17 @@ async fn run_scenario(client: &EndpointClient, scenario: &Scenario) -> ScenarioO
                     Some(turn_reason(scenario, turn_index, reason)),
                     &evidence,
                     retried,
+                    run_id,
+                    result_parent,
                 );
             }
             CompletionResult::Error {
                 reason,
-                raw_bytes,
+                raw_bytes: _,
+                turns,
                 retried: completion_retried,
             } => {
-                evidence.extend_from_slice(&raw_bytes);
+                evidence.extend(turns);
                 retried |= completion_retried;
                 return outcome(
                     scenario,
@@ -171,6 +202,8 @@ async fn run_scenario(client: &EndpointClient, scenario: &Scenario) -> ScenarioO
                     Some(turn_reason(scenario, turn_index, reason)),
                     &evidence,
                     retried,
+                    run_id,
+                    result_parent,
                 );
             }
         };
@@ -187,6 +220,8 @@ async fn run_scenario(client: &EndpointClient, scenario: &Scenario) -> ScenarioO
                 Some(turn_reason(scenario, turn_index, reason)),
                 &evidence,
                 retried,
+                run_id,
+                result_parent,
             );
         }
 
@@ -194,7 +229,15 @@ async fn run_scenario(client: &EndpointClient, scenario: &Scenario) -> ScenarioO
         messages.push(assistant_message(&response));
     }
 
-    outcome(scenario, Status::Pass, None, &evidence, retried)
+    outcome(
+        scenario,
+        Status::Pass,
+        None,
+        &evidence,
+        retried,
+        run_id,
+        result_parent,
+    )
 }
 
 fn request_message(message: &Message, previous_calls: &[ToolCall]) -> Result<Value, String> {
@@ -263,17 +306,40 @@ fn outcome(
     scenario: &Scenario,
     status: Status,
     failure_reason: Option<String>,
-    raw_bytes: &[u8],
+    captured_turns: &[CapturedTurn],
     retried: bool,
-) -> ScenarioOutcome {
-    ScenarioOutcome {
+    run_id: &str,
+    result_parent: &Path,
+) -> io::Result<ScenarioOutcome> {
+    let (evidence_hash, evidence_path) = if captured_turns.is_empty() {
+        (None, None)
+    } else {
+        let relative_path = format!("evidence/{run_id}/{}.json", scenario.id);
+        let path = result_parent.join(&relative_path);
+        fs::create_dir_all(path.parent().expect("evidence path has a parent"))?;
+        let transcript = Transcript {
+            schema_version: 1,
+            run_id: run_id.to_owned(),
+            scenario_id: scenario.id.clone(),
+            turns: captured_turns
+                .iter()
+                .cloned()
+                .enumerate()
+                .map(|(index, turn)| redact_transcript_turn(index, turn))
+                .collect(),
+        };
+        let bytes = write_transcript_atomic(&path, &transcript)?;
+        (Some(evidence_hash(&bytes)), Some(relative_path))
+    };
+    Ok(ScenarioOutcome {
         id: scenario.id.clone(),
         category: scenario.category,
         status,
         failure_reason,
-        evidence_hash: evidence_hash(raw_bytes),
+        evidence_hash,
+        evidence_path,
         retried,
-    }
+    })
 }
 
 fn totals(outcomes: &[ScenarioOutcome]) -> Totals {
@@ -295,13 +361,16 @@ fn totals(outcomes: &[ScenarioOutcome]) -> Totals {
     totals
 }
 
-fn evidence_hash(raw_bytes: &[u8]) -> Option<String> {
-    if raw_bytes.is_empty() {
-        return None;
-    }
-    // Evidence hashes are SHA-256 over the raw response bodies in turn order.
-    let hash = digest(&SHA256, raw_bytes);
-    Some(format!("sha256:{}", hex(hash.as_ref())))
+fn evidence_hash(transcript_bytes: &[u8]) -> String {
+    let hash = digest(&SHA256, transcript_bytes);
+    format!("sha256:{}", hex(hash.as_ref()))
+}
+
+fn run_id(timestamp: &str, endpoint: &str, model_id: &str) -> String {
+    let compact_timestamp = timestamp.replace(['-', ':'], "");
+    let source = format!("{timestamp}\n{endpoint}\n{model_id}");
+    let hash = digest(&SHA256, source.as_bytes());
+    format!("{compact_timestamp}-{}", &hex(hash.as_ref())[..8])
 }
 
 fn hex(bytes: &[u8]) -> String {
@@ -341,4 +410,19 @@ fn civil_from_days(days_since_epoch: i64) -> (i64, i64, i64) {
     let month = month_prime + if month_prime < 10 { 3 } else { -9 };
     year += i64::from(month <= 2);
     (year, month, day)
+}
+
+#[cfg(test)]
+mod tests {
+    #[test]
+    fn run_id_uses_compact_timestamp_and_metadata_hash_prefix() {
+        assert_eq!(
+            super::run_id(
+                "2026-07-19T20:45:00Z",
+                "http://localhost:11434/v1",
+                "qwen2.5:7b-instruct",
+            ),
+            "20260719T204500Z-beda7dcb"
+        );
+    }
 }

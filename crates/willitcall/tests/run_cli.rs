@@ -149,7 +149,7 @@ async fn happy_run_passes_all_scenarios_and_writes_a_valid_result() {
         String::from_utf8_lossy(&output.stderr),
         result.scenarios
     );
-    assert_eq!(result.schema_version, 1);
+    assert_eq!(result.schema_version, 2);
     assert_eq!(result.totals.passed, 5);
     assert_eq!(result.totals.failed, 0);
     assert!(result
@@ -260,14 +260,17 @@ content = "Reply ready."
 }
 
 #[tokio::test(flavor = "multi_thread", worker_threads = 2)]
-async fn validator_rejects_a_wrong_schema_version_with_a_precise_message() {
+async fn validate_accepts_v1_and_v2_fixtures_and_rejects_v3() {
     let directory = tempfile::tempdir().expect("temp directory");
-    let result_path = directory.path().join("invalid.json");
+    let v1_path = std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
+        .join("../../results/ollama-qwen2.5-7b-instruct.json");
+    let v2_path = directory.path().join("v2.json");
     fs::write(
-        &result_path,
+        &v2_path,
         r#"{
   "schema_version": 2,
   "metadata": {
+    "run_id": "20260719T120000Z-1234abcd",
     "timestamp": "2026-07-19T12:00:00Z",
     "willitcall_version": "0.1.0",
     "endpoint": "http://127.0.0.1:8080/v1",
@@ -295,19 +298,31 @@ async fn validator_rejects_a_wrong_schema_version_with_a_precise_message() {
   }
 }"#,
     )
-    .expect("write invalid result");
+    .expect("write v2 result");
 
-    let output = run_binary(vec![
-        "validate".to_owned(),
-        result_path.display().to_string(),
-    ])
-    .await;
+    for fixture in [&v1_path, &v2_path] {
+        let output = run_binary(vec!["validate".to_owned(), fixture.display().to_string()]).await;
+        assert_eq!(
+            output.status.code(),
+            Some(0),
+            "{}",
+            String::from_utf8_lossy(&output.stderr)
+        );
+    }
+
+    let v3_path = directory.path().join("v3.json");
+    let mut v3: Value =
+        serde_json::from_slice(&fs::read(&v2_path).expect("v2 bytes")).expect("v2 JSON");
+    v3["schema_version"] = json!(3);
+    fs::write(&v3_path, serde_json::to_vec_pretty(&v3).expect("encode v3"))
+        .expect("write v3 result");
+    let output = run_binary(vec!["validate".to_owned(), v3_path.display().to_string()]).await;
 
     assert_eq!(output.status.code(), Some(2));
     assert!(output.stdout.is_empty());
     let stderr = String::from_utf8_lossy(&output.stderr);
     assert!(
-        stderr.contains("unsupported schema_version 2; expected 1"),
+        stderr.contains("unsupported schema_version 3; expected 1 or 2"),
         "{stderr}"
     );
 }
@@ -457,7 +472,93 @@ content = "Say hello."
     let result: RunResult =
         serde_json::from_slice(&fs::read(output_path).expect("result file")).expect("valid result");
     assert!(result.scenarios[0].retried);
+    let evidence_path = directory.path().join(
+        result.scenarios[0]
+            .evidence_path
+            .as_deref()
+            .expect("evidence path"),
+    );
+    let transcript: Value =
+        serde_json::from_slice(&fs::read(evidence_path).expect("transcript file"))
+            .expect("valid transcript");
+    assert_eq!(transcript["turns"].as_array().expect("turns").len(), 2);
+    assert_eq!(transcript["turns"][0]["retried"], false);
+    assert_eq!(transcript["turns"][1]["retried"], true);
     assert_eq!(server.requests().len(), 2);
+}
+
+#[tokio::test(flavor = "multi_thread", worker_threads = 2)]
+async fn result_write_failure_leaves_valid_transcripts_without_partial_result() {
+    let server = MockServer::start_scripted(
+        "fixture-model",
+        vec![ScriptedResponse::Json(completion(
+            json!([]),
+            json!("Hello."),
+        ))],
+    )
+    .await;
+    let directory = tempfile::tempdir().expect("temp directory");
+    let scenario_path = directory.path().join("scenarios");
+    fs::create_dir(&scenario_path).expect("scenario directory");
+    fs::write(
+        scenario_path.join("ordering.toml"),
+        r#"
+id = "ordering-negative"
+category = "negative_trap"
+description = "Write evidence before publishing the result."
+rationale = "This fixture asserts write ordering; tool_choice none requires no tool call."
+
+[[tools]]
+name = "get_weather"
+description = "Get weather."
+
+[tools.parameters]
+type = "object"
+
+[tool_choice]
+mode = "none"
+
+[[turns]]
+[[turns.messages]]
+role = "user"
+content = "Say hello."
+"#,
+    )
+    .expect("write scenario");
+    let output_path = directory.path().join("result.json");
+    fs::create_dir(&output_path).expect("blocking destination directory");
+
+    let output = run_binary(vec![
+        "run".to_owned(),
+        "--endpoint".to_owned(),
+        server.endpoint(),
+        "--model".to_owned(),
+        "fixture-model".to_owned(),
+        "--scenarios".to_owned(),
+        scenario_path.display().to_string(),
+        "--out".to_owned(),
+        output_path.display().to_string(),
+    ])
+    .await;
+
+    assert_eq!(output.status.code(), Some(4));
+    assert!(
+        !output_path.is_file(),
+        "no partial result file is published"
+    );
+    let evidence_root = directory.path().join("evidence");
+    let run_directory = fs::read_dir(evidence_root)
+        .expect("evidence root")
+        .next()
+        .expect("run directory")
+        .expect("run directory entry")
+        .path();
+    let transcript: Value = serde_json::from_slice(
+        &fs::read(run_directory.join("ordering-negative.json")).expect("transcript bytes"),
+    )
+    .expect("valid transcript JSON");
+    assert_eq!(transcript["schema_version"], 1);
+    assert_eq!(transcript["scenario_id"], "ordering-negative");
 }
 
 #[tokio::test(flavor = "multi_thread", worker_threads = 2)]

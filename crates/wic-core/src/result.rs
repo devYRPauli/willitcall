@@ -1,12 +1,14 @@
+use std::collections::BTreeMap;
 use std::fs::File;
 use std::io::{self, Write};
 use std::path::Path;
 
 use serde::{Deserialize, Serialize};
+use serde_json::Value;
 
 use crate::ScenarioCategory;
 
-pub const RESULT_SCHEMA_VERSION: u32 = 1;
+pub const RESULT_SCHEMA_VERSION: u32 = 2;
 
 #[derive(Clone, Debug, Deserialize, Serialize)]
 #[serde(deny_unknown_fields)]
@@ -20,6 +22,8 @@ pub struct RunResult {
 #[derive(Clone, Debug, Deserialize, Serialize)]
 #[serde(deny_unknown_fields)]
 pub struct RunMetadata {
+    #[serde(default)]
+    pub run_id: String,
     pub timestamp: String,
     pub willitcall_version: String,
     pub endpoint: String,
@@ -54,7 +58,69 @@ pub struct ScenarioOutcome {
     pub status: Status,
     pub failure_reason: Option<String>,
     pub evidence_hash: Option<String>,
+    #[serde(default)]
+    pub evidence_path: Option<String>,
     pub retried: bool,
+}
+
+#[derive(Clone, Debug)]
+pub(crate) struct CapturedRequest {
+    pub method: String,
+    pub url: String,
+    pub headers: BTreeMap<String, String>,
+    pub body: Value,
+}
+
+#[derive(Clone, Debug)]
+pub(crate) struct CapturedResponse {
+    pub status: u16,
+    pub headers: BTreeMap<String, String>,
+    pub body: Vec<u8>,
+}
+
+#[derive(Clone, Debug)]
+pub struct CapturedTurn {
+    pub(crate) request: CapturedRequest,
+    pub(crate) response: Option<CapturedResponse>,
+    pub(crate) retried: bool,
+}
+
+#[derive(Debug, Serialize)]
+#[serde(deny_unknown_fields)]
+pub(crate) struct Transcript {
+    pub schema_version: u32,
+    pub run_id: String,
+    pub scenario_id: String,
+    pub turns: Vec<TranscriptTurn>,
+}
+
+#[derive(Debug, Serialize)]
+#[serde(deny_unknown_fields)]
+pub(crate) struct TranscriptTurn {
+    pub index: usize,
+    pub request: TranscriptRequest,
+    pub response: Option<TranscriptResponse>,
+    pub retried: bool,
+}
+
+#[derive(Debug, Serialize)]
+#[serde(deny_unknown_fields)]
+pub(crate) struct TranscriptRequest {
+    pub method: String,
+    pub url: String,
+    pub headers: BTreeMap<String, String>,
+    pub body: Value,
+}
+
+#[derive(Debug, Serialize)]
+#[serde(deny_unknown_fields)]
+pub(crate) struct TranscriptResponse {
+    pub status: u16,
+    pub headers: BTreeMap<String, String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub body_raw: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub body_raw_hex: Option<String>,
 }
 
 #[derive(Clone, Copy, Debug, Deserialize, Eq, PartialEq, Serialize)]
@@ -90,13 +156,41 @@ pub fn parse_and_validate_result(bytes: &[u8]) -> Result<RunResult, String> {
     let result: RunResult = serde_json::from_slice(bytes)
         .map_err(|error| format!("invalid result document: {error}"))?;
     validate_result(&result)?;
+    if result.schema_version == 2 {
+        let document: Value = serde_json::from_slice(bytes)
+            .map_err(|error| format!("invalid result document: {error}"))?;
+        let metadata = document
+            .get("metadata")
+            .and_then(Value::as_object)
+            .ok_or_else(|| "invalid result document: metadata must be an object".to_owned())?;
+        if !metadata.contains_key("run_id") {
+            return Err(
+                "invalid result document: metadata.run_id is required for schema_version 2"
+                    .to_owned(),
+            );
+        }
+        let scenarios = document
+            .get("scenarios")
+            .and_then(Value::as_array)
+            .ok_or_else(|| "invalid result document: scenarios must be an array".to_owned())?;
+        if scenarios.iter().any(|scenario| {
+            !scenario
+                .as_object()
+                .is_some_and(|scenario| scenario.contains_key("evidence_path"))
+        }) {
+            return Err(
+                "invalid result document: scenario evidence_path is required for schema_version 2"
+                    .to_owned(),
+            );
+        }
+    }
     Ok(result)
 }
 
 pub fn validate_result(result: &RunResult) -> Result<(), String> {
-    if result.schema_version != RESULT_SCHEMA_VERSION {
+    if !matches!(result.schema_version, 1 | RESULT_SCHEMA_VERSION) {
         return Err(format!(
-            "unsupported schema_version {}; expected {}",
+            "unsupported schema_version {}; expected 1 or {}",
             result.schema_version, RESULT_SCHEMA_VERSION
         ));
     }
@@ -146,7 +240,14 @@ pub fn write_result_atomic(path: &Path, result: &RunResult) -> io::Result<()> {
     })
 }
 
-fn atomic_write_with(
+pub(crate) fn write_transcript_atomic(path: &Path, transcript: &Transcript) -> io::Result<Vec<u8>> {
+    let mut bytes = serde_json::to_vec_pretty(transcript).map_err(io::Error::other)?;
+    bytes.push(b'\n');
+    atomic_write_with(path, |file| file.write_all(&bytes))?;
+    Ok(bytes)
+}
+
+pub(crate) fn atomic_write_with(
     path: &Path,
     write: impl FnOnce(&mut File) -> io::Result<()>,
 ) -> io::Result<()> {
@@ -162,8 +263,111 @@ fn atomic_write_with(
     Ok(())
 }
 
+pub(crate) fn redact_transcript_turn(index: usize, captured: CapturedTurn) -> TranscriptTurn {
+    const SENSITIVE_HEADERS: [&str; 7] = [
+        "authorization",
+        "api-key",
+        "x-api-key",
+        "openai-api-key",
+        "cookie",
+        "set-cookie",
+        "proxy-authorization",
+    ];
+    const SENSITIVE_QUERY_PARAMETERS: [&str; 5] =
+        ["api_key", "apikey", "key", "access_token", "token"];
+
+    let CapturedTurn {
+        request,
+        response,
+        retried,
+    } = captured;
+    let mut request_headers = request.headers;
+    for (name, value) in &mut request_headers {
+        if SENSITIVE_HEADERS
+            .iter()
+            .any(|sensitive| name.eq_ignore_ascii_case(sensitive))
+        {
+            *value = "[REDACTED]".to_owned();
+        }
+    }
+    let mut request_url = request.url;
+    if let Ok(mut url) = reqwest::Url::parse(&request_url) {
+        let query = url
+            .query_pairs()
+            .map(|(name, value)| (name.into_owned(), value.into_owned()))
+            .collect::<Vec<_>>();
+        if query.iter().any(|(name, _)| {
+            SENSITIVE_QUERY_PARAMETERS
+                .iter()
+                .any(|sensitive| name == sensitive)
+        }) {
+            url.query_pairs_mut()
+                .clear()
+                .extend_pairs(query.iter().map(|(name, value)| {
+                    (
+                        name.as_str(),
+                        if SENSITIVE_QUERY_PARAMETERS
+                            .iter()
+                            .any(|sensitive| name == sensitive)
+                        {
+                            "REDACTED"
+                        } else {
+                            value.as_str()
+                        },
+                    )
+                }));
+            request_url = url.to_string();
+        }
+    }
+
+    let response = response.map(|response| {
+        let mut headers = response.headers;
+        for (name, value) in &mut headers {
+            if SENSITIVE_HEADERS
+                .iter()
+                .any(|sensitive| name.eq_ignore_ascii_case(sensitive))
+            {
+                *value = "[REDACTED]".to_owned();
+            }
+        }
+        let (body_raw, body_raw_hex) = match String::from_utf8(response.body) {
+            Ok(body) => (Some(body), None),
+            Err(error) => (None, Some(hex(&error.into_bytes()))),
+        };
+        TranscriptResponse {
+            status: response.status,
+            headers,
+            body_raw,
+            body_raw_hex,
+        }
+    });
+
+    TranscriptTurn {
+        index,
+        request: TranscriptRequest {
+            method: request.method,
+            url: request_url,
+            headers: request_headers,
+            body: request.body,
+        },
+        response,
+        retried,
+    }
+}
+
+fn hex(bytes: &[u8]) -> String {
+    const DIGITS: &[u8; 16] = b"0123456789abcdef";
+    let mut encoded = String::with_capacity(bytes.len() * 2);
+    for byte in bytes {
+        encoded.push(DIGITS[(byte >> 4) as usize] as char);
+        encoded.push(DIGITS[(byte & 0x0f) as usize] as char);
+    }
+    encoded
+}
+
 #[cfg(test)]
 mod tests {
+    use std::collections::BTreeMap;
     use std::fs;
     use std::io::{self, Write};
 
@@ -175,8 +379,9 @@ mod tests {
 
     fn sample_result() -> RunResult {
         RunResult {
-            schema_version: 1,
+            schema_version: 2,
             metadata: RunMetadata {
+                run_id: "20260719T120000Z-1234abcd".to_owned(),
                 timestamp: "2026-07-19T12:00:00Z".to_owned(),
                 willitcall_version: "0.1.0".to_owned(),
                 endpoint: "http://127.0.0.1:8080/v1".to_owned(),
@@ -200,6 +405,9 @@ mod tests {
                 status: Status::Pass,
                 failure_reason: None,
                 evidence_hash: Some("sha256:abc123".to_owned()),
+                evidence_path: Some(
+                    "evidence/20260719T120000Z-1234abcd/single-weather.json".to_owned(),
+                ),
                 retried: false,
             }],
             totals: Totals {
@@ -216,7 +424,7 @@ mod tests {
     fn schema_version_is_the_first_serialized_field() {
         let json = serde_json::to_string(&sample_result()).expect("serialize result");
 
-        assert!(json.starts_with("{\"schema_version\":1,"));
+        assert!(json.starts_with("{\"schema_version\":2,"));
     }
 
     #[test]
@@ -253,7 +461,7 @@ mod tests {
 
         let written = fs::read_to_string(destination).expect("read result");
         let parsed: RunResult = serde_json::from_str(&written).expect("parse written result");
-        assert_eq!(parsed.schema_version, 1);
+        assert_eq!(parsed.schema_version, 2);
         assert_eq!(parsed.scenarios.len(), 1);
     }
 
@@ -279,6 +487,7 @@ mod tests {
             failure_reason: matches!(status, Status::Fail | Status::Error)
                 .then(|| "fixture failure".to_owned()),
             evidence_hash: None,
+            evidence_path: None,
             retried: false,
         })
         .collect();
@@ -294,7 +503,7 @@ mod tests {
             serde_json::from_slice(&fs::read(&destination).expect("read generated result"))
                 .expect("parse generated result");
         let schema: serde_json::Value =
-            serde_json::from_str(include_str!("../../../schemas/result-v1.schema.json"))
+            serde_json::from_str(include_str!("../../../schemas/result-v2.schema.json"))
                 .expect("parse checked-in schema");
         let validator = jsonschema::validator_for(&schema).expect("compile result schema");
 
@@ -319,15 +528,19 @@ mod tests {
     }
 
     #[test]
-    fn validator_rejects_wrong_schema_version_and_inconsistent_totals() {
+    fn validator_accepts_v1_and_v2_and_rejects_other_versions() {
         let mut result = sample_result();
+        result.schema_version = 1;
+        super::validate_result(&result).expect("v1 should validate");
         result.schema_version = 2;
+        super::validate_result(&result).expect("v2 should validate");
+        result.schema_version = 3;
         assert_eq!(
             super::validate_result(&result).expect_err("wrong version must fail"),
-            "unsupported schema_version 2; expected 1"
+            "unsupported schema_version 3; expected 1 or 2"
         );
 
-        result.schema_version = 1;
+        result.schema_version = 2;
         result.totals.total = 2;
         assert_eq!(
             super::validate_result(&result).expect_err("bad totals must fail"),
@@ -348,5 +561,89 @@ mod tests {
 
         assert!(error.starts_with("invalid result document:"), "{error}");
         assert!(error.contains("unknown field `unexpected`"), "{error}");
+    }
+
+    #[test]
+    fn v2_document_requires_run_id_and_evidence_path_properties() {
+        let mut missing_run_id = serde_json::to_value(sample_result()).expect("serialize result");
+        missing_run_id["metadata"]
+            .as_object_mut()
+            .expect("metadata object")
+            .remove("run_id");
+        let error = super::parse_and_validate_result(
+            &serde_json::to_vec(&missing_run_id).expect("encode result"),
+        )
+        .expect_err("v2 run_id is required");
+        assert!(error.contains("metadata.run_id is required"), "{error}");
+
+        let mut missing_evidence_path =
+            serde_json::to_value(sample_result()).expect("serialize result");
+        missing_evidence_path["scenarios"][0]
+            .as_object_mut()
+            .expect("scenario object")
+            .remove("evidence_path");
+        let error = super::parse_and_validate_result(
+            &serde_json::to_vec(&missing_evidence_path).expect("encode result"),
+        )
+        .expect_err("v2 evidence_path is required");
+        assert!(error.contains("evidence_path is required"), "{error}");
+    }
+
+    #[test]
+    fn redaction_covers_sensitive_headers_query_parameters_and_raw_bytes() {
+        let turn = super::redact_transcript_turn(
+            0,
+            super::CapturedTurn {
+                request: super::CapturedRequest {
+                    method: "POST".to_owned(),
+                    url: "https://example.test/v1/chat?api_key=one&apikey=two&key=three&access_token=four&token=five&keep=value".to_owned(),
+                    headers: BTreeMap::from([
+                        ("Authorization".to_owned(), "Bearer secret".to_owned()),
+                        ("API-Key".to_owned(), "api-key secret".to_owned()),
+                        ("X-API-KEY".to_owned(), "x-api-key secret".to_owned()),
+                        (
+                            "OpenAI-API-Key".to_owned(),
+                            "openai-api-key secret".to_owned(),
+                        ),
+                        ("Cookie".to_owned(), "cookie secret".to_owned()),
+                        ("Set-Cookie".to_owned(), "set-cookie secret".to_owned()),
+                        (
+                            "Proxy-Authorization".to_owned(),
+                            "proxy-authorization secret".to_owned(),
+                        ),
+                        ("content-type".to_owned(), "application/json".to_owned()),
+                    ]),
+                    body: serde_json::json!({"messages": []}),
+                },
+                response: Some(super::CapturedResponse {
+                    status: 200,
+                    headers: BTreeMap::from([
+                        ("Set-Cookie".to_owned(), "session=secret".to_owned()),
+                        (
+                            "content-type".to_owned(),
+                            "application/octet-stream".to_owned(),
+                        ),
+                    ]),
+                    body: vec![0xff, 0x00, 0x7f],
+                }),
+                retried: false,
+            },
+        );
+
+        assert_eq!(
+            turn.request.url,
+            "https://example.test/v1/chat?api_key=REDACTED&apikey=REDACTED&key=REDACTED&access_token=REDACTED&token=REDACTED&keep=value"
+        );
+        for (name, value) in &turn.request.headers {
+            if name == "content-type" {
+                assert_eq!(value, "application/json");
+            } else {
+                assert_eq!(value, "[REDACTED]", "header {name}");
+            }
+        }
+        let response = turn.response.expect("recorded response");
+        assert_eq!(response.headers["Set-Cookie"], "[REDACTED]");
+        assert_eq!(response.body_raw, None);
+        assert_eq!(response.body_raw_hex.as_deref(), Some("ff007f"));
     }
 }

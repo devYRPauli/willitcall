@@ -152,7 +152,14 @@ async fn execute(cli: Cli) -> Result<u8, ExecuteError> {
             let config = RunConfig::new(endpoint, args.model, Duration::from_secs(args.timeout))
                 .with_server(args.server.config());
             preflight(&config).await.map_err(ExecuteError::Preflight)?;
-            let result = run_scenarios(&config, &scenarios).await;
+            let result = run_scenarios(&config, &scenarios, &args.out)
+                .await
+                .map_err(|error| {
+                    ExecuteError::Harness(format!(
+                        "failed to write evidence for {}: {error}",
+                        args.out.display()
+                    ))
+                })?;
             write_result_atomic(&args.out, &result).map_err(|error| {
                 ExecuteError::Harness(format!(
                     "failed to write result {}: {error}",
@@ -317,6 +324,7 @@ mod tests {
         let result = RunResult {
             schema_version: 1,
             metadata: RunMetadata {
+                run_id: String::new(),
                 timestamp: "2026-07-19T12:00:00Z".to_owned(),
                 willitcall_version: "0.1.0".to_owned(),
                 endpoint: "http://127.0.0.1:8080/v1".to_owned(),
@@ -341,6 +349,7 @@ mod tests {
                     status: Status::Pass,
                     failure_reason: None,
                     evidence_hash: None,
+                    evidence_path: None,
                     retried: false,
                 },
                 ScenarioOutcome {
@@ -349,6 +358,7 @@ mod tests {
                     status: Status::Fail,
                     failure_reason: Some("wrong tool call: expected 'a', got 'b'".to_owned()),
                     evidence_hash: None,
+                    evidence_path: None,
                     retried: false,
                 },
                 ScenarioOutcome {
@@ -357,6 +367,7 @@ mod tests {
                     status: Status::Error,
                     failure_reason: Some("request timed out after 60s".to_owned()),
                     evidence_hash: None,
+                    evidence_path: None,
                     retried: true,
                 },
             ],
@@ -384,6 +395,7 @@ mod tests {
         let result = RunResult {
             schema_version: 1,
             metadata: RunMetadata {
+                run_id: String::new(),
                 timestamp: String::new(),
                 willitcall_version: String::new(),
                 endpoint: String::new(),
