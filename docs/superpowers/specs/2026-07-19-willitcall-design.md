@@ -155,13 +155,21 @@ the combined matrix.
 5. Unparsed-tool-call failure class (APPROVED, to implement in M5). M4 seeding
    found a failure mode the current vocabulary cannot express. granite3.1-dense:8b
    emits `<tool_call>[{"arguments":{"city":"Boston"},"name":"get_weather"}]`
-   and phi4-mini emits ``[`get_weather` {"city": "Boston"}]`` - both are
-   well-formed calls with the right function and arguments, in the model's own
-   format, left sitting in `content` because the server never parsed them into
-   `tool_calls`. Both score 7/50 on Ollama AND 7/50 on llama.cpp when the same
-   Ollama blob is served through llama.cpp, so this is neither an
+   - a well-formed call with the right function and arguments, in the model's
+   own format, left sitting in `content` because the server never parsed it
+   into `tool_calls`. It scores 7/50 on Ollama AND 7/50 on llama.cpp when the
+   same Ollama blob is served through llama.cpp, so this is neither an
    `empty_response` nor a `server-defect` attributable to one server: it is a
    format/parser mismatch across the ecosystem.
+   - CORRECTED (M5, 2026-07-20): this amendment originally also claimed
+     phi4-mini emits ``[`get_weather` {"city": "Boston"}]`` and shares the
+     failure mode. That is WRONG and is retracted. Across both servers only 1
+     of 86 phi4-mini failures matches any tool-call shape; the rest are prose
+     refusals and narration with no call at all, so phi4-mini's 7/50 is
+     largely genuine model failure. The claim was generalised from a single
+     example - the n=1 error amendment 4 exists to prevent. Evidence and the
+     full retraction are in
+     docs/case-studies/2026-07-20-granite-emits-tool-calls-no-server-parses.md.
    - Why it matters: as recorded today these cells are indistinguishable from
      "the model cannot call tools", which is false and is exactly the kind of
      misattribution amendment 2 exists to prevent. The 7 scenarios each model
@@ -173,6 +181,11 @@ the combined matrix.
      evidence-backed, since a false positive credits a model with a call it
      never made; a per-server-preset list of known shapes is preferred over one
      loose regex.
+   - IMPLEMENTATION NOTE (M5): the shape registry is NOT gated on server
+     preset. The same `<tool_call>` shape was observed under both the ollama
+     and llamacpp presets, so preset-gating would produce false negatives. A
+     curated registry of named shapes is applied to all presets instead, which
+     preserves the intent (no loose regex) without the false negatives.
    - DECIDED (owner, 2026-07-20): `failure_class` is a SINGLE value with a
      documented precedence order (error > empty_response > unparsed_tool_call
      > plain fail). Rationale: the class records the dominant mechanically
@@ -181,9 +194,12 @@ the combined matrix.
      a single value keeps schema, site rendering, and stats simple. Revisit
      only if a concrete multi-class response is actually observed; extending
      to an array later is an additive change.
-   - Sample basis: 2 models x 2 servers, 50 scenarios each, single run per arm.
-     Under amendment 4 this is below the bar for a case-study verdict; it needs
-     >= 5 runs per arm before any conclusion is published as such (M5 task).
+   - Sample basis: RESOLVED in M5. granite3.1-dense:8b was replicated at 5 runs
+     per arm on both servers, meeting amendment 4. All ten runs produced an
+     identical outcome, down to the same set of passing scenario ids: 7/50,
+     with 35 of 43 failures classified on Ollama and 42 of 43 on llama.cpp.
+     The verdict is published in the case study. phi4-mini was dropped from
+     the finding (see the correction above) rather than replicated.
 
 6. Measurement environment uniformity and disclosure (owner, 2026-07-20).
    M4 published rows measured on two different hosts (wave 1: 16GB MacBook;

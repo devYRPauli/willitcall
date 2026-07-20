@@ -235,7 +235,8 @@ fn site_generates_v1_and_v2_rows_ratios_links_and_badges() {
     assert!(index.contains("empty response"));
     assert!(index.contains("<span class=\"badge neutral unparsed\">unparsed tool call</span>"));
     assert!(index.contains("A cell measures the whole stack"));
-    assert!(index.contains("single run per cell unless stated otherwise"));
+    assert!(index.contains("Each published cell is one run."));
+    assert!(index.contains("replicated across at least five runs per arm"));
     assert!(index.contains("Host hardware"));
     assert!(index.contains("Apple M4 Max, 64GB"));
     assert!(index.contains("Host OS"));

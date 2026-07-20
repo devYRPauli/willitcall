@@ -135,7 +135,7 @@ fn render_index(results: &[ResultFile], repo_base: &str) -> String {
       <p>A cell measures the whole stack: model x quant x server x server version. It is not a property of the model alone.</p>
       <p>Red means the combination failed as tested, not that the weights are bad. The same weights can pass on one server and fail on another; where that is proven, the cell carries a cause annotation.</p>
       <p>Every red cell links to the full request/response transcript that produced it when the result schema supplies a transcript path. Legacy schema v1 results do not record transcript paths. See the <a href="{}">case studies under docs/case-studies/</a> for controlled comparisons.</p>
-      <p>Sample size and method: {} distinct scenarios are represented in this result set. Results come from a single run per cell unless stated otherwise.</p>
+      <p>Sample size and method: {} distinct scenarios are represented in this result set. Each published cell is one run. Findings in the case studies are replicated across at least five runs per arm before a verdict is drawn, so a cell tells you what one run measured and a case study tells you what held up under repetition.</p>
 {}
     </section>
 
