@@ -72,6 +72,8 @@ struct RunArgs {
     force: bool,
     #[arg(long, value_parser = clap::builder::NonEmptyStringValueParser::new())]
     host_hardware_class: Option<String>,
+    #[arg(long, value_parser = clap::builder::NonEmptyStringValueParser::new())]
+    quant: Option<String>,
 }
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq, ValueEnum)]
@@ -415,7 +417,8 @@ async fn execute_with_known_servers(
             }
             let config = RunConfig::new(endpoint, args.model, Duration::from_secs(args.timeout))
                 .with_server(args.server.config())
-                .with_host_hardware_class(args.host_hardware_class);
+                .with_host_hardware_class(args.host_hardware_class)
+                .with_declared_quant(args.quant);
             preflight(&config).await.map_err(ExecuteError::Preflight)?;
             let mut result = run_scenarios(&config, &scenarios, &args.out)
                 .await
@@ -632,6 +635,26 @@ mod tests {
             args.host_hardware_class.as_deref(),
             Some("Contributor workstation, 32GB")
         );
+    }
+
+    #[test]
+    fn run_subcommand_parses_quant_declaration() {
+        let cli = Cli::try_parse_from([
+            "willitcall",
+            "run",
+            "--endpoint",
+            "http://127.0.0.1:8080/v1",
+            "--model",
+            "local-model",
+            "--quant",
+            "Q4_K_M-imatrix",
+        ])
+        .expect("run arguments should parse");
+
+        let Command::Run(args) = cli.command else {
+            panic!("expected run command");
+        };
+        assert_eq!(args.quant.as_deref(), Some("Q4_K_M-imatrix"));
     }
 
     #[tokio::test]

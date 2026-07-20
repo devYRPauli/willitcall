@@ -605,6 +605,7 @@ async fn happy_run_passes_all_scenarios_and_writes_a_valid_result() {
         result.scenarios
     );
     assert_eq!(result.schema_version, 2);
+    assert_eq!(result.metadata.declared_quant, None);
     assert_eq!(result.totals.passed, 5);
     assert_eq!(result.totals.failed, 0);
     assert!(result
@@ -688,6 +689,8 @@ content = "Reply ready."
         "fixture-model".to_owned(),
         "--host-hardware-class".to_owned(),
         "Fixture workstation, 32GB".to_owned(),
+        "--quant".to_owned(),
+        "Q4_K_M-imatrix".to_owned(),
         "--force".to_owned(),
         "--scenarios".to_owned(),
         scenario_path.display().to_string(),
@@ -705,6 +708,10 @@ content = "Reply ready."
     );
     let result: RunResult = serde_json::from_slice(&output.stdout).expect("stdout is only JSON");
     assert_eq!(result.metadata.server.preset_name, "ollama");
+    assert_eq!(
+        result.metadata.declared_quant.as_deref(),
+        Some("Q4_K_M-imatrix")
+    );
     assert_eq!(
         result.metadata.server.reported_version.as_deref(),
         Some("mock-1.0")

@@ -26,6 +26,7 @@ pub struct RunConfig {
     pub sampling: SamplingParams,
     pub server: ServerConfig,
     pub environment: EnvironmentMetadata,
+    pub declared_quant: Option<String>,
     pub request_headers: HeaderMap,
 }
 
@@ -60,6 +61,7 @@ impl RunConfig {
                 version_probe: None,
             },
             environment: detect_environment(),
+            declared_quant: None,
             request_headers: HeaderMap::new(),
         }
     }
@@ -73,6 +75,11 @@ impl RunConfig {
         if let Some(host_hardware_class) = host_hardware_class {
             self.environment.host_hardware_class = host_hardware_class;
         }
+        self
+    }
+
+    pub fn with_declared_quant(mut self, declared_quant: Option<String>) -> Self {
+        self.declared_quant = declared_quant;
         self
     }
 }
@@ -229,7 +236,7 @@ pub async fn run_scenarios(
             willitcall_version: env!("CARGO_PKG_VERSION").to_owned(),
             endpoint: config.endpoint.clone(),
             model_id: config.model.clone(),
-            declared_quant: None,
+            declared_quant: config.declared_quant.clone(),
             server: ServerMetadata {
                 preset_name: config.server.preset_name.clone(),
                 reported_version,
@@ -560,6 +567,19 @@ mod tests {
             "Fixture workstation, 32GB"
         );
         assert!(!config.environment.host_os.is_empty());
+    }
+
+    #[test]
+    fn run_config_defaults_quant_to_none_and_accepts_declaration_verbatim() {
+        let config = super::RunConfig::new(
+            "http://127.0.0.1:8080/v1".to_owned(),
+            "fixture-model".to_owned(),
+            std::time::Duration::from_secs(60),
+        );
+        assert_eq!(config.declared_quant, None);
+
+        let config = config.with_declared_quant(Some("Q4_K_M-imatrix".to_owned()));
+        assert_eq!(config.declared_quant.as_deref(), Some("Q4_K_M-imatrix"));
     }
 
     async fn unused_port() -> u16 {
