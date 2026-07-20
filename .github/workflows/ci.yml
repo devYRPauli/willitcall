@@ -46,14 +46,21 @@ jobs:
           import json, sys
           from jsonschema import Draft202012Validator
 
-          with open("schemas/result-v1.schema.json") as handle:
-              schema = json.load(handle)
-          validator = Draft202012Validator(schema)
+          validators = {}
+          for version in (1, 2):
+              with open(f"schemas/result-v{version}.schema.json") as handle:
+                  validators[version] = Draft202012Validator(json.load(handle))
 
           failed = False
           for path in sys.argv[1:]:
               with open(path) as handle:
                   document = json.load(handle)
+              version = document.get("schema_version", 1)
+              validator = validators.get(version)
+              if validator is None:
+                  failed = True
+                  print(f"{path}: unknown schema_version {version}")
+                  continue
               errors = sorted(validator.iter_errors(document), key=lambda e: e.path)
               if errors:
                   failed = True
