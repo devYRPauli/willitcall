@@ -17,7 +17,7 @@ pub fn score_response(
     content: Option<&str>,
     actual: &[ToolCall],
 ) -> Result<(), ScoreFailure> {
-    let empty_response = actual.is_empty() && matches!(content, None | Some(""));
+    let empty_response = is_empty_response(content, actual);
     score_calls(tools, expected, default_policy, actual).map_err(|reason| ScoreFailure {
         reason: if empty_response {
             "empty response: no content and no tool call".to_owned()
@@ -26,6 +26,10 @@ pub fn score_response(
         },
         failure_class: empty_response.then(|| "empty_response".to_owned()),
     })
+}
+
+pub fn is_empty_response(content: Option<&str>, actual: &[ToolCall]) -> bool {
+    actual.is_empty() && matches!(content, None | Some(""))
 }
 
 pub fn score_calls(

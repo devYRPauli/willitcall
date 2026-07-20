@@ -1,13 +1,20 @@
 mod report;
 
 use std::io::IsTerminal;
-use std::path::PathBuf;
+use std::path::{Path, PathBuf};
 use std::process::ExitCode;
 use std::time::Duration;
 
-use clap::{Args, Parser, Subcommand, ValueEnum};
-use wic_core::result::{exit_code_for_totals, parse_and_validate_result, write_result_atomic};
+use clap::{ArgGroup, Args, Parser, Subcommand, ValueEnum};
+use wic_core::client::{
+    parse_non_streaming, parse_sse_data, reassemble_sse_payloads, AssistantResponse,
+};
+use wic_core::result::{
+    exit_code_for_totals, parse_and_validate_result, validate_result, write_result_atomic, Cause,
+    CauseKind, RunResult, Status,
+};
 use wic_core::runner::{preflight, run_scenarios, RunConfig, ServerConfig, ServerVersionProbe};
+use wic_core::score::is_empty_response;
 use wic_core::{load_embedded_scenarios, load_scenarios_from_dir};
 
 const EXIT_USAGE: u8 = 2;
@@ -27,6 +34,8 @@ enum Command {
     Run(RunArgs),
     Scenarios(ScenariosArgs),
     Validate(ValidateArgs),
+    Annotate(AnnotateArgs),
+    Rescore(RescoreArgs),
 }
 
 #[derive(Debug, Args)]
@@ -132,11 +141,172 @@ struct ValidateArgs {
     result_file: PathBuf,
 }
 
+#[derive(Debug, Args)]
+#[command(group(
+    ArgGroup::new("target")
+        .required(true)
+        .multiple(false)
+        .args(["scenario", "all_empty"])
+))]
+struct AnnotateArgs {
+    #[arg(long)]
+    result: PathBuf,
+    #[arg(long)]
+    scenario: Option<String>,
+    #[arg(long)]
+    all_empty: bool,
+    #[arg(long, value_enum)]
+    cause: CauseArg,
+    #[arg(long)]
+    reference: Option<String>,
+    #[arg(long)]
+    note: Option<String>,
+    #[arg(long)]
+    force: bool,
+}
+
+#[derive(Clone, Copy, Debug, ValueEnum)]
+enum CauseArg {
+    ServerDefect,
+    Unknown,
+}
+
+impl From<CauseArg> for CauseKind {
+    fn from(value: CauseArg) -> Self {
+        match value {
+            CauseArg::ServerDefect => Self::ServerDefect,
+            CauseArg::Unknown => Self::Unknown,
+        }
+    }
+}
+
+#[derive(Debug, Args)]
+struct RescoreArgs {
+    #[arg(long)]
+    result: PathBuf,
+}
+
 #[derive(Debug)]
 enum ExecuteError {
     Usage(String),
     Preflight(String),
     Harness(String),
+}
+
+fn read_result(path: &Path) -> Result<RunResult, ExecuteError> {
+    let bytes = std::fs::read(path).map_err(|error| {
+        ExecuteError::Usage(format!("failed to read result {}: {error}", path.display()))
+    })?;
+    parse_and_validate_result(&bytes).map_err(ExecuteError::Usage)
+}
+
+fn write_updated_result(path: &Path, result: &RunResult) -> Result<(), ExecuteError> {
+    validate_result(result).map_err(ExecuteError::Usage)?;
+    write_result_atomic(path, result).map_err(|error| {
+        ExecuteError::Harness(format!(
+            "failed to write result {}: {error}",
+            path.display()
+        ))
+    })
+}
+
+fn annotate(args: AnnotateArgs) -> Result<usize, ExecuteError> {
+    let mut result = read_result(&args.result)?;
+    let cause = Cause {
+        kind: args.cause.into(),
+        reference: args.reference,
+        note: args.note,
+    };
+
+    let count = if let Some(id) = args.scenario {
+        let outcome = result
+            .scenarios
+            .iter_mut()
+            .find(|outcome| outcome.id == id)
+            .ok_or_else(|| ExecuteError::Usage(format!("scenario '{id}' was not found")))?;
+        if outcome.failure_class.as_deref() != Some("empty_response") && !args.force {
+            return Err(ExecuteError::Usage(format!(
+                "scenario '{id}' is not an empty-response failure; use --force to annotate it"
+            )));
+        }
+        outcome.cause = Some(cause);
+        1
+    } else {
+        let mut count = 0;
+        for outcome in &mut result.scenarios {
+            if outcome.failure_class.as_deref() == Some("empty_response") {
+                outcome.cause = Some(cause.clone());
+                count += 1;
+            }
+        }
+        count
+    };
+
+    if count > 0 {
+        write_updated_result(&args.result, &result)?;
+    }
+    Ok(count)
+}
+
+fn parse_transcript_response(path: &Path) -> Result<AssistantResponse, String> {
+    let bytes = std::fs::read(path)
+        .map_err(|error| format!("failed to read transcript {}: {error}", path.display()))?;
+    let transcript: serde_json::Value = serde_json::from_slice(&bytes)
+        .map_err(|error| format!("failed to parse transcript {}: {error}", path.display()))?;
+    let body = transcript
+        .get("turns")
+        .and_then(serde_json::Value::as_array)
+        .and_then(|turns| turns.last())
+        .and_then(|turn| turn.get("response"))
+        .and_then(|response| response.get("body_raw"))
+        .and_then(serde_json::Value::as_str)
+        .ok_or_else(|| {
+            format!(
+                "failed to parse transcript {}: final response has no body_raw",
+                path.display()
+            )
+        })?;
+
+    if body.trim_start().starts_with("data:") {
+        let payloads = parse_sse_data(body.as_bytes())?;
+        reassemble_sse_payloads(&payloads)
+    } else {
+        parse_non_streaming(body.as_bytes())
+    }
+}
+
+fn rescore(args: RescoreArgs) -> Result<(usize, Vec<String>), ExecuteError> {
+    let mut result = read_result(&args.result)?;
+    let result_parent = match args.result.parent() {
+        Some(parent) if !parent.as_os_str().is_empty() => parent,
+        _ => Path::new("."),
+    };
+    let mut changed = 0;
+    let mut unparseable = Vec::new();
+
+    for outcome in &mut result.scenarios {
+        if outcome.status != Status::Fail || outcome.failure_class.is_some() {
+            continue;
+        }
+        let Some(evidence_path) = outcome.evidence_path.as_deref() else {
+            continue;
+        };
+        let path = result_parent.join(evidence_path);
+        match parse_transcript_response(&path) {
+            Ok(response) => {
+                if is_empty_response(response.content.as_deref(), &response.tool_calls) {
+                    outcome.failure_class = Some("empty_response".to_owned());
+                    changed += 1;
+                }
+            }
+            Err(error) => unparseable.push(format!("{}: {error}", outcome.id)),
+        }
+    }
+
+    if changed > 0 {
+        write_updated_result(&args.result, &result)?;
+    }
+    Ok((changed, unparseable))
 }
 
 async fn execute(cli: Cli) -> Result<u8, ExecuteError> {
@@ -200,6 +370,27 @@ async fn execute(cli: Cli) -> Result<u8, ExecuteError> {
             })?;
             parse_and_validate_result(&bytes).map_err(ExecuteError::Usage)?;
             println!("valid: {}", args.result_file.display());
+            Ok(0)
+        }
+        Command::Annotate(args) => {
+            let count = annotate(args)?;
+            println!(
+                "annotated {count} scenario{}",
+                if count == 1 { "" } else { "s" }
+            );
+            Ok(0)
+        }
+        Command::Rescore(args) => {
+            let result_path = args.result.clone();
+            let (changed, unparseable) = rescore(args)?;
+            for error in unparseable {
+                eprintln!("warning: could not parse response for {error}");
+            }
+            println!(
+                "rescored {}: {changed} scenario{} changed",
+                result_path.display(),
+                if changed == 1 { "" } else { "s" }
+            );
             Ok(0)
         }
     }

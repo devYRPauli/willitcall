@@ -55,6 +55,391 @@ async fn run_binary(arguments: Vec<String>) -> std::process::Output {
     .expect("join willitcall process")
 }
 
+fn scenario_fixture(id: &str, failure_class: Option<&str>, evidence_path: Option<&str>) -> Value {
+    let mut scenario = json!({
+        "id": id,
+        "category": "single_call",
+        "status": "fail",
+        "failure_reason": "no tool call emitted",
+        "evidence_hash": null,
+        "evidence_path": evidence_path,
+        "retried": false
+    });
+    if let Some(failure_class) = failure_class {
+        scenario["failure_class"] = json!(failure_class);
+    }
+    scenario
+}
+
+fn write_result_fixture(path: &std::path::Path, schema_version: u32, mut scenarios: Vec<Value>) {
+    let mut metadata = json!({
+        "run_id": "20260720T120000Z-fixture",
+        "timestamp": "2026-07-20T12:00:00Z",
+        "willitcall_version": "0.1.0",
+        "endpoint": "http://127.0.0.1:8080/v1",
+        "model_id": "fixture-model",
+        "declared_quant": null,
+        "server": {
+            "preset_name": "custom",
+            "reported_version": null,
+            "quirk_flags": []
+        },
+        "sampling": {
+            "temperature": 0.0,
+            "top_p": 1.0,
+            "seed": 42,
+            "max_tokens": 1024
+        }
+    });
+    if schema_version == 1 {
+        metadata
+            .as_object_mut()
+            .expect("metadata object")
+            .remove("run_id");
+        for scenario in &mut scenarios {
+            scenario
+                .as_object_mut()
+                .expect("scenario object")
+                .remove("evidence_path");
+        }
+    }
+    let total = scenarios.len() as u32;
+    let result = json!({
+        "schema_version": schema_version,
+        "metadata": metadata,
+        "scenarios": scenarios,
+        "totals": {
+            "total": total,
+            "passed": 0,
+            "failed": total,
+            "errors": 0,
+            "skipped": 0
+        }
+    });
+    fs::write(
+        path,
+        serde_json::to_vec_pretty(&result).expect("encode result fixture"),
+    )
+    .expect("write result fixture");
+}
+
+fn write_transcript_fixture(result_path: &std::path::Path, evidence_path: &str, body_raw: &str) {
+    let path = result_path
+        .parent()
+        .expect("result parent")
+        .join(evidence_path);
+    fs::create_dir_all(path.parent().expect("evidence parent")).expect("evidence directory");
+    let transcript = json!({
+        "schema_version": 1,
+        "run_id": "20260720T120000Z-fixture",
+        "scenario_id": "fixture",
+        "turns": [{
+            "response": {
+                "body_raw": body_raw
+            }
+        }]
+    });
+    fs::write(
+        path,
+        serde_json::to_vec_pretty(&transcript).expect("encode transcript fixture"),
+    )
+    .expect("write transcript fixture");
+}
+
+#[tokio::test(flavor = "multi_thread", worker_threads = 2)]
+async fn annotate_scenario_adds_a_cause() {
+    let directory = tempfile::tempdir().expect("temp directory");
+    let result_path = directory.path().join("result.json");
+    write_result_fixture(
+        &result_path,
+        2,
+        vec![scenario_fixture(
+            "empty",
+            Some("empty_response"),
+            Some("evidence/empty.json"),
+        )],
+    );
+
+    let output = run_binary(vec![
+        "annotate".to_owned(),
+        "--result".to_owned(),
+        result_path.display().to_string(),
+        "--scenario".to_owned(),
+        "empty".to_owned(),
+        "--cause".to_owned(),
+        "server-defect".to_owned(),
+        "--reference".to_owned(),
+        "https://example.test/issue/1".to_owned(),
+        "--note".to_owned(),
+        "known server bug".to_owned(),
+    ])
+    .await;
+
+    assert_eq!(
+        output.status.code(),
+        Some(0),
+        "{}",
+        String::from_utf8_lossy(&output.stderr)
+    );
+    assert!(String::from_utf8_lossy(&output.stdout).contains("1"));
+    let result: Value =
+        serde_json::from_slice(&fs::read(result_path).expect("result file")).expect("valid JSON");
+    assert_eq!(result["scenarios"][0]["cause"]["kind"], "server-defect");
+    assert_eq!(
+        result["scenarios"][0]["cause"]["reference"],
+        "https://example.test/issue/1"
+    );
+    assert_eq!(result["scenarios"][0]["cause"]["note"], "known server bug");
+}
+
+#[tokio::test(flavor = "multi_thread", worker_threads = 2)]
+async fn annotate_refuses_a_non_empty_scenario_without_force() {
+    let directory = tempfile::tempdir().expect("temp directory");
+    let result_path = directory.path().join("result.json");
+    write_result_fixture(
+        &result_path,
+        2,
+        vec![scenario_fixture(
+            "other-failure",
+            None,
+            Some("evidence/other.json"),
+        )],
+    );
+    let before = fs::read(&result_path).expect("result bytes");
+
+    let output = run_binary(vec![
+        "annotate".to_owned(),
+        "--result".to_owned(),
+        result_path.display().to_string(),
+        "--scenario".to_owned(),
+        "other-failure".to_owned(),
+        "--cause".to_owned(),
+        "unknown".to_owned(),
+    ])
+    .await;
+
+    assert_ne!(output.status.code(), Some(0));
+    assert!(String::from_utf8_lossy(&output.stderr).contains("empty-response"));
+    assert_eq!(fs::read(result_path).expect("result bytes"), before);
+}
+
+#[tokio::test(flavor = "multi_thread", worker_threads = 2)]
+async fn annotate_all_empty_targets_only_empty_response_failures() {
+    let directory = tempfile::tempdir().expect("temp directory");
+    let result_path = directory.path().join("result.json");
+    write_result_fixture(
+        &result_path,
+        2,
+        vec![
+            scenario_fixture(
+                "empty-one",
+                Some("empty_response"),
+                Some("evidence/one.json"),
+            ),
+            scenario_fixture(
+                "empty-two",
+                Some("empty_response"),
+                Some("evidence/two.json"),
+            ),
+            scenario_fixture("other", None, Some("evidence/other.json")),
+        ],
+    );
+
+    let output = run_binary(vec![
+        "annotate".to_owned(),
+        "--result".to_owned(),
+        result_path.display().to_string(),
+        "--all-empty".to_owned(),
+        "--cause".to_owned(),
+        "unknown".to_owned(),
+    ])
+    .await;
+
+    assert_eq!(
+        output.status.code(),
+        Some(0),
+        "{}",
+        String::from_utf8_lossy(&output.stderr)
+    );
+    assert!(String::from_utf8_lossy(&output.stdout).contains("2"));
+    let result: Value =
+        serde_json::from_slice(&fs::read(result_path).expect("result file")).expect("valid JSON");
+    assert_eq!(result["scenarios"][0]["cause"]["kind"], "unknown");
+    assert_eq!(result["scenarios"][1]["cause"]["kind"], "unknown");
+    assert!(result["scenarios"][2].get("cause").is_none());
+}
+
+#[tokio::test(flavor = "multi_thread", worker_threads = 2)]
+async fn annotate_refuses_an_absent_scenario_without_writing() {
+    let directory = tempfile::tempdir().expect("temp directory");
+    let result_path = directory.path().join("result.json");
+    write_result_fixture(
+        &result_path,
+        2,
+        vec![scenario_fixture(
+            "present",
+            Some("empty_response"),
+            Some("evidence/present.json"),
+        )],
+    );
+    let before = fs::read(&result_path).expect("result bytes");
+
+    let output = run_binary(vec![
+        "annotate".to_owned(),
+        "--result".to_owned(),
+        result_path.display().to_string(),
+        "--scenario".to_owned(),
+        "absent".to_owned(),
+        "--cause".to_owned(),
+        "unknown".to_owned(),
+    ])
+    .await;
+
+    assert_ne!(output.status.code(), Some(0));
+    assert!(String::from_utf8_lossy(&output.stderr).contains("absent"));
+    assert_eq!(fs::read(result_path).expect("result bytes"), before);
+}
+
+#[tokio::test(flavor = "multi_thread", worker_threads = 2)]
+async fn rescore_classifies_empty_json_and_sse_responses() {
+    let directory = tempfile::tempdir().expect("temp directory");
+    let result_path = directory.path().join("result.json");
+    write_result_fixture(
+        &result_path,
+        2,
+        vec![
+            scenario_fixture("empty-json", None, Some("evidence/empty-json.json")),
+            scenario_fixture("empty-sse", None, Some("evidence/empty-sse.json")),
+        ],
+    );
+    write_transcript_fixture(
+        &result_path,
+        "evidence/empty-json.json",
+        &completion(json!([]), Value::Null),
+    );
+    write_transcript_fixture(
+        &result_path,
+        "evidence/empty-sse.json",
+        "data: {\"choices\":[{\"delta\":{}}]}\n\ndata: [DONE]\n\n",
+    );
+
+    let output = run_binary(vec![
+        "rescore".to_owned(),
+        "--result".to_owned(),
+        result_path.display().to_string(),
+    ])
+    .await;
+
+    assert_eq!(
+        output.status.code(),
+        Some(0),
+        "{}",
+        String::from_utf8_lossy(&output.stderr)
+    );
+    assert!(String::from_utf8_lossy(&output.stdout).contains("2"));
+    let result: Value =
+        serde_json::from_slice(&fs::read(result_path).expect("result file")).expect("valid JSON");
+    for scenario in result["scenarios"].as_array().expect("scenarios") {
+        assert_eq!(scenario["status"], "fail");
+        assert_eq!(scenario["failure_class"], "empty_response");
+    }
+}
+
+#[tokio::test(flavor = "multi_thread", worker_threads = 2)]
+async fn rescore_leaves_a_response_with_content_untouched() {
+    let directory = tempfile::tempdir().expect("temp directory");
+    let result_path = directory.path().join("result.json");
+    write_result_fixture(
+        &result_path,
+        2,
+        vec![scenario_fixture(
+            "content",
+            None,
+            Some("evidence/content.json"),
+        )],
+    );
+    write_transcript_fixture(
+        &result_path,
+        "evidence/content.json",
+        &completion(json!([]), json!("answer")),
+    );
+
+    let output = run_binary(vec![
+        "rescore".to_owned(),
+        "--result".to_owned(),
+        result_path.display().to_string(),
+    ])
+    .await;
+
+    assert_eq!(
+        output.status.code(),
+        Some(0),
+        "{}",
+        String::from_utf8_lossy(&output.stderr)
+    );
+    let result: Value =
+        serde_json::from_slice(&fs::read(result_path).expect("result file")).expect("valid JSON");
+    assert!(result["scenarios"][0].get("failure_class").is_none());
+}
+
+#[tokio::test(flavor = "multi_thread", worker_threads = 2)]
+async fn rescore_reports_an_unparseable_transcript_without_writing() {
+    let directory = tempfile::tempdir().expect("temp directory");
+    let result_path = directory.path().join("result.json");
+    write_result_fixture(
+        &result_path,
+        2,
+        vec![scenario_fixture(
+            "broken",
+            None,
+            Some("evidence/broken.json"),
+        )],
+    );
+    write_transcript_fixture(&result_path, "evidence/broken.json", "not JSON or SSE");
+    let before = fs::read(&result_path).expect("result bytes");
+
+    let output = run_binary(vec![
+        "rescore".to_owned(),
+        "--result".to_owned(),
+        result_path.display().to_string(),
+    ])
+    .await;
+
+    assert_eq!(output.status.code(), Some(0));
+    let stderr = String::from_utf8_lossy(&output.stderr);
+    assert!(stderr.contains("broken"), "{stderr}");
+    assert!(stderr.contains("parse"), "{stderr}");
+    assert_eq!(fs::read(result_path).expect("result bytes"), before);
+}
+
+#[tokio::test(flavor = "multi_thread", worker_threads = 2)]
+async fn rescore_leaves_v1_without_evidence_paths_alone() {
+    let directory = tempfile::tempdir().expect("temp directory");
+    let result_path = directory.path().join("result.json");
+    write_result_fixture(
+        &result_path,
+        1,
+        vec![scenario_fixture("legacy", None, None)],
+    );
+    let before = fs::read(&result_path).expect("result bytes");
+
+    let output = run_binary(vec![
+        "rescore".to_owned(),
+        "--result".to_owned(),
+        result_path.display().to_string(),
+    ])
+    .await;
+
+    assert_eq!(
+        output.status.code(),
+        Some(0),
+        "{}",
+        String::from_utf8_lossy(&output.stderr)
+    );
+    assert!(output.stderr.is_empty());
+    assert_eq!(fs::read(result_path).expect("result bytes"), before);
+}
+
 fn write_m1a_scenarios(path: &std::path::Path) {
     fs::create_dir(path).expect("scenario directory");
     for (name, contents) in [
