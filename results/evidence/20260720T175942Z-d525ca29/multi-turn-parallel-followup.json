@@ -1,0 +1,94 @@
+{
+  "schema_version": 1,
+  "run_id": "20260720T175942Z-d525ca29",
+  "scenario_id": "multi-turn-parallel-followup",
+  "turns": [
+    {
+      "index": 0,
+      "request": {
+        "method": "POST",
+        "url": "http://localhost:11434/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "Get temperatures for Boston and Tokyo, then compare the returned values.",
+              "role": "user"
+            }
+          ],
+          "model": "qwen3:4b",
+          "seed": 42,
+          "stream": false,
+          "temperature": 0.0,
+          "tool_choice": "auto",
+          "tools": [
+            {
+              "function": {
+                "description": "Get the temperature for a city.",
+                "name": "get_temperature",
+                "parameters": {
+                  "properties": {
+                    "city": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "city"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            },
+            {
+              "function": {
+                "description": "Compare two named city temperatures.",
+                "name": "compare_temperatures",
+                "parameters": {
+                  "properties": {
+                    "first_city": {
+                      "description": "The city the user mentioned first.",
+                      "type": "string"
+                    },
+                    "first_value": {
+                      "type": "number"
+                    },
+                    "second_city": {
+                      "description": "The city the user mentioned second.",
+                      "type": "string"
+                    },
+                    "second_value": {
+                      "type": "number"
+                    }
+                  },
+                  "required": [
+                    "first_city",
+                    "first_value",
+                    "second_city",
+                    "second_value"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-type": "application/json",
+          "date": "Mon, 20 Jul 2026 18:00:18 GMT",
+          "transfer-encoding": "chunked"
+        },
+        "body_raw": "{\"id\":\"chatcmpl-771\",\"object\":\"chat.completion\",\"created\":1784570418,\"model\":\"qwen3:4b\",\"system_fingerprint\":\"fp_ollama\",\"choices\":[{\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"\",\"reasoning\":\"Okay, let's see. The user wants me to get the temperatures for Boston and Tokyo first, then compare them.\\n\\nFirst, I need to check the available tools. There's a function called get_temperature that takes a city as a parameter. So I should call that twice, once for Boston and once for Tokyo.\\n\\nWait, the tools section says the get_temperature function has a parameter city of type string. So I need to make two separate calls to get_temperature with city set to \\\"Boston\\\" and \\\"Tokyo\\\".\\n\\nOnce I have both temperatures, I can then use the compare_temperatures function. But the compare_temperatures function requires two cities and their temperatures. So after getting the two temperatures, I'll have first_city, first_value, second_city, second_value.\\n\\nBut the user says \\\"then compare the returned values\\\". So the steps are: get temp for Boston, get temp for Tokyo, then compare them.\\n\\nWait, the problem is that the user is asking me to do both steps. But the tools I have can only call functions one at a time. However, the instructions say I can call one or more functions. So I need to first call get_temperature for Boston, then get_temperature for Tokyo, then compare.\\n\\nBut in the tool calls, each tool call is a separate step. Wait, the user's message says \\\"Get temperatures for Boston and Tokyo, then compare the returned values.\\\" So I need to first get both temperatures, then compare.\\n\\nBut the assistant can only make tool calls. So first, I need to make two get_temperature calls. Let me check the function definitions.\\n\\nThe get_temperature function is: {get_temperature Get the temperature for a city. {object \\u003cnil\\u003e \\u003cnil\\u003e [city] {\\\"city\\\":{\\\"type\\\":\\\"string\\\"}}}}\\n\\nSo each call takes a city. So first tool call: city \\\"Boston\\\", second tool call: city \\\"Tokyo\\\".\\n\\nOnce I have both temperatures, then I can call compare_temperatures with first_city \\\"Boston\\\", first_value (temp from Boston), second_city \\\"Tok as Tokyo\\\", second_value (temp from Tokyo).\\n\\nBut the problem is that the assistant has to output the tool calls in sequence. However, the user's instruction says \\\"For each function call, return a json object...\\\". So I need to generate the tool calls step by step.\\n\\nWait, but the user wants me to do both steps: get the temps and then compare. But the assistant can only make the tool calls. So first, I need to call get_temperature for Boston, then get_temperature for Tokyo, then compare.\\n\\nBut the problem is that the assistant can't chain the tool calls in one response. Wait, the instructions say \\\"For each function call, return a json object...\\\". So maybe I need to output two tool calls first for the get_temperature, then the compare.\\n\\nWait, but the user says \\\"Get temperatures for Boston and Tokyo, then compare the returned values.\\\" So the assistant should first get the two temperatures, then compare.\\n\\nBut the assistant can only make tool calls. So the first step is to call get_temperature for Boston. Then, after that response, call get_temperature for Tokyo. Then, with both temperatures, call compare_temperatures.\\n\\nBut in the context of this problem, the assistant is supposed to generate the tool calls needed. However, since the assistant can't wait for responses, maybe the user expects the assistant to generate the necessary tool calls in order.\\n\\nWait, the problem says: \\\"You may call one or more functions to assist with the user query.\\\" So the assistant can output multiple tool calls in one response.\\n\\nBut the user's query requires two get_temperature calls and then a compare_temperatures call. However, the compare_temperatures requires the two temperatures, which are the results of the get_temperature calls.\\n\\nBut in the current setup, the assistant can't know the actual temperatures, so it has to generate the tool calls step by step.\\n\\nWait, but the problem here is that the assistant is supposed to generate the tool calls that would be needed. Since the user wants to get the temps for Boston and Tokyo first, then compare, the assistant should first make two get_temperature calls, then a compare_temperatures call.\\n\\nBut the problem is that the compare_temperatures requires the two temperatures as arguments, which are not known until the get_temperature calls are made.\\n\\nHowever, in the context of this problem, the assistant is supposed to generate the tool calls that would be needed. So the first step is to call get_temperature for Boston and Tokyo.\\n\\nWait, but the user says \\\"Get temperatures for Boston and Tokyo, then compare the returned values.\\\" So the assistant needs to first get both temperatures, then compare.\\n\\nBut the assistant can't do the comparison without the temperatures. So the correct approach is to first make two get_temperature calls, then a compare_temperatures call.\\n\\nBut the problem is that the assistant's response should be the tool calls. So the assistant would output two tool calls for get_temperature (Boston and Tokyo), and then a\"},\"finish_reason\":\"length\"}],\"usage\":{\"prompt_tokens\":233,\"completion_tokens\":1024,\"total_tokens\":1257}}\n"
+      },
+      "retried": false
+    }
+  ]
+}

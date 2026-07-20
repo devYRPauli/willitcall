@@ -1,0 +1,67 @@
+{
+  "schema_version": 1,
+  "run_id": "20260720T182604Z-d59df055",
+  "scenario_id": "negative-unicode-argument",
+  "turns": [
+    {
+      "index": 0,
+      "request": {
+        "method": "POST",
+        "url": "http://127.0.0.1:8080/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "Get the weather for the exact city name München.",
+              "role": "user"
+            }
+          ],
+          "model": "Qwen/Qwen2.5-7B-Instruct-GGUF:Q8_0",
+          "seed": 42,
+          "stream": false,
+          "temperature": 0.0,
+          "tool_choice": "auto",
+          "tools": [
+            {
+              "function": {
+                "description": "Get weather for a city with an optional country code.",
+                "name": "get_weather",
+                "parameters": {
+                  "properties": {
+                    "city": {
+                      "type": "string"
+                    },
+                    "country_code": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "city"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "access-control-allow-origin": "",
+          "content-length": "806",
+          "content-type": "application/json; charset=utf-8",
+          "keep-alive": "timeout=5, max=100",
+          "server": "llama.cpp"
+        },
+        "body_raw": "{\"choices\":[{\"finish_reason\":\"tool_calls\",\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"\",\"tool_calls\":[{\"type\":\"function\",\"function\":{\"name\":\"get_weather\",\"arguments\":\"{\\\"city\\\": \\\"München\\\"}\"},\"id\":\"EV8u5ioRdbhvkBlsgKP165z4m9OL92KU\"}]}}],\"created\":1784571983,\"model\":\"Qwen/Qwen2.5-7B-Instruct-GGUF:Q8_0\",\"system_fingerprint\":\"b10050-b15ca938a\",\"object\":\"chat.completion\",\"usage\":{\"completion_tokens\":21,\"prompt_tokens\":188,\"total_tokens\":209,\"prompt_tokens_details\":{\"cached_tokens\":75}},\"id\":\"chatcmpl-5cJgCa26Azci7yacOBNPcVXiE2zda4ZQ\",\"timings\":{\"cache_n\":75,\"prompt_n\":113,\"prompt_ms\":138.015,\"prompt_per_token_ms\":1.221371681415929,\"prompt_per_second\":818.751584972648,\"predicted_n\":21,\"predicted_ms\":341.899,\"predicted_per_token_ms\":16.28090476190476,\"predicted_per_second\":61.42164791356512}}"
+      },
+      "retried": false
+    }
+  ]
+}

@@ -1,0 +1,62 @@
+{
+  "schema_version": 1,
+  "run_id": "20260720T181212Z-f860526f",
+  "scenario_id": "negative-greeting",
+  "turns": [
+    {
+      "index": 0,
+      "request": {
+        "method": "POST",
+        "url": "http://localhost:11434/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "Say hello in one short sentence.",
+              "role": "user"
+            }
+          ],
+          "model": "qwen2.5:7b-instruct",
+          "seed": 42,
+          "stream": false,
+          "temperature": 0.0,
+          "tool_choice": "none",
+          "tools": [
+            {
+              "function": {
+                "description": "Get the current weather for a city.",
+                "name": "get_weather",
+                "parameters": {
+                  "properties": {
+                    "city": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "city"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-length": "330",
+          "content-type": "application/json",
+          "date": "Mon, 20 Jul 2026 18:12:26 GMT"
+        },
+        "body_raw": "{\"id\":\"chatcmpl-808\",\"object\":\"chat.completion\",\"created\":1784571146,\"model\":\"qwen2.5:7b-instruct\",\"system_fingerprint\":\"fp_ollama\",\"choices\":[{\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"Hello! How can I assist you today?\"},\"finish_reason\":\"stop\"}],\"usage\":{\"prompt_tokens\":153,\"completion_tokens\":10,\"total_tokens\":163}}\n"
+      },
+      "retried": false
+    }
+  ]
+}

@@ -1,0 +1,66 @@
+{
+  "schema_version": 1,
+  "run_id": "20260720T175942Z-d525ca29",
+  "scenario_id": "single-zero-and-negative",
+  "turns": [
+    {
+      "index": 0,
+      "request": {
+        "method": "POST",
+        "url": "http://localhost:11434/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "Set the axis range from -12.5 to 0.",
+              "role": "user"
+            }
+          ],
+          "model": "qwen3:4b",
+          "seed": 42,
+          "stream": false,
+          "temperature": 0.0,
+          "tool_choice": "auto",
+          "tools": [
+            {
+              "function": {
+                "description": "Set an axis range.",
+                "name": "set_axis_range",
+                "parameters": {
+                  "properties": {
+                    "maximum": {
+                      "type": "number"
+                    },
+                    "minimum": {
+                      "type": "number"
+                    }
+                  },
+                  "required": [
+                    "minimum",
+                    "maximum"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-type": "application/json",
+          "date": "Mon, 20 Jul 2026 18:02:05 GMT",
+          "transfer-encoding": "chunked"
+        },
+        "body_raw": "{\"id\":\"chatcmpl-283\",\"object\":\"chat.completion\",\"created\":1784570525,\"model\":\"qwen3:4b\",\"system_fingerprint\":\"fp_ollama\",\"choices\":[{\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"\",\"reasoning\":\"Okay, let's see. The user wants to set the axis range from -12.5 to 0. I need to figure out which function to use here.\\n\\nLooking at the tools provided, there's a function called set_axis_range. The description says it takes a minimum and maximum as numbers. The parameters are minimum and maximum, both numbers.\\n\\nThe user specified the range from -12.5 to 0. Wait, but usually in axis ranges, the minimum is the lower bound and maximum is the upper bound. So if they say from -12.5 to 0, that would mean the minimum is -12.5 and maximum is 0. But sometimes people might phrase it differently, but in this context, the function expects minimum and maximum.\\n\\nWait, the function's parameters are [minimum maximum], so the first argument is minimum, second is maximum. So the user says \\\"from -12.5 to 0\\\", so the minimum is -1.5? Wait no, -12.5 to 0. So the lower bound is -12.5 and upper is 0.\\n\\nSo the function call should have minimum: -12.5 and maximum: 0.\\n\\nLet me check the function definition again. The function set_axis_range has parameters minimum and maximum, both numbers. The example in the tool says [minimum maximum], so the arguments are two numbers.\\n\\nSo the correct call is set_axis_range with minimum -12.5 and maximum 0.\\n\\nI need to make sure the JSON is correctly formatted. The function name is set_axis_range, arguments as a JSON object with \\\"minimum\\\" and \\\"maximum\\\".\\n\\nSo the tool_call should be:\\n\\n{\\n  \\\"name\\\": \\\"set_axis_range\\\",\\n  \\\"arguments\\\": {\\n    \\\"minimum\\\": -12.5,\\n    \\\"maximum\\\": 0\\n  }\\n}\\n\\nWait, but the user said \\\"from -12.5 to 0\\\". So the range is from -12.5 (lower) to 0 (upper). So yes, minimum is -12.5, maximum is 0.\\n\\nI think that's correct. Let me just confirm there's no trick here. Sometimes in some contexts, the range might be specified as [start, end], but here the function expects minimum and maximum, so the user's \\\"from -12.5 to 0\\\" translates to minimum = -12.5, maximum = 0.\\n\\nYes, so the tool call is correct.\\n\",\"tool_calls\":[{\"id\":\"call_92kxzxtf\",\"index\":0,\"type\":\"function\",\"function\":{\"name\":\"set_axis_range\",\"arguments\":\"{\\\"minimum\\\":-12.5,\\\"maximum\\\":0}\"}}]},\"finish_reason\":\"tool_calls\"}],\"usage\":{\"prompt_tokens\":151,\"completion_tokens\":549,\"total_tokens\":700}}\n"
+      },
+      "retried": false
+    }
+  ]
+}

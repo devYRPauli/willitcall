@@ -1,0 +1,67 @@
+{
+  "schema_version": 1,
+  "run_id": "20260720T175942Z-d525ca29",
+  "scenario_id": "negative-long-argument",
+  "turns": [
+    {
+      "index": 0,
+      "request": {
+        "method": "POST",
+        "url": "http://localhost:11434/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "Store this exact token: abcdefghijklmnopqrstuvwxyz0123456789-ABCDEFGHIJKLMNOPQRSTUVWXYZ-abcdefghijklmnopqrstuvwxyz0123456789-ABCDEFGHIJKLMNOPQRSTUVWXYZ-abcdefghijklmnopqrstuvwxyz0123456789-ABCDEFGHIJKLMNOPQRSTUVWXYZ-abcdefghijklmnopqrstuvwxyz0123456789-ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+              "role": "user"
+            }
+          ],
+          "model": "qwen3:4b",
+          "seed": 42,
+          "stream": false,
+          "temperature": 0.0,
+          "tool_choice": {
+            "function": {
+              "name": "store_token"
+            },
+            "type": "function"
+          },
+          "tools": [
+            {
+              "function": {
+                "description": "Store one exact token.",
+                "name": "store_token",
+                "parameters": {
+                  "properties": {
+                    "token": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "token"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-type": "application/json",
+          "date": "Mon, 20 Jul 2026 18:00:54 GMT",
+          "transfer-encoding": "chunked"
+        },
+        "body_raw": "{\"id\":\"chatcmpl-886\",\"object\":\"chat.completion\",\"created\":1784570454,\"model\":\"qwen3:4b\",\"system_fingerprint\":\"fp_ollama\",\"choices\":[{\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"\",\"reasoning\":\"Okay, let's see. The user wants me to store this exact token. The token they provided is a long string that includes a mix of lowercase letters, numbers, hyphens, and uppercase letters. It looks like it's repeated multiple times.\\n\\nFirst, I need to check the available tools. The tool given is called store_token, which takes a token as a string. The function signature says it stores one exact token. The user specified that the token should be stored exactly as provided.\\n\\nSo, the task here is straightforward. I just need to call the store_token function with the token they provided. The token is a bit long, but the function should handle it as a string. I need to make sure that the token is passed exactly as written, without any modifications.\\n\\nWait, the user wrote the token with some hyphens and repeated sequences. Let me check the exact string they provided. The token is: \\\"abcdefghijklmnopqrstuvwxyz0123456789-ABCDEFGHIJKLMNOPQRSTUVWXYZ-abcdefghijklmnopqrstuvwxyz0123456789-ABCDEFGHIJKLMNOPQRSTUVWXYZ-abcdefghijklmnopqrstuvwxyz0123456789-ABCDEFGHIJKLMNOPQRSTUVWXYZ-abcdefghijklmnopqrstuvwxyz0123456789-ABCDEFGHIJKLMNOPQRSTUVWXYZ\\\"\\n\\nHmm, the hyphens are part of the token, so I need to include them. The function expects a string, so I should pass this entire string as the token argument.\\n\\nThe tool's function name is store_token, and the arguments should be a JSON object with the token. So the tool call would be {\\\"name\\\": \\\"store_token\\\", \\\"arguments\\\": {\\\"token\\\": \\\"the exact string provided\\\"}}\\n\\nI need to make sure that the token is stored exactly as the user wrote it. There's no mention of any processing or validation, so I just pass it as is.\\n\\nLet me write the tool call in JSON format. The token is a long string, but I'll copy it exactly as given. The user specified it with hyphens and the sequences repeated. So the arguments should be {\\\"token\\\": \\\"abcdefghijklmnopqrstuvwxyz0123456789-ABCDEFGHIJKLMNOPQRSTUVWXYZ-abcdefghijklmnopqrstuvwxyz0123456789-ABCDEFGHIJKLMNOPQRSTUVWXYZ-abcdefghijklmnopqrstuvwxyz0123456789-ABCDEFGHIJKLMNOPQRSTUVWXYZ-abcdefghijklmnopqrstuvwxyz0123456789-ABCDEFGHIJKLMNOPQRSTUVWXYZ\\\"}\\n\\nWait, the user's token ends with \\\"-ABCDEFGHIJKLMNOPQRSTUVWXYZ\\\", but in their message, the last part is \\\"-abcdefghijklmnopqrstuvwxyz0123456789-ABCDEFGHIJKLMNOPQRSTUVWXYZ\\\". Let me check the original user input.\\n\\nThe user wrote: \\\"Store this exact token: abcdefghijklmnopqrstuvwxyz0123456789-ABCDEFGHIJKLMNOPQRSTUVWXYZ-abcdefghijklmnopqrstuvwxyz0123456789-ABCDEFGHIJKLMNOPQRSTUVWXYZ-abcdefghijklmnopqrstuvwxyz0123456789-ABCDEFGHIJKLMNOPQRSTUVWXYZ-abcdefghijklmnopqrstuvwxyz0123456789-ABCDEFGHIJKLMNOPQRSTUVWXYZ\\\"\\n\\nWait, the token starts with \\\"abcdefghijklmnopqrstuvwxyz0123456789-...\\\" and has hyphens between the segments. The exact string they want stored is that entire string. So I need to make sure that the token string is copied exactly as written, including all hyphens and the repeated parts.\\n\\nSo the tool call should have the token as that long string. The function expects a string, so I'll pass it as is.\\n\\nTherefore, the correct tool call is to store_token with the provided token string.\\n\",\"tool_calls\":[{\"id\":\"call_wvxfmb8z\",\"index\":0,\"type\":\"function\",\"function\":{\"name\":\"store_token\",\"arguments\":\"{\\\"token\\\":\\\"abcdefghijklmnopqrstuvwxyz0123456789-ABCDEFGHIJKLMNOPQRSTUVWXYZ-abcdefghijklmnopqrstuvwxyz0123456789-ABCDEFGHIJKLMNOPQRSTUVWXYZ-abcdefghijklmnopqrstuvwxyz0123456789-ABCDEFGHIJKLMNOPQRSTUVWXYZ-abcdefghijklmnopqrstuvwxyz0123456789-ABCDEFGHIJKLMNOPQRSTUVWXYZ\\\"}\"}}]},\"finish_reason\":\"tool_calls\"}],\"usage\":{\"prompt_tokens\":194,\"completion_tokens\":766,\"total_tokens\":960}}\n"
+      },
+      "retried": false
+    }
+  ]
+}

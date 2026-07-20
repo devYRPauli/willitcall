@@ -1,0 +1,68 @@
+{
+  "schema_version": 1,
+  "run_id": "20260720T182604Z-d59df055",
+  "scenario_id": "single-decimal-price",
+  "turns": [
+    {
+      "index": 0,
+      "request": {
+        "method": "POST",
+        "url": "http://127.0.0.1:8080/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "Set the price of SKU AX-9 to exactly 19.95.",
+              "role": "user"
+            }
+          ],
+          "model": "Qwen/Qwen2.5-7B-Instruct-GGUF:Q8_0",
+          "seed": 42,
+          "stream": false,
+          "temperature": 0.0,
+          "tool_choice": "auto",
+          "tools": [
+            {
+              "function": {
+                "description": "Set the price of a product.",
+                "name": "set_price",
+                "parameters": {
+                  "properties": {
+                    "price": {
+                      "type": "number"
+                    },
+                    "sku": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "sku",
+                    "price"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "access-control-allow-origin": "",
+          "content-length": "800",
+          "content-type": "application/json; charset=utf-8",
+          "keep-alive": "timeout=5, max=100",
+          "server": "llama.cpp"
+        },
+        "body_raw": "{\"choices\":[{\"finish_reason\":\"tool_calls\",\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"\",\"tool_calls\":[{\"type\":\"function\",\"function\":{\"name\":\"set_price\",\"arguments\":\"{\\\"price\\\": 19.95, \\\"sku\\\": \\\"AX-9\\\"}\"},\"id\":\"xhOln9wNyYtlBfUzy7BW9dk8loKDd8t7\"}]}}],\"created\":1784571994,\"model\":\"Qwen/Qwen2.5-7B-Instruct-GGUF:Q8_0\",\"system_fingerprint\":\"b10050-b15ca938a\",\"object\":\"chat.completion\",\"usage\":{\"completion_tokens\":32,\"prompt_tokens\":193,\"total_tokens\":225,\"prompt_tokens_details\":{\"cached_tokens\":68}},\"id\":\"chatcmpl-843FMuncA3SJlzYZbLCF3RYdqNi1g2La\",\"timings\":{\"cache_n\":68,\"prompt_n\":125,\"prompt_ms\":139.373,\"prompt_per_token_ms\":1.114984,\"prompt_per_second\":896.873856485833,\"predicted_n\":32,\"predicted_ms\":523.316,\"predicted_per_token_ms\":16.353625,\"predicted_per_second\":61.14852211665609}}"
+      },
+      "retried": false
+    }
+  ]
+}

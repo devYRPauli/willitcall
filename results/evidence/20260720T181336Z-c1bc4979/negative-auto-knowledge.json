@@ -1,0 +1,62 @@
+{
+  "schema_version": 1,
+  "run_id": "20260720T181336Z-c1bc4979",
+  "scenario_id": "negative-auto-knowledge",
+  "turns": [
+    {
+      "index": 0,
+      "request": {
+        "method": "POST",
+        "url": "http://localhost:11434/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "Name the largest ocean on Earth. Do not use a tool.",
+              "role": "user"
+            }
+          ],
+          "model": "hermes3:8b",
+          "seed": 42,
+          "stream": false,
+          "temperature": 0.0,
+          "tool_choice": "auto",
+          "tools": [
+            {
+              "function": {
+                "description": "Look up an order by exact id.",
+                "name": "lookup_order",
+                "parameters": {
+                  "properties": {
+                    "order_id": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "order_id"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-length": "335",
+          "content-type": "application/json",
+          "date": "Mon, 20 Jul 2026 18:13:47 GMT"
+        },
+        "body_raw": "{\"id\":\"chatcmpl-250\",\"object\":\"chat.completion\",\"created\":1784571227,\"model\":\"hermes3:8b\",\"system_fingerprint\":\"fp_ollama\",\"choices\":[{\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"The largest ocean on Earth is the Pacific Ocean.\"},\"finish_reason\":\"stop\"}],\"usage\":{\"prompt_tokens\":239,\"completion_tokens\":11,\"total_tokens\":250}}\n"
+      },
+      "retried": false
+    }
+  ]
+}

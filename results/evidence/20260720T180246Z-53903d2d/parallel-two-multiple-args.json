@@ -1,0 +1,92 @@
+{
+  "schema_version": 1,
+  "run_id": "20260720T180246Z-53903d2d",
+  "scenario_id": "parallel-two-multiple-args",
+  "turns": [
+    {
+      "index": 0,
+      "request": {
+        "method": "POST",
+        "url": "http://localhost:11434/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "Book room Cedar on 2026-09-02 at hour 14 and reserve a car in Boise on 2026-09-03.",
+              "role": "user"
+            }
+          ],
+          "model": "qwen3:8b",
+          "seed": 42,
+          "stream": false,
+          "temperature": 0.0,
+          "tool_choice": "required",
+          "tools": [
+            {
+              "function": {
+                "description": "Book a room for an exact date and hour.",
+                "name": "book_room",
+                "parameters": {
+                  "properties": {
+                    "date": {
+                      "type": "string"
+                    },
+                    "hour": {
+                      "type": "integer"
+                    },
+                    "room": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "room",
+                    "date",
+                    "hour"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            },
+            {
+              "function": {
+                "description": "Reserve a car in a city for an exact date.",
+                "name": "reserve_car",
+                "parameters": {
+                  "properties": {
+                    "city": {
+                      "type": "string"
+                    },
+                    "date": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "city",
+                    "date"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-length": "1925",
+          "content-type": "application/json",
+          "date": "Mon, 20 Jul 2026 18:04:22 GMT"
+        },
+        "body_raw": "{\"id\":\"chatcmpl-484\",\"object\":\"chat.completion\",\"created\":1784570662,\"model\":\"qwen3:8b\",\"system_fingerprint\":\"fp_ollama\",\"choices\":[{\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"\",\"reasoning\":\"Okay, let's see. The user wants to book a room called Cedar on 2026-09-02 at hour 14 and also reserve a car in Boise on 2026-09-03. \\n\\nFirst, I need to check the available functions. There's book_room which requires room, date, and hour. The parameters for book_room are room (string), date (string), and hour (integer). Then there's reserve_car which needs city and date, both as strings.\\n\\nLooking at the user's request: \\\"Book room Cedar\\\" corresponds to the book_room function. The date is 2026-09-02, and the hour is 14. So that's straightforward. The room name is Cedar, date is 2026-09-02, hour 14. That fits the book_room function.\\n\\nNext part: \\\"reserve a car in Boise on 2026-09-03\\\". The city here is Boise, and the date is 2026-09-03. The reserve_car function takes city and date as parameters. So that's covered by reserve_car with city Boise and date 2026-09-03.\\n\\nI need to make sure there are no typos in the parameters. The date format for both functions is string, so the dates provided by the user are in the correct format. The hour is an integer, so 14 is okay. \\n\\nNo other functions are needed here. The user didn't mention anything else. So I should generate two tool calls: one for book_room with the specified parameters and another for reserve_car with Boise and the date.\\n\",\"tool_calls\":[{\"id\":\"call_dme74bcy\",\"index\":0,\"type\":\"function\",\"function\":{\"name\":\"book_room\",\"arguments\":\"{\\\"room\\\":\\\"Cedar\\\",\\\"date\\\":\\\"2026-09-02\\\",\\\"hour\\\":14}\"}},{\"id\":\"call_sikexffb\",\"index\":1,\"type\":\"function\",\"function\":{\"name\":\"reserve_car\",\"arguments\":\"{\\\"city\\\":\\\"Boise\\\",\\\"date\\\":\\\"2026-09-03\\\"}\"}}]},\"finish_reason\":\"tool_calls\"}],\"usage\":{\"prompt_tokens\":237,\"completion_tokens\":443,\"total_tokens\":680}}\n"
+      },
+      "retried": false
+    }
+  ]
+}

@@ -1,0 +1,62 @@
+{
+  "schema_version": 1,
+  "run_id": "20260720T180246Z-53903d2d",
+  "scenario_id": "negative-auto-knowledge",
+  "turns": [
+    {
+      "index": 0,
+      "request": {
+        "method": "POST",
+        "url": "http://localhost:11434/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "Name the largest ocean on Earth. Do not use a tool.",
+              "role": "user"
+            }
+          ],
+          "model": "qwen3:8b",
+          "seed": 42,
+          "stream": false,
+          "temperature": 0.0,
+          "tool_choice": "auto",
+          "tools": [
+            {
+              "function": {
+                "description": "Look up an order by exact id.",
+                "name": "lookup_order",
+                "parameters": {
+                  "properties": {
+                    "order_id": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "order_id"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-length": "1045",
+          "content-type": "application/json",
+          "date": "Mon, 20 Jul 2026 18:03:51 GMT"
+        },
+        "body_raw": "{\"id\":\"chatcmpl-835\",\"object\":\"chat.completion\",\"created\":1784570631,\"model\":\"qwen3:8b\",\"system_fingerprint\":\"fp_ollama\",\"choices\":[{\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"The largest ocean on Earth is the **Pacific Ocean**. It covers approximately 63 million square miles (165 million square kilometers), making it larger than the second and third largest oceans combined.\",\"reasoning\":\"Okay, the user is asking for the largest ocean on Earth. Let me think. The main oceans are the Pacific, Atlantic, Indian, Southern, and Arctic. I remember that the Pacific Ocean is the largest. But wait, I should make sure. The Pacific covers about 63 million square miles, which is more than the Atlantic. The Southern Ocean is smaller, and the Arctic is part of the Atlantic's northern region. So yes, the Pacific is the largest. Since the user said not to use a tool, I just need to recall this information. No function calls needed here.\\n\"},\"finish_reason\":\"stop\"}],\"usage\":{\"prompt_tokens\":147,\"completion_tokens\":166,\"total_tokens\":313}}\n"
+      },
+      "retried": false
+    }
+  ]
+}

@@ -1,0 +1,80 @@
+{
+  "schema_version": 1,
+  "run_id": "20260720T181418Z-d3446dd1",
+  "scenario_id": "parallel-weather-and-time",
+  "turns": [
+    {
+      "index": 0,
+      "request": {
+        "method": "POST",
+        "url": "http://localhost:11434/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "Get both the weather and local time for Denver.",
+              "role": "user"
+            }
+          ],
+          "model": "granite3.1-dense:8b",
+          "seed": 42,
+          "stream": false,
+          "temperature": 0.0,
+          "tool_choice": "auto",
+          "tools": [
+            {
+              "function": {
+                "description": "Get weather for a city.",
+                "name": "get_weather",
+                "parameters": {
+                  "properties": {
+                    "city": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "city"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            },
+            {
+              "function": {
+                "description": "Get local time for a city.",
+                "name": "get_time",
+                "parameters": {
+                  "properties": {
+                    "city": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "city"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-length": "446",
+          "content-type": "application/json",
+          "date": "Mon, 20 Jul 2026 18:14:36 GMT"
+        },
+        "body_raw": "{\"id\":\"chatcmpl-478\",\"object\":\"chat.completion\",\"created\":1784571276,\"model\":\"granite3.1-dense:8b\",\"system_fingerprint\":\"fp_ollama\",\"choices\":[{\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"\\u003ctool_call\\u003e[{\\\"arguments\\\":{\\\"city\\\": \\\"Denver\\\"},\\\"name\\\": \\\"get_weather\\\"}, {\\\"arguments\\\":{\\\"city\\\": \\\"Denver\\\"},\\\"name\\\": \\\"get_time\\\"}]\"},\"finish_reason\":\"stop\"}],\"usage\":{\"prompt_tokens\":138,\"completion_tokens\":38,\"total_tokens\":176}}\n"
+      },
+      "retried": false
+    }
+  ]
+}

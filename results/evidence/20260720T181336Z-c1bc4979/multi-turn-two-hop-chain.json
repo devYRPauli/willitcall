@@ -1,0 +1,337 @@
+{
+  "schema_version": 1,
+  "run_id": "20260720T181336Z-c1bc4979",
+  "scenario_id": "multi-turn-two-hop-chain",
+  "turns": [
+    {
+      "index": 0,
+      "request": {
+        "method": "POST",
+        "url": "http://localhost:11434/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "Archive the account owned by sam@example.test. Resolve each required id first.",
+              "role": "user"
+            }
+          ],
+          "model": "hermes3:8b",
+          "seed": 42,
+          "stream": false,
+          "temperature": 0.0,
+          "tool_choice": "auto",
+          "tools": [
+            {
+              "function": {
+                "description": "Find a user id by exact email.",
+                "name": "find_user",
+                "parameters": {
+                  "properties": {
+                    "email": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "email"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            },
+            {
+              "function": {
+                "description": "Find an account id for a user id.",
+                "name": "find_account",
+                "parameters": {
+                  "properties": {
+                    "user_id": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "user_id"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            },
+            {
+              "function": {
+                "description": "Archive an account by exact id.",
+                "name": "archive_account",
+                "parameters": {
+                  "properties": {
+                    "account_id": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "account_id"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-length": "438",
+          "content-type": "application/json",
+          "date": "Mon, 20 Jul 2026 18:13:45 GMT"
+        },
+        "body_raw": "{\"id\":\"chatcmpl-804\",\"object\":\"chat.completion\",\"created\":1784571225,\"model\":\"hermes3:8b\",\"system_fingerprint\":\"fp_ollama\",\"choices\":[{\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"\",\"tool_calls\":[{\"id\":\"call_623zfkj8\",\"index\":0,\"type\":\"function\",\"function\":{\"name\":\"find_user\",\"arguments\":\"{\\\"email\\\":\\\"sam@example.test\\\"}\"}}]},\"finish_reason\":\"tool_calls\"}],\"usage\":{\"prompt_tokens\":323,\"completion_tokens\":23,\"total_tokens\":346}}\n"
+      },
+      "retried": false
+    },
+    {
+      "index": 1,
+      "request": {
+        "method": "POST",
+        "url": "http://localhost:11434/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "Archive the account owned by sam@example.test. Resolve each required id first.",
+              "role": "user"
+            },
+            {
+              "content": "",
+              "role": "assistant",
+              "tool_calls": [
+                {
+                  "function": {
+                    "arguments": "{\"email\":\"sam@example.test\"}",
+                    "name": "find_user"
+                  },
+                  "id": "call_623zfkj8",
+                  "type": "function"
+                }
+              ]
+            },
+            {
+              "content": "{\"user_id\":\"user-41\"}",
+              "role": "tool",
+              "tool_call_id": "call_623zfkj8"
+            }
+          ],
+          "model": "hermes3:8b",
+          "seed": 42,
+          "stream": false,
+          "temperature": 0.0,
+          "tool_choice": "auto",
+          "tools": [
+            {
+              "function": {
+                "description": "Find a user id by exact email.",
+                "name": "find_user",
+                "parameters": {
+                  "properties": {
+                    "email": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "email"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            },
+            {
+              "function": {
+                "description": "Find an account id for a user id.",
+                "name": "find_account",
+                "parameters": {
+                  "properties": {
+                    "user_id": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "user_id"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            },
+            {
+              "function": {
+                "description": "Archive an account by exact id.",
+                "name": "archive_account",
+                "parameters": {
+                  "properties": {
+                    "account_id": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "account_id"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-length": "434",
+          "content-type": "application/json",
+          "date": "Mon, 20 Jul 2026 18:13:45 GMT"
+        },
+        "body_raw": "{\"id\":\"chatcmpl-616\",\"object\":\"chat.completion\",\"created\":1784571225,\"model\":\"hermes3:8b\",\"system_fingerprint\":\"fp_ollama\",\"choices\":[{\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"\",\"tool_calls\":[{\"id\":\"call_5ndu0zwj\",\"index\":0,\"type\":\"function\",\"function\":{\"name\":\"find_account\",\"arguments\":\"{\\\"user_id\\\":\\\"user-41\\\"}\"}}]},\"finish_reason\":\"tool_calls\"}],\"usage\":{\"prompt_tokens\":364,\"completion_tokens\":22,\"total_tokens\":386}}\n"
+      },
+      "retried": false
+    },
+    {
+      "index": 2,
+      "request": {
+        "method": "POST",
+        "url": "http://localhost:11434/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "Archive the account owned by sam@example.test. Resolve each required id first.",
+              "role": "user"
+            },
+            {
+              "content": "",
+              "role": "assistant",
+              "tool_calls": [
+                {
+                  "function": {
+                    "arguments": "{\"email\":\"sam@example.test\"}",
+                    "name": "find_user"
+                  },
+                  "id": "call_623zfkj8",
+                  "type": "function"
+                }
+              ]
+            },
+            {
+              "content": "{\"user_id\":\"user-41\"}",
+              "role": "tool",
+              "tool_call_id": "call_623zfkj8"
+            },
+            {
+              "content": "",
+              "role": "assistant",
+              "tool_calls": [
+                {
+                  "function": {
+                    "arguments": "{\"user_id\":\"user-41\"}",
+                    "name": "find_account"
+                  },
+                  "id": "call_5ndu0zwj",
+                  "type": "function"
+                }
+              ]
+            },
+            {
+              "content": "{\"account_id\":\"account-73\"}",
+              "role": "tool",
+              "tool_call_id": "call_5ndu0zwj"
+            }
+          ],
+          "model": "hermes3:8b",
+          "seed": 42,
+          "stream": false,
+          "temperature": 0.0,
+          "tool_choice": "auto",
+          "tools": [
+            {
+              "function": {
+                "description": "Find a user id by exact email.",
+                "name": "find_user",
+                "parameters": {
+                  "properties": {
+                    "email": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "email"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            },
+            {
+              "function": {
+                "description": "Find an account id for a user id.",
+                "name": "find_account",
+                "parameters": {
+                  "properties": {
+                    "user_id": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "user_id"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            },
+            {
+              "function": {
+                "description": "Archive an account by exact id.",
+                "name": "archive_account",
+                "parameters": {
+                  "properties": {
+                    "account_id": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "account_id"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-length": "443",
+          "content-type": "application/json",
+          "date": "Mon, 20 Jul 2026 18:13:46 GMT"
+        },
+        "body_raw": "{\"id\":\"chatcmpl-618\",\"object\":\"chat.completion\",\"created\":1784571226,\"model\":\"hermes3:8b\",\"system_fingerprint\":\"fp_ollama\",\"choices\":[{\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"\",\"tool_calls\":[{\"id\":\"call_hjlec8cp\",\"index\":0,\"type\":\"function\",\"function\":{\"name\":\"archive_account\",\"arguments\":\"{\\\"account_id\\\":\\\"account-73\\\"}\"}}]},\"finish_reason\":\"tool_calls\"}],\"usage\":{\"prompt_tokens\":406,\"completion_tokens\":22,\"total_tokens\":428}}\n"
+      },
+      "retried": false
+    }
+  ]
+}

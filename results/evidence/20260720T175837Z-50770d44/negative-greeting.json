@@ -1,0 +1,62 @@
+{
+  "schema_version": 1,
+  "run_id": "20260720T175837Z-50770d44",
+  "scenario_id": "negative-greeting",
+  "turns": [
+    {
+      "index": 0,
+      "request": {
+        "method": "POST",
+        "url": "http://localhost:11434/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "Say hello in one short sentence.",
+              "role": "user"
+            }
+          ],
+          "model": "qwen3:1.7b",
+          "seed": 42,
+          "stream": false,
+          "temperature": 0.0,
+          "tool_choice": "none",
+          "tools": [
+            {
+              "function": {
+                "description": "Get the current weather for a city.",
+                "name": "get_weather",
+                "parameters": {
+                  "properties": {
+                    "city": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "city"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-length": "827",
+          "content-type": "application/json",
+          "date": "Mon, 20 Jul 2026 17:59:03 GMT"
+        },
+        "body_raw": "{\"id\":\"chatcmpl-405\",\"object\":\"chat.completion\",\"created\":1784570343,\"model\":\"qwen3:1.7b\",\"system_fingerprint\":\"fp_ollama\",\"choices\":[{\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"Hello, how can I assist you today?\",\"reasoning\":\"Okay, the user asked me to say hello in one short sentence. I need to make sure the response is friendly and concise. Let's see, a simple greeting like \\\"Hello!\\\" would work. But maybe add a touch of warmth. How about \\\"Hello, how can I assist you today?\\\" That's a common greeting and opens the door for further interaction. It's short, clear, and polite. I should check if there's any specific context needed, but since the user didn't mention anything else, this should be appropriate.\\n\"},\"finish_reason\":\"stop\"}],\"usage\":{\"prompt_tokens\":139,\"completion_tokens\":122,\"total_tokens\":261}}\n"
+      },
+      "retried": false
+    }
+  ]
+}

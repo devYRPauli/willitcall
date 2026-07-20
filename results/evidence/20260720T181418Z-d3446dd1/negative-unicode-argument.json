@@ -1,0 +1,65 @@
+{
+  "schema_version": 1,
+  "run_id": "20260720T181418Z-d3446dd1",
+  "scenario_id": "negative-unicode-argument",
+  "turns": [
+    {
+      "index": 0,
+      "request": {
+        "method": "POST",
+        "url": "http://localhost:11434/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "Get the weather for the exact city name München.",
+              "role": "user"
+            }
+          ],
+          "model": "granite3.1-dense:8b",
+          "seed": 42,
+          "stream": false,
+          "temperature": 0.0,
+          "tool_choice": "auto",
+          "tools": [
+            {
+              "function": {
+                "description": "Get weather for a city with an optional country code.",
+                "name": "get_weather",
+                "parameters": {
+                  "properties": {
+                    "city": {
+                      "type": "string"
+                    },
+                    "country_code": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "city"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-length": "363",
+          "content-type": "application/json",
+          "date": "Mon, 20 Jul 2026 18:14:30 GMT"
+        },
+        "body_raw": "{\"id\":\"chatcmpl-78\",\"object\":\"chat.completion\",\"created\":1784571270,\"model\":\"granite3.1-dense:8b\",\"system_fingerprint\":\"fp_ollama\",\"choices\":[{\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"\\u003ctool_call\\u003e[{\\\"arguments\\\":{\\\"city\\\": \\\"M\\\\u00fcnchen\\\"}}]\"},\"finish_reason\":\"stop\"}],\"usage\":{\"prompt_tokens\":110,\"completion_tokens\":22,\"total_tokens\":132}}\n"
+      },
+      "retried": false
+    }
+  ]
+}

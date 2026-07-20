@@ -1,0 +1,65 @@
+{
+  "schema_version": 1,
+  "run_id": "20260720T175942Z-d525ca29",
+  "scenario_id": "single-optional-present",
+  "turns": [
+    {
+      "index": 0,
+      "request": {
+        "method": "POST",
+        "url": "http://localhost:11434/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "Search the catalog for brass compass and return exactly 4 results.",
+              "role": "user"
+            }
+          ],
+          "model": "qwen3:4b",
+          "seed": 42,
+          "stream": false,
+          "temperature": 0.0,
+          "tool_choice": "auto",
+          "tools": [
+            {
+              "function": {
+                "description": "Search a catalog with an optional result limit.",
+                "name": "search_catalog",
+                "parameters": {
+                  "properties": {
+                    "limit": {
+                      "type": "integer"
+                    },
+                    "query": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "query"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-length": "1588",
+          "content-type": "application/json",
+          "date": "Mon, 20 Jul 2026 18:01:57 GMT"
+        },
+        "body_raw": "{\"id\":\"chatcmpl-291\",\"object\":\"chat.completion\",\"created\":1784570517,\"model\":\"qwen3:4b\",\"system_fingerprint\":\"fp_ollama\",\"choices\":[{\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"\",\"reasoning\":\"Okay, let's see. The user wants to search the catalog for \\\"brass compass\\\" and get exactly 4 results.\\n\\nFirst, I need to check the available tools. The provided tool is search_catalog, which takes a query and an optional limit. The function parameters are query (string) and limit (integer). \\n\\nThe user specified \\\"brass compass\\\" as the query. So the query argument should be \\\"brass compass\\\". They want exactly 4 results, so the limit is 4.\\n\\nWait, the function's parameters: the tool's function definition says {object \\u003cnil\\u003e \\u003cnil\\u003e [query] {\\\"limit\\\":{\\\"type\\\":\\\"integer\\\"},\\\"query\\\":{\\\"type\\\":\\\"string\\\"}}}. So the required parameters are query (string) and limit (integer). \\n\\nSo I need to call search_catalog with query \\\"brass compass\\\" and limit 4. \\n\\nI should make sure that the limit is an integer. The user says \\\"exactly 4\\\", so limit=4.\\n\\nNo other parameters are needed. So the tool call should be search_catalog with those arguments.\\n\\nLet me structure the JSON. The name is \\\"search_catalog\\\", arguments: {\\\"query\\\": \\\"brass compass\\\", \\\"limit\\\": 4}\\n\\nYes, that should do it.\\n\",\"tool_calls\":[{\"id\":\"call_yl1667rv\",\"index\":0,\"type\":\"function\",\"function\":{\"name\":\"search_catalog\",\"arguments\":\"{\\\"query\\\":\\\"brass compass\\\",\\\"limit\\\":4}\"}}]},\"finish_reason\":\"tool_calls\"}],\"usage\":{\"prompt_tokens\":152,\"completion_tokens\":285,\"total_tokens\":437}}\n"
+      },
+      "retried": false
+    }
+  ]
+}

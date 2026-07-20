@@ -1,0 +1,188 @@
+{
+  "schema_version": 1,
+  "run_id": "20260720T181628Z-e5f2111e",
+  "scenario_id": "multi-turn-flight-booking",
+  "turns": [
+    {
+      "index": 0,
+      "request": {
+        "method": "POST",
+        "url": "http://localhost:11434/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "Find a flight from BOS to DEN on 2026-10-04, then book the returned flight.",
+              "role": "user"
+            }
+          ],
+          "model": "qwen3:14b",
+          "seed": 42,
+          "stream": false,
+          "temperature": 0.0,
+          "tool_choice": "auto",
+          "tools": [
+            {
+              "function": {
+                "description": "Find a flight for an exact route and date.",
+                "name": "find_flight",
+                "parameters": {
+                  "properties": {
+                    "date": {
+                      "type": "string"
+                    },
+                    "destination": {
+                      "type": "string"
+                    },
+                    "origin": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "origin",
+                    "destination",
+                    "date"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            },
+            {
+              "function": {
+                "description": "Book a flight by exact id.",
+                "name": "book_flight",
+                "parameters": {
+                  "properties": {
+                    "flight_id": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "flight_id"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-type": "application/json",
+          "date": "Mon, 20 Jul 2026 18:17:03 GMT",
+          "transfer-encoding": "chunked"
+        },
+        "body_raw": "{\"id\":\"chatcmpl-324\",\"object\":\"chat.completion\",\"created\":1784571423,\"model\":\"qwen3:14b\",\"system_fingerprint\":\"fp_ollama\",\"choices\":[{\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"\",\"reasoning\":\"Okay, let's see. The user wants to find a flight from BOS to DEN on 2026-10-04 and then book the returned flight. Hmm, first I need to figure out which functions to use. The available functions are find_flight and book_flight.\\n\\nSo, the first step is to find the flight. The find_flight function requires origin, destination, and date. The user provided BOS as origin, DEN as destination, and the date is 2026-10-04. That's straightforward. I should call find_flight with those parameters.\\n\\nOnce the flight is found, the user wants to book the returned flight. Wait, the return flight? The original query mentions \\\"returned flight,\\\" but the initial request is from BOS to DEN. Maybe the user meant the flight in the opposite direction? But the date is specified as 2026-10-04. Unless there's a return date involved, but the user didn't mention a return date. Wait, maybe the user made a typo and meant to say \\\"then book the flight\\\" instead of \\\"returned flight.\\\" Or perhaps the return flight is implied, but the date is the same. That's confusing.\\n\\nAlternatively, maybe the user wants to find a flight from BOS to DEN on that date and then book the return flight (from DEN to BOS) on the same date? But that doesn't make sense because a return flight would typically be on a different date. However, the user didn't specify a return date. Hmm. Maybe the user intended to book the flight they just found, not necessarily a return flight. Maybe \\\"returned flight\\\" is a mistake. \\n\\nAssuming that the user wants to book the flight they found, the next step after finding the flight would be to use the book_flight function with the flight_id obtained from the find_flight response. But since the user hasn't provided a flight_id yet, the assistant would first need to call find_flight, get the flight details (including flight_id), and then use that flight_id to book it.\\n\\nSo the correct sequence is: first call find_flight with origin BOS, destination DEN, date 2026-10-04. Then, once the flight is found (assuming the response includes a flight_id), call book_flight with that flight_id. However, the user's instruction says \\\"then book the returned flight.\\\" If \\\"returned flight\\\" refers to the flight in the opposite direction, but the date is the same, that might not be possible. Alternatively, maybe the user meant the flight that was found, and \\\"returned\\\" is a typo. \\n\\nIn any case, based on the given functions, the first action is to call find_flight with the provided parameters. Then, once the flight is found, use the flight_id from the response to book it. So the assistant should first make the find_flight call.\\n\",\"tool_calls\":[{\"id\":\"call_z9dpxqku\",\"index\":0,\"type\":\"function\",\"function\":{\"name\":\"find_flight\",\"arguments\":\"{\\\"origin\\\":\\\"BOS\\\",\\\"destination\\\":\\\"DEN\\\",\\\"date\\\":\\\"2026-10-04\\\"}\"}}]},\"finish_reason\":\"tool_calls\"}],\"usage\":{\"prompt_tokens\":216,\"completion_tokens\":645,\"total_tokens\":861}}\n"
+      },
+      "retried": false
+    },
+    {
+      "index": 1,
+      "request": {
+        "method": "POST",
+        "url": "http://localhost:11434/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "Find a flight from BOS to DEN on 2026-10-04, then book the returned flight.",
+              "role": "user"
+            },
+            {
+              "content": "",
+              "role": "assistant",
+              "tool_calls": [
+                {
+                  "function": {
+                    "arguments": "{\"origin\":\"BOS\",\"destination\":\"DEN\",\"date\":\"2026-10-04\"}",
+                    "name": "find_flight"
+                  },
+                  "id": "call_z9dpxqku",
+                  "type": "function"
+                }
+              ]
+            },
+            {
+              "content": "{\"flight_id\":\"FL-808\"}",
+              "role": "tool",
+              "tool_call_id": "call_z9dpxqku"
+            }
+          ],
+          "model": "qwen3:14b",
+          "seed": 42,
+          "stream": false,
+          "temperature": 0.0,
+          "tool_choice": "auto",
+          "tools": [
+            {
+              "function": {
+                "description": "Find a flight for an exact route and date.",
+                "name": "find_flight",
+                "parameters": {
+                  "properties": {
+                    "date": {
+                      "type": "string"
+                    },
+                    "destination": {
+                      "type": "string"
+                    },
+                    "origin": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "origin",
+                    "destination",
+                    "date"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            },
+            {
+              "function": {
+                "description": "Book a flight by exact id.",
+                "name": "book_flight",
+                "parameters": {
+                  "properties": {
+                    "flight_id": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "flight_id"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-length": "1093",
+          "content-type": "application/json",
+          "date": "Mon, 20 Jul 2026 18:17:07 GMT"
+        },
+        "body_raw": "{\"id\":\"chatcmpl-487\",\"object\":\"chat.completion\",\"created\":1784571427,\"model\":\"qwen3:14b\",\"system_fingerprint\":\"fp_ollama\",\"choices\":[{\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"\",\"reasoning\":\"Okay, the user asked to find a flight from BOS to DEN on 2026-10-04 and then book the returned flight. I first called the find_flight function with the given parameters. The response came back with a flight ID of FL-808. Now, the next step is to book that flight. The book_flight function requires the flight_id as an argument. So I need to use the flight_id from the previous response and pass it to the book_flight function. Let me make sure the parameters are correct. The flight ID is a string, and the function expects a flight_id parameter. Everything looks good. I'll proceed to call the book_flight function with the flight_id FL-808.\\n\",\"tool_calls\":[{\"id\":\"call_6stazog7\",\"index\":0,\"type\":\"function\",\"function\":{\"name\":\"book_flight\",\"arguments\":\"{\\\"flight_id\\\":\\\"FL-808\\\"}\"}}]},\"finish_reason\":\"tool_calls\"}],\"usage\":{\"prompt_tokens\":275,\"completion_tokens\":180,\"total_tokens\":455}}\n"
+      },
+      "retried": false
+    }
+  ]
+}

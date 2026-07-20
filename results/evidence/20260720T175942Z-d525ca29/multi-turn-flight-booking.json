@@ -1,0 +1,88 @@
+{
+  "schema_version": 1,
+  "run_id": "20260720T175942Z-d525ca29",
+  "scenario_id": "multi-turn-flight-booking",
+  "turns": [
+    {
+      "index": 0,
+      "request": {
+        "method": "POST",
+        "url": "http://localhost:11434/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "Find a flight from BOS to DEN on 2026-10-04, then book the returned flight.",
+              "role": "user"
+            }
+          ],
+          "model": "qwen3:4b",
+          "seed": 42,
+          "stream": false,
+          "temperature": 0.0,
+          "tool_choice": "auto",
+          "tools": [
+            {
+              "function": {
+                "description": "Find a flight for an exact route and date.",
+                "name": "find_flight",
+                "parameters": {
+                  "properties": {
+                    "date": {
+                      "type": "string"
+                    },
+                    "destination": {
+                      "type": "string"
+                    },
+                    "origin": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "origin",
+                    "destination",
+                    "date"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            },
+            {
+              "function": {
+                "description": "Book a flight by exact id.",
+                "name": "book_flight",
+                "parameters": {
+                  "properties": {
+                    "flight_id": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "flight_id"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-type": "application/json",
+          "date": "Mon, 20 Jul 2026 18:00:02 GMT",
+          "transfer-encoding": "chunked"
+        },
+        "body_raw": "{\"id\":\"chatcmpl-928\",\"object\":\"chat.completion\",\"created\":1784570402,\"model\":\"qwen3:4b\",\"system_fingerprint\":\"fp_ollama\",\"choices\":[{\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"\",\"reasoning\":\"Okay, let's see. The user wants to find a flight from BOS to DEN on 2026-10-04 and then book the returned flight.\\n\\nFirst, I need to check the available functions. There's find_flight and book_flight. The find_flight function takes origin, destination, and date. The book_flight needs a flight_id.\\n\\nWait, the user says \\\"find a flight from BOS to DEN on 2026-10-04\\\". So first step is to call find_flight with origin BOS, destination DEN, date 2026-10-04. That should give a flight ID, right? But the problem is, the user mentions \\\"then book the returned flight\\\". Hmm, \\\"returned flight\\\" probably means the flight from DEN back to BOS on the same date? Or maybe a return flight on a different date?\\n\\nWait, the date given is 2026-10-04. The user says \\\"find a flight from BOS to DEN on 2:026-10-04, then book the returned flight\\\". So maybe the returned flight is the same day? But typically, return flights are on a different date. Wait, maybe the user means after finding the outbound flight, they want to book the return flight (which would be DEN to BOS) on the same date? Or perhaps the return flight is on a subsequent date.\\n\\nBut the problem here is that the user hasn't specified the return date. Wait, the original instruction says \\\"Find a flight from BOS to DEN on 2026-10-04, then book the returned flight.\\\" So maybe the \\\"returned flight\\\" is the flight that goes back from DEN to BOS on the same date? But that's a bit odd because flights usually have a departure and arrival date. Alternatively, maybe the user made a typo and meant to say \\\"book the flight\\\" (the same flight) but the wording is \\\"returned flight\\\".\\n\\nWait, perhaps the user wants to first find a flight from BOS to DEN on that date, and then book a return flight (from DEN to BOS) on the same date. But the problem is that the return flight's date isn't specified. The user says \\\"the returned flight\\\", so maybe the system assumes that after finding the outbound flight, the return flight is the next one? But the functions provided don't have a way to find return flights unless we have the flight_id.\\n\\nWait, the functions available are find_flight (for exact route and date) and book_flight (by flight_id). So the process would be:\\n\\n1. Call find_flight with origin BOS, destination DEN, date 2026-10-04. This should return a flight_id for that route and date.\\n\\n2. Then, book that flight_id (but the user says \\\"book the returned flight\\\", which is confusing). Wait, maybe the user meant to book the flight they found (the outbound), but the wording says \\\"returned flight\\\". Hmm.\\n\\nWait, perhaps there's a misunderstanding here. Let me re-read the user's query: \\\"Find a flight from BOS to DEN on 2026-10-04, then book the returned flight.\\\"\\n\\nAh, maybe \\\"returned flight\\\" here refers to the flight that the user would take back, so after finding the outbound flight (BOS to DEN), they want to book the return flight (DEN to BOS). But the return flight's date isn't specified. The user didn't mention a return date, so perhaps the system is supposed to assume that the return flight is on the same date? Or maybe the user made a mistake in the query.\\n\\nBut given the tools provided, the assistant can only call the functions as per the user's request. So first, the assistant needs to find a flight from BOS to DEN on that date. Let's call find_flight with those parameters. Then, the next step would be to book the returned flight, but the returned flight's details (like origin, destination, date) aren't specified. Wait, but the user says \\\"the returned flight\\\", so maybe after finding the outbound flight, the return flight is implied to be the same date but in reverse direction.\\n\\nBut the problem is that the book_flight function requires a flight_id. So the assistant would first get the flight_id from find_flight, then use that flight_id to book it. But the user says \\\"book the returned flight\\\", which is confusing.\\n\\nWait, perhaps the user intended to say \\\"book the flight\\\" (the one they found), but wrote \\\"returned\\\". Alternatively, maybe the user wants to find a flight from BOS to DEN, then book a return flight (DEN to BOS) on the same date. But the date for the return flight isn't specified. Hmm.\\n\\nGiven the tools, the assistant can only make two function calls: first find_flight for BOS\"},\"finish_reason\":\"length\"}],\"usage\":{\"prompt_tokens\":216,\"completion_tokens\":1024,\"total_tokens\":1240}}\n"
+      },
+      "retried": false
+    }
+  ]
+}

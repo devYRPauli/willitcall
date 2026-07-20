@@ -1,0 +1,67 @@
+{
+  "schema_version": 1,
+  "run_id": "20260720T181628Z-e5f2111e",
+  "scenario_id": "negative-long-argument",
+  "turns": [
+    {
+      "index": 0,
+      "request": {
+        "method": "POST",
+        "url": "http://localhost:11434/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "Store this exact token: abcdefghijklmnopqrstuvwxyz0123456789-ABCDEFGHIJKLMNOPQRSTUVWXYZ-abcdefghijklmnopqrstuvwxyz0123456789-ABCDEFGHIJKLMNOPQRSTUVWXYZ-abcdefghijklmnopqrstuvwxyz0123456789-ABCDEFGHIJKLMNOPQRSTUVWXYZ-abcdefghijklmnopqrstuvwxyz0123456789-ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+              "role": "user"
+            }
+          ],
+          "model": "qwen3:14b",
+          "seed": 42,
+          "stream": false,
+          "temperature": 0.0,
+          "tool_choice": {
+            "function": {
+              "name": "store_token"
+            },
+            "type": "function"
+          },
+          "tools": [
+            {
+              "function": {
+                "description": "Store one exact token.",
+                "name": "store_token",
+                "parameters": {
+                  "properties": {
+                    "token": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "token"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-length": "1323",
+          "content-type": "application/json",
+          "date": "Mon, 20 Jul 2026 18:18:31 GMT"
+        },
+        "body_raw": "{\"id\":\"chatcmpl-470\",\"object\":\"chat.completion\",\"created\":1784571511,\"model\":\"qwen3:14b\",\"system_fingerprint\":\"fp_ollama\",\"choices\":[{\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"\",\"reasoning\":\"Okay, the user wants me to store a specific token. Let me check the tools available. There's a function called store_token that takes a token as a string. The token provided is a long string with letters, numbers, and hyphens. I need to make sure I pass the exact token without any modifications. Let me verify the function's parameters again. The function expects a \\\"token\\\" parameter of type string. The user's input is the exact token, so I should call store_token with that entire string. No other functions are available, so this is the correct one to use. I'll format the tool call correctly in JSON inside the XML tags.\\n\",\"tool_calls\":[{\"id\":\"call_vn9bkxqw\",\"index\":0,\"type\":\"function\",\"function\":{\"name\":\"store_token\",\"arguments\":\"{\\\"token\\\":\\\"abcdefghijklmnopqrstuvwxyz0123456789-ABCDEFGHIJKLMNOPQRSTUVWXYZ-abcdefghijklmnopqrstuvwxyz0123456789-ABCDEFGHIJKLMNOPQRSTUVWXYZ-abcdefghijklmnopqrstuvwxyz0123456789-ABCDEFGHIJKLMNOPQRSTUVWXYZ-abcdefghijklmnopqrstuvwxyz0123456789-ABCDEFGHIJKLMNOPQRSTUVWXYZ\\\"}\"}}]},\"finish_reason\":\"tool_calls\"}],\"usage\":{\"prompt_tokens\":194,\"completion_tokens\":213,\"total_tokens\":407}}\n"
+      },
+      "retried": false
+    }
+  ]
+}

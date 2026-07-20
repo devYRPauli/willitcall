@@ -1,0 +1,65 @@
+{
+  "schema_version": 1,
+  "run_id": "20260720T181418Z-d3446dd1",
+  "scenario_id": "single-optional-omitted",
+  "turns": [
+    {
+      "index": 0,
+      "request": {
+        "method": "POST",
+        "url": "http://localhost:11434/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "Search the catalog for brass compass. Do not set a result limit.",
+              "role": "user"
+            }
+          ],
+          "model": "granite3.1-dense:8b",
+          "seed": 42,
+          "stream": false,
+          "temperature": 0.0,
+          "tool_choice": "auto",
+          "tools": [
+            {
+              "function": {
+                "description": "Search a catalog with an optional result limit.",
+                "name": "search_catalog",
+                "parameters": {
+                  "properties": {
+                    "limit": {
+                      "type": "integer"
+                    },
+                    "query": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "query"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-length": "379",
+          "content-type": "application/json",
+          "date": "Mon, 20 Jul 2026 18:14:41 GMT"
+        },
+        "body_raw": "{\"id\":\"chatcmpl-829\",\"object\":\"chat.completion\",\"created\":1784571281,\"model\":\"granite3.1-dense:8b\",\"system_fingerprint\":\"fp_ollama\",\"choices\":[{\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"\\u003ctool_call\\u003e[{\\\"arguments\\\":{\\\"limit\\\":null,\\\"query\\\":\\\"brass compass\\\"}}]\"},\"finish_reason\":\"stop\"}],\"usage\":{\"prompt_tokens\":110,\"completion_tokens\":20,\"total_tokens\":130}}\n"
+      },
+      "retried": false
+    }
+  ]
+}

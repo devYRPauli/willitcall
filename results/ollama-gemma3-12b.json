@@ -1,8 +1,8 @@
 {
   "schema_version": 2,
   "metadata": {
-    "run_id": "20260720T143541Z-84234757",
-    "timestamp": "2026-07-20T14:35:41Z",
+    "run_id": "20260720T181615Z-5a462971",
+    "timestamp": "2026-07-20T18:16:15Z",
     "willitcall_version": "0.1.0",
     "endpoint": "http://localhost:11434/v1",
     "model_id": "gemma3:12b",
@@ -11,6 +11,10 @@
       "preset_name": "ollama",
       "reported_version": "0.32.1",
       "quirk_flags": []
+    },
+    "environment": {
+      "host_hardware_class": "Apple M4 Max, 64GB",
+      "host_os": "macOS 26.5.2"
     },
     "sampling": {
       "temperature": 0.0,
@@ -25,8 +29,8 @@
       "category": "multi_turn",
       "status": "error",
       "failure_reason": "turn 1: server returned HTTP 400 Bad Request",
-      "evidence_hash": "sha256:f9ce98ab62adddcc1280cfed2e1274e1b5dae5b3df1d25dbdb76495f68cf917a",
-      "evidence_path": "evidence/20260720T143541Z-84234757/multi-turn-calendar-followup.json",
+      "evidence_hash": "sha256:f1c30c0566d7b9409de8706633fbad99ddc50319e1b7469ba824af2cfa9b4079",
+      "evidence_path": "evidence/20260720T181615Z-5a462971/multi-turn-calendar-followup.json",
       "retried": false
     },
     {
@@ -34,8 +38,8 @@
       "category": "multi_turn",
       "status": "error",
       "failure_reason": "turn 1: server returned HTTP 400 Bad Request",
-      "evidence_hash": "sha256:72d7e3f19bab5d9df2579a08626756c960c16f076e333b2f366d9546b9b9014a",
-      "evidence_path": "evidence/20260720T143541Z-84234757/multi-turn-flight-booking.json",
+      "evidence_hash": "sha256:ac0b910b95b409aa2d68c155e572ab4a157c3695bf826138cbbd5034d63fe23a",
+      "evidence_path": "evidence/20260720T181615Z-5a462971/multi-turn-flight-booking.json",
       "retried": false
     },
     {
@@ -43,8 +47,8 @@
       "category": "multi_turn",
       "status": "error",
       "failure_reason": "turn 1: server returned HTTP 400 Bad Request",
-      "evidence_hash": "sha256:18db23c0de101e9e0743d0afa37dff9369b40cab0c5192386799446bf323035d",
-      "evidence_path": "evidence/20260720T143541Z-84234757/multi-turn-inventory-order.json",
+      "evidence_hash": "sha256:bfab25eeb9a474957779a5f14eb73bd4d945bc2992ea28d36b902f526b4f6ca1",
+      "evidence_path": "evidence/20260720T181615Z-5a462971/multi-turn-inventory-order.json",
       "retried": false
     },
     {
@@ -52,8 +56,8 @@
       "category": "multi_turn",
       "status": "error",
       "failure_reason": "turn 1: server returned HTTP 400 Bad Request",
-      "evidence_hash": "sha256:edf70b1839aa8dae6a1b5eb7271b417fe646186dfbad4f5a46647242b4518c33",
-      "evidence_path": "evidence/20260720T143541Z-84234757/multi-turn-parallel-followup.json",
+      "evidence_hash": "sha256:f217a6be18eee271a786555a8e7095bef7129680eb0c011effbfeca3d83fc12f",
+      "evidence_path": "evidence/20260720T181615Z-5a462971/multi-turn-parallel-followup.json",
       "retried": false
     },
     {
@@ -61,8 +65,8 @@
       "category": "multi_turn",
       "status": "error",
       "failure_reason": "turn 1: server returned HTTP 400 Bad Request",
-      "evidence_hash": "sha256:2b4ddeec75ed9a1546ca25c5d88de19e87361f2201d1509bcd6b95a744f7cd15",
-      "evidence_path": "evidence/20260720T143541Z-84234757/multi-turn-route.json",
+      "evidence_hash": "sha256:add0b25a9ffc86c9ecce9f2ad0d86c359592e466f25c585460e8447393b029a3",
+      "evidence_path": "evidence/20260720T181615Z-5a462971/multi-turn-route.json",
       "retried": false
     },
     {
@@ -70,8 +74,8 @@
       "category": "multi_turn",
       "status": "error",
       "failure_reason": "turn 1: server returned HTTP 400 Bad Request",
-      "evidence_hash": "sha256:54597abc160fdaf91f6117d6a89e6001e34bd88e0f5e02767faa69a7e152ce4b",
-      "evidence_path": "evidence/20260720T143541Z-84234757/multi-turn-ticket-update.json",
+      "evidence_hash": "sha256:289eecd09feae0d79355a1d2cfcfabb92392b721d8562fef0e27be2854363b22",
+      "evidence_path": "evidence/20260720T181615Z-5a462971/multi-turn-ticket-update.json",
       "retried": false
     },
     {
@@ -79,8 +83,8 @@
       "category": "multi_turn",
       "status": "error",
       "failure_reason": "turn 1: server returned HTTP 400 Bad Request",
-      "evidence_hash": "sha256:a05b3e0b651a19ef3063dc3c9a8cab3c41ecdc475c4ebb71687273aeb1a86626",
-      "evidence_path": "evidence/20260720T143541Z-84234757/multi-turn-two-hop-chain.json",
+      "evidence_hash": "sha256:2fbe8005e1d0a715a979e30172de95acce4c588df99223dba9beab51293feddc",
+      "evidence_path": "evidence/20260720T181615Z-5a462971/multi-turn-two-hop-chain.json",
       "retried": false
     },
     {
@@ -88,8 +92,8 @@
       "category": "negative_trap",
       "status": "error",
       "failure_reason": "server returned HTTP 400 Bad Request",
-      "evidence_hash": "sha256:6e4c4e20ed792e087405f33c98735e2adcd3ba4c3971f65d33e173427ea13469",
-      "evidence_path": "evidence/20260720T143541Z-84234757/negative-auto-arithmetic.json",
+      "evidence_hash": "sha256:519bae1ce349d4c088c39e5a4b2c7daee09cfb99547009216bb8d34e1e78d4d7",
+      "evidence_path": "evidence/20260720T181615Z-5a462971/negative-auto-arithmetic.json",
       "retried": false
     },
     {
@@ -97,8 +101,8 @@
       "category": "negative_trap",
       "status": "error",
       "failure_reason": "server returned HTTP 400 Bad Request",
-      "evidence_hash": "sha256:e0f8c1d9dae6be10dd07ba3e824469c6c0d615898e095eb2cd3eba1b142eff38",
-      "evidence_path": "evidence/20260720T143541Z-84234757/negative-auto-knowledge.json",
+      "evidence_hash": "sha256:7affba4944ef7973ba7223dca5042b5719e545fd914a48d3019b9c90e052bae7",
+      "evidence_path": "evidence/20260720T181615Z-5a462971/negative-auto-knowledge.json",
       "retried": false
     },
     {
@@ -106,8 +110,8 @@
       "category": "negative_trap",
       "status": "error",
       "failure_reason": "server returned HTTP 400 Bad Request",
-      "evidence_hash": "sha256:af7c16ab72b7392017c0f1cdac988fc329ffa3a4af3f4dc1ec66f99eaea29ac7",
-      "evidence_path": "evidence/20260720T143541Z-84234757/negative-greeting.json",
+      "evidence_hash": "sha256:aefc303229b715b5928a5571370d4e8f84978cf6e2f1fd51d4a834614cf6dbea",
+      "evidence_path": "evidence/20260720T181615Z-5a462971/negative-greeting.json",
       "retried": false
     },
     {
@@ -115,8 +119,8 @@
       "category": "negative_trap",
       "status": "error",
       "failure_reason": "server returned HTTP 400 Bad Request",
-      "evidence_hash": "sha256:5c1aea22667f21accccccdb7b9b9654a944ba49d7cdcde8d1e1f2fa6cf5a34dc",
-      "evidence_path": "evidence/20260720T143541Z-84234757/negative-invalid-schema.json",
+      "evidence_hash": "sha256:ac6f322055fd2fee7c52a991241370844132adcadb240b26c104cbdc0f2ac6f8",
+      "evidence_path": "evidence/20260720T181615Z-5a462971/negative-invalid-schema.json",
       "retried": false
     },
     {
@@ -124,8 +128,8 @@
       "category": "negative_trap",
       "status": "error",
       "failure_reason": "server returned HTTP 400 Bad Request",
-      "evidence_hash": "sha256:509c39dc059d4b8f4ede0e02ffa1f1749ebb96821a176f304e9b617a401d0034",
-      "evidence_path": "evidence/20260720T143541Z-84234757/negative-long-argument.json",
+      "evidence_hash": "sha256:3b26add1bf7bfa0f93414322fee7cd476d891656385b6399a2283be548329fbe",
+      "evidence_path": "evidence/20260720T181615Z-5a462971/negative-long-argument.json",
       "retried": false
     },
     {
@@ -133,8 +137,8 @@
       "category": "negative_trap",
       "status": "error",
       "failure_reason": "server returned HTTP 400 Bad Request",
-      "evidence_hash": "sha256:5216eeff7889adeae0f50c552d56e0ccbf83f8653504ad08ce4257494d8fc878",
-      "evidence_path": "evidence/20260720T143541Z-84234757/negative-plain-text.json",
+      "evidence_hash": "sha256:a0284740a0959afa47080f8bf3cc4aa7f366ac22e13cfaf2f019f38436e0f2fb",
+      "evidence_path": "evidence/20260720T181615Z-5a462971/negative-plain-text.json",
       "retried": false
     },
     {
@@ -142,8 +146,8 @@
       "category": "negative_trap",
       "status": "error",
       "failure_reason": "server returned HTTP 400 Bad Request",
-      "evidence_hash": "sha256:49b3ebbdade2bdc04651a05da04b87e1cab4ab681a3616136531f9fa5be3ec23",
-      "evidence_path": "evidence/20260720T143541Z-84234757/negative-unicode-argument.json",
+      "evidence_hash": "sha256:3353a0e2479f59713c6ff90bdb685dfe6572a50598aaaf5a83ee69db0cf88a4a",
+      "evidence_path": "evidence/20260720T181615Z-5a462971/negative-unicode-argument.json",
       "retried": false
     },
     {
@@ -151,8 +155,8 @@
       "category": "parallel_calls",
       "status": "error",
       "failure_reason": "server returned HTTP 400 Bad Request",
-      "evidence_hash": "sha256:0866930d0d5492381bb58dc9b3f5e2200932fbf8ec4c3391d21db914ecbf4234",
-      "evidence_path": "evidence/20260720T143541Z-84234757/parallel-city-time.json",
+      "evidence_hash": "sha256:03e8640fe71e9e1bc17b626a9792eb6d868beccc2db55f820bb33bf35058e6e5",
+      "evidence_path": "evidence/20260720T181615Z-5a462971/parallel-city-time.json",
       "retried": false
     },
     {
@@ -160,8 +164,8 @@
       "category": "parallel_calls",
       "status": "error",
       "failure_reason": "server returned HTTP 400 Bad Request",
-      "evidence_hash": "sha256:b33a311c28a0a190354a415c894b6657c1525b56a98fd983d9bb45ad488bc17a",
-      "evidence_path": "evidence/20260720T143541Z-84234757/parallel-different-tools.json",
+      "evidence_hash": "sha256:8c795bca03a104abdefc9444fd7dfa0bc6302c92aef5c0a5a9eacb5e93ea2e33",
+      "evidence_path": "evidence/20260720T181615Z-5a462971/parallel-different-tools.json",
       "retried": false
     },
     {
@@ -169,8 +173,8 @@
       "category": "parallel_calls",
       "status": "error",
       "failure_reason": "server returned HTTP 400 Bad Request",
-      "evidence_hash": "sha256:8eb2878f33bc9c288edfd4ef905840e6ee9a809f649499177bb03edc7f599293",
-      "evidence_path": "evidence/20260720T143541Z-84234757/parallel-three-cities.json",
+      "evidence_hash": "sha256:58c2848ea145aa12927cab3d67bd23c5772911e233e0b05c5a8adb36859d2427",
+      "evidence_path": "evidence/20260720T181615Z-5a462971/parallel-three-cities.json",
       "retried": false
     },
     {
@@ -178,8 +182,8 @@
       "category": "parallel_calls",
       "status": "error",
       "failure_reason": "server returned HTTP 400 Bad Request",
-      "evidence_hash": "sha256:d234f8369410f7b66de1d4b090f41e985abd8578dc3fef6d6550985551002a8d",
-      "evidence_path": "evidence/20260720T143541Z-84234757/parallel-three-different-tools.json",
+      "evidence_hash": "sha256:a8a3228a2a07f89e9dbdc39466fdeef0b60c2e337c8bf6c474d1716b340e8452",
+      "evidence_path": "evidence/20260720T181615Z-5a462971/parallel-three-different-tools.json",
       "retried": false
     },
     {
@@ -187,8 +191,8 @@
       "category": "parallel_calls",
       "status": "error",
       "failure_reason": "server returned HTTP 400 Bad Request",
-      "evidence_hash": "sha256:d5375c3c5eb6925450e92bf513a711b39b600c0b13ec7f7ee6e12c6c670eaf81",
-      "evidence_path": "evidence/20260720T143541Z-84234757/parallel-two-calculations.json",
+      "evidence_hash": "sha256:3def2b0e424bed3a5d1703180aa454055e5727d6bd7c41bcd2f7ed9392d5b200",
+      "evidence_path": "evidence/20260720T181615Z-5a462971/parallel-two-calculations.json",
       "retried": false
     },
     {
@@ -196,8 +200,8 @@
       "category": "parallel_calls",
       "status": "error",
       "failure_reason": "server returned HTTP 400 Bad Request",
-      "evidence_hash": "sha256:e1964429665d9ff3f975869094b5d54fe0938a5e5c8b85c4daebed0e6602096c",
-      "evidence_path": "evidence/20260720T143541Z-84234757/parallel-two-multiple-args.json",
+      "evidence_hash": "sha256:c8cb49f2b40d4a8eb586a96b59e2405d61cbfb58124e56fe8ae25fd748f43391",
+      "evidence_path": "evidence/20260720T181615Z-5a462971/parallel-two-multiple-args.json",
       "retried": false
     },
     {
@@ -205,8 +209,8 @@
       "category": "parallel_calls",
       "status": "error",
       "failure_reason": "server returned HTTP 400 Bad Request",
-      "evidence_hash": "sha256:a2b28fb11f74700fcb6afd9ca95d671c21abe144554c112594403be5dcfdb07c",
-      "evidence_path": "evidence/20260720T143541Z-84234757/parallel-two-searches.json",
+      "evidence_hash": "sha256:fcd6a778370712459af308f4ffdf120aae4017cfe5e30e900772f676a840628c",
+      "evidence_path": "evidence/20260720T181615Z-5a462971/parallel-two-searches.json",
       "retried": false
     },
     {
@@ -214,8 +218,8 @@
       "category": "parallel_calls",
       "status": "error",
       "failure_reason": "server returned HTTP 400 Bad Request",
-      "evidence_hash": "sha256:ee773f329076a42f838c907255d7234c0994121ac830ef2fe9dd60e537b4a5ad",
-      "evidence_path": "evidence/20260720T143541Z-84234757/parallel-weather-and-time.json",
+      "evidence_hash": "sha256:ec4d04f47097e0daf507342d81b20aac80ee247eefb26dcc22571c10104ded73",
+      "evidence_path": "evidence/20260720T181615Z-5a462971/parallel-weather-and-time.json",
       "retried": false
     },
     {
@@ -223,8 +227,8 @@
       "category": "single_call",
       "status": "error",
       "failure_reason": "server returned HTTP 400 Bad Request",
-      "evidence_hash": "sha256:9b650492455763a58937b0dc1e8ae812b9196a1f521a5e7da5d8c5bdd9243f31",
-      "evidence_path": "evidence/20260720T143541Z-84234757/single-array-tags.json",
+      "evidence_hash": "sha256:274d58b2da44e564b9e748c6ea7760d22fb71ab72df0eb220da648ef8ae0ec29",
+      "evidence_path": "evidence/20260720T181615Z-5a462971/single-array-tags.json",
       "retried": false
     },
     {
@@ -232,8 +236,8 @@
       "category": "single_call",
       "status": "error",
       "failure_reason": "server returned HTTP 400 Bad Request",
-      "evidence_hash": "sha256:9d6e1ac93d38aaf2ca8a7839b0b3cc1caafead0913e5dc720642775e6314367f",
-      "evidence_path": "evidence/20260720T143541Z-84234757/single-boolean-flag.json",
+      "evidence_hash": "sha256:afa1a69557119d871fb8094c459ed5fb26814a8a42a79d6ef2c3959df55d4e94",
+      "evidence_path": "evidence/20260720T181615Z-5a462971/single-boolean-flag.json",
       "retried": false
     },
     {
@@ -241,8 +245,8 @@
       "category": "single_call",
       "status": "error",
       "failure_reason": "server returned HTTP 400 Bad Request",
-      "evidence_hash": "sha256:5c1907b79c5763ff4473dd29a9576e071fe076e7417139df8d431832db6b3f70",
-      "evidence_path": "evidence/20260720T143541Z-84234757/single-date-range.json",
+      "evidence_hash": "sha256:6d42dc1798a6baf34763a59222cad311ed0a83da3c4d844be4cb02d2c1d3b08a",
+      "evidence_path": "evidence/20260720T181615Z-5a462971/single-date-range.json",
       "retried": false
     },
     {
@@ -250,8 +254,8 @@
       "category": "single_call",
       "status": "error",
       "failure_reason": "server returned HTTP 400 Bad Request",
-      "evidence_hash": "sha256:8d568bc5a2bc20cdf18176661673682faa5b77e41acddf33ab71b0eba39a8a67",
-      "evidence_path": "evidence/20260720T143541Z-84234757/single-decimal-price.json",
+      "evidence_hash": "sha256:f1c1a8732d6a77eefc2bfe62ff340e9ce4559967d3ce73db880740c1686ccd5d",
+      "evidence_path": "evidence/20260720T181615Z-5a462971/single-decimal-price.json",
       "retried": false
     },
     {
@@ -259,8 +263,8 @@
       "category": "single_call",
       "status": "error",
       "failure_reason": "server returned HTTP 400 Bad Request",
-      "evidence_hash": "sha256:12f6070550fea23b1a2875c75725b1e1bce8219fb5703d16eed4f5b0d80de984",
-      "evidence_path": "evidence/20260720T143541Z-84234757/single-empty-arguments.json",
+      "evidence_hash": "sha256:1e41b1799f55d5f10a620ecdbb501a237b9ad945570ffe116598b1b8fb0d7568",
+      "evidence_path": "evidence/20260720T181615Z-5a462971/single-empty-arguments.json",
       "retried": false
     },
     {
@@ -268,8 +272,8 @@
       "category": "single_call",
       "status": "error",
       "failure_reason": "server returned HTTP 400 Bad Request",
-      "evidence_hash": "sha256:168f322f1879f2b509878776ff7a8e55f6813f1bee4dbe29f7c0f09d4d4095e5",
-      "evidence_path": "evidence/20260720T143541Z-84234757/single-enum-format.json",
+      "evidence_hash": "sha256:30ec93a6e03511c432c06341d7cc27bdef752282d5f48b321285b1dcb35717dc",
+      "evidence_path": "evidence/20260720T181615Z-5a462971/single-enum-format.json",
       "retried": false
     },
     {
@@ -277,8 +281,8 @@
       "category": "single_call",
       "status": "error",
       "failure_reason": "server returned HTTP 400 Bad Request",
-      "evidence_hash": "sha256:e0c767583c6087adb450becfb63804cbf7e371922df3fa591a8af9bb7b6f8a7f",
-      "evidence_path": "evidence/20260720T143541Z-84234757/single-integer-limit.json",
+      "evidence_hash": "sha256:e9982f5dc604a3ff6b5e04559a717c1b78a1e408f3b550a4736c9a52e55a06cd",
+      "evidence_path": "evidence/20260720T181615Z-5a462971/single-integer-limit.json",
       "retried": false
     },
     {
@@ -286,8 +290,8 @@
       "category": "single_call",
       "status": "error",
       "failure_reason": "server returned HTTP 400 Bad Request",
-      "evidence_hash": "sha256:88ad4b11adb2f94b87be688fde3415cd1e684cae1345aed30294d7a0054a4cca",
-      "evidence_path": "evidence/20260720T143541Z-84234757/single-nested-options.json",
+      "evidence_hash": "sha256:e38835c8b3fc3a1de285f2ab3c2ea2f80c216fe9e3875865da3689d52fd60ff8",
+      "evidence_path": "evidence/20260720T181615Z-5a462971/single-nested-options.json",
       "retried": false
     },
     {
@@ -295,8 +299,8 @@
       "category": "single_call",
       "status": "error",
       "failure_reason": "server returned HTTP 400 Bad Request",
-      "evidence_hash": "sha256:ae915903556caabeec4b82b4494a05506b0f56629b1d5fcbdb72ca7c7032dd95",
-      "evidence_path": "evidence/20260720T143541Z-84234757/single-optional-omitted.json",
+      "evidence_hash": "sha256:519dc9554ce454013170fc1a585c56798c6c5307ed41f340154c138b37abb90c",
+      "evidence_path": "evidence/20260720T181615Z-5a462971/single-optional-omitted.json",
       "retried": false
     },
     {
@@ -304,8 +308,8 @@
       "category": "single_call",
       "status": "error",
       "failure_reason": "server returned HTTP 400 Bad Request",
-      "evidence_hash": "sha256:c27ed2959fbd003c6427fedf2b649270529c0416274627b3d02440b302e5b534",
-      "evidence_path": "evidence/20260720T143541Z-84234757/single-optional-present.json",
+      "evidence_hash": "sha256:b24731be9c34a21ecc90b854d0559f6c063a7b9852ce562e8b9b1bc4939d322e",
+      "evidence_path": "evidence/20260720T181615Z-5a462971/single-optional-present.json",
       "retried": false
     },
     {
@@ -313,8 +317,8 @@
       "category": "single_call",
       "status": "error",
       "failure_reason": "server returned HTTP 400 Bad Request",
-      "evidence_hash": "sha256:cff325e4932b1378a56a620f976187d079b5bb19bf9496f1f4bd2541325af63d",
-      "evidence_path": "evidence/20260720T143541Z-84234757/single-string-list.json",
+      "evidence_hash": "sha256:85e4f8cc36476f41264ebda360a1be7aecb6ec564bd3790b99e8ff1bb94f41bf",
+      "evidence_path": "evidence/20260720T181615Z-5a462971/single-string-list.json",
       "retried": false
     },
     {
@@ -322,8 +326,8 @@
       "category": "single_call",
       "status": "error",
       "failure_reason": "server returned HTTP 400 Bad Request",
-      "evidence_hash": "sha256:736743f4f2f394c23fa7e9a1c2d7e696eca20d6348a6d2a17da332242d9be4ea",
-      "evidence_path": "evidence/20260720T143541Z-84234757/single-weather.json",
+      "evidence_hash": "sha256:3592ad13701d43a71840b2a0e7c32ce0fd4f1e25788f6ee320f5711b115fc4f9",
+      "evidence_path": "evidence/20260720T181615Z-5a462971/single-weather.json",
       "retried": false
     },
     {
@@ -331,8 +335,8 @@
       "category": "single_call",
       "status": "error",
       "failure_reason": "server returned HTTP 400 Bad Request",
-      "evidence_hash": "sha256:f249c211b315f6c3bcdb14fd48c6e916c909e16e749a2419f05f0f5eec798c4b",
-      "evidence_path": "evidence/20260720T143541Z-84234757/single-zero-and-negative.json",
+      "evidence_hash": "sha256:10e5f8864be401d240294abd98f404dcd3e9ee87ce44453af2aa340337f23860",
+      "evidence_path": "evidence/20260720T181615Z-5a462971/single-zero-and-negative.json",
       "retried": false
     },
     {
@@ -340,8 +344,8 @@
       "category": "streaming",
       "status": "error",
       "failure_reason": "server returned HTTP 400 Bad Request",
-      "evidence_hash": "sha256:272b5afd05f53fea5f6baef6287ba8f984e2818d9b8540acd843ed93bc315ffa",
-      "evidence_path": "evidence/20260720T143541Z-84234757/streaming-array-arguments.json",
+      "evidence_hash": "sha256:4d6c5d088bf4526639d72df70b0d30a9dbdd8b1fe30a7b4770ab0f0e82202c17",
+      "evidence_path": "evidence/20260720T181615Z-5a462971/streaming-array-arguments.json",
       "retried": false
     },
     {
@@ -349,8 +353,8 @@
       "category": "streaming",
       "status": "error",
       "failure_reason": "server returned HTTP 400 Bad Request",
-      "evidence_hash": "sha256:05baeff0a05808c1847a46c35d8025995cdfb60a89e34157bb3e4579499a8348",
-      "evidence_path": "evidence/20260720T143541Z-84234757/streaming-boolean-argument.json",
+      "evidence_hash": "sha256:c35ffdb7cf4af72150ca72cc2d2e4e064f1b3eb5d5a9e6b2acf6ddd0d4c300ae",
+      "evidence_path": "evidence/20260720T181615Z-5a462971/streaming-boolean-argument.json",
       "retried": false
     },
     {
@@ -358,8 +362,8 @@
       "category": "streaming",
       "status": "error",
       "failure_reason": "server returned HTTP 400 Bad Request",
-      "evidence_hash": "sha256:5b69070c0056f67df323941cf8d13ee60101fd56af2ab99ec8832dba39cfad53",
-      "evidence_path": "evidence/20260720T143541Z-84234757/streaming-empty-arguments.json",
+      "evidence_hash": "sha256:26962caa8c9eda69ee7bb5afc50e40a2c8ef6658d10325e92e0a497734350949",
+      "evidence_path": "evidence/20260720T181615Z-5a462971/streaming-empty-arguments.json",
       "retried": false
     },
     {
@@ -367,8 +371,8 @@
       "category": "streaming",
       "status": "error",
       "failure_reason": "server returned HTTP 400 Bad Request",
-      "evidence_hash": "sha256:4e4d17b88801853a6333f36ddb0e03fb07af158ec3f55a596f9dc87b73569fd3",
-      "evidence_path": "evidence/20260720T143541Z-84234757/streaming-enum-arguments.json",
+      "evidence_hash": "sha256:1d4bc65fdb1f24b1208ce8fbf0854419460f90f44a156b45d547e9385457735a",
+      "evidence_path": "evidence/20260720T181615Z-5a462971/streaming-enum-arguments.json",
       "retried": false
     },
     {
@@ -376,8 +380,8 @@
       "category": "streaming",
       "status": "error",
       "failure_reason": "server returned HTTP 400 Bad Request",
-      "evidence_hash": "sha256:ac0152ae056fe4afd39f3e39ad78d849fc9b3f452fdc12b021a8f5fb21918401",
-      "evidence_path": "evidence/20260720T143541Z-84234757/streaming-nested-arguments.json",
+      "evidence_hash": "sha256:86357a875cd7ae71bb6636e524fcb7d51b5a96ed7a2da00e5839cdd31488dfcd",
+      "evidence_path": "evidence/20260720T181615Z-5a462971/streaming-nested-arguments.json",
       "retried": false
     },
     {
@@ -385,8 +389,8 @@
       "category": "streaming",
       "status": "error",
       "failure_reason": "server returned HTTP 400 Bad Request",
-      "evidence_hash": "sha256:dfc0c9b4164ef542471ab0935089993cfa61f239a3af1da0eafdb14e6c425cdc",
-      "evidence_path": "evidence/20260720T143541Z-84234757/streaming-parallel-three.json",
+      "evidence_hash": "sha256:149b6e0a182df47f81b9c703980c62d2506467782032c021d6fe353db0c9a0ff",
+      "evidence_path": "evidence/20260720T181615Z-5a462971/streaming-parallel-three.json",
       "retried": false
     },
     {
@@ -394,8 +398,8 @@
       "category": "streaming",
       "status": "error",
       "failure_reason": "server returned HTTP 400 Bad Request",
-      "evidence_hash": "sha256:4207600568fc547b6cfa408f0a4a839c6062e2fbe045d35a46ba7836e8029550",
-      "evidence_path": "evidence/20260720T143541Z-84234757/streaming-parallel-two.json",
+      "evidence_hash": "sha256:30ef5839b0b149acb17548a43331b1f43397e4a8cceb8380ff9fbdbe5c8323e7",
+      "evidence_path": "evidence/20260720T181615Z-5a462971/streaming-parallel-two.json",
       "retried": false
     },
     {
@@ -403,8 +407,8 @@
       "category": "streaming",
       "status": "error",
       "failure_reason": "server returned HTTP 400 Bad Request",
-      "evidence_hash": "sha256:0050a9f0d20a7a84f5acacd5143cf693a6a2e832cc743987c855ca29382f5581",
-      "evidence_path": "evidence/20260720T143541Z-84234757/streaming-weather.json",
+      "evidence_hash": "sha256:5206174cac4b4d6b8a6a9c64a1b221557e39aaefd6d35169b377b79ac99e087a",
+      "evidence_path": "evidence/20260720T181615Z-5a462971/streaming-weather.json",
       "retried": false
     },
     {
@@ -412,8 +416,8 @@
       "category": "tool_choice_modes",
       "status": "error",
       "failure_reason": "server returned HTTP 400 Bad Request",
-      "evidence_hash": "sha256:0a4f30d1842e9f74dd573a93f797ea908fe5e2cc1317d3fe11098ff4ad272cef",
-      "evidence_path": "evidence/20260720T143541Z-84234757/tool-choice-auto-call.json",
+      "evidence_hash": "sha256:c39255b5b2edc0e3c31b8124b6840b5b812688404f1095c14b26588d4592e674",
+      "evidence_path": "evidence/20260720T181615Z-5a462971/tool-choice-auto-call.json",
       "retried": false
     },
     {
@@ -421,8 +425,8 @@
       "category": "tool_choice_modes",
       "status": "error",
       "failure_reason": "server returned HTTP 400 Bad Request",
-      "evidence_hash": "sha256:70d14e952bec491821a8d2bcb215f2e4e643c090d408fbdac69ac2ab3d5be4bb",
-      "evidence_path": "evidence/20260720T143541Z-84234757/tool-choice-auto-no-call.json",
+      "evidence_hash": "sha256:87420925423a328af0293a8862094ca09080b0430deb1949b4a41c3ef811af6e",
+      "evidence_path": "evidence/20260720T181615Z-5a462971/tool-choice-auto-no-call.json",
       "retried": false
     },
     {
@@ -430,8 +434,8 @@
       "category": "tool_choice_modes",
       "status": "error",
       "failure_reason": "server returned HTTP 400 Bad Request",
-      "evidence_hash": "sha256:dbc372adc5cef31b51d4c50f9be2117a5e667ad99d6df960bfa6a19a29e69563",
-      "evidence_path": "evidence/20260720T143541Z-84234757/tool-choice-named.json",
+      "evidence_hash": "sha256:a788cb4fcff2f9174202d84aa924bd43590682fd842e1be5b5e3f7865e0d41f6",
+      "evidence_path": "evidence/20260720T181615Z-5a462971/tool-choice-named.json",
       "retried": false
     },
     {
@@ -439,8 +443,8 @@
       "category": "tool_choice_modes",
       "status": "error",
       "failure_reason": "server returned HTTP 400 Bad Request",
-      "evidence_hash": "sha256:aae83d901a3ad53e6cab402f32531721c1b2864c7f4d443c9f42488c425c40e5",
-      "evidence_path": "evidence/20260720T143541Z-84234757/tool-choice-named-empty.json",
+      "evidence_hash": "sha256:cbeb5999e1725db672e7b7d3bc95633553203da24301eba6a1543980572050d8",
+      "evidence_path": "evidence/20260720T181615Z-5a462971/tool-choice-named-empty.json",
       "retried": false
     },
     {
@@ -448,8 +452,8 @@
       "category": "tool_choice_modes",
       "status": "error",
       "failure_reason": "server returned HTTP 400 Bad Request",
-      "evidence_hash": "sha256:f1ffb531dbfe50a4d547993e1518874b065792e429d67078fbc6c77a88b5f522",
-      "evidence_path": "evidence/20260720T143541Z-84234757/tool-choice-none.json",
+      "evidence_hash": "sha256:b89f1dfdbd2d3f9e96a071a8a8120ae8d0d55e818f45ab44af7e29b73edc2d94",
+      "evidence_path": "evidence/20260720T181615Z-5a462971/tool-choice-none.json",
       "retried": false
     },
     {
@@ -457,8 +461,8 @@
       "category": "tool_choice_modes",
       "status": "error",
       "failure_reason": "server returned HTTP 400 Bad Request",
-      "evidence_hash": "sha256:dd2b02d9e6249b195de5ffb1ec2bda2a5295442250761a9f3090f334938cbda6",
-      "evidence_path": "evidence/20260720T143541Z-84234757/tool-choice-required.json",
+      "evidence_hash": "sha256:703c8d8f55e18616a35bc942223cbbbc8c3449a2c52569bbff043d73705541bd",
+      "evidence_path": "evidence/20260720T181615Z-5a462971/tool-choice-required.json",
       "retried": false
     },
     {
@@ -466,8 +470,8 @@
       "category": "tool_choice_modes",
       "status": "error",
       "failure_reason": "server returned HTTP 400 Bad Request",
-      "evidence_hash": "sha256:7fcda452770adbba63b918e659792f0602c9e227111fb2b6082ebe16c0fa747c",
-      "evidence_path": "evidence/20260720T143541Z-84234757/tool-choice-required-empty.json",
+      "evidence_hash": "sha256:d2df599bcfb2a935d694a0e56ba2716fc5131b16234a0e9d42d289bee4132dba",
+      "evidence_path": "evidence/20260720T181615Z-5a462971/tool-choice-required-empty.json",
       "retried": false
     }
   ],

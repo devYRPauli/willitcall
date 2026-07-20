@@ -1,0 +1,67 @@
+{
+  "schema_version": 1,
+  "run_id": "20260720T181418Z-d3446dd1",
+  "scenario_id": "negative-long-argument",
+  "turns": [
+    {
+      "index": 0,
+      "request": {
+        "method": "POST",
+        "url": "http://localhost:11434/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "Store this exact token: abcdefghijklmnopqrstuvwxyz0123456789-ABCDEFGHIJKLMNOPQRSTUVWXYZ-abcdefghijklmnopqrstuvwxyz0123456789-ABCDEFGHIJKLMNOPQRSTUVWXYZ-abcdefghijklmnopqrstuvwxyz0123456789-ABCDEFGHIJKLMNOPQRSTUVWXYZ-abcdefghijklmnopqrstuvwxyz0123456789-ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+              "role": "user"
+            }
+          ],
+          "model": "granite3.1-dense:8b",
+          "seed": 42,
+          "stream": false,
+          "temperature": 0.0,
+          "tool_choice": {
+            "function": {
+              "name": "store_token"
+            },
+            "type": "function"
+          },
+          "tools": [
+            {
+              "function": {
+                "description": "Store one exact token.",
+                "name": "store_token",
+                "parameters": {
+                  "properties": {
+                    "token": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "token"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-length": "632",
+          "content-type": "application/json",
+          "date": "Mon, 20 Jul 2026 18:14:29 GMT"
+        },
+        "body_raw": "{\"id\":\"chatcmpl-723\",\"object\":\"chat.completion\",\"created\":1784571269,\"model\":\"granite3.1-dense:8b\",\"system_fingerprint\":\"fp_ollama\",\"choices\":[{\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"\\u003ctool_call\\u003e[{\\\"arguments\\\":{\\\"token\\\":\\\"abcdefghijklmnopqrstuvwxyz0123456789-ABCDEFGHIJKLMNOPQRSTUVWXYZ-abcdefghijklmnopqrstuvwxyz0123456789-ABCDEFGHIJKLMNOPQRSTUVWXYZ-abcdefghijklmnopqrstuvwxyz0123456789-ABCDEFGHIJKLMNOPQRSTUVWXYZ-abcdefghijklmnopqrstuvwxyz0123456789-ABCDEFGHIJKLMNOPQRSTUVWXYZ\\\"},\\\"name\\\":\\\"store_token\\\"}]\"},\"finish_reason\":\"stop\"}],\"usage\":{\"prompt_tokens\":202,\"completion_tokens\":129,\"total_tokens\":331}}\n"
+      },
+      "retried": false
+    }
+  ]
+}

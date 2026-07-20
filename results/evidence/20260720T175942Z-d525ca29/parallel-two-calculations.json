@@ -1,0 +1,66 @@
+{
+  "schema_version": 1,
+  "run_id": "20260720T175942Z-d525ca29",
+  "scenario_id": "parallel-two-calculations",
+  "turns": [
+    {
+      "index": 0,
+      "request": {
+        "method": "POST",
+        "url": "http://localhost:11434/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "Use separate calls to divide 42 by 6 and divide 10 by 4.",
+              "role": "user"
+            }
+          ],
+          "model": "qwen3:4b",
+          "seed": 42,
+          "stream": false,
+          "temperature": 0.0,
+          "tool_choice": "required",
+          "tools": [
+            {
+              "function": {
+                "description": "Divide one number by another.",
+                "name": "divide",
+                "parameters": {
+                  "properties": {
+                    "dividend": {
+                      "type": "number"
+                    },
+                    "divisor": {
+                      "type": "number"
+                    }
+                  },
+                  "required": [
+                    "dividend",
+                    "divisor"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-length": "1677",
+          "content-type": "application/json",
+          "date": "Mon, 20 Jul 2026 18:01:19 GMT"
+        },
+        "body_raw": "{\"id\":\"chatcmpl-150\",\"object\":\"chat.completion\",\"created\":1784570479,\"model\":\"qwen3:4b\",\"system_fingerprint\":\"fp_ollama\",\"choices\":[{\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"\",\"reasoning\":\"Okay, let's see. The user wants me to divide 42 by 6 and then divide 10 by 4 using separate calls. Hmm, the tool provided is a function called divide that takes two numbers: dividend and divisor.\\n\\nFirst, I need to make two separate function calls. For the first division, 42 divided by 6. So the dividend is 42 and divisor is 6. Then the second one is 10 divided by 4, so dividend 10 and divisor 4.\\n\\nWait, the function's parameters are dividend and divisor. The tool description says it's a function that divides one number by another. So each call should be a separate tool_call.\\n\\nI need to output two tool_call entries. Let me check the format. The user said \\\"use separate calls\\\", so each division is a separate function call.\\n\\nSo first tool call: name \\\"divide\\\", arguments {\\\"dividend\\\": 42, \\\"divisor\\\": 6}\\n\\nSecond tool call: name \\\"divide\\\", arguments {\\\"dividend\\\": 10, \\\"divisor\\\": 4}\\n\\nI should make sure the JSON is correctly formatted. The tool's function name is \\\"divide\\\" as per the tool definition. The parameters are numbers.\\n\\nYes, that's right. So two tool_call blocks.\\n\",\"tool_calls\":[{\"id\":\"call_0d89wp3c\",\"index\":0,\"type\":\"function\",\"function\":{\"name\":\"divide\",\"arguments\":\"{\\\"divisor\\\":6,\\\"dividend\\\":42}\"}},{\"id\":\"call_603ru8tx\",\"index\":1,\"type\":\"function\",\"function\":{\"name\":\"divide\",\"arguments\":\"{\\\"dividend\\\":10,\\\"divisor\\\":4}\"}}]},\"finish_reason\":\"tool_calls\"}],\"usage\":{\"prompt_tokens\":159,\"completion_tokens\":327,\"total_tokens\":486}}\n"
+      },
+      "retried": false
+    }
+  ]
+}

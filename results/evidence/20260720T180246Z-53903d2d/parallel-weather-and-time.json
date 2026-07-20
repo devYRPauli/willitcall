@@ -1,0 +1,80 @@
+{
+  "schema_version": 1,
+  "run_id": "20260720T180246Z-53903d2d",
+  "scenario_id": "parallel-weather-and-time",
+  "turns": [
+    {
+      "index": 0,
+      "request": {
+        "method": "POST",
+        "url": "http://localhost:11434/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "Get both the weather and local time for Denver.",
+              "role": "user"
+            }
+          ],
+          "model": "qwen3:8b",
+          "seed": 42,
+          "stream": false,
+          "temperature": 0.0,
+          "tool_choice": "auto",
+          "tools": [
+            {
+              "function": {
+                "description": "Get weather for a city.",
+                "name": "get_weather",
+                "parameters": {
+                  "properties": {
+                    "city": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "city"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            },
+            {
+              "function": {
+                "description": "Get local time for a city.",
+                "name": "get_time",
+                "parameters": {
+                  "properties": {
+                    "city": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "city"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-length": "985",
+          "content-type": "application/json",
+          "date": "Mon, 20 Jul 2026 18:04:26 GMT"
+        },
+        "body_raw": "{\"id\":\"chatcmpl-867\",\"object\":\"chat.completion\",\"created\":1784570666,\"model\":\"qwen3:8b\",\"system_fingerprint\":\"fp_ollama\",\"choices\":[{\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"\",\"reasoning\":\"Okay, the user wants both the weather and local time for Denver. Let me check the tools available. There's get_weather and get_time functions, both requiring the city parameter. I need to call each function once with Denver as the city. First, I'll handle the weather request. Then, I'll get the local time. Make sure each tool call is in separate XML tags. Let me structure the JSON arguments correctly for each function.\\n\",\"tool_calls\":[{\"id\":\"call_jqezhbva\",\"index\":0,\"type\":\"function\",\"function\":{\"name\":\"get_weather\",\"arguments\":\"{\\\"city\\\":\\\"Denver\\\"}\"}},{\"id\":\"call_r1kl72hp\",\"index\":1,\"type\":\"function\",\"function\":{\"name\":\"get_time\",\"arguments\":\"{\\\"city\\\":\\\"Denver\\\"}\"}}]},\"finish_reason\":\"tool_calls\"}],\"usage\":{\"prompt_tokens\":179,\"completion_tokens\":133,\"total_tokens\":312}}\n"
+      },
+      "retried": false
+    }
+  ]
+}

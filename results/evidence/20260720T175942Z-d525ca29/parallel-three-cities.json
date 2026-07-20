@@ -1,0 +1,62 @@
+{
+  "schema_version": 1,
+  "run_id": "20260720T175942Z-d525ca29",
+  "scenario_id": "parallel-three-cities",
+  "turns": [
+    {
+      "index": 0,
+      "request": {
+        "method": "POST",
+        "url": "http://localhost:11434/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "Get weather for Austin, Dublin, and Seoul with three calls.",
+              "role": "user"
+            }
+          ],
+          "model": "qwen3:4b",
+          "seed": 42,
+          "stream": false,
+          "temperature": 0.0,
+          "tool_choice": "required",
+          "tools": [
+            {
+              "function": {
+                "description": "Get weather for a city.",
+                "name": "get_weather",
+                "parameters": {
+                  "properties": {
+                    "city": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "city"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-type": "application/json",
+          "date": "Mon, 20 Jul 2026 18:01:13 GMT",
+          "transfer-encoding": "chunked"
+        },
+        "body_raw": "{\"id\":\"chatcmpl-256\",\"object\":\"chat.completion\",\"created\":1784570473,\"model\":\"qwen3:4b\",\"system_fingerprint\":\"fp_ollama\",\"choices\":[{\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"\",\"reasoning\":\"Okay, let's see. The user wants the weather for Austin, Dublin, and Seoul using three calls. The tool provided is get_weather, which takes a city as a string.\\n\\nFirst, I need to make three separate function calls for each city. The function name is get_weather, and each call should have the city name. So for Austin, the arguments would be {\\\"city\\\": \\\"Austin\\\"}. Then Dublin: {\\\"city\\\": \\\"Dublin\\\"}, and Seoul: {\\\"city\\\": \\\"Seoul\\\"}.\\n\\nWait, the tool's function signature says the arguments are a JSON object with a city key. So each call is a separate tool_call. The user said three calls, so I need to generate three tool_call entries.\\n\\nLet me check the example format. The tool_call should be a JSON object inside tool_call tags. Each tool_call has a name and arguments. So for each city, I'll create a tool_call with the respective city.\\n\\nI should make sure the city names are correctly spelled. Austin is a city in Texas, Dublin is in Ireland, Seoul is in South Korea. The function expects the city as a string, so those names should be okay.\\n\\nSo the three tool calls would be:\\n\\n1. Austin\\n2. Dublin\\n3. Seoul\\n\\nEach in their own tool_call block. The response should have three tool_call entries. Let me structure the JSON correctly.\\n\\nWait, the user said \\\"with three calls\\\", so I need to output three tool_call XML blocks. Each with the respective city.\\n\\nYes, so the answer should be three tool_call entries, each for one city.\\n\",\"tool_calls\":[{\"id\":\"call_z78kyu6i\",\"index\":0,\"type\":\"function\",\"function\":{\"name\":\"get_weather\",\"arguments\":\"{\\\"city\\\":\\\"Austin\\\"}\"}},{\"id\":\"call_hhbhjvml\",\"index\":1,\"type\":\"function\",\"function\":{\"name\":\"get_weather\",\"arguments\":\"{\\\"city\\\":\\\"Dublin\\\"}\"}},{\"id\":\"call_2zge24jy\",\"index\":2,\"type\":\"function\",\"function\":{\"name\":\"get_weather\",\"arguments\":\"{\\\"city\\\":\\\"Seoul\\\"}\"}}]},\"finish_reason\":\"tool_calls\"}],\"usage\":{\"prompt_tokens\":143,\"completion_tokens\":389,\"total_tokens\":532}}\n"
+      },
+      "retried": false
+    }
+  ]
+}

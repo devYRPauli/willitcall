@@ -1,0 +1,62 @@
+{
+  "schema_version": 1,
+  "run_id": "20260720T180246Z-53903d2d",
+  "scenario_id": "parallel-city-time",
+  "turns": [
+    {
+      "index": 0,
+      "request": {
+        "method": "POST",
+        "url": "http://localhost:11434/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "What time is it in Boston and Tokyo?",
+              "role": "user"
+            }
+          ],
+          "model": "qwen3:8b",
+          "seed": 42,
+          "stream": false,
+          "temperature": 0.0,
+          "tool_choice": "required",
+          "tools": [
+            {
+              "function": {
+                "description": "Get the local time for a city.",
+                "name": "get_time",
+                "parameters": {
+                  "properties": {
+                    "city": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "city"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-length": "2046",
+          "content-type": "application/json",
+          "date": "Mon, 20 Jul 2026 18:04:06 GMT"
+        },
+        "body_raw": "{\"id\":\"chatcmpl-385\",\"object\":\"chat.completion\",\"created\":1784570646,\"model\":\"qwen3:8b\",\"system_fingerprint\":\"fp_ollama\",\"choices\":[{\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"\",\"reasoning\":\"Okay, the user is asking for the current time in both Boston and Tokyo. Let me see how to approach this.\\n\\nFirst, I need to check if there's a function available to get the local time for a city. Looking at the tools provided, there's a function called get_time that takes a city parameter. The function's description says it retrieves the local time for the specified city. \\n\\nSo, the plan is to call this function twice, once for Boston and once for Tokyo. Each function call will return the current time for that city. Then, I can present both times to the user in the response.\\n\\nWait, do I need to handle time zones manually, or does the function take care of that? The function's documentation mentions it's for local time, so I assume it handles the time zone conversion internally. That means I don't need to worry about time zones; just pass the city names.\\n\\nLet me make sure the function parameters are correct. The function requires a \\\"city\\\" argument, which is a string. Both Boston and Tokyo are valid city names, so that's straightforward.\\n\\nI should structure the tool calls correctly. Each tool_call should have the name \\\"get_time\\\" and the respective city in the arguments. The user might be in a different time zone, but the function will return the local time for each city, so the answer should be accurate.\\n\\nAlright, I'll generate two tool calls: one for Boston and one for Tokyo. Then, once I get the responses, I can format the answer to show both times.\\n\",\"tool_calls\":[{\"id\":\"call_dlllnn6h\",\"index\":0,\"type\":\"function\",\"function\":{\"name\":\"get_time\",\"arguments\":\"{\\\"city\\\":\\\"Boston\\\"}\"}},{\"id\":\"call_vfdklbxk\",\"index\":1,\"type\":\"function\",\"function\":{\"name\":\"get_time\",\"arguments\":\"{\\\"city\\\":\\\"Tokyo\\\"}\"}}]},\"finish_reason\":\"tool_calls\"}],\"usage\":{\"prompt_tokens\":141,\"completion_tokens\":359,\"total_tokens\":500}}\n"
+      },
+      "retried": false
+    }
+  ]
+}

@@ -1,0 +1,64 @@
+{
+  "schema_version": 1,
+  "run_id": "20260720T182604Z-d59df055",
+  "scenario_id": "tool-choice-auto-call",
+  "turns": [
+    {
+      "index": 0,
+      "request": {
+        "method": "POST",
+        "url": "http://127.0.0.1:8080/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "Get the temperature in Helsinki.",
+              "role": "user"
+            }
+          ],
+          "model": "Qwen/Qwen2.5-7B-Instruct-GGUF:Q8_0",
+          "seed": 42,
+          "stream": false,
+          "temperature": 0.0,
+          "tool_choice": "auto",
+          "tools": [
+            {
+              "function": {
+                "description": "Get the temperature for a city.",
+                "name": "get_temperature",
+                "parameters": {
+                  "properties": {
+                    "city": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "city"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "access-control-allow-origin": "",
+          "content-length": "812",
+          "content-type": "application/json; charset=utf-8",
+          "keep-alive": "timeout=5, max=100",
+          "server": "llama.cpp"
+        },
+        "body_raw": "{\"choices\":[{\"finish_reason\":\"tool_calls\",\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"\",\"tool_calls\":[{\"type\":\"function\",\"function\":{\"name\":\"get_temperature\",\"arguments\":\"{\\\"city\\\": \\\"Helsinki\\\"}\"},\"id\":\"N18r4P6tgQU80RNmb42FyLRgyBgYAW8F\"}]}}],\"created\":1784572006,\"model\":\"Qwen/Qwen2.5-7B-Instruct-GGUF:Q8_0\",\"system_fingerprint\":\"b10050-b15ca938a\",\"object\":\"chat.completion\",\"usage\":{\"completion_tokens\":21,\"prompt_tokens\":170,\"total_tokens\":191,\"prompt_tokens_details\":{\"cached_tokens\":68}},\"id\":\"chatcmpl-0FdJab0SCHzOT9if178VmAMieCWZRv4S\",\"timings\":{\"cache_n\":68,\"prompt_n\":102,\"prompt_ms\":137.847,\"prompt_per_token_ms\":1.3514411764705883,\"prompt_per_second\":739.9508150340595,\"predicted_n\":21,\"predicted_ms\":341.463,\"predicted_per_token_ms\":16.26014285714286,\"predicted_per_second\":61.50007467866211}}"
+      },
+      "retried": false
+    }
+  ]
+}

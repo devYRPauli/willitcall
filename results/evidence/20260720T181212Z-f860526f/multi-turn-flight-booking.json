@@ -1,0 +1,188 @@
+{
+  "schema_version": 1,
+  "run_id": "20260720T181212Z-f860526f",
+  "scenario_id": "multi-turn-flight-booking",
+  "turns": [
+    {
+      "index": 0,
+      "request": {
+        "method": "POST",
+        "url": "http://localhost:11434/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "Find a flight from BOS to DEN on 2026-10-04, then book the returned flight.",
+              "role": "user"
+            }
+          ],
+          "model": "qwen2.5:7b-instruct",
+          "seed": 42,
+          "stream": false,
+          "temperature": 0.0,
+          "tool_choice": "auto",
+          "tools": [
+            {
+              "function": {
+                "description": "Find a flight for an exact route and date.",
+                "name": "find_flight",
+                "parameters": {
+                  "properties": {
+                    "date": {
+                      "type": "string"
+                    },
+                    "destination": {
+                      "type": "string"
+                    },
+                    "origin": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "origin",
+                    "destination",
+                    "date"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            },
+            {
+              "function": {
+                "description": "Book a flight by exact id.",
+                "name": "book_flight",
+                "parameters": {
+                  "properties": {
+                    "flight_id": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "flight_id"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-length": "485",
+          "content-type": "application/json",
+          "date": "Mon, 20 Jul 2026 18:12:16 GMT"
+        },
+        "body_raw": "{\"id\":\"chatcmpl-988\",\"object\":\"chat.completion\",\"created\":1784571136,\"model\":\"qwen2.5:7b-instruct\",\"system_fingerprint\":\"fp_ollama\",\"choices\":[{\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"\",\"tool_calls\":[{\"id\":\"call_07k755rs\",\"index\":0,\"type\":\"function\",\"function\":{\"name\":\"find_flight\",\"arguments\":\"{\\\"origin\\\":\\\"BOS\\\",\\\"destination\\\":\\\"DEN\\\",\\\"date\\\":\\\"2026-10-04\\\"}\"}}]},\"finish_reason\":\"tool_calls\"}],\"usage\":{\"prompt_tokens\":230,\"completion_tokens\":42,\"total_tokens\":272}}\n"
+      },
+      "retried": false
+    },
+    {
+      "index": 1,
+      "request": {
+        "method": "POST",
+        "url": "http://localhost:11434/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "Find a flight from BOS to DEN on 2026-10-04, then book the returned flight.",
+              "role": "user"
+            },
+            {
+              "content": "",
+              "role": "assistant",
+              "tool_calls": [
+                {
+                  "function": {
+                    "arguments": "{\"origin\":\"BOS\",\"destination\":\"DEN\",\"date\":\"2026-10-04\"}",
+                    "name": "find_flight"
+                  },
+                  "id": "call_07k755rs",
+                  "type": "function"
+                }
+              ]
+            },
+            {
+              "content": "{\"flight_id\":\"FL-808\"}",
+              "role": "tool",
+              "tool_call_id": "call_07k755rs"
+            }
+          ],
+          "model": "qwen2.5:7b-instruct",
+          "seed": 42,
+          "stream": false,
+          "temperature": 0.0,
+          "tool_choice": "auto",
+          "tools": [
+            {
+              "function": {
+                "description": "Find a flight for an exact route and date.",
+                "name": "find_flight",
+                "parameters": {
+                  "properties": {
+                    "date": {
+                      "type": "string"
+                    },
+                    "destination": {
+                      "type": "string"
+                    },
+                    "origin": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "origin",
+                    "destination",
+                    "date"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            },
+            {
+              "function": {
+                "description": "Book a flight by exact id.",
+                "name": "book_flight",
+                "parameters": {
+                  "properties": {
+                    "flight_id": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "flight_id"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-length": "443",
+          "content-type": "application/json",
+          "date": "Mon, 20 Jul 2026 18:12:17 GMT"
+        },
+        "body_raw": "{\"id\":\"chatcmpl-546\",\"object\":\"chat.completion\",\"created\":1784571137,\"model\":\"qwen2.5:7b-instruct\",\"system_fingerprint\":\"fp_ollama\",\"choices\":[{\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"\",\"tool_calls\":[{\"id\":\"call_xddnjyny\",\"index\":0,\"type\":\"function\",\"function\":{\"name\":\"book_flight\",\"arguments\":\"{\\\"flight_id\\\":\\\"FL-808\\\"}\"}}]},\"finish_reason\":\"tool_calls\"}],\"usage\":{\"prompt_tokens\":294,\"completion_tokens\":25,\"total_tokens\":319}}\n"
+      },
+      "retried": false
+    }
+  ]
+}

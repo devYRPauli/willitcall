@@ -1,0 +1,89 @@
+{
+  "schema_version": 1,
+  "run_id": "20260720T180246Z-53903d2d",
+  "scenario_id": "multi-turn-ticket-update",
+  "turns": [
+    {
+      "index": 0,
+      "request": {
+        "method": "POST",
+        "url": "http://localhost:11434/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "Find ticket EXT-55 and set its priority to high.",
+              "role": "user"
+            }
+          ],
+          "model": "qwen3:8b",
+          "seed": 42,
+          "stream": false,
+          "temperature": 0.0,
+          "tool_choice": "auto",
+          "tools": [
+            {
+              "function": {
+                "description": "Find a ticket by exact external reference.",
+                "name": "find_ticket",
+                "parameters": {
+                  "properties": {
+                    "external_ref": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "external_ref"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            },
+            {
+              "function": {
+                "description": "Set ticket priority by internal id.",
+                "name": "set_ticket_priority",
+                "parameters": {
+                  "properties": {
+                    "priority": {
+                      "enum": [
+                        "low",
+                        "normal",
+                        "high"
+                      ],
+                      "type": "string"
+                    },
+                    "ticket_id": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "ticket_id",
+                    "priority"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-type": "application/json",
+          "date": "Mon, 20 Jul 2026 18:03:37 GMT",
+          "transfer-encoding": "chunked"
+        },
+        "body_raw": "{\"id\":\"chatcmpl-384\",\"object\":\"chat.completion\",\"created\":1784570617,\"model\":\"qwen3:8b\",\"system_fingerprint\":\"fp_ollama\",\"choices\":[{\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"\",\"reasoning\":\"Okay, let's see. The user wants to find a ticket with the external reference EXT-55 and set its priority to high. \\n\\nFirst, I need to check the available tools. There's the find_ticket function which takes an external_ref. So I should call that first to get the ticket's internal ID. Once I have the ticket ID, I can use set_ticket_priority with the priority set to high.\\n\\nWait, the functions are in a specific order. The user mentioned both actions: find and set priority. So first, I need to find the ticket using find_ticket with external_ref \\\"EXT-55\\\". Then, using the ticket_id obtained from that, call set_ticket_priority with priority \\\"high\\\".\\n\\nBut how do I handle the ticket_id? Since the find_ticket function might return the internal ID, which is needed for the next function. But in the tool definitions, the find_ticket's response isn't specified. However, the user's instruction says to call the functions as per the given tools. So maybe the first step is to call find_ticket with EXT-55, and then use the resulting ticket_id in the set_ticket_priority function.\\n\\nSo the plan is: first call find_ticket with external_ref \\\"EXT-55\\\", then use the ticket_id from that response to set the priority. But since each tool call is separate, I need to make two tool calls. However, the user's message requires both actions. So the assistant should first find the ticket, then set the priority. Therefore, the first tool call is find_ticket with external_ref \\\"EXT-55\\\", and then the second tool call is set_ticket_priority with the ticket_id and priority \\\"high\\\".\\n\",\"tool_calls\":[{\"id\":\"call_hhda4n69\",\"index\":0,\"type\":\"function\",\"function\":{\"name\":\"find_ticket\",\"arguments\":\"{\\\"external_ref\\\":\\\"EXT-55\\\"}\"}},{\"id\":\"call_l30v7vqg\",\"index\":1,\"type\":\"function\",\"function\":{\"name\":\"set_ticket_priority\",\"arguments\":\"{\\\"ticket_id\\\":\\\"TICKET_ID_FROM_FIND_TICKET\\\",\\\"priority\\\":\\\"high\\\"}\"}}]},\"finish_reason\":\"tool_calls\"}],\"usage\":{\"prompt_tokens\":205,\"completion_tokens\":407,\"total_tokens\":612}}\n"
+      },
+      "retried": false
+    }
+  ]
+}

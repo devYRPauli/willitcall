@@ -1,0 +1,92 @@
+{
+  "schema_version": 1,
+  "run_id": "20260720T175942Z-d525ca29",
+  "scenario_id": "parallel-two-multiple-args",
+  "turns": [
+    {
+      "index": 0,
+      "request": {
+        "method": "POST",
+        "url": "http://localhost:11434/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "Book room Cedar on 2026-09-02 at hour 14 and reserve a car in Boise on 2026-09-03.",
+              "role": "user"
+            }
+          ],
+          "model": "qwen3:4b",
+          "seed": 42,
+          "stream": false,
+          "temperature": 0.0,
+          "tool_choice": "required",
+          "tools": [
+            {
+              "function": {
+                "description": "Book a room for an exact date and hour.",
+                "name": "book_room",
+                "parameters": {
+                  "properties": {
+                    "date": {
+                      "type": "string"
+                    },
+                    "hour": {
+                      "type": "integer"
+                    },
+                    "room": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "room",
+                    "date",
+                    "hour"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            },
+            {
+              "function": {
+                "description": "Reserve a car in a city for an exact date.",
+                "name": "reserve_car",
+                "parameters": {
+                  "properties": {
+                    "city": {
+                      "type": "string"
+                    },
+                    "date": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "city",
+                    "date"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-length": "1913",
+          "content-type": "application/json",
+          "date": "Mon, 20 Jul 2026 18:01:23 GMT"
+        },
+        "body_raw": "{\"id\":\"chatcmpl-364\",\"object\":\"chat.completion\",\"created\":1784570483,\"model\":\"qwen3:4b\",\"system_fingerprint\":\"fp_ollama\",\"choices\":[{\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"\",\"reasoning\":\"Okay, let's see. The user wants to book a room called Cedar on 2:00 PM (hour 14) on September 2, 2026, and reserve a car in Boise on September 3, 2026.\\n\\nFirst, I need to check the available functions. There's a book_room function that takes room, date, and hour. The parameters are room (string), date (string), hour (integer). Then there's reserve_car which takes city (string) and date (string).\\n\\nFor the room booking: The room name is Cedar, date is 2026-09-02, hour is 14. So I should call book_room with those parameters.\\n\\nFor the car reservation: City is Boise, date is 2026-09-03. So reserve_car with city \\\"Boise\\\" and date \\\"2026-09-03\\\".\\n\\nWait, the user said \\\"hour 14\\\" which is 2 PM. The function expects an integer for hour, so 14 is correct.\\n\\nI need to make two separate tool calls. Let me structure each tool_call.\\n\\nFirst tool call: book_room with room \\\"Cedar\\\", date \\\"2026-09-02\\\", hour 14.\\n\\nSecond tool call: reserve_car with city \\\"Boise\\\", date \\\"2026-09-03\\\".\\n\\nCheck if the parameters match the function definitions. The book_room function's arguments are room (string), date (string), hour (integer). The user provided all three. The reserve_car needs city and date, which are both provided.\\n\\nSo two tool calls here. Each in their own tool_call tags.\\n\",\"tool_calls\":[{\"id\":\"call_ox7v2o8v\",\"index\":0,\"type\":\"function\",\"function\":{\"name\":\"book_room\",\"arguments\":\"{\\\"room\\\":\\\"Cedar\\\",\\\"date\\\":\\\"2026-09-02\\\",\\\"hour\\\":14}\"}},{\"id\":\"call_xjp5qkfh\",\"index\":1,\"type\":\"function\",\"function\":{\"name\":\"reserve_car\",\"arguments\":\"{\\\"city\\\":\\\"Boise\\\",\\\"date\\\":\\\"2026-09-03\\\"}\"}}]},\"finish_reason\":\"tool_calls\"}],\"usage\":{\"prompt_tokens\":237,\"completion_tokens\":444,\"total_tokens\":681}}\n"
+      },
+      "retried": false
+    }
+  ]
+}

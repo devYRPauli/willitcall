@@ -1,0 +1,68 @@
+{
+  "schema_version": 1,
+  "run_id": "20260720T182604Z-d59df055",
+  "scenario_id": "parallel-two-calculations",
+  "turns": [
+    {
+      "index": 0,
+      "request": {
+        "method": "POST",
+        "url": "http://127.0.0.1:8080/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "Use separate calls to divide 42 by 6 and divide 10 by 4.",
+              "role": "user"
+            }
+          ],
+          "model": "Qwen/Qwen2.5-7B-Instruct-GGUF:Q8_0",
+          "seed": 42,
+          "stream": false,
+          "temperature": 0.0,
+          "tool_choice": "required",
+          "tools": [
+            {
+              "function": {
+                "description": "Divide one number by another.",
+                "name": "divide",
+                "parameters": {
+                  "properties": {
+                    "dividend": {
+                      "type": "number"
+                    },
+                    "divisor": {
+                      "type": "number"
+                    }
+                  },
+                  "required": [
+                    "dividend",
+                    "divisor"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "access-control-allow-origin": "",
+          "content-length": "951",
+          "content-type": "application/json; charset=utf-8",
+          "keep-alive": "timeout=5, max=100",
+          "server": "llama.cpp"
+        },
+        "body_raw": "{\"choices\":[{\"finish_reason\":\"tool_calls\",\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"\",\"tool_calls\":[{\"type\":\"function\",\"function\":{\"name\":\"divide\",\"arguments\":\"{\\\"dividend\\\": 42, \\\"divisor\\\": 6}\"},\"id\":\"P3Qf40nlKDTw6f4kYDpb6tu9GYqnq6Sh\"},{\"type\":\"function\",\"function\":{\"name\":\"divide\",\"arguments\":\"{\\\"dividend\\\": 10, \\\"divisor\\\": 4}\"},\"id\":\"2sDoIIBlBEFJzrW2J9Hk5DxbbFH5AHHc\"}]}}],\"created\":1784571988,\"model\":\"Qwen/Qwen2.5-7B-Instruct-GGUF:Q8_0\",\"system_fingerprint\":\"b10050-b15ca938a\",\"object\":\"chat.completion\",\"usage\":{\"completion_tokens\":56,\"prompt_tokens\":199,\"total_tokens\":255,\"prompt_tokens_details\":{\"cached_tokens\":67}},\"id\":\"chatcmpl-wSy21AIuMeBGIimqMPZXhc5yvgoizT0S\",\"timings\":{\"cache_n\":67,\"prompt_n\":132,\"prompt_ms\":173.99,\"prompt_per_token_ms\":1.3181060606060606,\"prompt_per_second\":758.6642910512098,\"predicted_n\":56,\"predicted_ms\":913.988,\"predicted_per_token_ms\":16.321214285714287,\"predicted_per_second\":61.26995102780343}}"
+      },
+      "retried": false
+    }
+  ]
+}

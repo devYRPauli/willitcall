@@ -1,0 +1,70 @@
+{
+  "schema_version": 1,
+  "run_id": "20260720T181455Z-e6e6d1e9",
+  "scenario_id": "single-date-range",
+  "turns": [
+    {
+      "index": 0,
+      "request": {
+        "method": "POST",
+        "url": "http://localhost:11434/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "Find events in Denver from 2026-08-03 through 2026-08-05.",
+              "role": "user"
+            }
+          ],
+          "model": "mistral:7b",
+          "seed": 42,
+          "stream": false,
+          "temperature": 0.0,
+          "tool_choice": "auto",
+          "tools": [
+            {
+              "function": {
+                "description": "Find events in an inclusive date range.",
+                "name": "find_events",
+                "parameters": {
+                  "properties": {
+                    "city": {
+                      "type": "string"
+                    },
+                    "end_date": {
+                      "type": "string"
+                    },
+                    "start_date": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "city",
+                    "start_date",
+                    "end_date"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-length": "487",
+          "content-type": "application/json",
+          "date": "Mon, 20 Jul 2026 18:15:29 GMT"
+        },
+        "body_raw": "{\"id\":\"chatcmpl-809\",\"object\":\"chat.completion\",\"created\":1784571329,\"model\":\"mistral:7b\",\"system_fingerprint\":\"fp_ollama\",\"choices\":[{\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"\",\"tool_calls\":[{\"id\":\"call_99ewvv0l\",\"index\":0,\"type\":\"function\",\"function\":{\"name\":\"find_events\",\"arguments\":\"{\\\"start_date\\\":\\\"2026-08-03\\\",\\\"end_date\\\":\\\"2026-08-05\\\",\\\"city\\\":\\\"Denver\\\"}\"}}]},\"finish_reason\":\"tool_calls\"}],\"usage\":{\"prompt_tokens\":116,\"completion_tokens\":52,\"total_tokens\":168}}\n"
+      },
+      "retried": false
+    }
+  ]
+}

@@ -1,0 +1,106 @@
+{
+  "schema_version": 1,
+  "run_id": "20260720T175942Z-d525ca29",
+  "scenario_id": "parallel-three-different-tools",
+  "turns": [
+    {
+      "index": 0,
+      "request": {
+        "method": "POST",
+        "url": "http://localhost:11434/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "Get weather in Rome, time in Nairobi, and convert 25 USD to EUR.",
+              "role": "user"
+            }
+          ],
+          "model": "qwen3:4b",
+          "seed": 42,
+          "stream": false,
+          "temperature": 0.0,
+          "tool_choice": "required",
+          "tools": [
+            {
+              "function": {
+                "description": "Get weather for a city.",
+                "name": "get_weather",
+                "parameters": {
+                  "properties": {
+                    "city": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "city"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            },
+            {
+              "function": {
+                "description": "Get local time for a city.",
+                "name": "get_time",
+                "parameters": {
+                  "properties": {
+                    "city": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "city"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            },
+            {
+              "function": {
+                "description": "Convert an exact currency amount.",
+                "name": "convert_currency",
+                "parameters": {
+                  "properties": {
+                    "amount": {
+                      "type": "number"
+                    },
+                    "from": {
+                      "type": "string"
+                    },
+                    "to": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "amount",
+                    "from",
+                    "to"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-type": "application/json",
+          "date": "Mon, 20 Jul 2026 18:01:17 GMT",
+          "transfer-encoding": "chunked"
+        },
+        "body_raw": "{\"id\":\"chatcmpl-355\",\"object\":\"chat.completion\",\"created\":1784570477,\"model\":\"qwen3:4b\",\"system_fingerprint\":\"fp_ollama\",\"choices\":[{\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"\",\"reasoning\":\"Okay, let's see. The user wants three things: weather in Rome, time in Nairobi, and convert 25 USD to EUR.\\n\\nFirst, I need to check the available tools. There are three functions: get_weather, get_time, and convert_currency.\\n\\nFor the weather in Rome, I should call get_weather with city \\\"Rome\\\". The function takes a city as a string.\\n\\nNext, time in Nairobi. So get_time with city \\\"Nairobi\\\".\\n\\nThen, convert 25 USD to EUR. The convert_currency function needs amount, from, and to. So amount is 25, from \\\"USD\\\", to \\\"EUR\\\".\\n\\nI need to make three separate tool calls. Let me structure each one.\\n\\nFirst tool call: get_weather with city Rome.\\n\\nSecond: get_time with city Nairobi.\\n\\nThird: convert_currency with amount 2.5? Wait, no, the user said 25 USD. So amount is 25, from \\\"USD\\\", to \\\"EUR\\\".\\n\\nWait, the function parameters: for convert_currency, the arguments are [amount from to]. So the JSON should have \\\"amount\\\": 25, \\\"from\\\": \\\"USD\\\", \\\"to\\\": \\\"EUR\\\".\\n\\nI need to make sure the JSON is correctly formatted. Let me check each tool's parameters.\\n\\nFor get_weather: city is a string. So {\\\"city\\\": \\\"Rome\\\"}.\\n\\nFor get_time: same, {\\\"city\\\": \\\"Nairobi\\\"}.\\n\\nFor convert_currency: {\\\"amount\\\": 25, \\\"from\\\": \\\"USD\\\", \\\"to\\\": \\\"EUR\\\"}.\\n\\nYes, that's correct.\\n\\nSo three tool calls. Each in its own tool_call XML tags.\\n\\nWait, the user said \\\"convert 25 USD to EUR\\\". So the amount is 25, from USD to EUR.\\n\\nI think that's all. Let me write the tool calls.\\n\",\"tool_calls\":[{\"id\":\"call_4ig9zkbu\",\"index\":0,\"type\":\"function\",\"function\":{\"name\":\"get_weather\",\"arguments\":\"{\\\"city\\\":\\\"Rome\\\"}\"}},{\"id\":\"call_p3xpeffl\",\"index\":1,\"type\":\"function\",\"function\":{\"name\":\"get_time\",\"arguments\":\"{\\\"city\\\":\\\"Nairobi\\\"}\"}},{\"id\":\"call_xztd67ub\",\"index\":2,\"type\":\"function\",\"function\":{\"name\":\"convert_currency\",\"arguments\":\"{\\\"from\\\":\\\"USD\\\",\\\"to\\\":\\\"EUR\\\",\\\"amount\\\":25}\"}}]},\"finish_reason\":\"tool_calls\"}],\"usage\":{\"prompt_tokens\":239,\"completion_tokens\":457,\"total_tokens\":696}}\n"
+      },
+      "retried": false
+    }
+  ]
+}

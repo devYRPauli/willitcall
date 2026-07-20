@@ -1,0 +1,66 @@
+{
+  "schema_version": 1,
+  "run_id": "20260720T180523Z-8f80361a",
+  "scenario_id": "single-integer-limit",
+  "turns": [
+    {
+      "index": 0,
+      "request": {
+        "method": "POST",
+        "url": "http://localhost:11434/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "List exactly 12 messages from the support mailbox.",
+              "role": "user"
+            }
+          ],
+          "model": "llama3.1:8b",
+          "seed": 42,
+          "stream": false,
+          "temperature": 0.0,
+          "tool_choice": "auto",
+          "tools": [
+            {
+              "function": {
+                "description": "List a fixed number of messages.",
+                "name": "list_messages",
+                "parameters": {
+                  "properties": {
+                    "limit": {
+                      "type": "integer"
+                    },
+                    "mailbox": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "mailbox",
+                    "limit"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-length": "449",
+          "content-type": "application/json",
+          "date": "Mon, 20 Jul 2026 18:05:50 GMT"
+        },
+        "body_raw": "{\"id\":\"chatcmpl-550\",\"object\":\"chat.completion\",\"created\":1784570750,\"model\":\"llama3.1:8b\",\"system_fingerprint\":\"fp_ollama\",\"choices\":[{\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"\",\"tool_calls\":[{\"id\":\"call_dkkg08tv\",\"index\":0,\"type\":\"function\",\"function\":{\"name\":\"list_messages\",\"arguments\":\"{\\\"mailbox\\\":\\\"support\\\",\\\"limit\\\":12}\"}}]},\"finish_reason\":\"tool_calls\"}],\"usage\":{\"prompt_tokens\":169,\"completion_tokens\":23,\"total_tokens\":192}}\n"
+      },
+      "retried": false
+    }
+  ]
+}

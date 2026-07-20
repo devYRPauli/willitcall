@@ -1,0 +1,180 @@
+{
+  "schema_version": 1,
+  "run_id": "20260720T181212Z-f860526f",
+  "scenario_id": "multi-turn-route",
+  "turns": [
+    {
+      "index": 0,
+      "request": {
+        "method": "POST",
+        "url": "http://localhost:11434/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "Find a route to Fenway Park.",
+              "role": "user"
+            }
+          ],
+          "model": "qwen2.5:7b-instruct",
+          "seed": 42,
+          "stream": false,
+          "temperature": 0.0,
+          "tool_choice": "auto",
+          "tools": [
+            {
+              "function": {
+                "description": "Resolve a place to coordinates.",
+                "name": "geocode",
+                "parameters": {
+                  "properties": {
+                    "place": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "place"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            },
+            {
+              "function": {
+                "description": "Get a route to coordinates.",
+                "name": "get_route",
+                "parameters": {
+                  "properties": {
+                    "latitude": {
+                      "type": "number"
+                    },
+                    "longitude": {
+                      "type": "number"
+                    }
+                  },
+                  "required": [
+                    "latitude",
+                    "longitude"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-length": "600",
+          "content-type": "application/json",
+          "date": "Mon, 20 Jul 2026 18:12:20 GMT"
+        },
+        "body_raw": "{\"id\":\"chatcmpl-297\",\"object\":\"chat.completion\",\"created\":1784571140,\"model\":\"qwen2.5:7b-instruct\",\"system_fingerprint\":\"fp_ollama\",\"choices\":[{\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"Sure, I will first need to find the coordinates of Fenway Park before getting the route.\\nLet's start by resolving Fenway Park to its coordinates.\\n\",\"tool_calls\":[{\"id\":\"call_flbf93g7\",\"index\":0,\"type\":\"function\",\"function\":{\"name\":\"geocode\",\"arguments\":\"{\\\"place\\\":\\\"Fenway Park, Boston, MA\\\"}\"}}]},\"finish_reason\":\"tool_calls\"}],\"usage\":{\"prompt_tokens\":197,\"completion_tokens\":58,\"total_tokens\":255}}\n"
+      },
+      "retried": false
+    },
+    {
+      "index": 1,
+      "request": {
+        "method": "POST",
+        "url": "http://localhost:11434/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "Find a route to Fenway Park.",
+              "role": "user"
+            },
+            {
+              "content": "Sure, I will first need to find the coordinates of Fenway Park before getting the route.\nLet's start by resolving Fenway Park to its coordinates.\n",
+              "role": "assistant",
+              "tool_calls": [
+                {
+                  "function": {
+                    "arguments": "{\"place\":\"Fenway Park, Boston, MA\"}",
+                    "name": "geocode"
+                  },
+                  "id": "call_flbf93g7",
+                  "type": "function"
+                }
+              ]
+            },
+            {
+              "content": "{\"latitude\":42.3467,\"longitude\":-71.0972}",
+              "role": "tool",
+              "tool_call_id": "call_flbf93g7"
+            }
+          ],
+          "model": "qwen2.5:7b-instruct",
+          "seed": 42,
+          "stream": false,
+          "temperature": 0.0,
+          "tool_choice": "auto",
+          "tools": [
+            {
+              "function": {
+                "description": "Resolve a place to coordinates.",
+                "name": "geocode",
+                "parameters": {
+                  "properties": {
+                    "place": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "place"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            },
+            {
+              "function": {
+                "description": "Get a route to coordinates.",
+                "name": "get_route",
+                "parameters": {
+                  "properties": {
+                    "latitude": {
+                      "type": "number"
+                    },
+                    "longitude": {
+                      "type": "number"
+                    }
+                  },
+                  "required": [
+                    "latitude",
+                    "longitude"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-length": "460",
+          "content-type": "application/json",
+          "date": "Mon, 20 Jul 2026 18:12:21 GMT"
+        },
+        "body_raw": "{\"id\":\"chatcmpl-670\",\"object\":\"chat.completion\",\"created\":1784571141,\"model\":\"qwen2.5:7b-instruct\",\"system_fingerprint\":\"fp_ollama\",\"choices\":[{\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"\",\"tool_calls\":[{\"id\":\"call_47by6nbd\",\"index\":0,\"type\":\"function\",\"function\":{\"name\":\"get_route\",\"arguments\":\"{\\\"longitude\\\":-71.0972,\\\"latitude\\\":42.3467}\"}}]},\"finish_reason\":\"tool_calls\"}],\"usage\":{\"prompt_tokens\":267,\"completion_tokens\":38,\"total_tokens\":305}}\n"
+      },
+      "retried": false
+    }
+  ]
+}

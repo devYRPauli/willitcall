@@ -1,0 +1,180 @@
+{
+  "schema_version": 1,
+  "run_id": "20260720T181455Z-e6e6d1e9",
+  "scenario_id": "multi-turn-route",
+  "turns": [
+    {
+      "index": 0,
+      "request": {
+        "method": "POST",
+        "url": "http://localhost:11434/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "Find a route to Fenway Park.",
+              "role": "user"
+            }
+          ],
+          "model": "mistral:7b",
+          "seed": 42,
+          "stream": false,
+          "temperature": 0.0,
+          "tool_choice": "auto",
+          "tools": [
+            {
+              "function": {
+                "description": "Resolve a place to coordinates.",
+                "name": "geocode",
+                "parameters": {
+                  "properties": {
+                    "place": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "place"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            },
+            {
+              "function": {
+                "description": "Get a route to coordinates.",
+                "name": "get_route",
+                "parameters": {
+                  "properties": {
+                    "latitude": {
+                      "type": "number"
+                    },
+                    "longitude": {
+                      "type": "number"
+                    }
+                  },
+                  "required": [
+                    "latitude",
+                    "longitude"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-length": "432",
+          "content-type": "application/json",
+          "date": "Mon, 20 Jul 2026 18:15:05 GMT"
+        },
+        "body_raw": "{\"id\":\"chatcmpl-481\",\"object\":\"chat.completion\",\"created\":1784571305,\"model\":\"mistral:7b\",\"system_fingerprint\":\"fp_ollama\",\"choices\":[{\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"\",\"tool_calls\":[{\"id\":\"call_5jee4e4j\",\"index\":0,\"type\":\"function\",\"function\":{\"name\":\"geocode\",\"arguments\":\"{\\\"place\\\":\\\"Fenway Park\\\"}\"}}]},\"finish_reason\":\"tool_calls\"}],\"usage\":{\"prompt_tokens\":128,\"completion_tokens\":151,\"total_tokens\":279}}\n"
+      },
+      "retried": false
+    },
+    {
+      "index": 1,
+      "request": {
+        "method": "POST",
+        "url": "http://localhost:11434/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "Find a route to Fenway Park.",
+              "role": "user"
+            },
+            {
+              "content": "",
+              "role": "assistant",
+              "tool_calls": [
+                {
+                  "function": {
+                    "arguments": "{\"place\":\"Fenway Park\"}",
+                    "name": "geocode"
+                  },
+                  "id": "call_5jee4e4j",
+                  "type": "function"
+                }
+              ]
+            },
+            {
+              "content": "{\"latitude\":42.3467,\"longitude\":-71.0972}",
+              "role": "tool",
+              "tool_call_id": "call_5jee4e4j"
+            }
+          ],
+          "model": "mistral:7b",
+          "seed": 42,
+          "stream": false,
+          "temperature": 0.0,
+          "tool_choice": "auto",
+          "tools": [
+            {
+              "function": {
+                "description": "Resolve a place to coordinates.",
+                "name": "geocode",
+                "parameters": {
+                  "properties": {
+                    "place": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "place"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            },
+            {
+              "function": {
+                "description": "Get a route to coordinates.",
+                "name": "get_route",
+                "parameters": {
+                  "properties": {
+                    "latitude": {
+                      "type": "number"
+                    },
+                    "longitude": {
+                      "type": "number"
+                    }
+                  },
+                  "required": [
+                    "latitude",
+                    "longitude"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-length": "805",
+          "content-type": "application/json",
+          "date": "Mon, 20 Jul 2026 18:15:07 GMT"
+        },
+        "body_raw": "{\"id\":\"chatcmpl-258\",\"object\":\"chat.completion\",\"created\":1784571307,\"model\":\"mistral:7b\",\"system_fingerprint\":\"fp_ollama\",\"choices\":[{\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\" To find a route to Fenway Park, you can use a mapping service like Google Maps or Waze. Here's an example of how to get directions from Boston Common to Fenway Park using Google Maps:\\n\\n1. Open Google Maps on your device.\\n2. Enter \\\"Boston Common\\\" as the starting point and \\\"Fenway Park\\\" as the destination.\\n3. Tap \\\"Directions\\\" to view the route.\\n4. Choose the mode of transportation you prefer (e.g., driving, walking, public transit).\\n5. Follow the directions provided by Google Maps to reach Fenway Park.\"},\"finish_reason\":\"stop\"}],\"usage\":{\"prompt_tokens\":68,\"completion_tokens\":136,\"total_tokens\":204}}\n"
+      },
+      "retried": false
+    }
+  ]
+}

@@ -1,0 +1,85 @@
+{
+  "schema_version": 1,
+  "run_id": "20260720T175757Z-4b64779b",
+  "scenario_id": "tool-choice-named",
+  "turns": [
+    {
+      "index": 0,
+      "request": {
+        "method": "POST",
+        "url": "http://localhost:11434/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "Search contacts for Ada Stone.",
+              "role": "user"
+            }
+          ],
+          "model": "qwen3:0.6b",
+          "seed": 42,
+          "stream": false,
+          "temperature": 0.0,
+          "tool_choice": {
+            "function": {
+              "name": "search_contacts"
+            },
+            "type": "function"
+          },
+          "tools": [
+            {
+              "function": {
+                "description": "Search files for an exact phrase.",
+                "name": "search_files",
+                "parameters": {
+                  "properties": {
+                    "phrase": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "phrase"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            },
+            {
+              "function": {
+                "description": "Search contacts for an exact name.",
+                "name": "search_contacts",
+                "parameters": {
+                  "properties": {
+                    "name": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "name"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-length": "863",
+          "content-type": "application/json",
+          "date": "Mon, 20 Jul 2026 17:58:28 GMT"
+        },
+        "body_raw": "{\"id\":\"chatcmpl-488\",\"object\":\"chat.completion\",\"created\":1784570308,\"model\":\"qwen3:0.6b\",\"system_fingerprint\":\"fp_ollama\",\"choices\":[{\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"\",\"reasoning\":\"Okay, the user wants to search contacts for Ada Stone. Let me check the available tools. There's a function called search_contacts that takes a name parameter. The user provided \\\"Ada Stone\\\" as the name, so I should call that function with the name \\\"Ada Stone\\\". I need to make sure the arguments are correctly formatted in JSON within the tool_call tags. Let me double-check the syntax to avoid any errors.\\n\",\"tool_calls\":[{\"id\":\"call_ddv7xn4r\",\"index\":0,\"type\":\"function\",\"function\":{\"name\":\"search_contacts\",\"arguments\":\"{\\\"name\\\":\\\"Ada Stone\\\"}\"}}]},\"finish_reason\":\"tool_calls\"}],\"usage\":{\"prompt_tokens\":176,\"completion_tokens\":110,\"total_tokens\":286}}\n"
+      },
+      "retried": false
+    }
+  ]
+}

@@ -1,0 +1,69 @@
+{
+  "schema_version": 1,
+  "run_id": "20260720T175757Z-4b64779b",
+  "scenario_id": "single-array-tags",
+  "turns": [
+    {
+      "index": 0,
+      "request": {
+        "method": "POST",
+        "url": "http://localhost:11434/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "Tag document doc-17 with exactly alpha, beta, and gamma in that order.",
+              "role": "user"
+            }
+          ],
+          "model": "qwen3:0.6b",
+          "seed": 42,
+          "stream": false,
+          "temperature": 0.0,
+          "tool_choice": "auto",
+          "tools": [
+            {
+              "function": {
+                "description": "Apply tags to a document.",
+                "name": "tag_document",
+                "parameters": {
+                  "properties": {
+                    "document_id": {
+                      "type": "string"
+                    },
+                    "tags": {
+                      "items": {
+                        "type": "string"
+                      },
+                      "type": "array"
+                    }
+                  },
+                  "required": [
+                    "document_id",
+                    "tags"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-length": "755",
+          "content-type": "application/json",
+          "date": "Mon, 20 Jul 2026 17:58:17 GMT"
+        },
+        "body_raw": "{\"id\":\"chatcmpl-48\",\"object\":\"chat.completion\",\"created\":1784570297,\"model\":\"qwen3:0.6b\",\"system_fingerprint\":\"fp_ollama\",\"choices\":[{\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"\",\"reasoning\":\"Okay, the user wants to tag document doc-17 with exactly alpha, beta, and gamma in that order. Let me check the tools provided. There's a function called Apply tags to a document, which takes a document_id and an array of tags. The tags need to be alpha, beta, gamma. So I need to create an array with those three tags. Make sure the document_id is \\\"doc-17\\\" as specified. No other tags are required. Just apply those three tags. Alright, that's all.\\n\"},\"finish_reason\":\"stop\"}],\"usage\":{\"prompt_tokens\":163,\"completion_tokens\":153,\"total_tokens\":316}}\n"
+      },
+      "retried": false
+    }
+  ]
+}

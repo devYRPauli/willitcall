@@ -1,0 +1,64 @@
+{
+  "schema_version": 1,
+  "run_id": "20260720T182604Z-d59df055",
+  "scenario_id": "negative-auto-knowledge",
+  "turns": [
+    {
+      "index": 0,
+      "request": {
+        "method": "POST",
+        "url": "http://127.0.0.1:8080/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "Name the largest ocean on Earth. Do not use a tool.",
+              "role": "user"
+            }
+          ],
+          "model": "Qwen/Qwen2.5-7B-Instruct-GGUF:Q8_0",
+          "seed": 42,
+          "stream": false,
+          "temperature": 0.0,
+          "tool_choice": "auto",
+          "tools": [
+            {
+              "function": {
+                "description": "Look up an order by exact id.",
+                "name": "lookup_order",
+                "parameters": {
+                  "properties": {
+                    "order_id": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "order_id"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "access-control-allow-origin": "",
+          "content-length": "700",
+          "content-type": "application/json; charset=utf-8",
+          "keep-alive": "timeout=5, max=100",
+          "server": "llama.cpp"
+        },
+        "body_raw": "{\"choices\":[{\"finish_reason\":\"stop\",\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"The largest ocean on Earth is the Pacific Ocean.\"}}],\"created\":1784571979,\"model\":\"Qwen/Qwen2.5-7B-Instruct-GGUF:Q8_0\",\"system_fingerprint\":\"b10050-b15ca938a\",\"object\":\"chat.completion\",\"usage\":{\"completion_tokens\":11,\"prompt_tokens\":180,\"total_tokens\":191,\"prompt_tokens_details\":{\"cached_tokens\":67}},\"id\":\"chatcmpl-gdHTsozShF2GAltkTT8BdhZXMcyCQLnU\",\"timings\":{\"cache_n\":67,\"prompt_n\":113,\"prompt_ms\":138.328,\"prompt_per_token_ms\":1.224141592920354,\"prompt_per_second\":816.898964779365,\"predicted_n\":11,\"predicted_ms\":165.14,\"predicted_per_token_ms\":15.012727272727272,\"predicted_per_second\":66.61014896451496}}"
+      },
+      "retried": false
+    }
+  ]
+}

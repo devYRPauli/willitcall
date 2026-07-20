@@ -1,0 +1,66 @@
+{
+  "schema_version": 1,
+  "run_id": "20260720T180523Z-8f80361a",
+  "scenario_id": "negative-invalid-schema",
+  "turns": [
+    {
+      "index": 0,
+      "request": {
+        "method": "POST",
+        "url": "http://localhost:11434/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "Set the temperature unit to kelvin. If the schema cannot express it, explain that in plain text without calling a tool.",
+              "role": "user"
+            }
+          ],
+          "model": "llama3.1:8b",
+          "seed": 42,
+          "stream": false,
+          "temperature": 0.0,
+          "tool_choice": "auto",
+          "tools": [
+            {
+              "function": {
+                "description": "Set one supported temperature unit.",
+                "name": "set_temperature_unit",
+                "parameters": {
+                  "properties": {
+                    "unit": {
+                      "enum": [
+                        "celsius",
+                        "fahrenheit"
+                      ],
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "unit"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-length": "439",
+          "content-type": "application/json",
+          "date": "Mon, 20 Jul 2026 18:05:38 GMT"
+        },
+        "body_raw": "{\"id\":\"chatcmpl-602\",\"object\":\"chat.completion\",\"created\":1784570738,\"model\":\"llama3.1:8b\",\"system_fingerprint\":\"fp_ollama\",\"choices\":[{\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"\",\"tool_calls\":[{\"id\":\"call_qpzvalov\",\"index\":0,\"type\":\"function\",\"function\":{\"name\":\"set_temperature_unit\",\"arguments\":\"{\\\"unit\\\":\\\"kelvin\\\"}\"}}]},\"finish_reason\":\"tool_calls\"}],\"usage\":{\"prompt_tokens\":185,\"completion_tokens\":46,\"total_tokens\":231}}\n"
+      },
+      "retried": false
+    }
+  ]
+}

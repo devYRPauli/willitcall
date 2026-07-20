@@ -1,0 +1,73 @@
+{
+  "schema_version": 1,
+  "run_id": "20260720T182604Z-d59df055",
+  "scenario_id": "single-enum-format",
+  "turns": [
+    {
+      "index": 0,
+      "request": {
+        "method": "POST",
+        "url": "http://127.0.0.1:8080/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "Export report quarterly-7 as csv.",
+              "role": "user"
+            }
+          ],
+          "model": "Qwen/Qwen2.5-7B-Instruct-GGUF:Q8_0",
+          "seed": 42,
+          "stream": false,
+          "temperature": 0.0,
+          "tool_choice": "auto",
+          "tools": [
+            {
+              "function": {
+                "description": "Export a report in a supported format.",
+                "name": "export_report",
+                "parameters": {
+                  "properties": {
+                    "format": {
+                      "enum": [
+                        "csv",
+                        "json",
+                        "pdf"
+                      ],
+                      "type": "string"
+                    },
+                    "report_id": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "report_id",
+                    "format"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "access-control-allow-origin": "",
+          "content-length": "839",
+          "content-type": "application/json; charset=utf-8",
+          "keep-alive": "timeout=5, max=100",
+          "server": "llama.cpp"
+        },
+        "body_raw": "{\"choices\":[{\"finish_reason\":\"tool_calls\",\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"\",\"tool_calls\":[{\"type\":\"function\",\"function\":{\"name\":\"export_report\",\"arguments\":\"{\\\"format\\\": \\\"csv\\\", \\\"report_id\\\": \\\"quarterly-7\\\"}\"},\"id\":\"MRVpU5kGln1Jf73xMir4EY8hwG9WD0Qk\"}]}}],\"created\":1784571995,\"model\":\"Qwen/Qwen2.5-7B-Instruct-GGUF:Q8_0\",\"system_fingerprint\":\"b10050-b15ca938a\",\"object\":\"chat.completion\",\"usage\":{\"completion_tokens\":30,\"prompt_tokens\":199,\"total_tokens\":229,\"prompt_tokens_details\":{\"cached_tokens\":67}},\"id\":\"chatcmpl-odtYS3oIUDzFQeDIMw82vidQ4CKozGto\",\"timings\":{\"cache_n\":67,\"prompt_n\":132,\"prompt_ms\":173.94,\"prompt_per_token_ms\":1.3177272727272726,\"prompt_per_second\":758.8823732321491,\"predicted_n\":30,\"predicted_ms\":495.662,\"predicted_per_token_ms\":16.522066666666667,\"predicted_per_second\":60.52511590559696}}"
+      },
+      "retried": false
+    }
+  ]
+}

@@ -1,0 +1,66 @@
+{
+  "schema_version": 1,
+  "run_id": "20260720T180246Z-53903d2d",
+  "scenario_id": "negative-plain-text",
+  "turns": [
+    {
+      "index": 0,
+      "request": {
+        "method": "POST",
+        "url": "http://localhost:11434/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "In one plain text sentence, explain why leaves are green. Do not send email.",
+              "role": "user"
+            }
+          ],
+          "model": "qwen3:8b",
+          "seed": 42,
+          "stream": false,
+          "temperature": 0.0,
+          "tool_choice": "auto",
+          "tools": [
+            {
+              "function": {
+                "description": "Send an email to an exact address.",
+                "name": "send_email",
+                "parameters": {
+                  "properties": {
+                    "address": {
+                      "type": "string"
+                    },
+                    "body": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "address",
+                    "body"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-length": "1054",
+          "content-type": "application/json",
+          "date": "Mon, 20 Jul 2026 18:03:59 GMT"
+        },
+        "body_raw": "{\"id\":\"chatcmpl-529\",\"object\":\"chat.completion\",\"created\":1784570639,\"model\":\"qwen3:8b\",\"system_fingerprint\":\"fp_ollama\",\"choices\":[{\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"Leaves are green because they contain chlorophyll, a pigment that absorbs sunlight for photosynthesis.\",\"reasoning\":\"Okay, the user is asking why leaves are green in one plain text sentence and also mentioned not to send an email. Let me focus on the main question first. Leaves are green because they contain chlorophyll, which is essential for photosynthesis. I need to make sure the answer is concise and in a single sentence. Also, since they said not to send an email, I should avoid any function calls related to sending emails. Let me check the tools provided. The only function available is send_email, but the user explicitly told not to send email. So I'll just provide the explanation without any tool calls. Alright, the answer should be straightforward.\\n\"},\"finish_reason\":\"stop\"}],\"usage\":{\"prompt_tokens\":156,\"completion_tokens\":157,\"total_tokens\":313}}\n"
+      },
+      "retried": false
+    }
+  ]
+}

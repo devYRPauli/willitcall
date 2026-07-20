@@ -1,0 +1,66 @@
+{
+  "schema_version": 1,
+  "run_id": "20260720T181455Z-e6e6d1e9",
+  "scenario_id": "negative-invalid-schema",
+  "turns": [
+    {
+      "index": 0,
+      "request": {
+        "method": "POST",
+        "url": "http://localhost:11434/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "Set the temperature unit to kelvin. If the schema cannot express it, explain that in plain text without calling a tool.",
+              "role": "user"
+            }
+          ],
+          "model": "mistral:7b",
+          "seed": 42,
+          "stream": false,
+          "temperature": 0.0,
+          "tool_choice": "auto",
+          "tools": [
+            {
+              "function": {
+                "description": "Set one supported temperature unit.",
+                "name": "set_temperature_unit",
+                "parameters": {
+                  "properties": {
+                    "unit": {
+                      "enum": [
+                        "celsius",
+                        "fahrenheit"
+                      ],
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "unit"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-length": "865",
+          "content-type": "application/json",
+          "date": "Mon, 20 Jul 2026 18:15:14 GMT"
+        },
+        "body_raw": "{\"id\":\"chatcmpl-422\",\"object\":\"chat.completion\",\"created\":1784571314,\"model\":\"mistral:7b\",\"system_fingerprint\":\"fp_ollama\",\"choices\":[{\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\" In this case, Kelvin is not a supported temperature unit within the provided schema. However, you can convert Celsius or Fahrenheit to Kelvin by adding 273.15 to the temperature value. For example:\\n\\n```javascript\\nfunction set_temperature_unit(temperature, unit) {\\n    if (unit === \\\"celsius\\\") {\\n        return temperature + 273.15;\\n    } else if (unit === \\\"fahrenheit\\\") {\\n        return (temperature + 459.67) * 5 / 9 + 273.15;\\n    }\\n}\\n```\\n\\nThis function will convert the temperature to Kelvin when called with either Celsius or Fahrenheit as the unit parameter.\"},\"finish_reason\":\"stop\"}],\"usage\":{\"prompt_tokens\":97,\"completion_tokens\":174,\"total_tokens\":271}}\n"
+      },
+      "retried": false
+    }
+  ]
+}

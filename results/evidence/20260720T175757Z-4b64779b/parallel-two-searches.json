@@ -1,0 +1,62 @@
+{
+  "schema_version": 1,
+  "run_id": "20260720T175757Z-4b64779b",
+  "scenario_id": "parallel-two-searches",
+  "turns": [
+    {
+      "index": 0,
+      "request": {
+        "method": "POST",
+        "url": "http://localhost:11434/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "Run separate document searches for 'alpha protocol' and 'beta protocol'.",
+              "role": "user"
+            }
+          ],
+          "model": "qwen3:0.6b",
+          "seed": 42,
+          "stream": false,
+          "temperature": 0.0,
+          "tool_choice": "required",
+          "tools": [
+            {
+              "function": {
+                "description": "Search documents for an exact query.",
+                "name": "search_docs",
+                "parameters": {
+                  "properties": {
+                    "query": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "query"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-length": "1376",
+          "content-type": "application/json",
+          "date": "Mon, 20 Jul 2026 17:58:16 GMT"
+        },
+        "body_raw": "{\"id\":\"chatcmpl-946\",\"object\":\"chat.completion\",\"created\":1784570296,\"model\":\"qwen3:0.6b\",\"system_fingerprint\":\"fp_ollama\",\"choices\":[{\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"\",\"reasoning\":\"Okay, the user wants me to run separate document searches for 'alpha protocol' and 'beta protocol'. Let me think about how to approach this.\\n\\nFirst, I need to check if there's a function available for searching documents. The provided tools include a function called search_docs, which takes a query parameter. The user is asking for two different protocols, so I should use this function twice, each time with the respective query.\\n\\nWait, but the function's description says it's for an exact query. So each search should be a separate call. The user might not have specified any other parameters, so I'll just pass each query as a separate argument. That way, both searches are made independently. I should make sure to format each tool call correctly within the XML tags as specified.\\n\",\"tool_calls\":[{\"id\":\"call_m4i76tno\",\"index\":0,\"type\":\"function\",\"function\":{\"name\":\"search_docs\",\"arguments\":\"{\\\"query\\\":\\\"alpha protocol\\\"}\"}},{\"id\":\"call_8l7c9481\",\"index\":1,\"type\":\"function\",\"function\":{\"name\":\"search_docs\",\"arguments\":\"{\\\"query\\\":\\\"beta protocol\\\"}\"}}]},\"finish_reason\":\"tool_calls\"}],\"usage\":{\"prompt_tokens\":145,\"completion_tokens\":204,\"total_tokens\":349}}\n"
+      },
+      "retried": false
+    }
+  ]
+}

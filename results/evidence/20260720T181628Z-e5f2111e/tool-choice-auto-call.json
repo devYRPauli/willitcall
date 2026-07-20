@@ -1,0 +1,62 @@
+{
+  "schema_version": 1,
+  "run_id": "20260720T181628Z-e5f2111e",
+  "scenario_id": "tool-choice-auto-call",
+  "turns": [
+    {
+      "index": 0,
+      "request": {
+        "method": "POST",
+        "url": "http://localhost:11434/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "Get the temperature in Helsinki.",
+              "role": "user"
+            }
+          ],
+          "model": "qwen3:14b",
+          "seed": 42,
+          "stream": false,
+          "temperature": 0.0,
+          "tool_choice": "auto",
+          "tools": [
+            {
+              "function": {
+                "description": "Get the temperature for a city.",
+                "name": "get_temperature",
+                "parameters": {
+                  "properties": {
+                    "city": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "city"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-length": "872",
+          "content-type": "application/json",
+          "date": "Mon, 20 Jul 2026 18:20:28 GMT"
+        },
+        "body_raw": "{\"id\":\"chatcmpl-142\",\"object\":\"chat.completion\",\"created\":1784571628,\"model\":\"qwen3:14b\",\"system_fingerprint\":\"fp_ollama\",\"choices\":[{\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"\",\"reasoning\":\"Okay, the user is asking for the temperature in Helsinki. Let me check the tools available. There's a function called get_temperature that takes a city as an argument. Since the user mentioned Helsinki, I need to call that function with the city parameter set to \\\"Helsinki\\\". I'll make sure the JSON is correctly formatted with the city name as a string. No other parameters are needed here. Alright, that should do it.\\n\",\"tool_calls\":[{\"id\":\"call_7jlwcqrt\",\"index\":0,\"type\":\"function\",\"function\":{\"name\":\"get_temperature\",\"arguments\":\"{\\\"city\\\":\\\"Helsinki\\\"}\"}}]},\"finish_reason\":\"tool_calls\"}],\"usage\":{\"prompt_tokens\":137,\"completion_tokens\":112,\"total_tokens\":249}}\n"
+      },
+      "retried": false
+    }
+  ]
+}

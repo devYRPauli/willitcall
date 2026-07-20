@@ -1,0 +1,184 @@
+{
+  "schema_version": 1,
+  "run_id": "20260720T182604Z-d59df055",
+  "scenario_id": "multi-turn-route",
+  "turns": [
+    {
+      "index": 0,
+      "request": {
+        "method": "POST",
+        "url": "http://127.0.0.1:8080/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "Find a route to Fenway Park.",
+              "role": "user"
+            }
+          ],
+          "model": "Qwen/Qwen2.5-7B-Instruct-GGUF:Q8_0",
+          "seed": 42,
+          "stream": false,
+          "temperature": 0.0,
+          "tool_choice": "auto",
+          "tools": [
+            {
+              "function": {
+                "description": "Resolve a place to coordinates.",
+                "name": "geocode",
+                "parameters": {
+                  "properties": {
+                    "place": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "place"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            },
+            {
+              "function": {
+                "description": "Get a route to coordinates.",
+                "name": "get_route",
+                "parameters": {
+                  "properties": {
+                    "latitude": {
+                      "type": "number"
+                    },
+                    "longitude": {
+                      "type": "number"
+                    }
+                  },
+                  "required": [
+                    "latitude",
+                    "longitude"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "access-control-allow-origin": "",
+          "content-length": "904",
+          "content-type": "application/json; charset=utf-8",
+          "keep-alive": "timeout=5, max=100",
+          "server": "llama.cpp"
+        },
+        "body_raw": "{\"choices\":[{\"finish_reason\":\"tool_calls\",\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"First, I need to find the coordinates for Fenway Park. Let's start by geocoding it.\\n\",\"tool_calls\":[{\"type\":\"function\",\"function\":{\"name\":\"geocode\",\"arguments\":\"{\\\"place\\\": \\\"Fenway Park, Boston, MA\\\"}\"},\"id\":\"zDoECSbDKL5TxUAk0bpul8ZTQK308z0r\"}]}}],\"created\":1784571972,\"model\":\"Qwen/Qwen2.5-7B-Instruct-GGUF:Q8_0\",\"system_fingerprint\":\"b10050-b15ca938a\",\"object\":\"chat.completion\",\"usage\":{\"completion_tokens\":49,\"prompt_tokens\":238,\"total_tokens\":287,\"prompt_tokens_details\":{\"cached_tokens\":67}},\"id\":\"chatcmpl-si9WYngyD1wAzKvMspZZQD09RfmXCAM2\",\"timings\":{\"cache_n\":67,\"prompt_n\":171,\"prompt_ms\":200.104,\"prompt_per_token_ms\":1.170198830409357,\"prompt_per_second\":854.5556310718426,\"predicted_n\":49,\"predicted_ms\":804.341,\"predicted_per_token_ms\":16.41512244897959,\"predicted_per_second\":60.91943591088854}}"
+      },
+      "retried": false
+    },
+    {
+      "index": 1,
+      "request": {
+        "method": "POST",
+        "url": "http://127.0.0.1:8080/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "Find a route to Fenway Park.",
+              "role": "user"
+            },
+            {
+              "content": "First, I need to find the coordinates for Fenway Park. Let's start by geocoding it.\n",
+              "role": "assistant",
+              "tool_calls": [
+                {
+                  "function": {
+                    "arguments": "{\"place\": \"Fenway Park, Boston, MA\"}",
+                    "name": "geocode"
+                  },
+                  "id": "zDoECSbDKL5TxUAk0bpul8ZTQK308z0r",
+                  "type": "function"
+                }
+              ]
+            },
+            {
+              "content": "{\"latitude\":42.3467,\"longitude\":-71.0972}",
+              "role": "tool",
+              "tool_call_id": "zDoECSbDKL5TxUAk0bpul8ZTQK308z0r"
+            }
+          ],
+          "model": "Qwen/Qwen2.5-7B-Instruct-GGUF:Q8_0",
+          "seed": 42,
+          "stream": false,
+          "temperature": 0.0,
+          "tool_choice": "auto",
+          "tools": [
+            {
+              "function": {
+                "description": "Resolve a place to coordinates.",
+                "name": "geocode",
+                "parameters": {
+                  "properties": {
+                    "place": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "place"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            },
+            {
+              "function": {
+                "description": "Get a route to coordinates.",
+                "name": "get_route",
+                "parameters": {
+                  "properties": {
+                    "latitude": {
+                      "type": "number"
+                    },
+                    "longitude": {
+                      "type": "number"
+                    }
+                  },
+                  "required": [
+                    "latitude",
+                    "longitude"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "access-control-allow-origin": "",
+          "content-length": "930",
+          "content-type": "application/json; charset=utf-8",
+          "keep-alive": "timeout=5, max=100",
+          "server": "llama.cpp"
+        },
+        "body_raw": "{\"choices\":[{\"finish_reason\":\"tool_calls\",\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"I have found the coordinates for Fenway Park. Now, I will get the route to these coordinates.\\n\\n\",\"tool_calls\":[{\"type\":\"function\",\"function\":{\"name\":\"get_route\",\"arguments\":\"{\\\"latitude\\\": 42.3467, \\\"longitude\\\": -71.0972}\"},\"id\":\"Wu0ZUNq1rUslpbhj6XDfT6IZL5jBvkO7\"}]}}],\"created\":1784571973,\"model\":\"Qwen/Qwen2.5-7B-Instruct-GGUF:Q8_0\",\"system_fingerprint\":\"b10050-b15ca938a\",\"object\":\"chat.completion\",\"usage\":{\"completion_tokens\":59,\"prompt_tokens\":325,\"total_tokens\":384,\"prompt_tokens_details\":{\"cached_tokens\":259}},\"id\":\"chatcmpl-ABDtzBMaZ1KgjRcbJqyvWSgBPSO37DLi\",\"timings\":{\"cache_n\":259,\"prompt_n\":66,\"prompt_ms\":111.044,\"prompt_per_token_ms\":1.6824848484848485,\"prompt_per_second\":594.3589928316703,\"predicted_n\":59,\"predicted_ms\":971.707,\"predicted_per_token_ms\":16.469610169491524,\"predicted_per_second\":60.717891298508704}}"
+      },
+      "retried": false
+    }
+  ]
+}

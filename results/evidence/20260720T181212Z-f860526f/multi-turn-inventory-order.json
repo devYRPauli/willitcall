@@ -1,0 +1,180 @@
+{
+  "schema_version": 1,
+  "run_id": "20260720T181212Z-f860526f",
+  "scenario_id": "multi-turn-inventory-order",
+  "turns": [
+    {
+      "index": 0,
+      "request": {
+        "method": "POST",
+        "url": "http://localhost:11434/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "Check inventory for SKU QZ-4 and order exactly 3 if available.",
+              "role": "user"
+            }
+          ],
+          "model": "qwen2.5:7b-instruct",
+          "seed": 42,
+          "stream": false,
+          "temperature": 0.0,
+          "tool_choice": "auto",
+          "tools": [
+            {
+              "function": {
+                "description": "Check inventory for a SKU.",
+                "name": "check_inventory",
+                "parameters": {
+                  "properties": {
+                    "sku": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "sku"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            },
+            {
+              "function": {
+                "description": "Create an order for a SKU and quantity.",
+                "name": "create_order",
+                "parameters": {
+                  "properties": {
+                    "quantity": {
+                      "type": "integer"
+                    },
+                    "sku": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "sku",
+                    "quantity"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-length": "438",
+          "content-type": "application/json",
+          "date": "Mon, 20 Jul 2026 18:12:17 GMT"
+        },
+        "body_raw": "{\"id\":\"chatcmpl-33\",\"object\":\"chat.completion\",\"created\":1784571137,\"model\":\"qwen2.5:7b-instruct\",\"system_fingerprint\":\"fp_ollama\",\"choices\":[{\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"\",\"tool_calls\":[{\"id\":\"call_p00vsrtx\",\"index\":0,\"type\":\"function\",\"function\":{\"name\":\"check_inventory\",\"arguments\":\"{\\\"sku\\\":\\\"QZ-4\\\"}\"}}]},\"finish_reason\":\"tool_calls\"}],\"usage\":{\"prompt_tokens\":208,\"completion_tokens\":23,\"total_tokens\":231}}\n"
+      },
+      "retried": false
+    },
+    {
+      "index": 1,
+      "request": {
+        "method": "POST",
+        "url": "http://localhost:11434/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "Check inventory for SKU QZ-4 and order exactly 3 if available.",
+              "role": "user"
+            },
+            {
+              "content": "",
+              "role": "assistant",
+              "tool_calls": [
+                {
+                  "function": {
+                    "arguments": "{\"sku\":\"QZ-4\"}",
+                    "name": "check_inventory"
+                  },
+                  "id": "call_p00vsrtx",
+                  "type": "function"
+                }
+              ]
+            },
+            {
+              "content": "{\"sku\":\"QZ-4\",\"available\":12}",
+              "role": "tool",
+              "tool_call_id": "call_p00vsrtx"
+            }
+          ],
+          "model": "qwen2.5:7b-instruct",
+          "seed": 42,
+          "stream": false,
+          "temperature": 0.0,
+          "tool_choice": "auto",
+          "tools": [
+            {
+              "function": {
+                "description": "Check inventory for a SKU.",
+                "name": "check_inventory",
+                "parameters": {
+                  "properties": {
+                    "sku": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "sku"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            },
+            {
+              "function": {
+                "description": "Create an order for a SKU and quantity.",
+                "name": "create_order",
+                "parameters": {
+                  "properties": {
+                    "quantity": {
+                      "type": "integer"
+                    },
+                    "sku": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "sku",
+                    "quantity"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-length": "611",
+          "content-type": "application/json",
+          "date": "Mon, 20 Jul 2026 18:12:18 GMT"
+        },
+        "body_raw": "{\"id\":\"chatcmpl-276\",\"object\":\"chat.completion\",\"created\":1784571138,\"model\":\"qwen2.5:7b-instruct\",\"system_fingerprint\":\"fp_ollama\",\"choices\":[{\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"The inventory for SKU QZ-4 is sufficient. We can proceed with your request to order 3 units.\\n\\nNow, I will place the order for SKU QZ-4 with a quantity of 3.\\n\",\"tool_calls\":[{\"id\":\"call_sip3j9d5\",\"index\":0,\"type\":\"function\",\"function\":{\"name\":\"create_order\",\"arguments\":\"{\\\"sku\\\":\\\"QZ-4\\\",\\\"quantity\\\":3}\"}}]},\"finish_reason\":\"tool_calls\"}],\"usage\":{\"prompt_tokens\":260,\"completion_tokens\":69,\"total_tokens\":329}}\n"
+      },
+      "retried": false
+    }
+  ]
+}

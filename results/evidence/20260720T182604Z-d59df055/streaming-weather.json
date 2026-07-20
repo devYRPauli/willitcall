@@ -1,0 +1,70 @@
+{
+  "schema_version": 1,
+  "run_id": "20260720T182604Z-d59df055",
+  "scenario_id": "streaming-weather",
+  "turns": [
+    {
+      "index": 0,
+      "request": {
+        "method": "POST",
+        "url": "http://127.0.0.1:8080/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "Use get_weather for Seattle.",
+              "role": "user"
+            }
+          ],
+          "model": "Qwen/Qwen2.5-7B-Instruct-GGUF:Q8_0",
+          "seed": 42,
+          "stream": true,
+          "temperature": 0.0,
+          "tool_choice": {
+            "function": {
+              "name": "get_weather"
+            },
+            "type": "function"
+          },
+          "tools": [
+            {
+              "function": {
+                "description": "Get the current weather for a city.",
+                "name": "get_weather",
+                "parameters": {
+                  "properties": {
+                    "city": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "city"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "access-control-allow-origin": "",
+          "content-type": "text/event-stream",
+          "keep-alive": "timeout=5, max=100",
+          "server": "llama.cpp",
+          "transfer-encoding": "chunked",
+          "x-accel-buffering": "no"
+        },
+        "body_raw": "data: {\"choices\":[{\"finish_reason\":null,\"index\":0,\"delta\":{\"role\":\"assistant\",\"content\":null}}],\"created\":1784572005,\"id\":\"chatcmpl-wkiHe0TV2USYrFNKOl9hstUwVsnMbsWt\",\"model\":\"Qwen/Qwen2.5-7B-Instruct-GGUF:Q8_0\",\"system_fingerprint\":\"b10050-b15ca938a\",\"object\":\"chat.completion.chunk\"}\n\ndata: {\"choices\":[{\"finish_reason\":null,\"index\":0,\"delta\":{\"tool_calls\":[{\"index\":0,\"id\":\"joXIyBXB4RpK3C6o89Z7xaM61V9ng42R\",\"type\":\"function\",\"function\":{\"name\":\"get_weather\",\"arguments\":\"{\"}}]}}],\"created\":1784572005,\"id\":\"chatcmpl-wkiHe0TV2USYrFNKOl9hstUwVsnMbsWt\",\"model\":\"Qwen/Qwen2.5-7B-Instruct-GGUF:Q8_0\",\"system_fingerprint\":\"b10050-b15ca938a\",\"object\":\"chat.completion.chunk\"}\n\ndata: {\"choices\":[{\"finish_reason\":null,\"index\":0,\"delta\":{\"tool_calls\":[{\"index\":0,\"function\":{\"arguments\":\"\\\"\"}}]}}],\"created\":1784572005,\"id\":\"chatcmpl-wkiHe0TV2USYrFNKOl9hstUwVsnMbsWt\",\"model\":\"Qwen/Qwen2.5-7B-Instruct-GGUF:Q8_0\",\"system_fingerprint\":\"b10050-b15ca938a\",\"object\":\"chat.completion.chunk\"}\n\ndata: {\"choices\":[{\"finish_reason\":null,\"index\":0,\"delta\":{\"tool_calls\":[{\"index\":0,\"function\":{\"arguments\":\"city\"}}]}}],\"created\":1784572005,\"id\":\"chatcmpl-wkiHe0TV2USYrFNKOl9hstUwVsnMbsWt\",\"model\":\"Qwen/Qwen2.5-7B-Instruct-GGUF:Q8_0\",\"system_fingerprint\":\"b10050-b15ca938a\",\"object\":\"chat.completion.chunk\"}\n\ndata: {\"choices\":[{\"finish_reason\":null,\"index\":0,\"delta\":{\"tool_calls\":[{\"index\":0,\"function\":{\"arguments\":\"\\\":\"}}]}}],\"created\":1784572005,\"id\":\"chatcmpl-wkiHe0TV2USYrFNKOl9hstUwVsnMbsWt\",\"model\":\"Qwen/Qwen2.5-7B-Instruct-GGUF:Q8_0\",\"system_fingerprint\":\"b10050-b15ca938a\",\"object\":\"chat.completion.chunk\"}\n\ndata: {\"choices\":[{\"finish_reason\":null,\"index\":0,\"delta\":{\"tool_calls\":[{\"index\":0,\"function\":{\"arguments\":\" \\\"\"}}]}}],\"created\":1784572005,\"id\":\"chatcmpl-wkiHe0TV2USYrFNKOl9hstUwVsnMbsWt\",\"model\":\"Qwen/Qwen2.5-7B-Instruct-GGUF:Q8_0\",\"system_fingerprint\":\"b10050-b15ca938a\",\"object\":\"chat.completion.chunk\"}\n\ndata: {\"choices\":[{\"finish_reason\":null,\"index\":0,\"delta\":{\"tool_calls\":[{\"index\":0,\"function\":{\"arguments\":\"Seattle\"}}]}}],\"created\":1784572005,\"id\":\"chatcmpl-wkiHe0TV2USYrFNKOl9hstUwVsnMbsWt\",\"model\":\"Qwen/Qwen2.5-7B-Instruct-GGUF:Q8_0\",\"system_fingerprint\":\"b10050-b15ca938a\",\"object\":\"chat.completion.chunk\"}\n\ndata: {\"choices\":[{\"finish_reason\":null,\"index\":0,\"delta\":{\"tool_calls\":[{\"index\":0,\"function\":{\"arguments\":\"\\\"}\"}}]}}],\"created\":1784572005,\"id\":\"chatcmpl-wkiHe0TV2USYrFNKOl9hstUwVsnMbsWt\",\"model\":\"Qwen/Qwen2.5-7B-Instruct-GGUF:Q8_0\",\"system_fingerprint\":\"b10050-b15ca938a\",\"object\":\"chat.completion.chunk\"}\n\ndata: {\"choices\":[{\"finish_reason\":\"tool_calls\",\"index\":0,\"delta\":{}}],\"created\":1784572005,\"id\":\"chatcmpl-wkiHe0TV2USYrFNKOl9hstUwVsnMbsWt\",\"model\":\"Qwen/Qwen2.5-7B-Instruct-GGUF:Q8_0\",\"system_fingerprint\":\"b10050-b15ca938a\",\"object\":\"chat.completion.chunk\",\"timings\":{\"cache_n\":75,\"prompt_n\":96,\"prompt_ms\":111.435,\"prompt_per_token_ms\":1.16078125,\"prompt_per_second\":861.488760263831,\"predicted_n\":20,\"predicted_ms\":325.434,\"predicted_per_token_ms\":16.271700000000003,\"predicted_per_second\":61.45639361590983}}\n\ndata: [DONE]\n\n"
+      },
+      "retried": false
+    }
+  ]
+}

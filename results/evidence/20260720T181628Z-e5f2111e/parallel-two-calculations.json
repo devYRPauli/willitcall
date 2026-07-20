@@ -1,0 +1,66 @@
+{
+  "schema_version": 1,
+  "run_id": "20260720T181628Z-e5f2111e",
+  "scenario_id": "parallel-two-calculations",
+  "turns": [
+    {
+      "index": 0,
+      "request": {
+        "method": "POST",
+        "url": "http://localhost:11434/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "Use separate calls to divide 42 by 6 and divide 10 by 4.",
+              "role": "user"
+            }
+          ],
+          "model": "qwen3:14b",
+          "seed": 42,
+          "stream": false,
+          "temperature": 0.0,
+          "tool_choice": "required",
+          "tools": [
+            {
+              "function": {
+                "description": "Divide one number by another.",
+                "name": "divide",
+                "parameters": {
+                  "properties": {
+                    "dividend": {
+                      "type": "number"
+                    },
+                    "divisor": {
+                      "type": "number"
+                    }
+                  },
+                  "required": [
+                    "dividend",
+                    "divisor"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-length": "1137",
+          "content-type": "application/json",
+          "date": "Mon, 20 Jul 2026 18:18:58 GMT"
+        },
+        "body_raw": "{\"id\":\"chatcmpl-678\",\"object\":\"chat.completion\",\"created\":1784571538,\"model\":\"qwen3:14b\",\"system_fingerprint\":\"fp_ollama\",\"choices\":[{\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"\",\"reasoning\":\"Okay, the user wants me to divide 42 by 6 and then divide 10 by 4 using separate function calls. Let me check the tools provided. There's a function called divide that takes two numbers: dividend and divisor. So for the first division, 42 is the dividend and 6 is the divisor. I need to make a tool call with those values. Then, for the second division, 10 divided by 4, I'll use the same function again with 10 as the dividend and 4 as the divisor. I should make sure each call is in its own tool_call tags. Let me structure the JSON correctly for both calls.\\n\",\"tool_calls\":[{\"id\":\"call_78sd21pk\",\"index\":0,\"type\":\"function\",\"function\":{\"name\":\"divide\",\"arguments\":\"{\\\"dividend\\\":42,\\\"divisor\\\":6}\"}},{\"id\":\"call_8kvx0iqb\",\"index\":1,\"type\":\"function\",\"function\":{\"name\":\"divide\",\"arguments\":\"{\\\"dividend\\\":10,\\\"divisor\\\":4}\"}}]},\"finish_reason\":\"tool_calls\"}],\"usage\":{\"prompt_tokens\":159,\"completion_tokens\":200,\"total_tokens\":359}}\n"
+      },
+      "retried": false
+    }
+  ]
+}

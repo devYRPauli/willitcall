@@ -1,0 +1,62 @@
+{
+  "schema_version": 1,
+  "run_id": "20260720T180523Z-8f80361a",
+  "scenario_id": "negative-greeting",
+  "turns": [
+    {
+      "index": 0,
+      "request": {
+        "method": "POST",
+        "url": "http://localhost:11434/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "Say hello in one short sentence.",
+              "role": "user"
+            }
+          ],
+          "model": "llama3.1:8b",
+          "seed": 42,
+          "stream": false,
+          "temperature": 0.0,
+          "tool_choice": "none",
+          "tools": [
+            {
+              "function": {
+                "description": "Get the current weather for a city.",
+                "name": "get_weather",
+                "parameters": {
+                  "properties": {
+                    "city": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "city"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-length": "678",
+          "content-type": "application/json",
+          "date": "Mon, 20 Jul 2026 18:05:37 GMT"
+        },
+        "body_raw": "{\"id\":\"chatcmpl-444\",\"object\":\"chat.completion\",\"created\":1784570737,\"model\":\"llama3.1:8b\",\"system_fingerprint\":\"fp_ollama\",\"choices\":[{\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"I'm sorry, but I don't have a function that directly answers your question. However, I can suggest using the \\\"get_weather\\\" function with an argument of 'city' as 'New York', which is not relevant to your prompt, or I can provide a generic response.\\n\\nIf you'd like a generic response, here's how you could call it:\\n\\n{\\\"name\\\": \\\"get_weather\\\", \\\"parameters\\\": {\\\"city\\\": \\\"New York\\\"}}\"},\"finish_reason\":\"stop\"}],\"usage\":{\"prompt_tokens\":159,\"completion_tokens\":91,\"total_tokens\":250}}\n"
+      },
+      "retried": false
+    }
+  ]
+}

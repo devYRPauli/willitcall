@@ -1,0 +1,62 @@
+{
+  "schema_version": 1,
+  "run_id": "20260720T175837Z-50770d44",
+  "scenario_id": "tool-choice-auto-no-call",
+  "turns": [
+    {
+      "index": 0,
+      "request": {
+        "method": "POST",
+        "url": "http://localhost:11434/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "Reply with the exact text: ready",
+              "role": "user"
+            }
+          ],
+          "model": "qwen3:1.7b",
+          "seed": 42,
+          "stream": false,
+          "temperature": 0.0,
+          "tool_choice": "auto",
+          "tools": [
+            {
+              "function": {
+                "description": "Get the temperature for a city.",
+                "name": "get_temperature",
+                "parameters": {
+                  "properties": {
+                    "city": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "city"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-length": "663",
+          "content-type": "application/json",
+          "date": "Mon, 20 Jul 2026 17:59:32 GMT"
+        },
+        "body_raw": "{\"id\":\"chatcmpl-739\",\"object\":\"chat.completion\",\"created\":1784570372,\"model\":\"qwen3:1.7b\",\"system_fingerprint\":\"fp_ollama\",\"choices\":[{\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"ready\",\"reasoning\":\"Okay, the user wants me to reply with the exact text \\\"ready\\\". Let me check the tools provided. The only tool available is for getting the temperature, but the user isn't asking for that. They just want a simple response. Since there's no function needed here, I should just output the exact text without any tool calls. Alright, that's straightforward.\\n\"},\"finish_reason\":\"stop\"}],\"usage\":{\"prompt_tokens\":138,\"completion_tokens\":80,\"total_tokens\":218}}\n"
+      },
+      "retried": false
+    }
+  ]
+}

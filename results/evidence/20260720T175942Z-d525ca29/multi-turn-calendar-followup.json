@@ -1,0 +1,88 @@
+{
+  "schema_version": 1,
+  "run_id": "20260720T175942Z-d525ca29",
+  "scenario_id": "multi-turn-calendar-followup",
+  "turns": [
+    {
+      "index": 0,
+      "request": {
+        "method": "POST",
+        "url": "http://localhost:11434/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "Check my calendar on 2026-08-11, then create event Review at the available time.",
+              "role": "user"
+            }
+          ],
+          "model": "qwen3:4b",
+          "seed": 42,
+          "stream": false,
+          "temperature": 0.0,
+          "tool_choice": "auto",
+          "tools": [
+            {
+              "function": {
+                "description": "Get calendar availability for a date.",
+                "name": "get_calendar",
+                "parameters": {
+                  "properties": {
+                    "date": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "date"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            },
+            {
+              "function": {
+                "description": "Create an event at an exact date and time.",
+                "name": "create_event",
+                "parameters": {
+                  "properties": {
+                    "date": {
+                      "type": "string"
+                    },
+                    "time": {
+                      "type": "string"
+                    },
+                    "title": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "title",
+                    "date",
+                    "time"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-type": "application/json",
+          "date": "Mon, 20 Jul 2026 17:59:54 GMT",
+          "transfer-encoding": "chunked"
+        },
+        "body_raw": "{\"id\":\"chatcmpl-422\",\"object\":\"chat.completion\",\"created\":1784570394,\"model\":\"qwen3:4b\",\"system_fingerprint\":\"fp_ollama\",\"choices\":[{\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"\",\"reasoning\":\"Okay, let's see. The user wants me to check their calendar for August 11, 2026, and then create an event called \\\"Review\\\" at the available time.\\n\\nFirst, I need to use the get_calendar function to check availability on that date. The date they provided is 2026-08-11. So I'll call get_calendar with that date. Once I have the available times from the calendar, I can then use create_event to schedule the \\\"Review\\\" event at the first available time.\\n\\nWait, the tools given are get_calendar and create_event. The get_calendar function takes a date as a string. The user specified the date as 2026-08-11, so I should format that correctly. The function expects a date object with type string, so I'll pass \\\"2026-08-11\\\".\\n\\nAfter getting the calendar availability, the next step is to create the event. But the user says \\\"at the available time\\\". So I need to find the first available slot. However, the tool calls are sequential. First, I have to get the calendar info, then use that info to create the event.\\n\\nBut the user's instruction is to check the calendar first, then create the event. So the first tool call should be get_calendar with the date. Then, once that's done, the next step would be to create the event with the available time. But since the user is asking to do both, I need to make two tool calls. Wait, but the problem says \\\"for each function call, return a json object...\\\". So maybe the first step is to call get_calendar, then based on the response, call create_event.\\n\\nBut in this case, the user is asking to check the calendar first, then create the event. So the assistant should first call get_calendar for 2026-08-11. Then, once that's done, the next step would be to create the event. However, the user's message is a single query, so the assistant needs to generate the first tool call (get_calendar), and then presumably the next tool call (create_event) after the response. But the problem says \\\"for each function call, return a json object...\\\". Wait, the user says \\\"Check my calendar on 2026-08-11, then create event Review at the available time.\\\"\\n\\nSo the assistant should first call get_calendar with that date. Then, once the calendar is checked, the available time is known, so create_event with the title \\\"Review\\\" and the available time. But since the assistant can't know the available time until after the get_calendar call, the first step is to make the get_calendar call.\\n\\nSo the first tool call is get_calendar with date \\\"2026-08-11\\\". Then, after that response, the assistant would use the available time to create the event. But in this case, the user is asking for both steps, but the assistant can only make one tool call at a time. Wait, the problem says \\\"You may call one or more functions to assist with the user query.\\\" So maybe the assistant needs to make two tool calls here? Wait, no. Because the create_event depends on the result of get_calendar. So the assistant first calls get_calendar, then once it has the response, it can call create_event. But in the current step, the user hasn't provided the response yet, so the assistant should first generate the get_calendar tool call.\\n\\nThe user's instruction is to check the calendar first, then create the event. So the first step is to call get_calendar for 2026-08-11. Then, after that, the next step would be to create the event. But since the assistant is supposed to return the tool calls for the current step, the answer here is to first call get_calendar.\\n\\nWait, the problem says \\\"for each function call, return a json object...\\\". So the user's query requires two steps, but the assistant can only make the first tool call here. Because the create_event requires knowing the available time, which comes from the get_calendar response.\\n\\nSo the correct first tool call is get_calendar with date 2026-08-11.\\n\\nLet me check the function definitions again. The get_calendar function takes a date as a string. The date is 2026-08-11, which is a valid date string.\\n\\nSo the tool call should be:\\n\\n{\\n  \\\"name\\\": \\\"get_calendar\\\",\\n  \\\"arguments\\\": {\\n    \\\"date\\\": \\\"2026-08-11\\\"\\n  }\\n}\\n\\nThen, after that, the system would respond with the available times, and then the assistant would call create_event with the available time. But for now, the user's query requires the first step, so the assistant should output that tool call.\\n\\nYes, so the\"},\"finish_reason\":\"length\"}],\"usage\":{\"prompt_tokens\":212,\"completion_tokens\":1024,\"total_tokens\":1236}}\n"
+      },
+      "retried": false
+    }
+  ]
+}

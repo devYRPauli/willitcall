@@ -1,0 +1,481 @@
+{
+  "schema_version": 2,
+  "metadata": {
+    "run_id": "20260720T143528Z-09b0f838",
+    "timestamp": "2026-07-20T14:35:28Z",
+    "willitcall_version": "0.1.0",
+    "endpoint": "http://localhost:11434/v1",
+    "model_id": "gemma3:4b",
+    "declared_quant": null,
+    "server": {
+      "preset_name": "ollama",
+      "reported_version": "0.32.1",
+      "quirk_flags": []
+    },
+    "sampling": {
+      "temperature": 0.0,
+      "top_p": 1.0,
+      "seed": 42,
+      "max_tokens": 1024
+    }
+  },
+  "scenarios": [
+    {
+      "id": "multi-turn-calendar-followup",
+      "category": "multi_turn",
+      "status": "error",
+      "failure_reason": "turn 1: server returned HTTP 400 Bad Request",
+      "evidence_hash": "sha256:f1f70ff1ee1c4779e20c4ca30f5ba8019025e1e9294c9801442ed44757009942",
+      "evidence_path": "evidence/20260720T143528Z-09b0f838/multi-turn-calendar-followup.json",
+      "retried": false
+    },
+    {
+      "id": "multi-turn-flight-booking",
+      "category": "multi_turn",
+      "status": "error",
+      "failure_reason": "turn 1: server returned HTTP 400 Bad Request",
+      "evidence_hash": "sha256:0ced01d5c4043fe13a1c55ba6c7872ec5b327583b8eed8618784f8ba36e2a43f",
+      "evidence_path": "evidence/20260720T143528Z-09b0f838/multi-turn-flight-booking.json",
+      "retried": false
+    },
+    {
+      "id": "multi-turn-inventory-order",
+      "category": "multi_turn",
+      "status": "error",
+      "failure_reason": "turn 1: server returned HTTP 400 Bad Request",
+      "evidence_hash": "sha256:cca5a725f3a6683c0aeda25f151d61d96f202adc6971a4bde84862b93ea36216",
+      "evidence_path": "evidence/20260720T143528Z-09b0f838/multi-turn-inventory-order.json",
+      "retried": false
+    },
+    {
+      "id": "multi-turn-parallel-followup",
+      "category": "multi_turn",
+      "status": "error",
+      "failure_reason": "turn 1: server returned HTTP 400 Bad Request",
+      "evidence_hash": "sha256:2fa3bdcd2d691394ea9b837d756ec7dc979818addfe98daeb13c1693beedd794",
+      "evidence_path": "evidence/20260720T143528Z-09b0f838/multi-turn-parallel-followup.json",
+      "retried": false
+    },
+    {
+      "id": "multi-turn-route",
+      "category": "multi_turn",
+      "status": "error",
+      "failure_reason": "turn 1: server returned HTTP 400 Bad Request",
+      "evidence_hash": "sha256:9f71a521c12701033bb2dd2278c6d974c992c3757ad29d2abd0f7bf4b09588fa",
+      "evidence_path": "evidence/20260720T143528Z-09b0f838/multi-turn-route.json",
+      "retried": false
+    },
+    {
+      "id": "multi-turn-ticket-update",
+      "category": "multi_turn",
+      "status": "error",
+      "failure_reason": "turn 1: server returned HTTP 400 Bad Request",
+      "evidence_hash": "sha256:b91f9d16da3a6c6106d86ac45dae86e1ec995ca208d781ec4dd55bfb23d69a4e",
+      "evidence_path": "evidence/20260720T143528Z-09b0f838/multi-turn-ticket-update.json",
+      "retried": false
+    },
+    {
+      "id": "multi-turn-two-hop-chain",
+      "category": "multi_turn",
+      "status": "error",
+      "failure_reason": "turn 1: server returned HTTP 400 Bad Request",
+      "evidence_hash": "sha256:91ddb5467d9a9b87f5cd62c13f5dec51000a3eb9901ca471d7fb2be750cd2886",
+      "evidence_path": "evidence/20260720T143528Z-09b0f838/multi-turn-two-hop-chain.json",
+      "retried": false
+    },
+    {
+      "id": "negative-auto-arithmetic",
+      "category": "negative_trap",
+      "status": "error",
+      "failure_reason": "server returned HTTP 400 Bad Request",
+      "evidence_hash": "sha256:3429a548cc8133accb337cf19b62f867eae3312ad6fed74ca5904a33ab4226f4",
+      "evidence_path": "evidence/20260720T143528Z-09b0f838/negative-auto-arithmetic.json",
+      "retried": false
+    },
+    {
+      "id": "negative-auto-knowledge",
+      "category": "negative_trap",
+      "status": "error",
+      "failure_reason": "server returned HTTP 400 Bad Request",
+      "evidence_hash": "sha256:3f6a58b66ecd7d620dc8ac39582d26d4dd06831f5b5279aff8b40e77ed7e73e9",
+      "evidence_path": "evidence/20260720T143528Z-09b0f838/negative-auto-knowledge.json",
+      "retried": false
+    },
+    {
+      "id": "negative-greeting",
+      "category": "negative_trap",
+      "status": "error",
+      "failure_reason": "server returned HTTP 400 Bad Request",
+      "evidence_hash": "sha256:f9f109d40d7e255f59d94121d868f8575c7e482d371643bf8bb5db5ec2d6a5d5",
+      "evidence_path": "evidence/20260720T143528Z-09b0f838/negative-greeting.json",
+      "retried": false
+    },
+    {
+      "id": "negative-invalid-schema",
+      "category": "negative_trap",
+      "status": "error",
+      "failure_reason": "server returned HTTP 400 Bad Request",
+      "evidence_hash": "sha256:befe7405aa68f9634574eb3abdb4df7b8867bcd8fe40a18c26c1e03bb18fc7c1",
+      "evidence_path": "evidence/20260720T143528Z-09b0f838/negative-invalid-schema.json",
+      "retried": false
+    },
+    {
+      "id": "negative-long-argument",
+      "category": "negative_trap",
+      "status": "error",
+      "failure_reason": "server returned HTTP 400 Bad Request",
+      "evidence_hash": "sha256:c98486d1e4ae16ce34e62a3bac226f5b90f18ec5f368608699c869709272b37a",
+      "evidence_path": "evidence/20260720T143528Z-09b0f838/negative-long-argument.json",
+      "retried": false
+    },
+    {
+      "id": "negative-plain-text",
+      "category": "negative_trap",
+      "status": "error",
+      "failure_reason": "server returned HTTP 400 Bad Request",
+      "evidence_hash": "sha256:ceba11ce8449d4242b605e964a5cf73f2f404031e1c46c852f62dfd1dcaf2bb9",
+      "evidence_path": "evidence/20260720T143528Z-09b0f838/negative-plain-text.json",
+      "retried": false
+    },
+    {
+      "id": "negative-unicode-argument",
+      "category": "negative_trap",
+      "status": "error",
+      "failure_reason": "server returned HTTP 400 Bad Request",
+      "evidence_hash": "sha256:e36da7d8840622820898f8d74cde45e08e31dd53eb710f24978e7d04cdaf258e",
+      "evidence_path": "evidence/20260720T143528Z-09b0f838/negative-unicode-argument.json",
+      "retried": false
+    },
+    {
+      "id": "parallel-city-time",
+      "category": "parallel_calls",
+      "status": "error",
+      "failure_reason": "server returned HTTP 400 Bad Request",
+      "evidence_hash": "sha256:53c0b6b81834ccf7bd5cc9304c0e0b970609942b4cc8d5066d6f5af95a4a10ed",
+      "evidence_path": "evidence/20260720T143528Z-09b0f838/parallel-city-time.json",
+      "retried": false
+    },
+    {
+      "id": "parallel-different-tools",
+      "category": "parallel_calls",
+      "status": "error",
+      "failure_reason": "server returned HTTP 400 Bad Request",
+      "evidence_hash": "sha256:bc340d31e4b774e3a2c37caa6b11f4221868e8ae634998309aac82a6a34dcb4b",
+      "evidence_path": "evidence/20260720T143528Z-09b0f838/parallel-different-tools.json",
+      "retried": false
+    },
+    {
+      "id": "parallel-three-cities",
+      "category": "parallel_calls",
+      "status": "error",
+      "failure_reason": "server returned HTTP 400 Bad Request",
+      "evidence_hash": "sha256:251cea33c8e8786be3d2b6ca3f2e9851c8f021893edee9b3b61e6f9da7c1a240",
+      "evidence_path": "evidence/20260720T143528Z-09b0f838/parallel-three-cities.json",
+      "retried": false
+    },
+    {
+      "id": "parallel-three-different-tools",
+      "category": "parallel_calls",
+      "status": "error",
+      "failure_reason": "server returned HTTP 400 Bad Request",
+      "evidence_hash": "sha256:0fa6bb7977e7cec589a48462f220913c44e0bc67863eaab9c13f30b38719e47b",
+      "evidence_path": "evidence/20260720T143528Z-09b0f838/parallel-three-different-tools.json",
+      "retried": false
+    },
+    {
+      "id": "parallel-two-calculations",
+      "category": "parallel_calls",
+      "status": "error",
+      "failure_reason": "server returned HTTP 400 Bad Request",
+      "evidence_hash": "sha256:21497ab9f4a418c42711989237d7d7bb985cd1cb8f55f47f8d0dc40f39ba13d7",
+      "evidence_path": "evidence/20260720T143528Z-09b0f838/parallel-two-calculations.json",
+      "retried": false
+    },
+    {
+      "id": "parallel-two-multiple-args",
+      "category": "parallel_calls",
+      "status": "error",
+      "failure_reason": "server returned HTTP 400 Bad Request",
+      "evidence_hash": "sha256:8c1edacbb325534fefcea61c4dc6f0db9299463d975859d7cb7328234fb65223",
+      "evidence_path": "evidence/20260720T143528Z-09b0f838/parallel-two-multiple-args.json",
+      "retried": false
+    },
+    {
+      "id": "parallel-two-searches",
+      "category": "parallel_calls",
+      "status": "error",
+      "failure_reason": "server returned HTTP 400 Bad Request",
+      "evidence_hash": "sha256:191ba993730222567c1a2935e18ca103a989894642a29a88906d6dd5e88fbf86",
+      "evidence_path": "evidence/20260720T143528Z-09b0f838/parallel-two-searches.json",
+      "retried": false
+    },
+    {
+      "id": "parallel-weather-and-time",
+      "category": "parallel_calls",
+      "status": "error",
+      "failure_reason": "server returned HTTP 400 Bad Request",
+      "evidence_hash": "sha256:4d6bbe6061c83d3076d5c69fab98535ebf47b63ecfe6d1386d5b710660c646eb",
+      "evidence_path": "evidence/20260720T143528Z-09b0f838/parallel-weather-and-time.json",
+      "retried": false
+    },
+    {
+      "id": "single-array-tags",
+      "category": "single_call",
+      "status": "error",
+      "failure_reason": "server returned HTTP 400 Bad Request",
+      "evidence_hash": "sha256:79100709e34412b9c563edefc726f923c0840e95f5681a743aeee83ece57b764",
+      "evidence_path": "evidence/20260720T143528Z-09b0f838/single-array-tags.json",
+      "retried": false
+    },
+    {
+      "id": "single-boolean-flag",
+      "category": "single_call",
+      "status": "error",
+      "failure_reason": "server returned HTTP 400 Bad Request",
+      "evidence_hash": "sha256:fe9b13f811662b2e9ab0578fabde09b44a42c3b58c917f20e86d5398a6509319",
+      "evidence_path": "evidence/20260720T143528Z-09b0f838/single-boolean-flag.json",
+      "retried": false
+    },
+    {
+      "id": "single-date-range",
+      "category": "single_call",
+      "status": "error",
+      "failure_reason": "server returned HTTP 400 Bad Request",
+      "evidence_hash": "sha256:2516ec50e84cadcd5e7bc2731f0f7751c30f0e4267ca19ad0fc36c453048cd60",
+      "evidence_path": "evidence/20260720T143528Z-09b0f838/single-date-range.json",
+      "retried": false
+    },
+    {
+      "id": "single-decimal-price",
+      "category": "single_call",
+      "status": "error",
+      "failure_reason": "server returned HTTP 400 Bad Request",
+      "evidence_hash": "sha256:7d05163dfbb1921aa6f13090af23f2aeb2b9d69f0bc2a6f062f83953bf6c230b",
+      "evidence_path": "evidence/20260720T143528Z-09b0f838/single-decimal-price.json",
+      "retried": false
+    },
+    {
+      "id": "single-empty-arguments",
+      "category": "single_call",
+      "status": "error",
+      "failure_reason": "server returned HTTP 400 Bad Request",
+      "evidence_hash": "sha256:0e2c5ad7d976fe2d7bf39272c0e44e07ca4118f70f85ae97e14c8427a23bd7d2",
+      "evidence_path": "evidence/20260720T143528Z-09b0f838/single-empty-arguments.json",
+      "retried": false
+    },
+    {
+      "id": "single-enum-format",
+      "category": "single_call",
+      "status": "error",
+      "failure_reason": "server returned HTTP 400 Bad Request",
+      "evidence_hash": "sha256:75ea6b2281ad01c5ad8ba6f733f36f09e1cbb2a1e64d817716681da035666afe",
+      "evidence_path": "evidence/20260720T143528Z-09b0f838/single-enum-format.json",
+      "retried": false
+    },
+    {
+      "id": "single-integer-limit",
+      "category": "single_call",
+      "status": "error",
+      "failure_reason": "server returned HTTP 400 Bad Request",
+      "evidence_hash": "sha256:c94b081d5fb09832b4843678e06a9a85c8e9b94bc1e137cf407886250b6019b1",
+      "evidence_path": "evidence/20260720T143528Z-09b0f838/single-integer-limit.json",
+      "retried": false
+    },
+    {
+      "id": "single-nested-options",
+      "category": "single_call",
+      "status": "error",
+      "failure_reason": "server returned HTTP 400 Bad Request",
+      "evidence_hash": "sha256:16ccf78d2b761747ed7ca07e2e6431a298d591016384299fca2dd89b01299c77",
+      "evidence_path": "evidence/20260720T143528Z-09b0f838/single-nested-options.json",
+      "retried": false
+    },
+    {
+      "id": "single-optional-omitted",
+      "category": "single_call",
+      "status": "error",
+      "failure_reason": "server returned HTTP 400 Bad Request",
+      "evidence_hash": "sha256:84ee07b69617fce996d0995bc62f0240ee5d39372c176338701546129d4fa132",
+      "evidence_path": "evidence/20260720T143528Z-09b0f838/single-optional-omitted.json",
+      "retried": false
+    },
+    {
+      "id": "single-optional-present",
+      "category": "single_call",
+      "status": "error",
+      "failure_reason": "server returned HTTP 400 Bad Request",
+      "evidence_hash": "sha256:134614cbedd6a486e1ce174f46d9ee841e83950e5ff2f155c12154777482cdd2",
+      "evidence_path": "evidence/20260720T143528Z-09b0f838/single-optional-present.json",
+      "retried": false
+    },
+    {
+      "id": "single-string-list",
+      "category": "single_call",
+      "status": "error",
+      "failure_reason": "server returned HTTP 400 Bad Request",
+      "evidence_hash": "sha256:5c0d416edb94eba25d489c1f49c2f9717e67b352239a27c1e7131718b78fbac9",
+      "evidence_path": "evidence/20260720T143528Z-09b0f838/single-string-list.json",
+      "retried": false
+    },
+    {
+      "id": "single-weather",
+      "category": "single_call",
+      "status": "error",
+      "failure_reason": "server returned HTTP 400 Bad Request",
+      "evidence_hash": "sha256:eb7f5cb2a88b45532ae721ad029789c7fba3e9d9a32ead10ad33f0f54b809ff7",
+      "evidence_path": "evidence/20260720T143528Z-09b0f838/single-weather.json",
+      "retried": false
+    },
+    {
+      "id": "single-zero-and-negative",
+      "category": "single_call",
+      "status": "error",
+      "failure_reason": "server returned HTTP 400 Bad Request",
+      "evidence_hash": "sha256:32475f078e2768830e3eeeeb96e6cf9f1f23151bb536f6e5e63aff82503e7e7e",
+      "evidence_path": "evidence/20260720T143528Z-09b0f838/single-zero-and-negative.json",
+      "retried": false
+    },
+    {
+      "id": "streaming-array-arguments",
+      "category": "streaming",
+      "status": "error",
+      "failure_reason": "server returned HTTP 400 Bad Request",
+      "evidence_hash": "sha256:faaca58a7dab7a65bfa6bac9ab766ad9dfc07bb9c45f963865fd77b2386fc090",
+      "evidence_path": "evidence/20260720T143528Z-09b0f838/streaming-array-arguments.json",
+      "retried": false
+    },
+    {
+      "id": "streaming-boolean-argument",
+      "category": "streaming",
+      "status": "error",
+      "failure_reason": "server returned HTTP 400 Bad Request",
+      "evidence_hash": "sha256:27befd5a56adedd8b2ddfa64c2b1f3075ef1aa93988c4a0572cb7c42c77ce7d9",
+      "evidence_path": "evidence/20260720T143528Z-09b0f838/streaming-boolean-argument.json",
+      "retried": false
+    },
+    {
+      "id": "streaming-empty-arguments",
+      "category": "streaming",
+      "status": "error",
+      "failure_reason": "server returned HTTP 400 Bad Request",
+      "evidence_hash": "sha256:86de21880b71aef0b87c76884e12b906f6de6ea134962116751f31955c2fdbc3",
+      "evidence_path": "evidence/20260720T143528Z-09b0f838/streaming-empty-arguments.json",
+      "retried": false
+    },
+    {
+      "id": "streaming-enum-arguments",
+      "category": "streaming",
+      "status": "error",
+      "failure_reason": "server returned HTTP 400 Bad Request",
+      "evidence_hash": "sha256:f75976ef78357d4a130709075b6079ebdc5d801157d536bb88737ab94a68ea61",
+      "evidence_path": "evidence/20260720T143528Z-09b0f838/streaming-enum-arguments.json",
+      "retried": false
+    },
+    {
+      "id": "streaming-nested-arguments",
+      "category": "streaming",
+      "status": "error",
+      "failure_reason": "server returned HTTP 400 Bad Request",
+      "evidence_hash": "sha256:5c5263060ecf75f4d8da910fbfa955fdd4699caf64515689c530e81bad46a621",
+      "evidence_path": "evidence/20260720T143528Z-09b0f838/streaming-nested-arguments.json",
+      "retried": false
+    },
+    {
+      "id": "streaming-parallel-three",
+      "category": "streaming",
+      "status": "error",
+      "failure_reason": "server returned HTTP 400 Bad Request",
+      "evidence_hash": "sha256:3e3921f856b53165ac466592ed8d9d0832e571fb883330bfd77a43736babe583",
+      "evidence_path": "evidence/20260720T143528Z-09b0f838/streaming-parallel-three.json",
+      "retried": false
+    },
+    {
+      "id": "streaming-parallel-two",
+      "category": "streaming",
+      "status": "error",
+      "failure_reason": "server returned HTTP 400 Bad Request",
+      "evidence_hash": "sha256:8e81169496a36c8a9641fc47875d48ff2fdde188671ec70ae4344e318bbbc4de",
+      "evidence_path": "evidence/20260720T143528Z-09b0f838/streaming-parallel-two.json",
+      "retried": false
+    },
+    {
+      "id": "streaming-weather",
+      "category": "streaming",
+      "status": "error",
+      "failure_reason": "server returned HTTP 400 Bad Request",
+      "evidence_hash": "sha256:19b5de27fbf3d8640078ee69c173a028820861e773efe4c3d599d57063ed8eb5",
+      "evidence_path": "evidence/20260720T143528Z-09b0f838/streaming-weather.json",
+      "retried": false
+    },
+    {
+      "id": "tool-choice-auto-call",
+      "category": "tool_choice_modes",
+      "status": "error",
+      "failure_reason": "server returned HTTP 400 Bad Request",
+      "evidence_hash": "sha256:c0c164c4123a5a64e1a170d470b2659481f967c9559ca1dc178e75cfb66a0caf",
+      "evidence_path": "evidence/20260720T143528Z-09b0f838/tool-choice-auto-call.json",
+      "retried": false
+    },
+    {
+      "id": "tool-choice-auto-no-call",
+      "category": "tool_choice_modes",
+      "status": "error",
+      "failure_reason": "server returned HTTP 400 Bad Request",
+      "evidence_hash": "sha256:f35327eec79f6f21ea03f73e94d5169e99c7c3ff58256249dead055eb8e652e9",
+      "evidence_path": "evidence/20260720T143528Z-09b0f838/tool-choice-auto-no-call.json",
+      "retried": false
+    },
+    {
+      "id": "tool-choice-named",
+      "category": "tool_choice_modes",
+      "status": "error",
+      "failure_reason": "server returned HTTP 400 Bad Request",
+      "evidence_hash": "sha256:af1deb0129f3c717d5bbbd3215eec9a6b4f56b39ab9de45fab951cfb83b5aa49",
+      "evidence_path": "evidence/20260720T143528Z-09b0f838/tool-choice-named.json",
+      "retried": false
+    },
+    {
+      "id": "tool-choice-named-empty",
+      "category": "tool_choice_modes",
+      "status": "error",
+      "failure_reason": "server returned HTTP 400 Bad Request",
+      "evidence_hash": "sha256:e80a7065731f82fb002fa751b06ad6b318f6f40f5095731ffc226737ce009abd",
+      "evidence_path": "evidence/20260720T143528Z-09b0f838/tool-choice-named-empty.json",
+      "retried": false
+    },
+    {
+      "id": "tool-choice-none",
+      "category": "tool_choice_modes",
+      "status": "error",
+      "failure_reason": "server returned HTTP 400 Bad Request",
+      "evidence_hash": "sha256:bb1a32956e99c7129abfa3759b5df394eb7ce7fb84ddbbc60a911f56c0d82057",
+      "evidence_path": "evidence/20260720T143528Z-09b0f838/tool-choice-none.json",
+      "retried": false
+    },
+    {
+      "id": "tool-choice-required",
+      "category": "tool_choice_modes",
+      "status": "error",
+      "failure_reason": "server returned HTTP 400 Bad Request",
+      "evidence_hash": "sha256:8ca1afb908beba064c00e522f9fdf9dd02f32e72a7d8565d7ec9cd56d19e3d72",
+      "evidence_path": "evidence/20260720T143528Z-09b0f838/tool-choice-required.json",
+      "retried": false
+    },
+    {
+      "id": "tool-choice-required-empty",
+      "category": "tool_choice_modes",
+      "status": "error",
+      "failure_reason": "server returned HTTP 400 Bad Request",
+      "evidence_hash": "sha256:de991271af5fd90c2d81901764b0d41e65fd1727d33804d412c2a7858b40c33e",
+      "evidence_path": "evidence/20260720T143528Z-09b0f838/tool-choice-required-empty.json",
+      "retried": false
+    }
+  ],
+  "totals": {
+    "total": 50,
+    "passed": 0,
+    "failed": 0,
+    "errors": 50,
+    "skipped": 0
+  }
+}

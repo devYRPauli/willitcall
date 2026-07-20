@@ -1,0 +1,188 @@
+{
+  "schema_version": 1,
+  "run_id": "20260720T180246Z-53903d2d",
+  "scenario_id": "multi-turn-calendar-followup",
+  "turns": [
+    {
+      "index": 0,
+      "request": {
+        "method": "POST",
+        "url": "http://localhost:11434/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "Check my calendar on 2026-08-11, then create event Review at the available time.",
+              "role": "user"
+            }
+          ],
+          "model": "qwen3:8b",
+          "seed": 42,
+          "stream": false,
+          "temperature": 0.0,
+          "tool_choice": "auto",
+          "tools": [
+            {
+              "function": {
+                "description": "Get calendar availability for a date.",
+                "name": "get_calendar",
+                "parameters": {
+                  "properties": {
+                    "date": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "date"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            },
+            {
+              "function": {
+                "description": "Create an event at an exact date and time.",
+                "name": "create_event",
+                "parameters": {
+                  "properties": {
+                    "date": {
+                      "type": "string"
+                    },
+                    "time": {
+                      "type": "string"
+                    },
+                    "title": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "title",
+                    "date",
+                    "time"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-type": "application/json",
+          "date": "Mon, 20 Jul 2026 18:02:57 GMT",
+          "transfer-encoding": "chunked"
+        },
+        "body_raw": "{\"id\":\"chatcmpl-321\",\"object\":\"chat.completion\",\"created\":1784570577,\"model\":\"qwen3:8b\",\"system_fingerprint\":\"fp_ollama\",\"choices\":[{\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"\",\"reasoning\":\"Okay, let me figure out how to handle the user's request. They want to check their calendar for August 11, 2026, and then create an event called \\\"Review\\\" at an available time.\\n\\nFirst, I need to call the get_calendar function with the specified date. The function requires the date parameter, so I'll set that to \\\"2026-08-11\\\". That should retrieve the availability for that day.\\n\\nOnce I have the calendar data, I can check which time slots are free. But since the user wants to create the event after checking, I should first make sure the get_calendar call is made. The response from that call will inform me of the available times. However, since I don't have real-time data, I'll assume the function returns available times, and then proceed to create the event using the create_event function. The title is \\\"Review\\\", and the date is already known. The time would be one of the available slots from the calendar check. But since the user didn't specify a particular time, maybe the function defaults to the first available time or the user expects a placeholder. Wait, the create_event function requires date, time, and title. Since the user said \\\"available time\\\", perhaps the time is determined by the calendar check. But in the tool calls, I need to first get the calendar data, then use that to create the event. However, in the current setup, each tool call is separate. So first, I need to call get_calendar for the date, then based on that, call create_event with the title, date, and a time from the available slots. But since the user hasn't provided specific times, maybe the time is left as a parameter to be filled in once the calendar is checked. But the functions require specific parameters. Hmm, perhaps the user expects that after checking the calendar, the system will automatically pick an available time. But since I can't execute multiple steps, I need to first call get_calendar, then in the next step, use the result to create the event. However, in this scenario, I can only make one tool call at a time. So the user's instruction is to first check the calendar, then create the event. Therefore, the first step is to call get_calendar with the date. The user might be expecting that after getting the availability, the event is created. But since I can't do both in one step, I'll first make the get_calendar call. Then, assuming the response gives available times, the next step would be to create the event. But in this case, the user's message is a single query, so maybe the assistant is supposed to chain the calls. However, according to the instructions, each turn can make one tool call. So the first tool call is get_calendar for 2026-08-11. Then, once that's done, the next step would be to create the event. But since the user's message is a single input, perhaps the assistant is supposed to first check the calendar and then proceed. But in the current setup, the assistant can only make one tool call per response. Therefore, the correct first step is to call get_calendar with the specified date.\\n\",\"tool_calls\":[{\"id\":\"call_utc1mqsx\",\"index\":0,\"type\":\"function\",\"function\":{\"name\":\"get_calendar\",\"arguments\":\"{\\\"date\\\":\\\"2026-08-11\\\"}\"}}]},\"finish_reason\":\"tool_calls\"}],\"usage\":{\"prompt_tokens\":212,\"completion_tokens\":697,\"total_tokens\":909}}\n"
+      },
+      "retried": false
+    },
+    {
+      "index": 1,
+      "request": {
+        "method": "POST",
+        "url": "http://localhost:11434/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "Check my calendar on 2026-08-11, then create event Review at the available time.",
+              "role": "user"
+            },
+            {
+              "content": "",
+              "role": "assistant",
+              "tool_calls": [
+                {
+                  "function": {
+                    "arguments": "{\"date\":\"2026-08-11\"}",
+                    "name": "get_calendar"
+                  },
+                  "id": "call_utc1mqsx",
+                  "type": "function"
+                }
+              ]
+            },
+            {
+              "content": "{\"available_time\":\"15:30\"}",
+              "role": "tool",
+              "tool_call_id": "call_utc1mqsx"
+            }
+          ],
+          "model": "qwen3:8b",
+          "seed": 42,
+          "stream": false,
+          "temperature": 0.0,
+          "tool_choice": "auto",
+          "tools": [
+            {
+              "function": {
+                "description": "Get calendar availability for a date.",
+                "name": "get_calendar",
+                "parameters": {
+                  "properties": {
+                    "date": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "date"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            },
+            {
+              "function": {
+                "description": "Create an event at an exact date and time.",
+                "name": "create_event",
+                "parameters": {
+                  "properties": {
+                    "date": {
+                      "type": "string"
+                    },
+                    "time": {
+                      "type": "string"
+                    },
+                    "title": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "title",
+                    "date",
+                    "time"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-length": "1922",
+          "content-type": "application/json",
+          "date": "Mon, 20 Jul 2026 18:03:02 GMT"
+        },
+        "body_raw": "{\"id\":\"chatcmpl-167\",\"object\":\"chat.completion\",\"created\":1784570582,\"model\":\"qwen3:8b\",\"system_fingerprint\":\"fp_ollama\",\"choices\":[{\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"\",\"reasoning\":\"Okay, the user asked to check their calendar for 2026-08-11 and then create an event called \\\"Review\\\" at an available time. First, I called the get_calendar function with that date. The response came back with an available time of 15:30. Now, I need to use that time to create the event.\\n\\nSo, the next step is to use the create_event function. The parameters required are title, date, and time. The date is already known from the user's request, which is 2026-08-11. The time from the calendar check is 15:30. The title is \\\"Review\\\" as specified. \\n\\nI should make sure the date and time are in the correct format. The date is a string in YYYY-MM-DD format, which matches the input. The time is in HH:MM format, which should be acceptable. No timezone was mentioned, so I'll assume it's in the user's local time or the default timezone the function uses. \\n\\nPutting it all together, the arguments for create_event should be title: \\\"Review\\\", date: \\\"2026-08-11\\\", time: \\\"15:30\\\". I need to structure this into a JSON object for the tool call. Let me double-check the function signature to ensure the parameters are correctly named and formatted. Yes, the function expects title, date, and time as strings. \\n\\nNo errors here, so the tool call should be valid. The user probably wants the event created at that specific time since it's the only available slot. I'll proceed to make the create_event call with these parameters.\\n\",\"tool_calls\":[{\"id\":\"call_v8imwuat\",\"index\":0,\"type\":\"function\",\"function\":{\"name\":\"create_event\",\"arguments\":\"{\\\"title\\\":\\\"Review\\\",\\\"date\\\":\\\"2026-08-11\\\",\\\"time\\\":\\\"15:30\\\"}\"}}]},\"finish_reason\":\"tool_calls\"}],\"usage\":{\"prompt_tokens\":262,\"completion_tokens\":395,\"total_tokens\":657}}\n"
+      },
+      "retried": false
+    }
+  ]
+}

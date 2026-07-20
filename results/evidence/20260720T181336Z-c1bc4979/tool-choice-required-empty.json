@@ -1,0 +1,54 @@
+{
+  "schema_version": 1,
+  "run_id": "20260720T181336Z-c1bc4979",
+  "scenario_id": "tool-choice-required-empty",
+  "turns": [
+    {
+      "index": 0,
+      "request": {
+        "method": "POST",
+        "url": "http://localhost:11434/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "Get the current sequence number.",
+              "role": "user"
+            }
+          ],
+          "model": "hermes3:8b",
+          "seed": 42,
+          "stream": false,
+          "temperature": 0.0,
+          "tool_choice": "required",
+          "tools": [
+            {
+              "function": {
+                "description": "Get the current sequence number.",
+                "name": "current_sequence",
+                "parameters": {
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-length": "415",
+          "content-type": "application/json",
+          "date": "Mon, 20 Jul 2026 18:14:13 GMT"
+        },
+        "body_raw": "{\"id\":\"chatcmpl-905\",\"object\":\"chat.completion\",\"created\":1784571253,\"model\":\"hermes3:8b\",\"system_fingerprint\":\"fp_ollama\",\"choices\":[{\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"\",\"tool_calls\":[{\"id\":\"call_qiybej4l\",\"index\":0,\"type\":\"function\",\"function\":{\"name\":\"current_sequence\",\"arguments\":\"{}\"}}]},\"finish_reason\":\"tool_calls\"}],\"usage\":{\"prompt_tokens\":221,\"completion_tokens\":16,\"total_tokens\":237}}\n"
+      },
+      "retried": false
+    }
+  ]
+}

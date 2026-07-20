@@ -1,0 +1,66 @@
+{
+  "schema_version": 1,
+  "run_id": "20260720T175837Z-50770d44",
+  "scenario_id": "single-integer-limit",
+  "turns": [
+    {
+      "index": 0,
+      "request": {
+        "method": "POST",
+        "url": "http://localhost:11434/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "List exactly 12 messages from the support mailbox.",
+              "role": "user"
+            }
+          ],
+          "model": "qwen3:1.7b",
+          "seed": 42,
+          "stream": false,
+          "temperature": 0.0,
+          "tool_choice": "auto",
+          "tools": [
+            {
+              "function": {
+                "description": "List a fixed number of messages.",
+                "name": "list_messages",
+                "parameters": {
+                  "properties": {
+                    "limit": {
+                      "type": "integer"
+                    },
+                    "mailbox": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "mailbox",
+                    "limit"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-length": "938",
+          "content-type": "application/json",
+          "date": "Mon, 20 Jul 2026 17:59:19 GMT"
+        },
+        "body_raw": "{\"id\":\"chatcmpl-971\",\"object\":\"chat.completion\",\"created\":1784570359,\"model\":\"qwen3:1.7b\",\"system_fingerprint\":\"fp_ollama\",\"choices\":[{\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"\",\"reasoning\":\"Okay, the user wants to list exactly 12 messages from the support mailbox. Let me check the available tools. There's a function called list_messages that takes a mailbox name and a limit. The mailbox here is \\\"support\\\" and the limit is 12. I need to make sure the arguments are correctly formatted as JSON. So the function call should have name \\\"list_messages\\\" with arguments {\\\"mailbox\\\": \\\"support\\\", \\\"limit\\\": 12}. I'll wrap that in the tool_call tags as specified.\\n\",\"tool_calls\":[{\"id\":\"call_rvs03ozk\",\"index\":0,\"type\":\"function\",\"function\":{\"name\":\"list_messages\",\"arguments\":\"{\\\"limit\\\":12,\\\"mailbox\\\":\\\"support\\\"}\"}}]},\"finish_reason\":\"tool_calls\"}],\"usage\":{\"prompt_tokens\":149,\"completion_tokens\":137,\"total_tokens\":286}}\n"
+      },
+      "retried": false
+    }
+  ]
+}

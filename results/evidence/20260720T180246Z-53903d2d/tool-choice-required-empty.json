@@ -1,0 +1,54 @@
+{
+  "schema_version": 1,
+  "run_id": "20260720T180246Z-53903d2d",
+  "scenario_id": "tool-choice-required-empty",
+  "turns": [
+    {
+      "index": 0,
+      "request": {
+        "method": "POST",
+        "url": "http://localhost:11434/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "Get the current sequence number.",
+              "role": "user"
+            }
+          ],
+          "model": "qwen3:8b",
+          "seed": 42,
+          "stream": false,
+          "temperature": 0.0,
+          "tool_choice": "required",
+          "tools": [
+            {
+              "function": {
+                "description": "Get the current sequence number.",
+                "name": "current_sequence",
+                "parameters": {
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-length": "810",
+          "content-type": "application/json",
+          "date": "Mon, 20 Jul 2026 18:05:16 GMT"
+        },
+        "body_raw": "{\"id\":\"chatcmpl-691\",\"object\":\"chat.completion\",\"created\":1784570716,\"model\":\"qwen3:8b\",\"system_fingerprint\":\"fp_ollama\",\"choices\":[{\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"\",\"reasoning\":\"Okay, the user is asking for the current sequence number. Let me check the tools provided. There's a function called current_sequence that doesn't require any arguments. Since the user's query is straightforward, I just need to call that function. No parameters are needed, so the tool call should be simple. I'll make sure to format it correctly within the XML tags as specified.\\n\",\"tool_calls\":[{\"id\":\"call_x8p32985\",\"index\":0,\"type\":\"function\",\"function\":{\"name\":\"current_sequence\",\"arguments\":\"{}\"}}]},\"finish_reason\":\"tool_calls\"}],\"usage\":{\"prompt_tokens\":128,\"completion_tokens\":97,\"total_tokens\":225}}\n"
+      },
+      "retried": false
+    }
+  ]
+}

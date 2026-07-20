@@ -1,0 +1,66 @@
+{
+  "schema_version": 1,
+  "run_id": "20260720T180246Z-53903d2d",
+  "scenario_id": "single-boolean-flag",
+  "turns": [
+    {
+      "index": 0,
+      "request": {
+        "method": "POST",
+        "url": "http://localhost:11434/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "Disable the feature named audit-log.",
+              "role": "user"
+            }
+          ],
+          "model": "qwen3:8b",
+          "seed": 42,
+          "stream": false,
+          "temperature": 0.0,
+          "tool_choice": "auto",
+          "tools": [
+            {
+              "function": {
+                "description": "Enable or disable a feature.",
+                "name": "set_feature",
+                "parameters": {
+                  "properties": {
+                    "enabled": {
+                      "type": "boolean"
+                    },
+                    "feature": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "feature",
+                    "enabled"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-length": "923",
+          "content-type": "application/json",
+          "date": "Mon, 20 Jul 2026 18:04:30 GMT"
+        },
+        "body_raw": "{\"id\":\"chatcmpl-346\",\"object\":\"chat.completion\",\"created\":1784570670,\"model\":\"qwen3:8b\",\"system_fingerprint\":\"fp_ollama\",\"choices\":[{\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"\",\"reasoning\":\"Okay, the user wants to disable the audit-log feature. Let me check the tools provided. There's a function called set_feature that takes 'feature' and 'enabled' parameters. The user specified the feature name as audit-log and wants it disabled, so enabled should be false. I need to structure the JSON arguments correctly. Make sure the keys are 'feature' and 'enabled', with the right data types. Let me confirm the syntax again. Yep, that should do it.\\n\",\"tool_calls\":[{\"id\":\"call_ewi7f3ok\",\"index\":0,\"type\":\"function\",\"function\":{\"name\":\"set_feature\",\"arguments\":\"{\\\"enabled\\\":false,\\\"feature\\\":\\\"audit-log\\\"}\"}}]},\"finish_reason\":\"tool_calls\"}],\"usage\":{\"prompt_tokens\":144,\"completion_tokens\":128,\"total_tokens\":272}}\n"
+      },
+      "retried": false
+    }
+  ]
+}

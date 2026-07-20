@@ -1,0 +1,82 @@
+{
+  "schema_version": 1,
+  "run_id": "20260720T175757Z-4b64779b",
+  "scenario_id": "single-nested-options",
+  "turns": [
+    {
+      "index": 0,
+      "request": {
+        "method": "POST",
+        "url": "http://localhost:11434/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "Render 'red circle' at width 640 and height 480 with transparency enabled.",
+              "role": "user"
+            }
+          ],
+          "model": "qwen3:0.6b",
+          "seed": 42,
+          "stream": false,
+          "temperature": 0.0,
+          "tool_choice": "auto",
+          "tools": [
+            {
+              "function": {
+                "description": "Render an image with explicit options.",
+                "name": "render_image",
+                "parameters": {
+                  "properties": {
+                    "options": {
+                      "properties": {
+                        "height": {
+                          "type": "integer"
+                        },
+                        "transparent": {
+                          "type": "boolean"
+                        },
+                        "width": {
+                          "type": "integer"
+                        }
+                      },
+                      "required": [
+                        "width",
+                        "height",
+                        "transparent"
+                      ],
+                      "type": "object"
+                    },
+                    "prompt": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "prompt",
+                    "options"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-length": "1051",
+          "content-type": "application/json",
+          "date": "Mon, 20 Jul 2026 17:58:20 GMT"
+        },
+        "body_raw": "{\"id\":\"chatcmpl-596\",\"object\":\"chat.completion\",\"created\":1784570300,\"model\":\"qwen3:0.6b\",\"system_fingerprint\":\"fp_ollama\",\"choices\":[{\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"\",\"reasoning\":\"Okay, the user wants to render a red circle with specific dimensions and transparency. Let me check the tools provided. There's a function called render_image that takes width, height, transparent, and prompt. The required parameters are width, height, and transparent. The user specified width 640 and height 480, which are integers. Transparency is enabled, so set transparent to true. The prompt is 'red circle'. I need to make sure all required fields are included. No optional parameters here, so the JSON should have those. Let me structure the tool call accordingly.\\n\",\"tool_calls\":[{\"id\":\"call_r0kkqb3i\",\"index\":0,\"type\":\"function\",\"function\":{\"name\":\"render_image\",\"arguments\":\"{\\\"width\\\":640,\\\"height\\\":480,\\\"transparent\\\":true}\"}}]},\"finish_reason\":\"tool_calls\"}],\"usage\":{\"prompt_tokens\":189,\"completion_tokens\":158,\"total_tokens\":347}}\n"
+      },
+      "retried": false
+    }
+  ]
+}

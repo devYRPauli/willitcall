@@ -1,0 +1,66 @@
+{
+  "schema_version": 1,
+  "run_id": "20260720T181212Z-f860526f",
+  "scenario_id": "negative-invalid-schema",
+  "turns": [
+    {
+      "index": 0,
+      "request": {
+        "method": "POST",
+        "url": "http://localhost:11434/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "Set the temperature unit to kelvin. If the schema cannot express it, explain that in plain text without calling a tool.",
+              "role": "user"
+            }
+          ],
+          "model": "qwen2.5:7b-instruct",
+          "seed": 42,
+          "stream": false,
+          "temperature": 0.0,
+          "tool_choice": "auto",
+          "tools": [
+            {
+              "function": {
+                "description": "Set one supported temperature unit.",
+                "name": "set_temperature_unit",
+                "parameters": {
+                  "properties": {
+                    "unit": {
+                      "enum": [
+                        "celsius",
+                        "fahrenheit"
+                      ],
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "unit"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-length": "653",
+          "content-type": "application/json",
+          "date": "Mon, 20 Jul 2026 18:12:27 GMT"
+        },
+        "body_raw": "{\"id\":\"chatcmpl-154\",\"object\":\"chat.completion\",\"created\":1784571147,\"model\":\"qwen2.5:7b-instruct\",\"system_fingerprint\":\"fp_ollama\",\"choices\":[{\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"The provided schema only supports setting the temperature unit to either Celsius or Fahrenheit. Since Kelvin is not one of the options, we cannot set the temperature unit to Kelvin using this method.\\n\\nHowever, if you would like to set the temperature unit to Celsius or Fahrenheit, I can assist with that. Could you please specify which unit you'd prefer?\"},\"finish_reason\":\"stop\"}],\"usage\":{\"prompt_tokens\":179,\"completion_tokens\":69,\"total_tokens\":248}}\n"
+      },
+      "retried": false
+    }
+  ]
+}

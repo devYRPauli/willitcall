@@ -1,0 +1,180 @@
+{
+  "schema_version": 1,
+  "run_id": "20260720T181628Z-e5f2111e",
+  "scenario_id": "multi-turn-route",
+  "turns": [
+    {
+      "index": 0,
+      "request": {
+        "method": "POST",
+        "url": "http://localhost:11434/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "Find a route to Fenway Park.",
+              "role": "user"
+            }
+          ],
+          "model": "qwen3:14b",
+          "seed": 42,
+          "stream": false,
+          "temperature": 0.0,
+          "tool_choice": "auto",
+          "tools": [
+            {
+              "function": {
+                "description": "Resolve a place to coordinates.",
+                "name": "geocode",
+                "parameters": {
+                  "properties": {
+                    "place": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "place"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            },
+            {
+              "function": {
+                "description": "Get a route to coordinates.",
+                "name": "get_route",
+                "parameters": {
+                  "properties": {
+                    "latitude": {
+                      "type": "number"
+                    },
+                    "longitude": {
+                      "type": "number"
+                    }
+                  },
+                  "required": [
+                    "latitude",
+                    "longitude"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-length": "1195",
+          "content-type": "application/json",
+          "date": "Mon, 20 Jul 2026 18:17:37 GMT"
+        },
+        "body_raw": "{\"id\":\"chatcmpl-581\",\"object\":\"chat.completion\",\"created\":1784571457,\"model\":\"qwen3:14b\",\"system_fingerprint\":\"fp_ollama\",\"choices\":[{\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"\",\"reasoning\":\"Okay, the user wants a route to Fenway Park. First, I need to figure out the coordinates of Fenway Park. Since the user mentioned the name of the place, I should use the geocode function to resolve \\\"Fenway Park\\\" into latitude and longitude. Once I have the coordinates, I can then use the get_route function to get the route details. Let me check the available functions again. The geocode function takes a place as a string, so I'll call that first with \\\"Fenway Park\\\". After getting the coordinates from geocode, I'll pass those latitude and longitude values to get_route. I need to make sure I handle the function calls in order because get_route requires the coordinates which geocode will provide. Alright, let's start with the first step.\\n\",\"tool_calls\":[{\"id\":\"call_rcfj4nb0\",\"index\":0,\"type\":\"function\",\"function\":{\"name\":\"geocode\",\"arguments\":\"{\\\"place\\\":\\\"Fenway Park\\\"}\"}}]},\"finish_reason\":\"tool_calls\"}],\"usage\":{\"prompt_tokens\":183,\"completion_tokens\":189,\"total_tokens\":372}}\n"
+      },
+      "retried": false
+    },
+    {
+      "index": 1,
+      "request": {
+        "method": "POST",
+        "url": "http://localhost:11434/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "Find a route to Fenway Park.",
+              "role": "user"
+            },
+            {
+              "content": "",
+              "role": "assistant",
+              "tool_calls": [
+                {
+                  "function": {
+                    "arguments": "{\"place\":\"Fenway Park\"}",
+                    "name": "geocode"
+                  },
+                  "id": "call_rcfj4nb0",
+                  "type": "function"
+                }
+              ]
+            },
+            {
+              "content": "{\"latitude\":42.3467,\"longitude\":-71.0972}",
+              "role": "tool",
+              "tool_call_id": "call_rcfj4nb0"
+            }
+          ],
+          "model": "qwen3:14b",
+          "seed": 42,
+          "stream": false,
+          "temperature": 0.0,
+          "tool_choice": "auto",
+          "tools": [
+            {
+              "function": {
+                "description": "Resolve a place to coordinates.",
+                "name": "geocode",
+                "parameters": {
+                  "properties": {
+                    "place": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "place"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            },
+            {
+              "function": {
+                "description": "Get a route to coordinates.",
+                "name": "get_route",
+                "parameters": {
+                  "properties": {
+                    "latitude": {
+                      "type": "number"
+                    },
+                    "longitude": {
+                      "type": "number"
+                    }
+                  },
+                  "required": [
+                    "latitude",
+                    "longitude"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-type": "application/json",
+          "date": "Mon, 20 Jul 2026 18:17:53 GMT",
+          "transfer-encoding": "chunked"
+        },
+        "body_raw": "{\"id\":\"chatcmpl-607\",\"object\":\"chat.completion\",\"created\":1784571473,\"model\":\"qwen3:14b\",\"system_fingerprint\":\"fp_ollama\",\"choices\":[{\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"\",\"reasoning\":\"Okay, the user asked for a route to Fenway Park. First, I needed to figure out the coordinates of Fenway Park. I used the geocode function with the place name \\\"Fenway Park\\\" and got back the latitude and longitude. Now that I have the coordinates, the next step is to get the route. But wait, the get_route function requires the user's current location, right? The function parameters are latitude and longitude, which are the destination coordinates. Oh, wait, maybe the function is designed to return a route from the user's current location to the provided coordinates. But the user hasn't provided their current location. Hmm, maybe the function assumes that the user's current location is known, or maybe there's a default. Wait, looking back at the function definitions, the get_route function's parameters are latitude and longitude, which are the destination. But how does the system know the starting point? Maybe there's an assumption that the user's current location is used as the starting point. But since the user hasn't provided that, maybe I need to ask for it. Wait, but the tools provided don't include a function to get the user's current location. So perhaps the get_route function is supposed to be called with the destination coordinates, and the system handles the starting point internally. Maybe the function is designed to return a route from a default starting point, but that doesn't make sense. Alternatively, maybe the user is expected to provide their current location, but in this case, they didn't. Wait, the original user query was \\\"Find a route to Fenway Park.\\\" They didn't mention their current location. So perhaps the assistant needs to ask for the user's current location to provide a route. But the available functions don't include a way to get the user's location. Hmm, this is a problem. Wait, looking back at the tools, the get_route function's parameters are latitude and longitude, which are the destination. But the function's description says \\\"Get a route to coordinates.\\\" So maybe the function is supposed to return a route from the user's current location to the given coordinates. But without knowing the user's current location, how can the function proceed? Maybe the function is designed to use the user's current location as the starting point, but the assistant doesn't have access to that information. In this case, the assistant might need to inform the user that their current location is required to get a route. However, the user hasn't provided that. Alternatively, maybe the function is designed to return a route from a predefined starting point, but that's not indicated. Wait, perhaps the function is supposed to be called with the destination coordinates, and the system handles the starting point. But without that information, the function can't generate a route. This seems like a missing piece. However, given the tools provided, the assistant has to work with what's available. The user's query is to find a route to Fenway Park. The assistant has the coordinates of Fenway Park. The next step is to call get_route with those coordinates. Even though the starting point isn't provided, maybe the function is designed to use the user's current location, which the system might have access to. Alternatively, maybe the function is supposed to return a route from a default location, but that's unclear. Given the tools, the assistant should proceed by calling get_route with the obtained coordinates. So, the assistant will call get_route with the latitude 42.3467 and longitude -71.0972.\\n\",\"tool_calls\":[{\"id\":\"call_lw970kiz\",\"index\":0,\"type\":\"function\",\"function\":{\"name\":\"get_route\",\"arguments\":\"{\\\"latitude\\\":42.3467,\\\"longitude\\\":-71.0972}\"}}]},\"finish_reason\":\"tool_calls\"}],\"usage\":{\"prompt_tokens\":238,\"completion_tokens\":765,\"total_tokens\":1003}}\n"
+      },
+      "retried": false
+    }
+  ]
+}

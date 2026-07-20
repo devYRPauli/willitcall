@@ -1,0 +1,68 @@
+{
+  "schema_version": 1,
+  "run_id": "20260720T182604Z-d59df055",
+  "scenario_id": "single-boolean-flag",
+  "turns": [
+    {
+      "index": 0,
+      "request": {
+        "method": "POST",
+        "url": "http://127.0.0.1:8080/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "Disable the feature named audit-log.",
+              "role": "user"
+            }
+          ],
+          "model": "Qwen/Qwen2.5-7B-Instruct-GGUF:Q8_0",
+          "seed": 42,
+          "stream": false,
+          "temperature": 0.0,
+          "tool_choice": "auto",
+          "tools": [
+            {
+              "function": {
+                "description": "Enable or disable a feature.",
+                "name": "set_feature",
+                "parameters": {
+                  "properties": {
+                    "enabled": {
+                      "type": "boolean"
+                    },
+                    "feature": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "feature",
+                    "enabled"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "access-control-allow-origin": "",
+          "content-length": "832",
+          "content-type": "application/json; charset=utf-8",
+          "keep-alive": "timeout=5, max=100",
+          "server": "llama.cpp"
+        },
+        "body_raw": "{\"choices\":[{\"finish_reason\":\"tool_calls\",\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"\",\"tool_calls\":[{\"type\":\"function\",\"function\":{\"name\":\"set_feature\",\"arguments\":\"{\\\"enabled\\\": false, \\\"feature\\\": \\\"audit-log\\\"}\"},\"id\":\"mhuQ6PtuZoiMgy6MHf0bNT3bz6rrySKz\"}]}}],\"created\":1784571993,\"model\":\"Qwen/Qwen2.5-7B-Instruct-GGUF:Q8_0\",\"system_fingerprint\":\"b10050-b15ca938a\",\"object\":\"chat.completion\",\"usage\":{\"completion_tokens\":26,\"prompt_tokens\":182,\"total_tokens\":208,\"prompt_tokens_details\":{\"cached_tokens\":68}},\"id\":\"chatcmpl-yIoe7aMnJ7E7umFeIzZPmZOAOmd04Pvs\",\"timings\":{\"cache_n\":68,\"prompt_n\":114,\"prompt_ms\":138.41,\"prompt_per_token_ms\":1.2141228070175438,\"prompt_per_second\":823.6399104110975,\"predicted_n\":26,\"predicted_ms\":424.962,\"predicted_per_token_ms\":16.344692307692306,\"predicted_per_second\":61.18194097354587}}"
+      },
+      "retried": false
+    }
+  ]
+}

@@ -1,0 +1,80 @@
+{
+  "schema_version": 1,
+  "run_id": "20260720T181255Z-2c14754b",
+  "scenario_id": "parallel-different-tools",
+  "turns": [
+    {
+      "index": 0,
+      "request": {
+        "method": "POST",
+        "url": "http://localhost:11434/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "Get the weather in Oslo and the local time in Cairo.",
+              "role": "user"
+            }
+          ],
+          "model": "llama3-groq-tool-use:8b",
+          "seed": 42,
+          "stream": false,
+          "temperature": 0.0,
+          "tool_choice": "required",
+          "tools": [
+            {
+              "function": {
+                "description": "Get weather for a city.",
+                "name": "get_weather",
+                "parameters": {
+                  "properties": {
+                    "city": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "city"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            },
+            {
+              "function": {
+                "description": "Get local time for a city.",
+                "name": "get_time",
+                "parameters": {
+                  "properties": {
+                    "city": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "city"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-length": "557",
+          "content-type": "application/json",
+          "date": "Mon, 20 Jul 2026 18:13:09 GMT"
+        },
+        "body_raw": "{\"id\":\"chatcmpl-205\",\"object\":\"chat.completion\",\"created\":1784571189,\"model\":\"llama3-groq-tool-use:8b\",\"system_fingerprint\":\"fp_ollama\",\"choices\":[{\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"\",\"tool_calls\":[{\"id\":\"call_86p6kyz0\",\"index\":0,\"type\":\"function\",\"function\":{\"name\":\"get_weather\",\"arguments\":\"{\\\"city\\\":\\\"Oslo\\\"}\"}},{\"id\":\"call_imjda0ee\",\"index\":1,\"type\":\"function\",\"function\":{\"name\":\"get_time\",\"arguments\":\"{\\\"city\\\":\\\"Cairo\\\"}\"}}]},\"finish_reason\":\"tool_calls\"}],\"usage\":{\"prompt_tokens\":173,\"completion_tokens\":54,\"total_tokens\":227}}\n"
+      },
+      "retried": false
+    }
+  ]
+}

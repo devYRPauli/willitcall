@@ -1,0 +1,65 @@
+{
+  "schema_version": 1,
+  "run_id": "20260720T180246Z-53903d2d",
+  "scenario_id": "single-optional-omitted",
+  "turns": [
+    {
+      "index": 0,
+      "request": {
+        "method": "POST",
+        "url": "http://localhost:11434/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "Search the catalog for brass compass. Do not set a result limit.",
+              "role": "user"
+            }
+          ],
+          "model": "qwen3:8b",
+          "seed": 42,
+          "stream": false,
+          "temperature": 0.0,
+          "tool_choice": "auto",
+          "tools": [
+            {
+              "function": {
+                "description": "Search a catalog with an optional result limit.",
+                "name": "search_catalog",
+                "parameters": {
+                  "properties": {
+                    "limit": {
+                      "type": "integer"
+                    },
+                    "query": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "query"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-length": "889",
+          "content-type": "application/json",
+          "date": "Mon, 20 Jul 2026 18:04:43 GMT"
+        },
+        "body_raw": "{\"id\":\"chatcmpl-755\",\"object\":\"chat.completion\",\"created\":1784570683,\"model\":\"qwen3:8b\",\"system_fingerprint\":\"fp_ollama\",\"choices\":[{\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"\",\"reasoning\":\"Okay, the user wants to search the catalog for a brass compass and hasn't set a result limit. Let me check the tools provided. The available function is search_catalog, which takes a query and an optional limit. Since the user said not to set a limit, I should omit the limit parameter. So I'll call search_catalog with the query \\\"brass compass\\\" and no limit. That should return all matching results without restricting the number.\\n\",\"tool_calls\":[{\"id\":\"call_7lddt8rv\",\"index\":0,\"type\":\"function\",\"function\":{\"name\":\"search_catalog\",\"arguments\":\"{\\\"query\\\":\\\"brass compass\\\"}\"}}]},\"finish_reason\":\"tool_calls\"}],\"usage\":{\"prompt_tokens\":153,\"completion_tokens\":116,\"total_tokens\":269}}\n"
+      },
+      "retried": false
+    }
+  ]
+}

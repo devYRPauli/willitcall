@@ -1,0 +1,54 @@
+{
+  "schema_version": 1,
+  "run_id": "20260720T181455Z-e6e6d1e9",
+  "scenario_id": "tool-choice-required-empty",
+  "turns": [
+    {
+      "index": 0,
+      "request": {
+        "method": "POST",
+        "url": "http://localhost:11434/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "Get the current sequence number.",
+              "role": "user"
+            }
+          ],
+          "model": "mistral:7b",
+          "seed": 42,
+          "stream": false,
+          "temperature": 0.0,
+          "tool_choice": "required",
+          "tools": [
+            {
+              "function": {
+                "description": "Get the current sequence number.",
+                "name": "current_sequence",
+                "parameters": {
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-length": "968",
+          "content-type": "application/json",
+          "date": "Mon, 20 Jul 2026 18:15:53 GMT"
+        },
+        "body_raw": "{\"id\":\"chatcmpl-228\",\"object\":\"chat.completion\",\"created\":1784571353,\"model\":\"mistral:7b\",\"system_fingerprint\":\"fp_ollama\",\"choices\":[{\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\" To get the current sequence number, you can use the following code:\\n\\n```javascript\\nfunction current_sequence() {\\n    // This is a placeholder function and does not have access to any global variables or databases.\\n    // In a real-world application, you would likely fetch the current sequence number from a database or another data source.\\n    return 0;\\n}\\n```\\n\\nIn this example, I've created a placeholder function `current_sequence()`. To get the actual sequence number in a real-world application, you would need to fetch it from a database or another data source. The returned value will be 0 until you replace it with the appropriate code for your specific use case.\"},\"finish_reason\":\"stop\"}],\"usage\":{\"prompt_tokens\":49,\"completion_tokens\":152,\"total_tokens\":201}}\n"
+      },
+      "retried": false
+    }
+  ]
+}

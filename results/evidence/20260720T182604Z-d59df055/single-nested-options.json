@@ -1,0 +1,84 @@
+{
+  "schema_version": 1,
+  "run_id": "20260720T182604Z-d59df055",
+  "scenario_id": "single-nested-options",
+  "turns": [
+    {
+      "index": 0,
+      "request": {
+        "method": "POST",
+        "url": "http://127.0.0.1:8080/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "Render 'red circle' at width 640 and height 480 with transparency enabled.",
+              "role": "user"
+            }
+          ],
+          "model": "Qwen/Qwen2.5-7B-Instruct-GGUF:Q8_0",
+          "seed": 42,
+          "stream": false,
+          "temperature": 0.0,
+          "tool_choice": "auto",
+          "tools": [
+            {
+              "function": {
+                "description": "Render an image with explicit options.",
+                "name": "render_image",
+                "parameters": {
+                  "properties": {
+                    "options": {
+                      "properties": {
+                        "height": {
+                          "type": "integer"
+                        },
+                        "transparent": {
+                          "type": "boolean"
+                        },
+                        "width": {
+                          "type": "integer"
+                        }
+                      },
+                      "required": [
+                        "width",
+                        "height",
+                        "transparent"
+                      ],
+                      "type": "object"
+                    },
+                    "prompt": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "prompt",
+                    "options"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "access-control-allow-origin": "",
+          "content-length": "874",
+          "content-type": "application/json; charset=utf-8",
+          "keep-alive": "timeout=5, max=100",
+          "server": "llama.cpp"
+        },
+        "body_raw": "{\"choices\":[{\"finish_reason\":\"tool_calls\",\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"\",\"tool_calls\":[{\"type\":\"function\",\"function\":{\"name\":\"render_image\",\"arguments\":\"{\\\"options\\\": {\\\"height\\\": 480, \\\"transparent\\\": true, \\\"width\\\": 640}, \\\"prompt\\\": \\\"red circle\\\"}\"},\"id\":\"hlKerXKAWZtHhrbgvd77oQK9NZfNkGW9\"}]}}],\"created\":1784571997,\"model\":\"Qwen/Qwen2.5-7B-Instruct-GGUF:Q8_0\",\"system_fingerprint\":\"b10050-b15ca938a\",\"object\":\"chat.completion\",\"usage\":{\"completion_tokens\":45,\"prompt_tokens\":240,\"total_tokens\":285,\"prompt_tokens_details\":{\"cached_tokens\":67}},\"id\":\"chatcmpl-mandlCv8bx5N1uhCjkzcbgRLxqcoGZzo\",\"timings\":{\"cache_n\":67,\"prompt_n\":173,\"prompt_ms\":200.359,\"prompt_per_token_ms\":1.1581445086705202,\"prompt_per_second\":863.4501070578312,\"predicted_n\":45,\"predicted_ms\":754.254,\"predicted_per_token_ms\":16.7612,\"predicted_per_second\":59.66159940815693}}"
+      },
+      "retried": false
+    }
+  ]
+}

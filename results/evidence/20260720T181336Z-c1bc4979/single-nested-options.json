@@ -1,0 +1,82 @@
+{
+  "schema_version": 1,
+  "run_id": "20260720T181336Z-c1bc4979",
+  "scenario_id": "single-nested-options",
+  "turns": [
+    {
+      "index": 0,
+      "request": {
+        "method": "POST",
+        "url": "http://localhost:11434/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "Render 'red circle' at width 640 and height 480 with transparency enabled.",
+              "role": "user"
+            }
+          ],
+          "model": "hermes3:8b",
+          "seed": 42,
+          "stream": false,
+          "temperature": 0.0,
+          "tool_choice": "auto",
+          "tools": [
+            {
+              "function": {
+                "description": "Render an image with explicit options.",
+                "name": "render_image",
+                "parameters": {
+                  "properties": {
+                    "options": {
+                      "properties": {
+                        "height": {
+                          "type": "integer"
+                        },
+                        "transparent": {
+                          "type": "boolean"
+                        },
+                        "width": {
+                          "type": "integer"
+                        }
+                      },
+                      "required": [
+                        "width",
+                        "height",
+                        "transparent"
+                      ],
+                      "type": "object"
+                    },
+                    "prompt": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "prompt",
+                    "options"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-length": "485",
+          "content-type": "application/json",
+          "date": "Mon, 20 Jul 2026 18:14:02 GMT"
+        },
+        "body_raw": "{\"id\":\"chatcmpl-14\",\"object\":\"chat.completion\",\"created\":1784571242,\"model\":\"hermes3:8b\",\"system_fingerprint\":\"fp_ollama\",\"choices\":[{\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"\",\"tool_calls\":[{\"id\":\"call_1o7tvqm1\",\"index\":0,\"type\":\"function\",\"function\":{\"name\":\"render_image\",\"arguments\":\"{\\\"width\\\":640,\\\"height\\\":480,\\\"transparent\\\":true,\\\"prompt\\\":\\\"red circle\\\"}\"}}]},\"finish_reason\":\"tool_calls\"}],\"usage\":{\"prompt_tokens\":277,\"completion_tokens\":38,\"total_tokens\":315}}\n"
+      },
+      "retried": false
+    }
+  ]
+}

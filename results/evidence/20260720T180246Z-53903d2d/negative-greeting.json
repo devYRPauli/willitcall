@@ -1,0 +1,62 @@
+{
+  "schema_version": 1,
+  "run_id": "20260720T180246Z-53903d2d",
+  "scenario_id": "negative-greeting",
+  "turns": [
+    {
+      "index": 0,
+      "request": {
+        "method": "POST",
+        "url": "http://localhost:11434/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "Say hello in one short sentence.",
+              "role": "user"
+            }
+          ],
+          "model": "qwen3:8b",
+          "seed": 42,
+          "stream": false,
+          "temperature": 0.0,
+          "tool_choice": "none",
+          "tools": [
+            {
+              "function": {
+                "description": "Get the current weather for a city.",
+                "name": "get_weather",
+                "parameters": {
+                  "properties": {
+                    "city": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "city"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-length": "771",
+          "content-type": "application/json",
+          "date": "Mon, 20 Jul 2026 18:03:52 GMT"
+        },
+        "body_raw": "{\"id\":\"chatcmpl-559\",\"object\":\"chat.completion\",\"created\":1784570632,\"model\":\"qwen3:8b\",\"system_fingerprint\":\"fp_ollama\",\"choices\":[{\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"Hello! How can I assist you today?\",\"reasoning\":\"Okay, the user wants me to say hello in one short sentence. Let me check the tools provided. The only tool available is get_weather, which requires a city parameter. Since the user's request is just a greeting and doesn't involve weather or any other function, I don't need to use the provided tool. I should respond with a simple hello message. No function call is necessary here. I'll make sure the response is friendly and concise.\\n\"},\"finish_reason\":\"stop\"}],\"usage\":{\"prompt_tokens\":139,\"completion_tokens\":105,\"total_tokens\":244}}\n"
+      },
+      "retried": false
+    }
+  ]
+}

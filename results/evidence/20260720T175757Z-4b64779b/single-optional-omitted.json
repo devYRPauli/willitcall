@@ -1,0 +1,65 @@
+{
+  "schema_version": 1,
+  "run_id": "20260720T175757Z-4b64779b",
+  "scenario_id": "single-optional-omitted",
+  "turns": [
+    {
+      "index": 0,
+      "request": {
+        "method": "POST",
+        "url": "http://localhost:11434/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "Search the catalog for brass compass. Do not set a result limit.",
+              "role": "user"
+            }
+          ],
+          "model": "qwen3:0.6b",
+          "seed": 42,
+          "stream": false,
+          "temperature": 0.0,
+          "tool_choice": "auto",
+          "tools": [
+            {
+              "function": {
+                "description": "Search a catalog with an optional result limit.",
+                "name": "search_catalog",
+                "parameters": {
+                  "properties": {
+                    "limit": {
+                      "type": "integer"
+                    },
+                    "query": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "query"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-length": "850",
+          "content-type": "application/json",
+          "date": "Mon, 20 Jul 2026 17:58:21 GMT"
+        },
+        "body_raw": "{\"id\":\"chatcmpl-633\",\"object\":\"chat.completion\",\"created\":1784570301,\"model\":\"qwen3:0.6b\",\"system_fingerprint\":\"fp_ollama\",\"choices\":[{\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"\",\"reasoning\":\"Okay, the user wants to search the catalog for a brass compass and shouldn't set a result limit. Let me check the available tools. The provided function is search_catalog with optional limit. Since they specified not to set a limit, I should leave that out. The query is \\\"brass compass\\\". So the tool call would be to search_catalog with the query and no limit. Let me format that correctly.\\n\",\"tool_calls\":[{\"id\":\"call_aixtrk6r\",\"index\":0,\"type\":\"function\",\"function\":{\"name\":\"search_catalog\",\"arguments\":\"{\\\"query\\\":\\\"brass compass\\\"}\"}}]},\"finish_reason\":\"tool_calls\"}],\"usage\":{\"prompt_tokens\":153,\"completion_tokens\":109,\"total_tokens\":262}}\n"
+      },
+      "retried": false
+    }
+  ]
+}

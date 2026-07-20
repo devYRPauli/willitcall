@@ -1,0 +1,72 @@
+{
+  "schema_version": 1,
+  "run_id": "20260720T181255Z-2c14754b",
+  "scenario_id": "streaming-enum-arguments",
+  "turns": [
+    {
+      "index": 0,
+      "request": {
+        "method": "POST",
+        "url": "http://localhost:11434/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "Set the log level for payments to warn.",
+              "role": "user"
+            }
+          ],
+          "model": "llama3-groq-tool-use:8b",
+          "seed": 42,
+          "stream": true,
+          "temperature": 0.0,
+          "tool_choice": "auto",
+          "tools": [
+            {
+              "function": {
+                "description": "Set a supported log level.",
+                "name": "set_log_level",
+                "parameters": {
+                  "properties": {
+                    "level": {
+                      "enum": [
+                        "debug",
+                        "info",
+                        "warn",
+                        "error"
+                      ],
+                      "type": "string"
+                    },
+                    "service": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "service",
+                    "level"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-type": "text/event-stream",
+          "date": "Mon, 20 Jul 2026 18:13:25 GMT",
+          "transfer-encoding": "chunked"
+        },
+        "body_raw": "data: {\"id\":\"chatcmpl-725\",\"object\":\"chat.completion.chunk\",\"created\":1784571205,\"model\":\"llama3-groq-tool-use:8b\",\"system_fingerprint\":\"fp_ollama\",\"choices\":[{\"index\":0,\"delta\":{\"role\":\"assistant\",\"content\":\"\",\"tool_calls\":[{\"id\":\"call_chvq7r48\",\"index\":0,\"type\":\"function\",\"function\":{\"name\":\"set_log_level\",\"arguments\":\"{\\\"level\\\":\\\"warn\\\",\\\"service\\\":\\\"payments\\\"}\"}}]},\"finish_reason\":null}]}\n\ndata: {\"id\":\"chatcmpl-725\",\"object\":\"chat.completion.chunk\",\"created\":1784571205,\"model\":\"llama3-groq-tool-use:8b\",\"system_fingerprint\":\"fp_ollama\",\"choices\":[{\"index\":0,\"delta\":{\"role\":\"assistant\",\"content\":\"\"},\"finish_reason\":\"tool_calls\"}]}\n\ndata: [DONE]\n\n"
+      },
+      "retried": false
+    }
+  ]
+}

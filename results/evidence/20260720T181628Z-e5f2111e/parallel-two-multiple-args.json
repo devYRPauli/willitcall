@@ -1,0 +1,92 @@
+{
+  "schema_version": 1,
+  "run_id": "20260720T181628Z-e5f2111e",
+  "scenario_id": "parallel-two-multiple-args",
+  "turns": [
+    {
+      "index": 0,
+      "request": {
+        "method": "POST",
+        "url": "http://localhost:11434/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "Book room Cedar on 2026-09-02 at hour 14 and reserve a car in Boise on 2026-09-03.",
+              "role": "user"
+            }
+          ],
+          "model": "qwen3:14b",
+          "seed": 42,
+          "stream": false,
+          "temperature": 0.0,
+          "tool_choice": "required",
+          "tools": [
+            {
+              "function": {
+                "description": "Book a room for an exact date and hour.",
+                "name": "book_room",
+                "parameters": {
+                  "properties": {
+                    "date": {
+                      "type": "string"
+                    },
+                    "hour": {
+                      "type": "integer"
+                    },
+                    "room": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "room",
+                    "date",
+                    "hour"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            },
+            {
+              "function": {
+                "description": "Reserve a car in a city for an exact date.",
+                "name": "reserve_car",
+                "parameters": {
+                  "properties": {
+                    "city": {
+                      "type": "string"
+                    },
+                    "date": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "city",
+                    "date"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-length": "1911",
+          "content-type": "application/json",
+          "date": "Mon, 20 Jul 2026 18:19:07 GMT"
+        },
+        "body_raw": "{\"id\":\"chatcmpl-904\",\"object\":\"chat.completion\",\"created\":1784571547,\"model\":\"qwen3:14b\",\"system_fingerprint\":\"fp_ollama\",\"choices\":[{\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"\",\"reasoning\":\"Okay, let's see. The user wants to book a room called Cedar on 2026-09-02 at 14:00 and also reserve a car in Boise on 2026-09-03. \\n\\nFirst, I need to check the available functions. There's book_room which requires room, date, and hour. The parameters are date as a string and hour as an integer. The other function is reserve_car, which needs city and date as a string.\\n\\nSo for the first part, booking the room: the room name is Cedar, date is 2026-09-02, and hour is 14. That fits the book_room function. The date format is correct, and the hour is an integer.\\n\\nThen, reserving a car in Boise on 2026-09-03. The city is Boise, and the date is 2026-09-03. That matches the reserve_car function's parameters. \\n\\nI need to make two separate function calls here. The user mentioned both actions, so both should be handled. Let me structure each tool_call properly. For book_room, the arguments are room: \\\"Cedar\\\", date: \\\"2026-09-02\\\", hour: 14. For reserve_car, city: \\\"Boise\\\", date: \\\"2026-09-03\\\". \\n\\nI should ensure that the JSON syntax is correct, with quotes around strings and no quotes around the integer hour. Also, check that the function names are spelled correctly as per the tool definitions. No other parameters are needed, so the tool calls should be straightforward.\\n\",\"tool_calls\":[{\"id\":\"call_6eu1xvd3\",\"index\":0,\"type\":\"function\",\"function\":{\"name\":\"book_room\",\"arguments\":\"{\\\"room\\\":\\\"Cedar\\\",\\\"date\\\":\\\"2026-09-02\\\",\\\"hour\\\":14}\"}},{\"id\":\"call_x4akpg9h\",\"index\":1,\"type\":\"function\",\"function\":{\"name\":\"reserve_car\",\"arguments\":\"{\\\"city\\\":\\\"Boise\\\",\\\"date\\\":\\\"2026-09-03\\\"}\"}}]},\"finish_reason\":\"tool_calls\"}],\"usage\":{\"prompt_tokens\":237,\"completion_tokens\":439,\"total_tokens\":676}}\n"
+      },
+      "retried": false
+    }
+  ]
+}

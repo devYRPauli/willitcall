@@ -1,0 +1,337 @@
+{
+  "schema_version": 1,
+  "run_id": "20260720T175837Z-50770d44",
+  "scenario_id": "multi-turn-two-hop-chain",
+  "turns": [
+    {
+      "index": 0,
+      "request": {
+        "method": "POST",
+        "url": "http://localhost:11434/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "Archive the account owned by sam@example.test. Resolve each required id first.",
+              "role": "user"
+            }
+          ],
+          "model": "qwen3:1.7b",
+          "seed": 42,
+          "stream": false,
+          "temperature": 0.0,
+          "tool_choice": "auto",
+          "tools": [
+            {
+              "function": {
+                "description": "Find a user id by exact email.",
+                "name": "find_user",
+                "parameters": {
+                  "properties": {
+                    "email": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "email"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            },
+            {
+              "function": {
+                "description": "Find an account id for a user id.",
+                "name": "find_account",
+                "parameters": {
+                  "properties": {
+                    "user_id": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "user_id"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            },
+            {
+              "function": {
+                "description": "Archive an account by exact id.",
+                "name": "archive_account",
+                "parameters": {
+                  "properties": {
+                    "account_id": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "account_id"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-length": "1353",
+          "content-type": "application/json",
+          "date": "Mon, 20 Jul 2026 17:58:59 GMT"
+        },
+        "body_raw": "{\"id\":\"chatcmpl-350\",\"object\":\"chat.completion\",\"created\":1784570339,\"model\":\"qwen3:1.7b\",\"system_fingerprint\":\"fp_ollama\",\"choices\":[{\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"\",\"reasoning\":\"Okay, let's see. The user wants to archive the account owned by sam@example.test. I need to resolve each required ID first. So first, I need to find the user ID associated with sam@example.test. Then, use that user ID to find the account ID. Once I have both, I can archive the account.\\n\\nLooking at the tools provided, there's a function called find_user that takes an email and returns a user ID. Then there's find_account which takes a user ID and returns an account ID. Finally, archive_account needs the account ID. \\n\\nSo the steps are: use find_user with sam@example.test to get the user ID. Then use that user ID with find_account to get the account ID. Once I have the account ID, call archive_account with it. \\n\\nI need to make sure each step is done in order. The user didn't mention any errors, so I assume the emails exist. Let me start by calling find_user with the email provided.\\n\",\"tool_calls\":[{\"id\":\"call_2dvxa32z\",\"index\":0,\"type\":\"function\",\"function\":{\"name\":\"find_user\",\"arguments\":\"{\\\"email\\\":\\\"sam@example.test\\\"}\"}}]},\"finish_reason\":\"tool_calls\"}],\"usage\":{\"prompt_tokens\":231,\"completion_tokens\":227,\"total_tokens\":458}}\n"
+      },
+      "retried": false
+    },
+    {
+      "index": 1,
+      "request": {
+        "method": "POST",
+        "url": "http://localhost:11434/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "Archive the account owned by sam@example.test. Resolve each required id first.",
+              "role": "user"
+            },
+            {
+              "content": "",
+              "role": "assistant",
+              "tool_calls": [
+                {
+                  "function": {
+                    "arguments": "{\"email\":\"sam@example.test\"}",
+                    "name": "find_user"
+                  },
+                  "id": "call_2dvxa32z",
+                  "type": "function"
+                }
+              ]
+            },
+            {
+              "content": "{\"user_id\":\"user-41\"}",
+              "role": "tool",
+              "tool_call_id": "call_2dvxa32z"
+            }
+          ],
+          "model": "qwen3:1.7b",
+          "seed": 42,
+          "stream": false,
+          "temperature": 0.0,
+          "tool_choice": "auto",
+          "tools": [
+            {
+              "function": {
+                "description": "Find a user id by exact email.",
+                "name": "find_user",
+                "parameters": {
+                  "properties": {
+                    "email": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "email"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            },
+            {
+              "function": {
+                "description": "Find an account id for a user id.",
+                "name": "find_account",
+                "parameters": {
+                  "properties": {
+                    "user_id": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "user_id"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            },
+            {
+              "function": {
+                "description": "Archive an account by exact id.",
+                "name": "archive_account",
+                "parameters": {
+                  "properties": {
+                    "account_id": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "account_id"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-length": "1292",
+          "content-type": "application/json",
+          "date": "Mon, 20 Jul 2026 17:59:00 GMT"
+        },
+        "body_raw": "{\"id\":\"chatcmpl-687\",\"object\":\"chat.completion\",\"created\":1784570340,\"model\":\"qwen3:1.7b\",\"system_fingerprint\":\"fp_ollama\",\"choices\":[{\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"\",\"reasoning\":\"Okay, let's see. The user wants to archive the account owned by sam@example.test. First, I need to resolve the user ID by finding the email. I called the find_user function with sam@example.test, and got back user-41. Now next step is to find the account ID for that user. So I should use the find_account function with the user_id \\\"user-41\\\". Once I have the account ID, I can then archive it using the archive_account function. But wait, the tools provided only have find_user, find_account, and archive_account. So the steps are: find user, then find account, then archive. The user's request says to resolve each required id first. So first find user, then account, then archive. So the next tool call should be find_account with the user_id from the previous step. Then after getting the account ID, call archive_account with that ID.\\n\",\"tool_calls\":[{\"id\":\"call_l5qdvn1j\",\"index\":0,\"type\":\"function\",\"function\":{\"name\":\"find_account\",\"arguments\":\"{\\\"user_id\\\":\\\"user-41\\\"}\"}}]},\"finish_reason\":\"tool_calls\"}],\"usage\":{\"prompt_tokens\":273,\"completion_tokens\":217,\"total_tokens\":490}}\n"
+      },
+      "retried": false
+    },
+    {
+      "index": 2,
+      "request": {
+        "method": "POST",
+        "url": "http://localhost:11434/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "Archive the account owned by sam@example.test. Resolve each required id first.",
+              "role": "user"
+            },
+            {
+              "content": "",
+              "role": "assistant",
+              "tool_calls": [
+                {
+                  "function": {
+                    "arguments": "{\"email\":\"sam@example.test\"}",
+                    "name": "find_user"
+                  },
+                  "id": "call_2dvxa32z",
+                  "type": "function"
+                }
+              ]
+            },
+            {
+              "content": "{\"user_id\":\"user-41\"}",
+              "role": "tool",
+              "tool_call_id": "call_2dvxa32z"
+            },
+            {
+              "content": "",
+              "role": "assistant",
+              "tool_calls": [
+                {
+                  "function": {
+                    "arguments": "{\"user_id\":\"user-41\"}",
+                    "name": "find_account"
+                  },
+                  "id": "call_l5qdvn1j",
+                  "type": "function"
+                }
+              ]
+            },
+            {
+              "content": "{\"account_id\":\"account-73\"}",
+              "role": "tool",
+              "tool_call_id": "call_l5qdvn1j"
+            }
+          ],
+          "model": "qwen3:1.7b",
+          "seed": 42,
+          "stream": false,
+          "temperature": 0.0,
+          "tool_choice": "auto",
+          "tools": [
+            {
+              "function": {
+                "description": "Find a user id by exact email.",
+                "name": "find_user",
+                "parameters": {
+                  "properties": {
+                    "email": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "email"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            },
+            {
+              "function": {
+                "description": "Find an account id for a user id.",
+                "name": "find_account",
+                "parameters": {
+                  "properties": {
+                    "user_id": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "user_id"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            },
+            {
+              "function": {
+                "description": "Archive an account by exact id.",
+                "name": "archive_account",
+                "parameters": {
+                  "properties": {
+                    "account_id": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "account_id"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-length": "1035",
+          "content-type": "application/json",
+          "date": "Mon, 20 Jul 2026 17:59:01 GMT"
+        },
+        "body_raw": "{\"id\":\"chatcmpl-894\",\"object\":\"chat.completion\",\"created\":1784570341,\"model\":\"qwen3:1.7b\",\"system_fingerprint\":\"fp_ollama\",\"choices\":[{\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"\",\"reasoning\":\"Okay, let's see. The user wants to archive the account owned by sam@example.test. They mentioned resolving each required ID first. So first, I need to find the user ID based on their email. I called the find_user function with sam@example.test, and got back user-41. Then, I used find_account with that user ID to get account-73. Now, the next step is to archive that account. The function for archiving is archive_account, and I need to pass the account_id. So the final step is to call archive_account with account-73. I should make sure to format the tool call correctly.\\n\",\"tool_calls\":[{\"id\":\"call_wglxhhc5\",\"index\":0,\"type\":\"function\",\"function\":{\"name\":\"archive_account\",\"arguments\":\"{\\\"account_id\\\":\\\"account-73\\\"}\"}}]},\"finish_reason\":\"tool_calls\"}],\"usage\":{\"prompt_tokens\":317,\"completion_tokens\":160,\"total_tokens\":477}}\n"
+      },
+      "retried": false
+    }
+  ]
+}
