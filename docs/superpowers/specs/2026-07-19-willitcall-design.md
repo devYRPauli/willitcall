@@ -150,9 +150,9 @@ the combined matrix.
    arm) before recording a case-study conclusion. M2's single-sample
    "description change fixes it" conclusion was overturned by M3.
 
-## Proposed amendments (2026-07-20, post-M4, awaiting owner decision)
+## Amendments (2026-07-20, post-M4, decided by owner)
 
-5. Unparsed-tool-call failure class (PROPOSED, not implemented). M4 seeding
+5. Unparsed-tool-call failure class (APPROVED, to implement in M5). M4 seeding
    found a failure mode the current vocabulary cannot express. granite3.1-dense:8b
    emits `<tool_call>[{"arguments":{"city":"Boston"},"name":"get_weather"}]`
    and phi4-mini emits ``[`get_weather` {"city": "Boston"}]`` - both are
@@ -173,13 +173,31 @@ the combined matrix.
      evidence-backed, since a false positive credits a model with a call it
      never made; a per-server-preset list of known shapes is preferred over one
      loose regex.
-   - Open question for the owner: is `failure_class` a single value, or does a
-     scenario need to carry several (an unparsed call is also, in a sense, a
-     parse failure of the stack)? Deciding this before implementing avoids a
-     second schema change.
+   - DECIDED (owner, 2026-07-20): `failure_class` is a SINGLE value with a
+     documented precedence order (error > empty_response > unparsed_tool_call
+     > plain fail). Rationale: the class records the dominant mechanically
+     observed phenomenon of one response; genuinely simultaneous classes have
+     not been observed, the transcript retains the full truth regardless, and
+     a single value keeps schema, site rendering, and stats simple. Revisit
+     only if a concrete multi-class response is actually observed; extending
+     to an array later is an additive change.
    - Sample basis: 2 models x 2 servers, 50 scenarios each, single run per arm.
      Under amendment 4 this is below the bar for a case-study verdict; it needs
-     >= 5 runs per arm before any conclusion is published as such.
+     >= 5 runs per arm before any conclusion is published as such (M5 task).
+
+6. Measurement environment uniformity and disclosure (owner, 2026-07-20).
+   M4 published rows measured on two different hosts (wave 1: 16GB MacBook;
+   waves 2-3: macstudio M4 Max 64GB) without disclosure. For a project whose
+   product is trustworthy measurement, undisclosed environment differences
+   are unacceptable.
+   - Result files gain environment fields (host hardware class, server
+     name+version) - additive to schema v2.
+   - Wave-1 rows are RE-RUN on macstudio so every published row shares one
+     measurement host; the site discloses the environment per row (or one
+     global statement once uniform).
+   - Going forward: mixed-host result sets are fine for the community matrix
+     (the environment field makes it visible), but owner-seeded rows stay
+     single-host.
 
 ## Naming / availability (verified 2026-07-19)
 
