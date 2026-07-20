@@ -37,6 +37,7 @@ jobs:
       - name: Validate submitted result files
         run: |
           shopt -s nullglob
+          # Only top-level JSON files are published; results/archive is ignored.
           files=(results/*.json)
           if [ ${#files[@]} -eq 0 ]; then
             echo "no result files to validate"
@@ -44,7 +45,30 @@ jobs:
           fi
           python - "${files[@]}" <<'PY'
           import json, sys
+          from pathlib import Path
           from jsonschema import Draft202012Validator
+
+          # Pre-amendment-6 rows scheduled for re-measurement.
+          PRE_AMENDMENT_6_RESULTS = {
+              "llamacpp-granite3.1-dense-8b.json",
+              "llamacpp-phi4-mini.json",
+              "llamacpp-qwen2.5-1.5b-instruct-q4_k_m.json",
+              "llamacpp-watt-tool-8b-q4_k_m.json",
+              "ollama-gemma3-12b.json",
+              "ollama-gemma3-4b.json",
+              "ollama-granite3.1-dense-8b.json",
+              "ollama-hermes3-8b.json",
+              "ollama-llama3-groq-tool-use-8b.json",
+              "ollama-llama3.1-8b.json",
+              "ollama-mistral-7b.json",
+              "ollama-phi4-mini.json",
+              "ollama-qwen2.5-7b-instruct.json",
+              "ollama-qwen3-0.6b.json",
+              "ollama-qwen3-1.7b.json",
+              "ollama-qwen3-14b.json",
+              "ollama-qwen3-4b.json",
+              "ollama-qwen3-8b.json",
+          }
 
           validators = {}
           for version in (1, 2):
@@ -61,6 +85,11 @@ jobs:
                   failed = True
                   print(f"{path}: unknown schema_version {version}")
                   continue
+              if version == 2 and Path(path).name not in PRE_AMENDMENT_6_RESULTS:
+                  metadata = document.get("metadata")
+                  if not isinstance(metadata, dict) or "environment" not in metadata:
+                      failed = True
+                      print(f"{path}: metadata/environment: required for new schema v2 results")
               errors = sorted(validator.iter_errors(document), key=lambda e: e.path)
               if errors:
                   failed = True

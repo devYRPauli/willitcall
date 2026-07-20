@@ -70,6 +70,8 @@ struct RunArgs {
     json: bool,
     #[arg(long)]
     force: bool,
+    #[arg(long, value_parser = clap::builder::NonEmptyStringValueParser::new())]
+    host_hardware_class: Option<String>,
 }
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq, ValueEnum)]
@@ -412,7 +414,8 @@ async fn execute_with_known_servers(
                 )));
             }
             let config = RunConfig::new(endpoint, args.model, Duration::from_secs(args.timeout))
-                .with_server(args.server.config());
+                .with_server(args.server.config())
+                .with_host_hardware_class(args.host_hardware_class);
             preflight(&config).await.map_err(ExecuteError::Preflight)?;
             let mut result = run_scenarios(&config, &scenarios, &args.out)
                 .await
@@ -463,14 +466,45 @@ async fn execute_with_known_servers(
             }
         },
         Command::Validate(args) => {
-            let bytes = std::fs::read(&args.result_file).map_err(|error| {
-                ExecuteError::Usage(format!(
-                    "failed to read result {}: {error}",
-                    args.result_file.display()
-                ))
-            })?;
-            parse_and_validate_result(&bytes).map_err(ExecuteError::Usage)?;
-            println!("valid: {}", args.result_file.display());
+            let is_directory = args.result_file.is_dir();
+            let mut paths = if is_directory {
+                std::fs::read_dir(&args.result_file)
+                    .map_err(|error| {
+                        ExecuteError::Usage(format!(
+                            "failed to read results directory {}: {error}",
+                            args.result_file.display()
+                        ))
+                    })?
+                    .map(|entry| {
+                        entry.map(|entry| entry.path()).map_err(|error| {
+                            ExecuteError::Usage(format!(
+                                "failed to read results directory entry: {error}"
+                            ))
+                        })
+                    })
+                    .collect::<Result<Vec<_>, _>>()?
+            } else {
+                vec![args.result_file]
+            };
+            if is_directory {
+                paths.retain(|path| {
+                    path.is_file()
+                        && path
+                            .extension()
+                            .is_some_and(|extension| extension == "json")
+                });
+            }
+            paths.sort();
+            for path in paths {
+                let bytes = std::fs::read(&path).map_err(|error| {
+                    ExecuteError::Usage(format!(
+                        "failed to read result {}: {error}",
+                        path.display()
+                    ))
+                })?;
+                parse_and_validate_result(&bytes).map_err(ExecuteError::Usage)?;
+                println!("valid: {}", path.display());
+            }
             Ok(0)
         }
         Command::Annotate(args) => {
@@ -575,6 +609,29 @@ mod tests {
         assert_eq!(args.timeout, 60);
         assert!(args.json);
         assert!(args.force);
+    }
+
+    #[test]
+    fn run_subcommand_parses_host_hardware_class_override() {
+        let cli = Cli::try_parse_from([
+            "willitcall",
+            "run",
+            "--endpoint",
+            "http://127.0.0.1:8080/v1",
+            "--model",
+            "local-model",
+            "--host-hardware-class",
+            "Contributor workstation, 32GB",
+        ])
+        .expect("run arguments should parse");
+
+        let Command::Run(args) = cli.command else {
+            panic!("expected run command");
+        };
+        assert_eq!(
+            args.host_hardware_class.as_deref(),
+            Some("Contributor workstation, 32GB")
+        );
     }
 
     #[tokio::test]
@@ -727,6 +784,7 @@ mod tests {
                     reported_version: None,
                     quirk_flags: Vec::new(),
                 },
+                environment: None,
                 sampling: SamplingParams {
                     temperature: Some(0.0),
                     top_p: Some(1.0),
@@ -805,6 +863,7 @@ mod tests {
                     reported_version: None,
                     quirk_flags: Vec::new(),
                 },
+                environment: None,
                 sampling: SamplingParams {
                     temperature: None,
                     top_p: None,

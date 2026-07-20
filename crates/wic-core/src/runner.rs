@@ -2,6 +2,7 @@ use std::fs;
 use std::io;
 use std::net::{Ipv4Addr, SocketAddr};
 use std::path::Path;
+use std::process::Command;
 use std::time::{Duration, SystemTime, UNIX_EPOCH};
 
 use reqwest::header::HeaderMap;
@@ -10,9 +11,9 @@ use serde_json::{json, Map, Value};
 
 use crate::client::{AssistantResponse, CompletionResult, EndpointClient, ToolCall};
 use crate::result::{
-    redact_transcript_turn, write_transcript_atomic, CapturedTurn, RunMetadata, RunResult,
-    SamplingParams, ScenarioOutcome, ServerMetadata, Status, Totals, Transcript,
-    RESULT_SCHEMA_VERSION,
+    redact_transcript_turn, write_transcript_atomic, CapturedTurn, EnvironmentMetadata,
+    RunMetadata, RunResult, SamplingParams, ScenarioOutcome, ServerMetadata, Status, Totals,
+    Transcript, RESULT_SCHEMA_VERSION,
 };
 use crate::score::score_response;
 use crate::{Message, MessageRole, Scenario};
@@ -24,6 +25,7 @@ pub struct RunConfig {
     pub timeout: Duration,
     pub sampling: SamplingParams,
     pub server: ServerConfig,
+    pub environment: EnvironmentMetadata,
     pub request_headers: HeaderMap,
 }
 
@@ -57,6 +59,7 @@ impl RunConfig {
                 quirk_flags: Vec::new(),
                 version_probe: None,
             },
+            environment: detect_environment(),
             request_headers: HeaderMap::new(),
         }
     }
@@ -65,6 +68,65 @@ impl RunConfig {
         self.server = server;
         self
     }
+
+    pub fn with_host_hardware_class(mut self, host_hardware_class: Option<String>) -> Self {
+        if let Some(host_hardware_class) = host_hardware_class {
+            self.environment.host_hardware_class = host_hardware_class;
+        }
+        self
+    }
+}
+
+fn detect_environment() -> EnvironmentMetadata {
+    EnvironmentMetadata {
+        host_hardware_class: detect_host_hardware_class(),
+        host_os: detect_host_os(),
+    }
+}
+
+fn detect_host_hardware_class() -> String {
+    #[cfg(target_os = "macos")]
+    {
+        let cpu = command_value("sysctl", &["-n", "machdep.cpu.brand_string"]);
+        let memory_gb = command_value("sysctl", &["-n", "hw.memsize"])
+            .and_then(|value| value.parse::<u64>().ok())
+            .map(|bytes| bytes / 1024 / 1024 / 1024)
+            .filter(|gigabytes| *gigabytes > 0);
+        if let (Some(cpu), Some(memory_gb)) = (cpu, memory_gb) {
+            return format!("{cpu}, {memory_gb}GB");
+        }
+    }
+
+    format!("{} {} host", std::env::consts::OS, std::env::consts::ARCH)
+}
+
+fn detect_host_os() -> String {
+    #[cfg(target_os = "macos")]
+    if let (Some(name), Some(version)) = (
+        command_value("sw_vers", &["-productName"]),
+        command_value("sw_vers", &["-productVersion"]),
+    ) {
+        return format!("{name} {version}");
+    }
+
+    if let (Some(name), Some(version)) = (
+        command_value("uname", &["-s"]),
+        command_value("uname", &["-r"]),
+    ) {
+        return format!("{name} {version}");
+    }
+
+    format!("{} (version unavailable)", std::env::consts::OS)
+}
+
+fn command_value(program: &str, arguments: &[&str]) -> Option<String> {
+    let output = Command::new(program).args(arguments).output().ok()?;
+    if !output.status.success() {
+        return None;
+    }
+    let value = String::from_utf8(output.stdout).ok()?;
+    let value = value.trim();
+    (!value.is_empty()).then(|| value.to_owned())
 }
 
 pub async fn preflight(config: &RunConfig) -> Result<(), String> {
@@ -173,6 +235,7 @@ pub async fn run_scenarios(
                 reported_version,
                 quirk_flags: config.server.quirk_flags.clone(),
             },
+            environment: Some(config.environment.clone()),
             sampling: config.sampling.clone(),
             preflight_override: None,
         },
@@ -482,6 +545,22 @@ fn civil_from_days(days_since_epoch: i64) -> (i64, i64, i64) {
 #[cfg(test)]
 mod tests {
     use tokio::net::TcpListener;
+
+    #[test]
+    fn run_config_collects_environment_and_accepts_hardware_override() {
+        let config = super::RunConfig::new(
+            "http://127.0.0.1:8080/v1".to_owned(),
+            "fixture-model".to_owned(),
+            std::time::Duration::from_secs(60),
+        )
+        .with_host_hardware_class(Some("Fixture workstation, 32GB".to_owned()));
+
+        assert_eq!(
+            config.environment.host_hardware_class,
+            "Fixture workstation, 32GB"
+        );
+        assert!(!config.environment.host_os.is_empty());
+    }
 
     async fn unused_port() -> u16 {
         let listener = TcpListener::bind("127.0.0.1:0")

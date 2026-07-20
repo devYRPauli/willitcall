@@ -686,6 +686,8 @@ content = "Reply ready."
         server.endpoint(),
         "--model".to_owned(),
         "fixture-model".to_owned(),
+        "--host-hardware-class".to_owned(),
+        "Fixture workstation, 32GB".to_owned(),
         "--force".to_owned(),
         "--scenarios".to_owned(),
         scenario_path.display().to_string(),
@@ -708,11 +710,41 @@ content = "Reply ready."
         Some("mock-1.0")
     );
     assert!(result.metadata.server.quirk_flags.is_empty());
+    let environment = result
+        .metadata
+        .environment
+        .as_ref()
+        .expect("measurement environment");
+    assert_eq!(environment.host_hardware_class, "Fixture workstation, 32GB");
+    assert!(!environment.host_os.is_empty());
     assert_eq!(
         fs::read(&output_path).expect("result file"),
         output.stdout,
         "stdout and --out should contain the same result document"
     );
+}
+
+#[tokio::test(flavor = "multi_thread", worker_threads = 2)]
+async fn validate_directory_ignores_archive() {
+    let directory = tempfile::tempdir().expect("temp directory");
+    let results = directory.path().join("results");
+    let archive = results.join("archive");
+    fs::create_dir_all(&archive).expect("archive directory");
+    let published = results.join("published.json");
+    write_result_fixture(&published, 2, Vec::new());
+    fs::write(archive.join("invalid.json"), b"not JSON").expect("archived fixture");
+
+    let output = run_binary(vec!["validate".to_owned(), results.display().to_string()]).await;
+
+    assert_eq!(
+        output.status.code(),
+        Some(0),
+        "{}",
+        String::from_utf8_lossy(&output.stderr)
+    );
+    let stdout = String::from_utf8_lossy(&output.stdout);
+    assert!(stdout.contains(&format!("valid: {}", published.display())));
+    assert!(!stdout.contains("archive"));
 }
 
 #[tokio::test(flavor = "multi_thread", worker_threads = 2)]

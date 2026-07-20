@@ -3,7 +3,9 @@ use std::fmt::Write as _;
 use std::fs;
 use std::path::{Path, PathBuf};
 
-use wic_core::result::{parse_and_validate_result, CauseKind, RunResult, Status};
+use wic_core::result::{
+    parse_and_validate_result, CauseKind, EnvironmentMetadata, RunResult, Status,
+};
 use wic_core::ScenarioCategory;
 
 const CATEGORIES: [ScenarioCategory; 6] = [
@@ -95,6 +97,17 @@ fn render_index(results: &[ResultFile], repo_base: &str) -> String {
         .collect::<BTreeSet<_>>()
         .len();
     let case_studies_url = format!("{repo_base}/tree/main/docs/case-studies");
+    let uniform_environment = results
+        .first()
+        .and_then(|result| result.result.metadata.environment.as_ref())
+        .filter(|environment| {
+            results
+                .iter()
+                .all(|result| result.result.metadata.environment.as_ref() == Some(*environment))
+        });
+    let environment_statement = uniform_environment
+        .map(render_environment_statement)
+        .unwrap_or_default();
     let mut html = String::new();
     write!(
         html,
@@ -123,6 +136,7 @@ fn render_index(results: &[ResultFile], repo_base: &str) -> String {
       <p>Red means the combination failed as tested, not that the weights are bad. The same weights can pass on one server and fail on another; where that is proven, the cell carries a cause annotation.</p>
       <p>Every red cell links to the full request/response transcript that produced it when the result schema supplies a transcript path. Legacy schema v1 results do not record transcript paths. See the <a href="{}">case studies under docs/case-studies/</a> for controlled comparisons.</p>
       <p>Sample size and method: {} distinct scenarios are represented in this result set. Results come from a single run per cell unless stated otherwise.</p>
+{}
     </section>
 
     <section class="matrix" aria-labelledby="matrix-title">
@@ -153,6 +167,7 @@ fn render_index(results: &[ResultFile], repo_base: &str) -> String {
 "#,
         escape_html(&case_studies_url),
         scenario_count,
+        environment_statement,
         results.len()
     )
     .expect("write HTML");
@@ -171,7 +186,13 @@ fn render_index(results: &[ResultFile], repo_base: &str) -> String {
     );
 
     for (index, result_file) in results.iter().enumerate() {
-        render_result_rows(&mut html, index, result_file, repo_base);
+        render_result_rows(
+            &mut html,
+            index,
+            result_file,
+            repo_base,
+            uniform_environment.is_none(),
+        );
     }
 
     html.push_str(
@@ -190,7 +211,13 @@ fn render_index(results: &[ResultFile], repo_base: &str) -> String {
     html
 }
 
-fn render_result_rows(html: &mut String, index: usize, result_file: &ResultFile, repo_base: &str) {
+fn render_result_rows(
+    html: &mut String,
+    index: usize,
+    result_file: &ResultFile,
+    repo_base: &str,
+    disclose_environment: bool,
+) {
     let result = &result_file.result;
     let server = &result.metadata.server.preset_name;
     let server_display = display_server(server);
@@ -201,6 +228,24 @@ fn render_result_rows(html: &mut String, index: usize, result_file: &ResultFile,
         .as_deref()
         .unwrap_or("not declared");
     let details_id = format!("result-details-{index}");
+    let environment_metadata = if disclose_environment {
+        let environment = result.metadata.environment.as_ref();
+        format!(
+            "                    <div><dt>Host hardware</dt><dd>{}</dd></div>\n                    <div><dt>Host OS</dt><dd>{}</dd></div>\n",
+            escape_html(
+                environment
+                    .map(|environment| environment.host_hardware_class.as_str())
+                    .unwrap_or("not recorded")
+            ),
+            escape_html(
+                environment
+                    .map(|environment| environment.host_os.as_str())
+                    .unwrap_or("not recorded")
+            )
+        )
+    } else {
+        String::new()
+    };
     write!(
         html,
         "          <tbody class=\"result-group\" data-server=\"{}\">\n            <tr class=\"result-row\">\n              <th scope=\"row\">\n                <strong>{}</strong>\n                <span>quant: {}</span>\n                <span>server: {}</span>\n              </th>\n",
@@ -217,7 +262,7 @@ fn render_result_rows(html: &mut String, index: usize, result_file: &ResultFile,
 
     write!(
         html,
-        "            </tr>\n            <tr class=\"detail-row\">\n              <td colspan=\"7\">\n                <details id=\"{details_id}\">\n                  <summary>View {} scenarios and row metadata</summary>\n                  <dl class=\"metadata\">\n                    <div><dt>Result file</dt><dd><code>{}</code></dd></div>\n                    <div><dt>Model id</dt><dd><code>{}</code></dd></div>\n                    <div><dt>Declared quant</dt><dd>{}</dd></div>\n                    <div><dt>Server</dt><dd>{} {}</dd></div>\n                    <div><dt>Schema</dt><dd>v{}</dd></div>\n                    <div><dt>Run time</dt><dd>{}</dd></div>\n                  </dl>\n                  <ol class=\"scenario-list\">\n",
+        "            </tr>\n            <tr class=\"detail-row\">\n              <td colspan=\"7\">\n                <details id=\"{details_id}\">\n                  <summary>View {} scenarios and row metadata</summary>\n                  <dl class=\"metadata\">\n                    <div><dt>Result file</dt><dd><code>{}</code></dd></div>\n                    <div><dt>Model id</dt><dd><code>{}</code></dd></div>\n                    <div><dt>Declared quant</dt><dd>{}</dd></div>\n                    <div><dt>Server</dt><dd>{} {}</dd></div>\n                    <div><dt>Schema</dt><dd>v{}</dd></div>\n                    <div><dt>Run time</dt><dd>{}</dd></div>\n{}                  </dl>\n                  <ol class=\"scenario-list\">\n",
         result.scenarios.len(),
         escape_html(&result_file.file_name),
         escape_html(&result.metadata.model_id),
@@ -232,7 +277,8 @@ fn render_result_rows(html: &mut String, index: usize, result_file: &ResultFile,
                 .unwrap_or("version not reported")
         ),
         result.schema_version,
-        escape_html(&result.metadata.timestamp)
+        escape_html(&result.metadata.timestamp),
+        environment_metadata
     )
     .expect("write HTML");
 
@@ -273,6 +319,14 @@ fn render_result_rows(html: &mut String, index: usize, result_file: &ResultFile,
           </tbody>
 "#,
     );
+}
+
+fn render_environment_statement(environment: &EnvironmentMetadata) -> String {
+    format!(
+        "      <p>Measurement environment: {}; {}.</p>",
+        escape_html(&environment.host_hardware_class),
+        escape_html(&environment.host_os)
+    )
 }
 
 fn render_category_cell(

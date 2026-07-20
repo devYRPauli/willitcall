@@ -30,9 +30,18 @@ pub struct RunMetadata {
     pub model_id: String,
     pub declared_quant: Option<String>,
     pub server: ServerMetadata,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub environment: Option<EnvironmentMetadata>,
     pub sampling: SamplingParams,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub preflight_override: Option<PreflightOverride>,
+}
+
+#[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
+#[serde(deny_unknown_fields)]
+pub struct EnvironmentMetadata {
+    pub host_hardware_class: String,
+    pub host_os: String,
 }
 
 #[derive(Clone, Debug, Deserialize, Serialize)]
@@ -400,8 +409,8 @@ mod tests {
     use std::io::{self, Write};
 
     use super::{
-        atomic_write_with, write_result_atomic, Cause, CauseKind, RunMetadata, RunResult,
-        SamplingParams, ScenarioOutcome, ServerMetadata, Status, Totals,
+        atomic_write_with, write_result_atomic, Cause, CauseKind, EnvironmentMetadata, RunMetadata,
+        RunResult, SamplingParams, ScenarioOutcome, ServerMetadata, Status, Totals,
     };
     use crate::ScenarioCategory;
 
@@ -420,6 +429,7 @@ mod tests {
                     reported_version: Some("b6000".to_owned()),
                     quirk_flags: Vec::new(),
                 },
+                environment: None,
                 sampling: SamplingParams {
                     temperature: Some(0.0),
                     top_p: Some(1.0),
@@ -523,6 +533,10 @@ mod tests {
         let directory = tempfile::tempdir().expect("temp directory");
         let destination = directory.path().join("result.json");
         let mut result = sample_result();
+        result.metadata.environment = Some(EnvironmentMetadata {
+            host_hardware_class: "Apple M4 Max, 64GB".to_owned(),
+            host_os: "macOS 15.5".to_owned(),
+        });
         result.metadata.preflight_override = Some(super::PreflightOverride {
             forced: true,
             foreign_endpoints: vec!["127.0.0.1:11434".to_owned()],
@@ -573,6 +587,16 @@ mod tests {
         validator
             .validate(&document)
             .expect("generated result should satisfy checked-in schema");
+    }
+
+    #[test]
+    fn environment_remains_optional_for_existing_v2_documents() {
+        let bytes = serde_json::to_vec(&sample_result()).expect("encode result");
+
+        let result = super::parse_and_validate_result(&bytes)
+            .expect("existing v2 result without environment should remain valid");
+
+        assert!(result.metadata.environment.is_none());
     }
 
     #[test]

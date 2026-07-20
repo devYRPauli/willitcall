@@ -58,11 +58,29 @@
         "server": {
           "$ref": "#/$defs/server_metadata"
         },
+        "environment": {
+          "$ref": "#/$defs/environment_metadata"
+        },
         "sampling": {
           "$ref": "#/$defs/sampling_params"
         },
         "preflight_override": {
           "$ref": "#/$defs/preflight_override"
+        }
+      }
+    },
+    "environment_metadata": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["host_hardware_class", "host_os"],
+      "properties": {
+        "host_hardware_class": {
+          "type": "string",
+          "minLength": 1
+        },
+        "host_os": {
+          "type": "string",
+          "minLength": 1
         }
       }
     },

@@ -28,6 +28,7 @@ fn write_result(
     model_id: &str,
     declared_quant: Option<&str>,
     server: &str,
+    environment: Option<(&str, &str)>,
     mut scenarios: Vec<Value>,
 ) {
     let mut metadata = json!({
@@ -49,6 +50,12 @@ fn write_result(
             "max_tokens": 1024
         }
     });
+    if let Some((host_hardware_class, host_os)) = environment {
+        metadata["environment"] = json!({
+            "host_hardware_class": host_hardware_class,
+            "host_os": host_os
+        });
+    }
     if schema_version == 1 {
         metadata
             .as_object_mut()
@@ -123,6 +130,7 @@ fn site_generates_v1_and_v2_rows_ratios_links_and_badges() {
         "legacy:model",
         None,
         "ollama",
+        None,
         vec![
             scenario("legacy-pass", "single_call", "pass", None, None),
             scenario(
@@ -170,6 +178,7 @@ fn site_generates_v1_and_v2_rows_ratios_links_and_badges() {
         "/models/blobs/sha256-deadbeef",
         Some("Q4_K_M"),
         "llamacpp",
+        Some(("Apple M4 Max, 64GB", "macOS 15.5")),
         vec![
             scenario("single-ok", "single_call", "pass", None, None),
             unparsed,
@@ -227,6 +236,10 @@ fn site_generates_v1_and_v2_rows_ratios_links_and_badges() {
     assert!(index.contains("<span class=\"badge neutral unparsed\">unparsed tool call</span>"));
     assert!(index.contains("A cell measures the whole stack"));
     assert!(index.contains("single run per cell unless stated otherwise"));
+    assert!(index.contains("Host hardware"));
+    assert!(index.contains("Apple M4 Max, 64GB"));
+    assert!(index.contains("Host OS"));
+    assert!(index.contains("macOS 15.5"));
     assert!(index.contains("docs/case-studies/"));
     assert!(!index.contains("<script src=\"http"));
 
@@ -250,6 +263,7 @@ fn site_uses_the_configured_repo_base_for_evidence_links() {
         "fixture:model",
         None,
         "ollama",
+        Some(("Apple M4 Max, 64GB", "macOS 15.5")),
         vec![scenario(
             "single-bad",
             "single_call",
@@ -274,4 +288,67 @@ fn site_uses_the_configured_repo_base_for_evidence_links() {
     assert!(index.contains(
         "https://github.com/example/willitcall/blob/main/results/evidence/fixture/single-bad.json"
     ));
+}
+
+#[test]
+fn site_uses_one_global_environment_statement_when_uniform() {
+    let directory = tempfile::tempdir().expect("temp directory");
+    let results = directory.path().join("results");
+    let output = directory.path().join("site");
+    fs::create_dir(&results).expect("results directory");
+    for name in ["ollama-one.json", "ollama-two.json"] {
+        write_result(
+            &results.join(name),
+            2,
+            "fixture:model",
+            None,
+            "ollama",
+            Some(("Apple M4 Max, 64GB", "macOS 15.5")),
+            vec![scenario("single-ok", "single_call", "pass", None, None)],
+        );
+    }
+
+    let generated = run_site(&results, &output, None);
+    assert_eq!(
+        generated.status.code(),
+        Some(0),
+        "{}",
+        String::from_utf8_lossy(&generated.stderr)
+    );
+    let index = fs::read_to_string(output.join("index.html")).expect("generated index");
+    assert_eq!(index.matches("Measurement environment:").count(), 1);
+    assert!(index.contains("Measurement environment: Apple M4 Max, 64GB; macOS 15.5."));
+    assert!(!index.contains("<dt>Host hardware</dt>"));
+    assert!(!index.contains("<dt>Host OS</dt>"));
+}
+
+#[test]
+fn site_ignores_archive_directory() {
+    let directory = tempfile::tempdir().expect("temp directory");
+    let results = directory.path().join("results");
+    let archive = results.join("archive");
+    let output = directory.path().join("site");
+    fs::create_dir_all(&archive).expect("archive directory");
+    write_result(
+        &results.join("ollama-published.json"),
+        2,
+        "fixture:model",
+        None,
+        "ollama",
+        Some(("Apple M4 Max, 64GB", "macOS 15.5")),
+        vec![scenario("single-ok", "single_call", "pass", None, None)],
+    );
+    fs::write(archive.join("invalid.json"), b"not JSON").expect("archived fixture");
+
+    let generated = run_site(&results, &output, None);
+
+    assert_eq!(
+        generated.status.code(),
+        Some(0),
+        "{}",
+        String::from_utf8_lossy(&generated.stderr)
+    );
+    let index = fs::read_to_string(output.join("index.html")).expect("generated index");
+    assert_eq!(index.matches("class=\"result-row\"").count(), 1);
+    assert!(!index.contains("invalid.json"));
 }
