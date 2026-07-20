@@ -1,0 +1,85 @@
+{
+  "schema_version": 1,
+  "run_id": "20260720T143302Z-0c5daa9d",
+  "scenario_id": "tool-choice-named",
+  "turns": [
+    {
+      "index": 0,
+      "request": {
+        "method": "POST",
+        "url": "http://localhost:11434/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "Search contacts for Ada Stone.",
+              "role": "user"
+            }
+          ],
+          "model": "hermes3:8b",
+          "seed": 42,
+          "stream": false,
+          "temperature": 0.0,
+          "tool_choice": {
+            "function": {
+              "name": "search_contacts"
+            },
+            "type": "function"
+          },
+          "tools": [
+            {
+              "function": {
+                "description": "Search files for an exact phrase.",
+                "name": "search_files",
+                "parameters": {
+                  "properties": {
+                    "phrase": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "phrase"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            },
+            {
+              "function": {
+                "description": "Search contacts for an exact name.",
+                "name": "search_contacts",
+                "parameters": {
+                  "properties": {
+                    "name": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "name"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-length": "436",
+          "content-type": "application/json",
+          "date": "Mon, 20 Jul 2026 14:33:38 GMT"
+        },
+        "body_raw": "{\"id\":\"chatcmpl-393\",\"object\":\"chat.completion\",\"created\":1784558018,\"model\":\"hermes3:8b\",\"system_fingerprint\":\"fp_ollama\",\"choices\":[{\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"\",\"tool_calls\":[{\"id\":\"call_3ayodlhl\",\"index\":0,\"type\":\"function\",\"function\":{\"name\":\"search_contacts\",\"arguments\":\"{\\\"name\\\":\\\"Ada Stone\\\"}\"}}]},\"finish_reason\":\"tool_calls\"}],\"usage\":{\"prompt_tokens\":268,\"completion_tokens\":21,\"total_tokens\":289}}\n"
+      },
+      "retried": false
+    }
+  ]
+}

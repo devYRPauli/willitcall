@@ -1,0 +1,72 @@
+{
+  "schema_version": 1,
+  "run_id": "20260720T145532Z-af40963b",
+  "scenario_id": "single-date-range",
+  "turns": [
+    {
+      "index": 0,
+      "request": {
+        "method": "POST",
+        "url": "http://127.0.0.1:8080/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "Find events in Denver from 2026-08-03 through 2026-08-05.",
+              "role": "user"
+            }
+          ],
+          "model": "/Users/bbadmin/gguf/watt-tool-8B.Q4_K_M.gguf",
+          "seed": 42,
+          "stream": false,
+          "temperature": 0.0,
+          "tool_choice": "auto",
+          "tools": [
+            {
+              "function": {
+                "description": "Find events in an inclusive date range.",
+                "name": "find_events",
+                "parameters": {
+                  "properties": {
+                    "city": {
+                      "type": "string"
+                    },
+                    "end_date": {
+                      "type": "string"
+                    },
+                    "start_date": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "city",
+                    "start_date",
+                    "end_date"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "access-control-allow-origin": "",
+          "content-length": "1805",
+          "content-type": "application/json; charset=utf-8",
+          "keep-alive": "timeout=5, max=100",
+          "server": "llama.cpp"
+        },
+        "body_raw": "{\"choices\":[{\"finish_reason\":\"stop\",\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"I'm sorry, but I cannot directly find events in Denver from 2026-08-03 through 2026-08-05. However, I can suggest some ways to find events in Denver during that time:\\n\\n1. **Check Local Event Calendars**: Websites like Eventbrite, Meetup, and local newspapers often list upcoming events in Denver. You can search for events by date, location, and category.\\n\\n2. **Denver Convention and Visitors Bureau**: This website provides information on events, festivals, and attractions in Denver. You can filter events by date and category.\\n\\n3. **Local News Websites**: Websites like Denver Post, Denver Business Journal, and local news outlets often list upcoming events in Denver.\\n\\n4. **Social Media**: Follow local event organizers, venues, and tourism boards on social media platforms like Facebook, Twitter, and Instagram to stay updated on upcoming events.\\n\\n5. **Google Search**: Use specific keywords like \\\"events in Denver 2026-08-03 to 2026-08-05\\\" or \\\"things to do in Denver 2026-08-03 to 2026-08-05\\\" to find relevant information.\\n\\nRemember to verify the dates and details of any events you find, as they are subject to change.\"}}],\"created\":1784559370,\"model\":\"/Users/bbadmin/gguf/watt-tool-8B.Q4_K_M.gguf\",\"system_fingerprint\":\"b10050-b15ca938a\",\"object\":\"chat.completion\",\"usage\":{\"completion_tokens\":258,\"prompt_tokens\":31,\"total_tokens\":289,\"prompt_tokens_details\":{\"cached_tokens\":5}},\"id\":\"chatcmpl-KzArbwKNtmvhiQ03jkYEJU8ocrPnKFFC\",\"timings\":{\"cache_n\":5,\"prompt_n\":26,\"prompt_ms\":54.589,\"prompt_per_token_ms\":2.0995769230769232,\"prompt_per_second\":476.28643133231975,\"predicted_n\":258,\"predicted_ms\":2915.473,\"predicted_per_token_ms\":11.300282945736434,\"predicted_per_second\":88.49335939657134}}"
+      },
+      "retried": false
+    }
+  ]
+}

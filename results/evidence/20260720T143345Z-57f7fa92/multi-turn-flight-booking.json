@@ -1,0 +1,88 @@
+{
+  "schema_version": 1,
+  "run_id": "20260720T143345Z-57f7fa92",
+  "scenario_id": "multi-turn-flight-booking",
+  "turns": [
+    {
+      "index": 0,
+      "request": {
+        "method": "POST",
+        "url": "http://localhost:11434/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "Find a flight from BOS to DEN on 2026-10-04, then book the returned flight.",
+              "role": "user"
+            }
+          ],
+          "model": "granite3.1-dense:8b",
+          "seed": 42,
+          "stream": false,
+          "temperature": 0.0,
+          "tool_choice": "auto",
+          "tools": [
+            {
+              "function": {
+                "description": "Find a flight for an exact route and date.",
+                "name": "find_flight",
+                "parameters": {
+                  "properties": {
+                    "date": {
+                      "type": "string"
+                    },
+                    "destination": {
+                      "type": "string"
+                    },
+                    "origin": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "origin",
+                    "destination",
+                    "date"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            },
+            {
+              "function": {
+                "description": "Book a flight by exact id.",
+                "name": "book_flight",
+                "parameters": {
+                  "properties": {
+                    "flight_id": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "flight_id"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-length": "435",
+          "content-type": "application/json",
+          "date": "Mon, 20 Jul 2026 14:33:50 GMT"
+        },
+        "body_raw": "{\"id\":\"chatcmpl-893\",\"object\":\"chat.completion\",\"created\":1784558030,\"model\":\"granite3.1-dense:8b\",\"system_fingerprint\":\"fp_ollama\",\"choices\":[{\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"\\u003ctool_call\\u003e[{\\\"arguments\\\":{\\\"origin\\\": \\\"BOS\\\", \\\"destination\\\": \\\"DEN\\\", \\\"date\\\": \\\"2026-10-04\\\"}, \\\"name\\\": \\\"find_flight\\\"}]\"},\"finish_reason\":\"stop\"}],\"usage\":{\"prompt_tokens\":179,\"completion_tokens\":44,\"total_tokens\":223}}\n"
+      },
+      "retried": false
+    }
+  ]
+}

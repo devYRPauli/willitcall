@@ -1,0 +1,67 @@
+{
+  "schema_version": 1,
+  "run_id": "20260720T150136Z-52ebff14",
+  "scenario_id": "negative-unicode-argument",
+  "turns": [
+    {
+      "index": 0,
+      "request": {
+        "method": "POST",
+        "url": "http://127.0.0.1:8080/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "Get the weather for the exact city name München.",
+              "role": "user"
+            }
+          ],
+          "model": "/Users/bbadmin/.ollama/models/blobs/sha256-3c168af1dea0a414299c7d9077e100ac763370e5a98b3c53801a958a47f0a5db",
+          "seed": 42,
+          "stream": false,
+          "temperature": 0.0,
+          "tool_choice": "auto",
+          "tools": [
+            {
+              "function": {
+                "description": "Get weather for a city with an optional country code.",
+                "name": "get_weather",
+                "parameters": {
+                  "properties": {
+                    "city": {
+                      "type": "string"
+                    },
+                    "country_code": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "city"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "access-control-allow-origin": "",
+          "content-length": "1002",
+          "content-type": "application/json; charset=utf-8",
+          "keep-alive": "timeout=5, max=100",
+          "server": "llama.cpp"
+        },
+        "body_raw": "{\"choices\":[{\"finish_reason\":\"stop\",\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"I'm sorry, but I can't provide real-time data or access to current weather information. However, you can easily check the weather for Munich by visiting a weather website like Weather.com, using a weather app, or by searching for \\\"Munich weather\\\" on your preferred search engine.\"}}],\"created\":1784559705,\"model\":\"/Users/bbadmin/.ollama/models/blobs/sha256-3c168af1dea0a414299c7d9077e100ac763370e5a98b3c53801a958a47f0a5db\",\"system_fingerprint\":\"b10050-b15ca938a\",\"object\":\"chat.completion\",\"usage\":{\"completion_tokens\":57,\"prompt_tokens\":13,\"total_tokens\":70,\"prompt_tokens_details\":{\"cached_tokens\":0}},\"id\":\"chatcmpl-xn2M3u7TEy8ohWjI6yRRvw41jk4Cqn0N\",\"timings\":{\"cache_n\":0,\"prompt_n\":13,\"prompt_ms\":33.251,\"prompt_per_token_ms\":2.557769230769231,\"prompt_per_second\":390.9656852425491,\"predicted_n\":57,\"predicted_ms\":402.495,\"predicted_per_token_ms\":7.061315789473684,\"predicted_per_second\":141.61666604554094}}"
+      },
+      "retried": false
+    }
+  ]
+}

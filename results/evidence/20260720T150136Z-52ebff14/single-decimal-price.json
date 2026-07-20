@@ -1,0 +1,68 @@
+{
+  "schema_version": 1,
+  "run_id": "20260720T150136Z-52ebff14",
+  "scenario_id": "single-decimal-price",
+  "turns": [
+    {
+      "index": 0,
+      "request": {
+        "method": "POST",
+        "url": "http://127.0.0.1:8080/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "Set the price of SKU AX-9 to exactly 19.95.",
+              "role": "user"
+            }
+          ],
+          "model": "/Users/bbadmin/.ollama/models/blobs/sha256-3c168af1dea0a414299c7d9077e100ac763370e5a98b3c53801a958a47f0a5db",
+          "seed": 42,
+          "stream": false,
+          "temperature": 0.0,
+          "tool_choice": "auto",
+          "tools": [
+            {
+              "function": {
+                "description": "Set the price of a product.",
+                "name": "set_price",
+                "parameters": {
+                  "properties": {
+                    "price": {
+                      "type": "number"
+                    },
+                    "sku": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "sku",
+                    "price"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "access-control-allow-origin": "",
+          "content-length": "1492",
+          "content-type": "application/json; charset=utf-8",
+          "keep-alive": "timeout=5, max=100",
+          "server": "llama.cpp"
+        },
+        "body_raw": "{\"choices\":[{\"finish_reason\":\"stop\",\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"To set the price of SKU AX-9 to exactly $19.95, you would typically need to access the inventory management system or the specific software used by your business. The steps can vary depending on the system, but here's a general idea of how you might do it:\\n\\n1. Log in to your inventory management system or e-commerce platform.\\n2. Navigate to the section where you can manage products or SKUs.\\n3. Find SKU AX-9 in the list of products.\\n4. Locate the price field for SKU AX-9.\\n5. Enter the price as $19.95.\\n6. Save or update the changes.\\n\\nIf you are using a spreadsheet or a database, you would update the price field for SKU AX-9 with the value 19.95.\\n\\nIf you need more specific instructions, please provide the name of the software or system you are using.\"}}],\"created\":1784559718,\"model\":\"/Users/bbadmin/.ollama/models/blobs/sha256-3c168af1dea0a414299c7d9077e100ac763370e5a98b3c53801a958a47f0a5db\",\"system_fingerprint\":\"b10050-b15ca938a\",\"object\":\"chat.completion\",\"usage\":{\"completion_tokens\":179,\"prompt_tokens\":18,\"total_tokens\":197,\"prompt_tokens_details\":{\"cached_tokens\":0}},\"id\":\"chatcmpl-VexPJwuhIKI4u9AFbGFsMnlbjexHNN8p\",\"timings\":{\"cache_n\":0,\"prompt_n\":18,\"prompt_ms\":33.593,\"prompt_per_token_ms\":1.866277777777778,\"prompt_per_second\":535.825916113476,\"predicted_n\":179,\"predicted_ms\":1279.544,\"predicted_per_token_ms\":7.148290502793297,\"predicted_per_second\":139.89358709040096}}"
+      },
+      "retried": false
+    }
+  ]
+}

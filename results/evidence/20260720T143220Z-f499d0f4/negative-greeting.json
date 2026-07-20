@@ -1,0 +1,62 @@
+{
+  "schema_version": 1,
+  "run_id": "20260720T143220Z-f499d0f4",
+  "scenario_id": "negative-greeting",
+  "turns": [
+    {
+      "index": 0,
+      "request": {
+        "method": "POST",
+        "url": "http://localhost:11434/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "Say hello in one short sentence.",
+              "role": "user"
+            }
+          ],
+          "model": "llama3-groq-tool-use:8b",
+          "seed": 42,
+          "stream": false,
+          "temperature": 0.0,
+          "tool_choice": "none",
+          "tools": [
+            {
+              "function": {
+                "description": "Get the current weather for a city.",
+                "name": "get_weather",
+                "parameters": {
+                  "properties": {
+                    "city": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "city"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-length": "305",
+          "content-type": "application/json",
+          "date": "Mon, 20 Jul 2026 14:32:31 GMT"
+        },
+        "body_raw": "{\"id\":\"chatcmpl-314\",\"object\":\"chat.completion\",\"created\":1784557951,\"model\":\"llama3-groq-tool-use:8b\",\"system_fingerprint\":\"fp_ollama\",\"choices\":[{\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"Hello!\"},\"finish_reason\":\"stop\"}],\"usage\":{\"prompt_tokens\":141,\"completion_tokens\":3,\"total_tokens\":144}}\n"
+      },
+      "retried": false
+    }
+  ]
+}

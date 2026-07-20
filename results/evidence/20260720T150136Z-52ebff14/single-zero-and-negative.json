@@ -1,0 +1,68 @@
+{
+  "schema_version": 1,
+  "run_id": "20260720T150136Z-52ebff14",
+  "scenario_id": "single-zero-and-negative",
+  "turns": [
+    {
+      "index": 0,
+      "request": {
+        "method": "POST",
+        "url": "http://127.0.0.1:8080/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "Set the axis range from -12.5 to 0.",
+              "role": "user"
+            }
+          ],
+          "model": "/Users/bbadmin/.ollama/models/blobs/sha256-3c168af1dea0a414299c7d9077e100ac763370e5a98b3c53801a958a47f0a5db",
+          "seed": 42,
+          "stream": false,
+          "temperature": 0.0,
+          "tool_choice": "auto",
+          "tools": [
+            {
+              "function": {
+                "description": "Set an axis range.",
+                "name": "set_axis_range",
+                "parameters": {
+                  "properties": {
+                    "maximum": {
+                      "type": "number"
+                    },
+                    "minimum": {
+                      "type": "number"
+                    }
+                  },
+                  "required": [
+                    "minimum",
+                    "maximum"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "access-control-allow-origin": "",
+          "content-length": "2712",
+          "content-type": "application/json; charset=utf-8",
+          "keep-alive": "timeout=5, max=100",
+          "server": "llama.cpp"
+        },
+        "body_raw": "{\"choices\":[{\"finish_reason\":\"stop\",\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"To set the axis range from -12.5 to 0, you can use different methods depending on the software or programming language you are working with. Below are examples for a few common scenarios:\\n\\n### Matplotlib (Python)\\n```python\\nimport matplotlib.pyplot as plt\\n\\nplt.ylim(-12.5, 0)  # Set the y-axis range\\nplt.xlim(-12.5, 0)  # Set the x-axis range\\nplt.show()\\n```\\n\\n### Seaborn (Python)\\n```python\\nimport seaborn as sns\\nimport matplotlib.pyplot as plt\\n\\n# Example with a sample dataset\\nsns.set_style(\\\"whitegrid\\\")\\ntips = sns.load_dataset(\\\"tips\\\")\\n\\n# Set the axis range\\nsns.set_context(\\\"notebook\\\")\\nsns.set_style(\\\"darkgrid\\\")\\nsns.set(rc={\\\"figure.figsize\\\":(10, 6)})\\nsns.set_style(\\\"white\\\")\\nsns.set_style(\\\"darkgrid\\\")\\n\\n# Plot with specified axis range\\nsns.lineplot(data=tips, x=\\\"total_bill\\\", y=\\\"tip\\\", hue=\\\"sex\\\")\\nplt.ylim(-12.5, 0)\\nplt.xlim(-12.5, 0)\\nplt.show()\\n```\\n\\n### Plotly (Python)\\n```python\\nimport plotly.express as px\\n\\ndf = px.data.tips()\\n\\nfig = px.line(df, x=\\\"total_bill\\\", y=\\\"tip\\\", color=\\\"sex\\\")\\nfig.update_layout(yaxis=dict(range=[-12.5, 0], xaxis=dict(range=[-12.5, 0]))\\nfig.show()\\n```\\n\\n### ggplot2 (R)\\n```R\\nlibrary(ggplot2)\\n\\n# Example with a sample dataset\\ntips <- ggplot2::ggplot(tips, aes(x=total_bill, y=tip)) + geom_point(aes(color=sex))\\n\\n# Set the axis range\\nggplot2::ylimits(tips, lower=-12.5, upper=0)\\nggplot2::xlim(tips, lower=-12.5, upper=0)\\nprint(tips)\\n```\\n\\n### Excel\\n1. Select the chart.\\n2. Go to the \\\"Format\\\" tab.\\n3. Click on \\\"Chart settings.\\\"\\n4. Under the \\\"Axes\\\" section, set the minimum and maximum for the X and Y axes.\\n5. Set the minimum for the Y-axis to -12.5 and the maximum to 0.\\n\\n### MATLAB\\n```MATLAB\\nx = -12.5:0.1:0;\\ny = [your data here]; % Replace with your actual data\\nplot(x, y);\\naxis([-12.5 0 -12.5 0]);\\n```\\n\\nThese examples should help you set the axis range for different scenarios. Adjust the code according to your specific needs and the context in which you are working.\"}}],\"created\":1784559737,\"model\":\"/Users/bbadmin/.ollama/models/blobs/sha256-3c168af1dea0a414299c7d9077e100ac763370e5a98b3c53801a958a47f0a5db\",\"system_fingerprint\":\"b10050-b15ca938a\",\"object\":\"chat.completion\",\"usage\":{\"completion_tokens\":578,\"prompt_tokens\":16,\"total_tokens\":594,\"prompt_tokens_details\":{\"cached_tokens\":0}},\"id\":\"chatcmpl-neNRF13pAxVShsFnS7M24ep4nYwd7dE7\",\"timings\":{\"cache_n\":0,\"prompt_n\":16,\"prompt_ms\":33.493,\"prompt_per_token_ms\":2.0933125,\"prompt_per_second\":477.7117606664079,\"predicted_n\":578,\"predicted_ms\":4169.011,\"predicted_per_token_ms\":7.212821799307959,\"predicted_per_second\":138.64199446823238}}"
+      },
+      "retried": false
+    }
+  ]
+}

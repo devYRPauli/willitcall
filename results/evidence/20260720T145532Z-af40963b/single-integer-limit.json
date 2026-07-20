@@ -1,0 +1,68 @@
+{
+  "schema_version": 1,
+  "run_id": "20260720T145532Z-af40963b",
+  "scenario_id": "single-integer-limit",
+  "turns": [
+    {
+      "index": 0,
+      "request": {
+        "method": "POST",
+        "url": "http://127.0.0.1:8080/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "List exactly 12 messages from the support mailbox.",
+              "role": "user"
+            }
+          ],
+          "model": "/Users/bbadmin/gguf/watt-tool-8B.Q4_K_M.gguf",
+          "seed": 42,
+          "stream": false,
+          "temperature": 0.0,
+          "tool_choice": "auto",
+          "tools": [
+            {
+              "function": {
+                "description": "List a fixed number of messages.",
+                "name": "list_messages",
+                "parameters": {
+                  "properties": {
+                    "limit": {
+                      "type": "integer"
+                    },
+                    "mailbox": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "mailbox",
+                    "limit"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "access-control-allow-origin": "",
+          "content-length": "891",
+          "content-type": "application/json; charset=utf-8",
+          "keep-alive": "timeout=5, max=100",
+          "server": "llama.cpp"
+        },
+        "body_raw": "{\"choices\":[{\"finish_reason\":\"stop\",\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"I cannot directly access the support mailbox or retrieve messages from it. However, I can help you with any questions or concerns you have, or provide general information on a topic. If you have a specific issue or question, feel free to ask!\"}}],\"created\":1784559373,\"model\":\"/Users/bbadmin/gguf/watt-tool-8B.Q4_K_M.gguf\",\"system_fingerprint\":\"b10050-b15ca938a\",\"object\":\"chat.completion\",\"usage\":{\"completion_tokens\":50,\"prompt_tokens\":20,\"total_tokens\":70,\"prompt_tokens_details\":{\"cached_tokens\":5}},\"id\":\"chatcmpl-3NpzDFKrxOFzbK2PnKyeu9zm7p3OkM62\",\"timings\":{\"cache_n\":5,\"prompt_n\":15,\"prompt_ms\":54.816,\"prompt_per_token_ms\":3.6544000000000003,\"prompt_per_second\":273.6427320490368,\"predicted_n\":50,\"predicted_ms\":555.714,\"predicted_per_token_ms\":11.11428,\"predicted_per_second\":89.97433931842637}}"
+      },
+      "retried": false
+    }
+  ]
+}

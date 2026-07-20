@@ -1,0 +1,106 @@
+{
+  "schema_version": 1,
+  "run_id": "20260720T143554Z-4bd8a171",
+  "scenario_id": "parallel-three-different-tools",
+  "turns": [
+    {
+      "index": 0,
+      "request": {
+        "method": "POST",
+        "url": "http://localhost:11434/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "Get weather in Rome, time in Nairobi, and convert 25 USD to EUR.",
+              "role": "user"
+            }
+          ],
+          "model": "qwen3:14b",
+          "seed": 42,
+          "stream": false,
+          "temperature": 0.0,
+          "tool_choice": "required",
+          "tools": [
+            {
+              "function": {
+                "description": "Get weather for a city.",
+                "name": "get_weather",
+                "parameters": {
+                  "properties": {
+                    "city": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "city"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            },
+            {
+              "function": {
+                "description": "Get local time for a city.",
+                "name": "get_time",
+                "parameters": {
+                  "properties": {
+                    "city": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "city"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            },
+            {
+              "function": {
+                "description": "Convert an exact currency amount.",
+                "name": "convert_currency",
+                "parameters": {
+                  "properties": {
+                    "amount": {
+                      "type": "number"
+                    },
+                    "from": {
+                      "type": "string"
+                    },
+                    "to": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "amount",
+                    "from",
+                    "to"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-length": "1567",
+          "content-type": "application/json",
+          "date": "Mon, 20 Jul 2026 14:38:20 GMT"
+        },
+        "body_raw": "{\"id\":\"chatcmpl-416\",\"object\":\"chat.completion\",\"created\":1784558300,\"model\":\"qwen3:14b\",\"system_fingerprint\":\"fp_ollama\",\"choices\":[{\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"\",\"reasoning\":\"Okay, let's see. The user wants three things: the weather in Rome, the time in Nairobi, and to convert 25 USD to EUR. I need to figure out which functions to use for each part.\\n\\nFirst, the weather in Rome. There's a get_weather function that takes a city parameter. So I'll need to call that with \\\"Rome\\\" as the city. Then, the time in Nairobi. The get_time function also requires a city, so that's straightforward with \\\"Nairobi\\\". Lastly, converting 25 USD to EUR. The convert_currency function needs amount, from, and to parameters. The amount here is 25, from is USD, to is EUR. \\n\\nI should make sure each function is called correctly. No parameters are missing, and the cities are spelled right. Since the user asked for all three, I need to make three separate tool calls. Let me structure each one properly in JSON within the tool_call tags.\\n\",\"tool_calls\":[{\"id\":\"call_zls2hvtd\",\"index\":0,\"type\":\"function\",\"function\":{\"name\":\"get_weather\",\"arguments\":\"{\\\"city\\\":\\\"Rome\\\"}\"}},{\"id\":\"call_lts5py1e\",\"index\":1,\"type\":\"function\",\"function\":{\"name\":\"get_time\",\"arguments\":\"{\\\"city\\\":\\\"Nairobi\\\"}\"}},{\"id\":\"call_8nrxw6za\",\"index\":2,\"type\":\"function\",\"function\":{\"name\":\"convert_currency\",\"arguments\":\"{\\\"amount\\\":25,\\\"from\\\":\\\"USD\\\",\\\"to\\\":\\\"EUR\\\"}\"}}]},\"finish_reason\":\"tool_calls\"}],\"usage\":{\"prompt_tokens\":239,\"completion_tokens\":277,\"total_tokens\":516}}\n"
+      },
+      "retried": false
+    }
+  ]
+}

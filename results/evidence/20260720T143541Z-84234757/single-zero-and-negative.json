@@ -1,0 +1,66 @@
+{
+  "schema_version": 1,
+  "run_id": "20260720T143541Z-84234757",
+  "scenario_id": "single-zero-and-negative",
+  "turns": [
+    {
+      "index": 0,
+      "request": {
+        "method": "POST",
+        "url": "http://localhost:11434/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "Set the axis range from -12.5 to 0.",
+              "role": "user"
+            }
+          ],
+          "model": "gemma3:12b",
+          "seed": 42,
+          "stream": false,
+          "temperature": 0.0,
+          "tool_choice": "auto",
+          "tools": [
+            {
+              "function": {
+                "description": "Set an axis range.",
+                "name": "set_axis_range",
+                "parameters": {
+                  "properties": {
+                    "maximum": {
+                      "type": "number"
+                    },
+                    "minimum": {
+                      "type": "number"
+                    }
+                  },
+                  "required": [
+                    "minimum",
+                    "maximum"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 400,
+        "headers": {
+          "content-length": "141",
+          "content-type": "application/json",
+          "date": "Mon, 20 Jul 2026 14:35:46 GMT"
+        },
+        "body_raw": "{\"error\":{\"message\":\"registry.ollama.ai/library/gemma3:12b does not support tools\",\"type\":\"invalid_request_error\",\"param\":null,\"code\":null}}\n"
+      },
+      "retried": false
+    }
+  ]
+}

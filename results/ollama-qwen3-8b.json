@@ -25,6 +25,7 @@
       "category": "multi_turn",
       "status": "fail",
       "failure_reason": "turn 1: no tool call emitted",
+      "failure_class": "empty_response",
       "evidence_hash": "sha256:fbbf297b4688b1e98a2c0354c71b384353f3e2d4b51d7e7dc57f270fcae62b65",
       "evidence_path": "evidence/20260720T022254Z-1c879a7b/multi-turn-calendar-followup.json",
       "retried": false
@@ -43,6 +44,7 @@
       "category": "multi_turn",
       "status": "fail",
       "failure_reason": "turn 1: no tool call emitted",
+      "failure_class": "empty_response",
       "evidence_hash": "sha256:054dcad38aacc88bc2d6dccc16bb07a52fbf292716a8833217ff3f12af9f9062",
       "evidence_path": "evidence/20260720T022254Z-1c879a7b/multi-turn-inventory-order.json",
       "retried": false
@@ -70,6 +72,7 @@
       "category": "multi_turn",
       "status": "fail",
       "failure_reason": "turn 1: no tool call emitted",
+      "failure_class": "empty_response",
       "evidence_hash": "sha256:bf122b0d84cc651d0b2cedc429dae92f1fc8467ba69ae0725ddd90cf60fe4da5",
       "evidence_path": "evidence/20260720T022254Z-1c879a7b/multi-turn-ticket-update.json",
       "retried": false

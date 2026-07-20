@@ -1,0 +1,73 @@
+{
+  "schema_version": 1,
+  "run_id": "20260720T150136Z-52ebff14",
+  "scenario_id": "single-enum-format",
+  "turns": [
+    {
+      "index": 0,
+      "request": {
+        "method": "POST",
+        "url": "http://127.0.0.1:8080/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "Export report quarterly-7 as csv.",
+              "role": "user"
+            }
+          ],
+          "model": "/Users/bbadmin/.ollama/models/blobs/sha256-3c168af1dea0a414299c7d9077e100ac763370e5a98b3c53801a958a47f0a5db",
+          "seed": 42,
+          "stream": false,
+          "temperature": 0.0,
+          "tool_choice": "auto",
+          "tools": [
+            {
+              "function": {
+                "description": "Export a report in a supported format.",
+                "name": "export_report",
+                "parameters": {
+                  "properties": {
+                    "format": {
+                      "enum": [
+                        "csv",
+                        "json",
+                        "pdf"
+                      ],
+                      "type": "string"
+                    },
+                    "report_id": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "report_id",
+                    "format"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "access-control-allow-origin": "",
+          "content-length": "3441",
+          "content-type": "application/json; charset=utf-8",
+          "keep-alive": "timeout=5, max=100",
+          "server": "llama.cpp"
+        },
+        "body_raw": "{\"choices\":[{\"finish_reason\":\"stop\",\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"To export a report as a CSV file, you would typically follow these steps. However, since I can't directly manipulate files or execute code, I'll guide you through the process using Python, which is a common choice for such tasks. This example assumes you have a report in a format that can be easily converted into a CSV (like a list of dictionaries, a pandas DataFrame, etc.). If your report is in a different format (e.g., a PDF, Excel), you might need to first convert it into a more accessible format before proceeding.\\n\\n### Using Python with Pandas\\n\\nPandas is a powerful library for data manipulation and analysis. If your report is in a CSV-like format (e.g., a list of dictionaries), you can directly convert it into a CSV file. If it's not, you might first need to convert it.\\n\\nFirst, ensure you have pandas installed. If not, you can install it using pip:\\n\\n```bash\\npip install pandas\\n```\\n\\nHere's a simple script to convert a list of dictionaries (which could represent your report) into a CSV file:\\n\\n```python\\nimport pandas as pd\\n\\n# Sample data: Replace this with your actual report data\\ndata = [\\n    {'Column1': 'Value1', 'Column2': 'Value2', 'Column3': 'Value3'},\\n    {'Column1': 'Value4', 'Column2': 'Value5', 'Column3': 'Value6'},\\n    # Add as many dictionaries as you have rows in your report\\n]\\n\\n# Convert the list of dictionaries into a pandas DataFrame\\ndf = pd.DataFrame(data)\\n\\n# Save the DataFrame to a CSV file\\ndf.to_csv('quarterly_report_7.csv', index=False)\\n\\nprint(\\\"Report exported as quarterly_report_7.csv\\\")\\n```\\n\\nIf your report is in a different format (e.g., Excel), you can use pandas to read it first:\\n\\n```python\\nimport pandas as pd\\n\\n# For an Excel file\\ndf = pd.read_excel('path_to_your_report.xlsx')\\n\\n# Save the DataFrame to a CSV file\\ndf.to_csv('quarterly_report_7.csv', index=False)\\n\\nprint(\\\"Report exported as quarterly_report_7.csv\\\")\\n```\\n\\nFor a PDF, you might first need to convert it to text or CSV using a tool like `tabula-py` (for tables) or `pdfplumber` (for extracting text), then follow the above steps.\\n\\nRemember to replace `'path_to_your_report.xlsx'` with the actual path to your report file. If your report is not in a CSV-like format, you might need to adjust the code to fit your specific situation, such as using `tabula-py` for extracting tables from PDFs or `pdfplumber` for extracting text from PDFs.\\n\\n### Note:\\n\\n- `index=False` is used to tell pandas not to write row indices into the CSV file. You can remove it if you want the indices.\\n- Ensure you have the necessary permissions to write files to the directory you're working in.\\n- Adjust the column names and data according to your actual report structure.\"}}],\"created\":1784559724,\"model\":\"/Users/bbadmin/.ollama/models/blobs/sha256-3c168af1dea0a414299c7d9077e100ac763370e5a98b3c53801a958a47f0a5db\",\"system_fingerprint\":\"b10050-b15ca938a\",\"object\":\"chat.completion\",\"usage\":{\"completion_tokens\":631,\"prompt_tokens\":11,\"total_tokens\":642,\"prompt_tokens_details\":{\"cached_tokens\":0}},\"id\":\"chatcmpl-DSBNCiKq43VFHg9x8rVEvNIOuqrVhIGM\",\"timings\":{\"cache_n\":0,\"prompt_n\":11,\"prompt_ms\":33.023,\"prompt_per_token_ms\":3.0020909090909096,\"prompt_per_second\":333.1011719104866,\"predicted_n\":631,\"predicted_ms\":4554.715,\"predicted_per_token_ms\":7.21824881141046,\"predicted_per_second\":138.53775702760765}}"
+      },
+      "retried": false
+    }
+  ]
+}

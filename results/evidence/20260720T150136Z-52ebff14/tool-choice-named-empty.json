@@ -1,0 +1,71 @@
+{
+  "schema_version": 1,
+  "run_id": "20260720T150136Z-52ebff14",
+  "scenario_id": "tool-choice-named-empty",
+  "turns": [
+    {
+      "index": 0,
+      "request": {
+        "method": "POST",
+        "url": "http://127.0.0.1:8080/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "Get the current deployment region.",
+              "role": "user"
+            }
+          ],
+          "model": "/Users/bbadmin/.ollama/models/blobs/sha256-3c168af1dea0a414299c7d9077e100ac763370e5a98b3c53801a958a47f0a5db",
+          "seed": 42,
+          "stream": false,
+          "temperature": 0.0,
+          "tool_choice": {
+            "function": {
+              "name": "current_region"
+            },
+            "type": "function"
+          },
+          "tools": [
+            {
+              "function": {
+                "description": "Get the current deployment region.",
+                "name": "current_region",
+                "parameters": {
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            },
+            {
+              "function": {
+                "description": "Get the current deployment zone.",
+                "name": "current_zone",
+                "parameters": {
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "access-control-allow-origin": "",
+          "content-length": "1565",
+          "content-type": "application/json; charset=utf-8",
+          "keep-alive": "timeout=5, max=100",
+          "server": "llama.cpp"
+        },
+        "body_raw": "{\"choices\":[{\"finish_reason\":\"stop\",\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"To get the current deployment region, you would typically use a cloud provider's SDK or API. For example, if you're using AWS, you can use the Boto3 library in Python to retrieve the region of your deployment. Here's a simple Python script that uses Boto3 to get the current region of your AWS deployment:\\n\\n```python\\nimport boto3\\n\\n# Create a Boto3 session\\nsession = boto3.Session()\\n\\n# Get the EC2 client\\nec2 = session.client('ec2')\\n\\n# Get the current region\\ncurrent_region = ec2.meta.region_name\\n\\nprint(f\\\"The current deployment region is: {current_region}\\\")\\n```\\n\\nMake sure you have the necessary permissions and your AWS credentials configured properly for this script to work. If you're using a different cloud provider or need to get the region from a different context, let me know, and I can provide you with the appropriate code.\"}}],\"created\":1784559757,\"model\":\"/Users/bbadmin/.ollama/models/blobs/sha256-3c168af1dea0a414299c7d9077e100ac763370e5a98b3c53801a958a47f0a5db\",\"system_fingerprint\":\"b10050-b15ca938a\",\"object\":\"chat.completion\",\"usage\":{\"completion_tokens\":183,\"prompt_tokens\":9,\"total_tokens\":192,\"prompt_tokens_details\":{\"cached_tokens\":1}},\"id\":\"chatcmpl-SfgZkxPhKP9SWuIpq9dKhbzOGkNZn1Qq\",\"timings\":{\"cache_n\":1,\"prompt_n\":8,\"prompt_ms\":35.808,\"prompt_per_token_ms\":4.476,\"prompt_per_second\":223.41376228775692,\"predicted_n\":183,\"predicted_ms\":1308.85,\"predicted_per_token_ms\":7.1521857923497265,\"predicted_per_second\":139.81739695152234}}"
+      },
+      "retried": false
+    }
+  ]
+}

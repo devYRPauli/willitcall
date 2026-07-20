@@ -52,6 +52,7 @@
       "category": "multi_turn",
       "status": "fail",
       "failure_reason": "turn 1: no tool call emitted",
+      "failure_class": "empty_response",
       "evidence_hash": "sha256:454276f884725fdff0ce19fcb1a94635cad123f4e236b6e3e6d1c1ed1291d607",
       "evidence_path": "evidence/20260720T020938Z-e62601da/multi-turn-parallel-followup.json",
       "retried": false
@@ -124,6 +125,7 @@
       "category": "negative_trap",
       "status": "fail",
       "failure_reason": "no tool call emitted",
+      "failure_class": "empty_response",
       "evidence_hash": "sha256:edf816b50d965c65023b0d8b4a8afd3b89574b41d483e574ec980922f83c422f",
       "evidence_path": "evidence/20260720T020938Z-e62601da/negative-long-argument.json",
       "retried": false
@@ -223,6 +225,7 @@
       "category": "single_call",
       "status": "fail",
       "failure_reason": "no tool call emitted",
+      "failure_class": "empty_response",
       "evidence_hash": "sha256:a1a14ff8d03b77f28c0b32ee6274d736318c1d335ca61604205484356857c263",
       "evidence_path": "evidence/20260720T020938Z-e62601da/single-array-tags.json",
       "retried": false
@@ -466,6 +469,7 @@
       "category": "tool_choice_modes",
       "status": "fail",
       "failure_reason": "no tool call emitted",
+      "failure_class": "empty_response",
       "evidence_hash": "sha256:9369ca247cc211714cfc87fea929f1ad519e126669abc81a08ef72f423b7eedb",
       "evidence_path": "evidence/20260720T020938Z-e62601da/tool-choice-required-empty.json",
       "retried": false

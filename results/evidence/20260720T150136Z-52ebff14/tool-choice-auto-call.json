@@ -1,0 +1,64 @@
+{
+  "schema_version": 1,
+  "run_id": "20260720T150136Z-52ebff14",
+  "scenario_id": "tool-choice-auto-call",
+  "turns": [
+    {
+      "index": 0,
+      "request": {
+        "method": "POST",
+        "url": "http://127.0.0.1:8080/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "Get the temperature in Helsinki.",
+              "role": "user"
+            }
+          ],
+          "model": "/Users/bbadmin/.ollama/models/blobs/sha256-3c168af1dea0a414299c7d9077e100ac763370e5a98b3c53801a958a47f0a5db",
+          "seed": 42,
+          "stream": false,
+          "temperature": 0.0,
+          "tool_choice": "auto",
+          "tools": [
+            {
+              "function": {
+                "description": "Get the temperature for a city.",
+                "name": "get_temperature",
+                "parameters": {
+                  "properties": {
+                    "city": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "city"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "access-control-allow-origin": "",
+          "content-length": "1046",
+          "content-type": "application/json; charset=utf-8",
+          "keep-alive": "timeout=5, max=100",
+          "server": "llama.cpp"
+        },
+        "body_raw": "{\"choices\":[{\"finish_reason\":\"stop\",\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"As of my last update in April 2023, I can't provide real-time data. To find the current temperature in Helsinki, you can check a reliable weather website like AccuWeather, the official Finnish Meteorological Institute, or use a weather app like Weather Underground. Simply search for \\\"Helsinki temperature\\\" to get the latest updates.\"}}],\"created\":1784559755,\"model\":\"/Users/bbadmin/.ollama/models/blobs/sha256-3c168af1dea0a414299c7d9077e100ac763370e5a98b3c53801a958a47f0a5db\",\"system_fingerprint\":\"b10050-b15ca938a\",\"object\":\"chat.completion\",\"usage\":{\"completion_tokens\":70,\"prompt_tokens\":9,\"total_tokens\":79,\"prompt_tokens_details\":{\"cached_tokens\":1}},\"id\":\"chatcmpl-Nfw7oQtBZmFuTsKdJ5uN1ZXty3jTOJbg\",\"timings\":{\"cache_n\":1,\"prompt_n\":8,\"prompt_ms\":35.897,\"prompt_per_token_ms\":4.487125,\"prompt_per_second\":222.85984901245232,\"predicted_n\":70,\"predicted_ms\":495.828,\"predicted_per_token_ms\":7.083257142857143,\"predicted_per_second\":141.17798914139584}}"
+      },
+      "retried": false
+    }
+  ]
+}

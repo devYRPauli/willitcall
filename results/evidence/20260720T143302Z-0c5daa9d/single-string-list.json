@@ -1,0 +1,69 @@
+{
+  "schema_version": 1,
+  "run_id": "20260720T143302Z-0c5daa9d",
+  "scenario_id": "single-string-list",
+  "turns": [
+    {
+      "index": 0,
+      "request": {
+        "method": "POST",
+        "url": "http://localhost:11434/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "Create playlist road-test with tracks t-3, t-1, and t-8 in that order.",
+              "role": "user"
+            }
+          ],
+          "model": "hermes3:8b",
+          "seed": 42,
+          "stream": false,
+          "temperature": 0.0,
+          "tool_choice": "auto",
+          "tools": [
+            {
+              "function": {
+                "description": "Create a playlist from ordered track ids.",
+                "name": "create_playlist",
+                "parameters": {
+                  "properties": {
+                    "name": {
+                      "type": "string"
+                    },
+                    "track_ids": {
+                      "items": {
+                        "type": "string"
+                      },
+                      "type": "array"
+                    }
+                  },
+                  "required": [
+                    "name",
+                    "track_ids"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-length": "476",
+          "content-type": "application/json",
+          "date": "Mon, 20 Jul 2026 14:33:30 GMT"
+        },
+        "body_raw": "{\"id\":\"chatcmpl-222\",\"object\":\"chat.completion\",\"created\":1784558010,\"model\":\"hermes3:8b\",\"system_fingerprint\":\"fp_ollama\",\"choices\":[{\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"\",\"tool_calls\":[{\"id\":\"call_05qti63d\",\"index\":0,\"type\":\"function\",\"function\":{\"name\":\"create_playlist\",\"arguments\":\"{\\\"track_ids\\\":[\\\"t-3\\\",\\\"t-1\\\",\\\"t-8\\\"],\\\"name\\\":\\\"road-test\\\"}\"}}]},\"finish_reason\":\"tool_calls\"}],\"usage\":{\"prompt_tokens\":262,\"completion_tokens\":40,\"total_tokens\":302}}\n"
+      },
+      "retried": false
+    }
+  ]
+}

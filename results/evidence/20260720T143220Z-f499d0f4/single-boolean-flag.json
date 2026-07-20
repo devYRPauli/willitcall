@@ -1,0 +1,66 @@
+{
+  "schema_version": 1,
+  "run_id": "20260720T143220Z-f499d0f4",
+  "scenario_id": "single-boolean-flag",
+  "turns": [
+    {
+      "index": 0,
+      "request": {
+        "method": "POST",
+        "url": "http://localhost:11434/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "Disable the feature named audit-log.",
+              "role": "user"
+            }
+          ],
+          "model": "llama3-groq-tool-use:8b",
+          "seed": 42,
+          "stream": false,
+          "temperature": 0.0,
+          "tool_choice": "auto",
+          "tools": [
+            {
+              "function": {
+                "description": "Enable or disable a feature.",
+                "name": "set_feature",
+                "parameters": {
+                  "properties": {
+                    "enabled": {
+                      "type": "boolean"
+                    },
+                    "feature": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "feature",
+                    "enabled"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-length": "466",
+          "content-type": "application/json",
+          "date": "Mon, 20 Jul 2026 14:32:42 GMT"
+        },
+        "body_raw": "{\"id\":\"chatcmpl-807\",\"object\":\"chat.completion\",\"created\":1784557962,\"model\":\"llama3-groq-tool-use:8b\",\"system_fingerprint\":\"fp_ollama\",\"choices\":[{\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"\",\"tool_calls\":[{\"id\":\"call_ce4t8g64\",\"index\":0,\"type\":\"function\",\"function\":{\"name\":\"set_feature\",\"arguments\":\"{\\\"enabled\\\":false,\\\"feature\\\":\\\"audit-log\\\"}\"}}]},\"finish_reason\":\"tool_calls\"}],\"usage\":{\"prompt_tokens\":146,\"completion_tokens\":32,\"total_tokens\":178}}\n"
+      },
+      "retried": false
+    }
+  ]
+}

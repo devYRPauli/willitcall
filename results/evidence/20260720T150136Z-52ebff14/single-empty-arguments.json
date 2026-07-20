@@ -1,0 +1,56 @@
+{
+  "schema_version": 1,
+  "run_id": "20260720T150136Z-52ebff14",
+  "scenario_id": "single-empty-arguments",
+  "turns": [
+    {
+      "index": 0,
+      "request": {
+        "method": "POST",
+        "url": "http://127.0.0.1:8080/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "Get the current service status now.",
+              "role": "user"
+            }
+          ],
+          "model": "/Users/bbadmin/.ollama/models/blobs/sha256-3c168af1dea0a414299c7d9077e100ac763370e5a98b3c53801a958a47f0a5db",
+          "seed": 42,
+          "stream": false,
+          "temperature": 0.0,
+          "tool_choice": "required",
+          "tools": [
+            {
+              "function": {
+                "description": "Get the current service status.",
+                "name": "get_service_status",
+                "parameters": {
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "access-control-allow-origin": "",
+          "content-length": "1269",
+          "content-type": "application/json; charset=utf-8",
+          "keep-alive": "timeout=5, max=100",
+          "server": "llama.cpp"
+        },
+        "body_raw": "{\"choices\":[{\"finish_reason\":\"stop\",\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"I'm sorry for any confusion, but as an AI developed by Microsoft, I don't have the capability to directly access real-time data or services. I can't provide the current status of any service. To check the status of a specific service, you would typically visit the service's official website, use a status checker tool provided by the service, or check social media updates or official communications for any reported outages or issues. If you provide me with the name of the service you're interested in, I can guide you on how to find the current status.\"}}],\"created\":1784559719,\"model\":\"/Users/bbadmin/.ollama/models/blobs/sha256-3c168af1dea0a414299c7d9077e100ac763370e5a98b3c53801a958a47f0a5db\",\"system_fingerprint\":\"b10050-b15ca938a\",\"object\":\"chat.completion\",\"usage\":{\"completion_tokens\":109,\"prompt_tokens\":10,\"total_tokens\":119,\"prompt_tokens_details\":{\"cached_tokens\":0}},\"id\":\"chatcmpl-Fx4Aeq8U57Yz2Cs7zDRan23KYJRD7iGb\",\"timings\":{\"cache_n\":0,\"prompt_n\":10,\"prompt_ms\":33.329,\"prompt_per_token_ms\":3.3329,\"prompt_per_second\":300.0390050706592,\"predicted_n\":109,\"predicted_ms\":775.764,\"predicted_per_token_ms\":7.117100917431193,\"predicted_per_second\":140.50664892931357}}"
+      },
+      "retried": false
+    }
+  ]
+}

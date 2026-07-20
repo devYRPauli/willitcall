@@ -1,0 +1,73 @@
+{
+  "schema_version": 1,
+  "run_id": "20260720T145943Z-12bad35d",
+  "scenario_id": "single-enum-format",
+  "turns": [
+    {
+      "index": 0,
+      "request": {
+        "method": "POST",
+        "url": "http://127.0.0.1:8080/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "Export report quarterly-7 as csv.",
+              "role": "user"
+            }
+          ],
+          "model": "/Users/bbadmin/.ollama/models/blobs/sha256-44d19d212d76a6f3fc442e8411fdb44ea6b67ceccfb00be4b4345c9a4cf813e8",
+          "seed": 42,
+          "stream": false,
+          "temperature": 0.0,
+          "tool_choice": "auto",
+          "tools": [
+            {
+              "function": {
+                "description": "Export a report in a supported format.",
+                "name": "export_report",
+                "parameters": {
+                  "properties": {
+                    "format": {
+                      "enum": [
+                        "csv",
+                        "json",
+                        "pdf"
+                      ],
+                      "type": "string"
+                    },
+                    "report_id": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "report_id",
+                    "format"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "access-control-allow-origin": "",
+          "content-length": "841",
+          "content-type": "application/json; charset=utf-8",
+          "keep-alive": "timeout=5, max=100",
+          "server": "llama.cpp"
+        },
+        "body_raw": "{\"choices\":[{\"finish_reason\":\"stop\",\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"<tool_call>[{\\\"arguments\\\": {\\\"report_id\\\": \\\"quarterly-7\\\", \\\"format\\\": \\\"csv\\\"}, \\\"name\\\": \\\"export_report\\\"}]\"}}],\"created\":1784559606,\"model\":\"/Users/bbadmin/.ollama/models/blobs/sha256-44d19d212d76a6f3fc442e8411fdb44ea6b67ceccfb00be4b4345c9a4cf813e8\",\"system_fingerprint\":\"b10050-b15ca938a\",\"object\":\"chat.completion\",\"usage\":{\"completion_tokens\":34,\"prompt_tokens\":262,\"total_tokens\":296,\"prompt_tokens_details\":{\"cached_tokens\":133}},\"id\":\"chatcmpl-4IchRtFLPKZqIDErGSbY11yLkuWYkUwG\",\"timings\":{\"cache_n\":133,\"prompt_n\":129,\"prompt_ms\":212.504,\"prompt_per_token_ms\":1.6473178294573643,\"prompt_per_second\":607.0473967548846,\"predicted_n\":34,\"predicted_ms\":418.833,\"predicted_per_token_ms\":12.318617647058824,\"predicted_per_second\":81.1779396561398}}"
+      },
+      "retried": false
+    }
+  ]
+}

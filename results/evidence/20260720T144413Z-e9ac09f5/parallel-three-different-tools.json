@@ -1,0 +1,106 @@
+{
+  "schema_version": 1,
+  "run_id": "20260720T144413Z-e9ac09f5",
+  "scenario_id": "parallel-three-different-tools",
+  "turns": [
+    {
+      "index": 0,
+      "request": {
+        "method": "POST",
+        "url": "http://localhost:11434/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "Get weather in Rome, time in Nairobi, and convert 25 USD to EUR.",
+              "role": "user"
+            }
+          ],
+          "model": "phi4-mini:latest",
+          "seed": 42,
+          "stream": false,
+          "temperature": 0.0,
+          "tool_choice": "required",
+          "tools": [
+            {
+              "function": {
+                "description": "Get weather for a city.",
+                "name": "get_weather",
+                "parameters": {
+                  "properties": {
+                    "city": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "city"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            },
+            {
+              "function": {
+                "description": "Get local time for a city.",
+                "name": "get_time",
+                "parameters": {
+                  "properties": {
+                    "city": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "city"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            },
+            {
+              "function": {
+                "description": "Convert an exact currency amount.",
+                "name": "convert_currency",
+                "parameters": {
+                  "properties": {
+                    "amount": {
+                      "type": "number"
+                    },
+                    "from": {
+                      "type": "string"
+                    },
+                    "to": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "amount",
+                    "from",
+                    "to"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-length": "691",
+          "content-type": "application/json",
+          "date": "Mon, 20 Jul 2026 14:44:35 GMT"
+        },
+        "body_raw": "{\"id\":\"chatcmpl-833\",\"object\":\"chat.completion\",\"created\":1784558675,\"model\":\"phi4-mini:latest\",\"system_fingerprint\":\"fp_ollama\",\"choices\":[{\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"I'm going to perform each task one by one for you.\\n\\n1. Get the current weather information for Rome.\\n2. Find out what the local time is right now in Nairobi.\\n3. Convert an amount of $25 from US Dollars (USD) into Euros (€).\\n\\nLet's start with getting today's weather forecast for Rome:\\n\\n[{\\\"type\\\":\\\"get_weather\\\",\\\"function\\\":{\\\"name\\\":\\\"get_weather\\\",\\\"arguments\\\":{\\\"city\\\":\\\"Rome\\\"}}}]\"},\"finish_reason\":\"stop\"}],\"usage\":{\"prompt_tokens\":174,\"completion_tokens\":86,\"total_tokens\":260}}\n"
+      },
+      "retried": false
+    }
+  ]
+}

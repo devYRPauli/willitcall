@@ -1,0 +1,91 @@
+{
+  "schema_version": 1,
+  "run_id": "20260720T145532Z-af40963b",
+  "scenario_id": "multi-turn-ticket-update",
+  "turns": [
+    {
+      "index": 0,
+      "request": {
+        "method": "POST",
+        "url": "http://127.0.0.1:8080/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "Find ticket EXT-55 and set its priority to high.",
+              "role": "user"
+            }
+          ],
+          "model": "/Users/bbadmin/gguf/watt-tool-8B.Q4_K_M.gguf",
+          "seed": 42,
+          "stream": false,
+          "temperature": 0.0,
+          "tool_choice": "auto",
+          "tools": [
+            {
+              "function": {
+                "description": "Find a ticket by exact external reference.",
+                "name": "find_ticket",
+                "parameters": {
+                  "properties": {
+                    "external_ref": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "external_ref"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            },
+            {
+              "function": {
+                "description": "Set ticket priority by internal id.",
+                "name": "set_ticket_priority",
+                "parameters": {
+                  "properties": {
+                    "priority": {
+                      "enum": [
+                        "low",
+                        "normal",
+                        "high"
+                      ],
+                      "type": "string"
+                    },
+                    "ticket_id": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "ticket_id",
+                    "priority"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "access-control-allow-origin": "",
+          "content-length": "1791",
+          "content-type": "application/json; charset=utf-8",
+          "keep-alive": "timeout=5, max=100",
+          "server": "llama.cpp"
+        },
+        "body_raw": "{\"choices\":[{\"finish_reason\":\"stop\",\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"I cannot directly access or modify tickets. However, I can guide you on how to set the priority of a ticket in a ticketing system. \\n\\n1. **Access the Ticketing System**: You need to access the ticketing system where the ticket EXT-55 is located. This could be a web-based system, a desktop application, or a mobile app.\\n\\n2. **Search for the Ticket**: Once you are in the ticketing system, search for the ticket EXT-55. This might involve using a search bar or filtering tickets based on their IDs.\\n\\n3. **Edit the Ticket**: Once you have found the ticket, you should be able to edit it. This might involve clicking on the ticket or selecting an \\\"Edit\\\" option.\\n\\n4. **Change the Priority**: Within the edit options, you should be able to change the priority of the ticket. This might be a dropdown menu or a radio button selection. Choose \\\"High\\\" as the new priority.\\n\\n5. **Save the Changes**: After changing the priority, make sure to save the changes. This might involve clicking a \\\"Save\\\" or \\\"Update\\\" button.\\n\\nIf you need further assistance or have specific questions about the ticketing system you are using, feel free to ask!\"}}],\"created\":1784559347,\"model\":\"/Users/bbadmin/gguf/watt-tool-8B.Q4_K_M.gguf\",\"system_fingerprint\":\"b10050-b15ca938a\",\"object\":\"chat.completion\",\"usage\":{\"completion_tokens\":252,\"prompt_tokens\":22,\"total_tokens\":274,\"prompt_tokens_details\":{\"cached_tokens\":6}},\"id\":\"chatcmpl-UZ1sQFfCLH8Kwdqro63dIyeLAVP61771\",\"timings\":{\"cache_n\":6,\"prompt_n\":16,\"prompt_ms\":54.944,\"prompt_per_token_ms\":3.434,\"prompt_per_second\":291.20559114735,\"predicted_n\":252,\"predicted_ms\":2844.32,\"predicted_per_token_ms\":11.286984126984128,\"predicted_per_second\":88.59762614614388}}"
+      },
+      "retried": false
+    }
+  ]
+}

@@ -1,0 +1,62 @@
+{
+  "schema_version": 1,
+  "run_id": "20260720T144413Z-e9ac09f5",
+  "scenario_id": "tool-choice-required",
+  "turns": [
+    {
+      "index": 0,
+      "request": {
+        "method": "POST",
+        "url": "http://localhost:11434/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "Look up order ORD-204.",
+              "role": "user"
+            }
+          ],
+          "model": "phi4-mini:latest",
+          "seed": 42,
+          "stream": false,
+          "temperature": 0.0,
+          "tool_choice": "required",
+          "tools": [
+            {
+              "function": {
+                "description": "Look up an order by exact id.",
+                "name": "lookup_order",
+                "parameters": {
+                  "properties": {
+                    "order_id": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "order_id"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-length": "669",
+          "content-type": "application/json",
+          "date": "Mon, 20 Jul 2026 14:45:02 GMT"
+        },
+        "body_raw": "{\"id\":\"chatcmpl-616\",\"object\":\"chat.completion\",\"created\":1784558702,\"model\":\"phi4-mini:latest\",\"system_fingerprint\":\"fp_ollama\",\"choices\":[{\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"I'm going to use the provided function `lookup_order` with the given \\\"order_id\\\".\\n\\n```python\\nresult = lookup_order(order_id=\\\"ORD-204\\\")\\nprint(result)\\n```\\n\\nPlease wait while I perform this action for you.\\n\\n(Note: As an AI language model, I'm not able to execute code or functions. The above is a representation of how one would use the function in their environment.)\"},\"finish_reason\":\"stop\"}],\"usage\":{\"prompt_tokens\":69,\"completion_tokens\":81,\"total_tokens\":150}}\n"
+      },
+      "retried": false
+    }
+  ]
+}

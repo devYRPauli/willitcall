@@ -1,0 +1,84 @@
+{
+  "schema_version": 1,
+  "run_id": "20260720T143220Z-f499d0f4",
+  "scenario_id": "multi-turn-route",
+  "turns": [
+    {
+      "index": 0,
+      "request": {
+        "method": "POST",
+        "url": "http://localhost:11434/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "Find a route to Fenway Park.",
+              "role": "user"
+            }
+          ],
+          "model": "llama3-groq-tool-use:8b",
+          "seed": 42,
+          "stream": false,
+          "temperature": 0.0,
+          "tool_choice": "auto",
+          "tools": [
+            {
+              "function": {
+                "description": "Resolve a place to coordinates.",
+                "name": "geocode",
+                "parameters": {
+                  "properties": {
+                    "place": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "place"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            },
+            {
+              "function": {
+                "description": "Get a route to coordinates.",
+                "name": "get_route",
+                "parameters": {
+                  "properties": {
+                    "latitude": {
+                      "type": "number"
+                    },
+                    "longitude": {
+                      "type": "number"
+                    }
+                  },
+                  "required": [
+                    "latitude",
+                    "longitude"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-length": "516",
+          "content-type": "application/json",
+          "date": "Mon, 20 Jul 2026 14:32:28 GMT"
+        },
+        "body_raw": "{\"id\":\"chatcmpl-786\",\"object\":\"chat.completion\",\"created\":1784557948,\"model\":\"llama3-groq-tool-use:8b\",\"system_fingerprint\":\"fp_ollama\",\"choices\":[{\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"I'm sorry but I don't have the capability to perform external HTTP requests. However, you can use mapping apps like Google Maps or Waze to find directions to Fenway Park. Would you like me to help with anything else?\"},\"finish_reason\":\"stop\"}],\"usage\":{\"prompt_tokens\":175,\"completion_tokens\":48,\"total_tokens\":223}}\n"
+      },
+      "retried": false
+    }
+  ]
+}

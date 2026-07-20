@@ -1,0 +1,66 @@
+{
+  "schema_version": 1,
+  "run_id": "20260720T144413Z-e9ac09f5",
+  "scenario_id": "single-boolean-flag",
+  "turns": [
+    {
+      "index": 0,
+      "request": {
+        "method": "POST",
+        "url": "http://localhost:11434/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "Disable the feature named audit-log.",
+              "role": "user"
+            }
+          ],
+          "model": "phi4-mini:latest",
+          "seed": 42,
+          "stream": false,
+          "temperature": 0.0,
+          "tool_choice": "auto",
+          "tools": [
+            {
+              "function": {
+                "description": "Enable or disable a feature.",
+                "name": "set_feature",
+                "parameters": {
+                  "properties": {
+                    "enabled": {
+                      "type": "boolean"
+                    },
+                    "feature": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "feature",
+                    "enabled"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-length": "735",
+          "content-type": "application/json",
+          "date": "Mon, 20 Jul 2026 14:44:41 GMT"
+        },
+        "body_raw": "{\"id\":\"chatcmpl-694\",\"object\":\"chat.completion\",\"created\":1784558681,\"model\":\"phi4-mini:latest\",\"system_fingerprint\":\"fp_ollama\",\"choices\":[{\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"I'm sorry, but it seems there might be some confusion here as I don't have any specific features listed that can currently exist in my system to enable or disable directly through your command. The function you provided is for enabling a hypothetical \\\"audit-log\\\" feature within an application context.\\n\\nIf there's another way you'd like me to assist with disabling something, please let me know the details so we could proceed accordingly!\"},\"finish_reason\":\"stop\"}],\"usage\":{\"prompt_tokens\":74,\"completion_tokens\":81,\"total_tokens\":155}}\n"
+      },
+      "retried": false
+    }
+  ]
+}

@@ -1,0 +1,54 @@
+{
+  "schema_version": 1,
+  "run_id": "20260720T144413Z-e9ac09f5",
+  "scenario_id": "tool-choice-required-empty",
+  "turns": [
+    {
+      "index": 0,
+      "request": {
+        "method": "POST",
+        "url": "http://localhost:11434/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "Get the current sequence number.",
+              "role": "user"
+            }
+          ],
+          "model": "phi4-mini:latest",
+          "seed": 42,
+          "stream": false,
+          "temperature": 0.0,
+          "tool_choice": "required",
+          "tools": [
+            {
+              "function": {
+                "description": "Get the current sequence number.",
+                "name": "current_sequence",
+                "parameters": {
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-length": "1138",
+          "content-type": "application/json",
+          "date": "Mon, 20 Jul 2026 14:45:03 GMT"
+        },
+        "body_raw": "{\"id\":\"chatcmpl-527\",\"object\":\"chat.completion\",\"created\":1784558703,\"model\":\"phi4-mini:latest\",\"system_fingerprint\":\"fp_ollama\",\"choices\":[{\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"I'm sorry, but as an AI developed by Microsoft, I don't have direct access to your system's functions or data unless they are provided within our interaction here on this platform. If you need me to retrieve a specific piece of information like \\\"current sequence number,\\\" please provide more context so that I can assist accordingly.\\n\\nFor instance, if you're working with an API and require the current sequence number for making subsequent requests (like in pagination), you'd typically use parameters or headers provided by your service's documentation. If you need help constructing such a request based on specific details of what function to call next after obtaining this \\\"current sequence number,\\\" please let me know, including any relevant context like API names, endpoints you're working with, etc., and I'll do my best to assist!\"},\"finish_reason\":\"stop\"}],\"usage\":{\"prompt_tokens\":54,\"completion_tokens\":155,\"total_tokens\":209}}\n"
+      },
+      "retried": false
+    }
+  ]
+}

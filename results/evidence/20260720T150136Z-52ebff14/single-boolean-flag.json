@@ -1,0 +1,68 @@
+{
+  "schema_version": 1,
+  "run_id": "20260720T150136Z-52ebff14",
+  "scenario_id": "single-boolean-flag",
+  "turns": [
+    {
+      "index": 0,
+      "request": {
+        "method": "POST",
+        "url": "http://127.0.0.1:8080/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "Disable the feature named audit-log.",
+              "role": "user"
+            }
+          ],
+          "model": "/Users/bbadmin/.ollama/models/blobs/sha256-3c168af1dea0a414299c7d9077e100ac763370e5a98b3c53801a958a47f0a5db",
+          "seed": 42,
+          "stream": false,
+          "temperature": 0.0,
+          "tool_choice": "auto",
+          "tools": [
+            {
+              "function": {
+                "description": "Enable or disable a feature.",
+                "name": "set_feature",
+                "parameters": {
+                  "properties": {
+                    "enabled": {
+                      "type": "boolean"
+                    },
+                    "feature": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "feature",
+                    "enabled"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "access-control-allow-origin": "",
+          "content-length": "2681",
+          "content-type": "application/json; charset=utf-8",
+          "keep-alive": "timeout=5, max=100",
+          "server": "llama.cpp"
+        },
+        "body_raw": "{\"choices\":[{\"finish_reason\":\"stop\",\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"To disable the feature named \\\"audit-log,\\\" you would typically need to access the configuration settings of the system or application that contains this feature. The exact steps can vary depending on the software or system you are using. Here are some general instructions that might apply to different scenarios:\\n\\n\\n1. **Software Configuration File:**\\n\\n   - Locate the configuration file for the software (often found in the installation directory or within a 'config' folder).\\n\\n   - Open the configuration file with a text editor.\\n\\n   - Search for the setting related to \\\"audit-log\\\" (it might be under a section like `[Audit]` or `[Logging]`).\\n\\n   - Change the setting to `false` or `0` (depending on the format) to disable the feature.\\n\\n   - Save the file and restart the software if necessary.\\n\\n\\n2. **System Settings:**\\n\\n   - Go to the system settings or control panel.\\n\\n   - Navigate to the security or privacy settings.\\n\\n   - Find the option for audit logging and uncheck it or set it to `off`.\\n\\n   - Apply the changes and restart if required.\\n\\n\\n3. **Command Line:**\\n\\n   - If the software is running, you can sometimes disable features via command line.\\n\\n   - Open a terminal or command prompt.\\n\\n   - Use a command specific to the software to disable the audit-log feature (e.g., `auditctl -D` for Linux audit systems).\\n\\n   - Apply the changes and restart the service if necessary.\\n\\n\\n4. **Database Settings:**\\n\\n   - If the audit-log feature is stored in a database, you would need to access the database management tool.\\n\\n   - Locate the table or setting related to audit logs.\\n\\n   - Update the relevant field to disable logging or set it to `false`.\\n\\n   - Save the changes and restart the database service if necessary.\\n\\n\\nAlways ensure you have the appropriate permissions to change these settings and that you understand the implications of disabling such a feature, as it may affect security and compliance.\"}}],\"created\":1784559717,\"model\":\"/Users/bbadmin/.ollama/models/blobs/sha256-3c168af1dea0a414299c7d9077e100ac763370e5a98b3c53801a958a47f0a5db\",\"system_fingerprint\":\"b10050-b15ca938a\",\"object\":\"chat.completion\",\"usage\":{\"completion_tokens\":399,\"prompt_tokens\":10,\"total_tokens\":409,\"prompt_tokens_details\":{\"cached_tokens\":0}},\"id\":\"chatcmpl-1kMqMXAf1GUiN0dMBuod6f4c5TZzppUG\",\"timings\":{\"cache_n\":0,\"prompt_n\":10,\"prompt_ms\":33.299,\"prompt_per_token_ms\":3.3299,\"prompt_per_second\":300.3093185981561,\"predicted_n\":399,\"predicted_ms\":2866.615,\"predicted_per_token_ms\":7.184498746867168,\"predicted_per_second\":139.18855514256362}}"
+      },
+      "retried": false
+    }
+  ]
+}

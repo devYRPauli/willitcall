@@ -1,0 +1,80 @@
+{
+  "schema_version": 1,
+  "run_id": "20260720T144413Z-e9ac09f5",
+  "scenario_id": "parallel-different-tools",
+  "turns": [
+    {
+      "index": 0,
+      "request": {
+        "method": "POST",
+        "url": "http://localhost:11434/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "Get the weather in Oslo and the local time in Cairo.",
+              "role": "user"
+            }
+          ],
+          "model": "phi4-mini:latest",
+          "seed": 42,
+          "stream": false,
+          "temperature": 0.0,
+          "tool_choice": "required",
+          "tools": [
+            {
+              "function": {
+                "description": "Get weather for a city.",
+                "name": "get_weather",
+                "parameters": {
+                  "properties": {
+                    "city": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "city"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            },
+            {
+              "function": {
+                "description": "Get local time for a city.",
+                "name": "get_time",
+                "parameters": {
+                  "properties": {
+                    "city": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "city"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-length": "1324",
+          "content-type": "application/json",
+          "date": "Mon, 20 Jul 2026 14:44:34 GMT"
+        },
+        "body_raw": "{\"id\":\"chatcmpl-159\",\"object\":\"chat.completion\",\"created\":1784558674,\"model\":\"phi4-mini:latest\",\"system_fingerprint\":\"fp_ollama\",\"choices\":[{\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"I'm sorry, but it seems like there's been some confusion here as I don't have access to real-time data or external systems that can provide current information such as live weather updates for a specific city (Oslo) or accurate local times at this moment since my capabilities are limited by design and do not include the ability to retrieve up-to-date details. However, if you would like me to demonstrate how I could use hypothetical functions based on your instructions:\\n\\n1. To get the current weather in Oslo: `get_weather({\\\"city\\\": \\\"Oslo\\\"})`\\n2. And for local time information of Cairo: `get_time({\\\"city\\\": \\\"Cairo\\\"})`\\n\\nPlease note that these are just illustrative examples and not actual real-time results, as I can't provide live data at this moment.\\n\\nIf you need the current weather in Oslo or the latest time in Cairo right now, please check a reliable online service like Weather.com for weather information (for Oslo) and WorldTimeZone.com to find out what it's currently 24 hours ahead of UTC/GMT for Cairo.\"},\"finish_reason\":\"stop\"}],\"usage\":{\"prompt_tokens\":111,\"completion_tokens\":212,\"total_tokens\":323}}\n"
+      },
+      "retried": false
+    }
+  ]
+}

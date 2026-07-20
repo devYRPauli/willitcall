@@ -1,0 +1,71 @@
+{
+  "schema_version": 1,
+  "run_id": "20260720T145532Z-af40963b",
+  "scenario_id": "single-string-list",
+  "turns": [
+    {
+      "index": 0,
+      "request": {
+        "method": "POST",
+        "url": "http://127.0.0.1:8080/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "Create playlist road-test with tracks t-3, t-1, and t-8 in that order.",
+              "role": "user"
+            }
+          ],
+          "model": "/Users/bbadmin/gguf/watt-tool-8B.Q4_K_M.gguf",
+          "seed": 42,
+          "stream": false,
+          "temperature": 0.0,
+          "tool_choice": "auto",
+          "tools": [
+            {
+              "function": {
+                "description": "Create a playlist from ordered track ids.",
+                "name": "create_playlist",
+                "parameters": {
+                  "properties": {
+                    "name": {
+                      "type": "string"
+                    },
+                    "track_ids": {
+                      "items": {
+                        "type": "string"
+                      },
+                      "type": "array"
+                    }
+                  },
+                  "required": [
+                    "name",
+                    "track_ids"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "access-control-allow-origin": "",
+          "content-length": "772",
+          "content-type": "application/json; charset=utf-8",
+          "keep-alive": "timeout=5, max=100",
+          "server": "llama.cpp"
+        },
+        "body_raw": "{\"choices\":[{\"finish_reason\":\"stop\",\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"The playlist road-test with tracks t-3, t-1, and t-8 in that order is:\\n\\n1. Track t-3\\n2. Track t-1\\n3. Track t-8\"}}],\"created\":1784559379,\"model\":\"/Users/bbadmin/gguf/watt-tool-8B.Q4_K_M.gguf\",\"system_fingerprint\":\"b10050-b15ca938a\",\"object\":\"chat.completion\",\"usage\":{\"completion_tokens\":44,\"prompt_tokens\":32,\"total_tokens\":76,\"prompt_tokens_details\":{\"cached_tokens\":5}},\"id\":\"chatcmpl-LzJ8QDQigUQz1ENSBXdlaChE3TA1Luzz\",\"timings\":{\"cache_n\":5,\"prompt_n\":27,\"prompt_ms\":54.595,\"prompt_per_token_ms\":2.022037037037037,\"prompt_per_second\":494.5507830387398,\"predicted_n\":44,\"predicted_ms\":487.061,\"predicted_per_token_ms\":11.069568181818182,\"predicted_per_second\":90.33776056797815}}"
+      },
+      "retried": false
+    }
+  ]
+}

@@ -1,0 +1,66 @@
+{
+  "schema_version": 1,
+  "run_id": "20260720T143302Z-0c5daa9d",
+  "scenario_id": "parallel-two-calculations",
+  "turns": [
+    {
+      "index": 0,
+      "request": {
+        "method": "POST",
+        "url": "http://localhost:11434/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "Use separate calls to divide 42 by 6 and divide 10 by 4.",
+              "role": "user"
+            }
+          ],
+          "model": "hermes3:8b",
+          "seed": 42,
+          "stream": false,
+          "temperature": 0.0,
+          "tool_choice": "required",
+          "tools": [
+            {
+              "function": {
+                "description": "Divide one number by another.",
+                "name": "divide",
+                "parameters": {
+                  "properties": {
+                    "dividend": {
+                      "type": "number"
+                    },
+                    "divisor": {
+                      "type": "number"
+                    }
+                  },
+                  "required": [
+                    "dividend",
+                    "divisor"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-length": "560",
+          "content-type": "application/json",
+          "date": "Mon, 20 Jul 2026 14:33:21 GMT"
+        },
+        "body_raw": "{\"id\":\"chatcmpl-473\",\"object\":\"chat.completion\",\"created\":1784558001,\"model\":\"hermes3:8b\",\"system_fingerprint\":\"fp_ollama\",\"choices\":[{\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"\",\"tool_calls\":[{\"id\":\"call_fsjlvun5\",\"index\":0,\"type\":\"function\",\"function\":{\"name\":\"divide\",\"arguments\":\"{\\\"dividend\\\":42,\\\"divisor\\\":6}\"}},{\"id\":\"call_pt405q74\",\"index\":1,\"type\":\"function\",\"function\":{\"name\":\"divide\",\"arguments\":\"{\\\"divisor\\\":4,\\\"dividend\\\":10}\"}}]},\"finish_reason\":\"tool_calls\"}],\"usage\":{\"prompt_tokens\":249,\"completion_tokens\":54,\"total_tokens\":303}}\n"
+      },
+      "retried": false
+    }
+  ]
+}

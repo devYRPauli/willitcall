@@ -1,0 +1,88 @@
+{
+  "schema_version": 1,
+  "run_id": "20260720T144413Z-e9ac09f5",
+  "scenario_id": "multi-turn-flight-booking",
+  "turns": [
+    {
+      "index": 0,
+      "request": {
+        "method": "POST",
+        "url": "http://localhost:11434/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "Find a flight from BOS to DEN on 2026-10-04, then book the returned flight.",
+              "role": "user"
+            }
+          ],
+          "model": "phi4-mini:latest",
+          "seed": 42,
+          "stream": false,
+          "temperature": 0.0,
+          "tool_choice": "auto",
+          "tools": [
+            {
+              "function": {
+                "description": "Find a flight for an exact route and date.",
+                "name": "find_flight",
+                "parameters": {
+                  "properties": {
+                    "date": {
+                      "type": "string"
+                    },
+                    "destination": {
+                      "type": "string"
+                    },
+                    "origin": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "origin",
+                    "destination",
+                    "date"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            },
+            {
+              "function": {
+                "description": "Book a flight by exact id.",
+                "name": "book_flight",
+                "parameters": {
+                  "properties": {
+                    "flight_id": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "flight_id"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-length": "1045",
+          "content-type": "application/json",
+          "date": "Mon, 20 Jul 2026 14:44:18 GMT"
+        },
+        "body_raw": "{\"id\":\"chatcmpl-305\",\"object\":\"chat.completion\",\"created\":1784558658,\"model\":\"phi4-mini:latest\",\"system_fingerprint\":\"fp_ollama\",\"choices\":[{\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"I'm sorry for any confusion but it seems there might be an error in your input date as it's written \\\"2026-10-04\\\". The year is currently beyond our knowledge cutoff and also not within this format (YYYY-MM-DD). Could you please check that? If you'd like to find a flight from Boston Logan International Airport (BOS) to Denver International Airport (DEN), I can certainly help with the correct date. However, once we have an accurate future or past year for your intended travel dates in the YYYY-MM-DD format, I'll be able to assist you further by finding available flights and proceeding as requested if that's within my capabilities given current tools at hand which don't predict into the distant future nor access real-time databases after 2023.\"},\"finish_reason\":\"stop\"}],\"usage\":{\"prompt_tokens\":147,\"completion_tokens\":151,\"total_tokens\":298}}\n"
+      },
+      "retried": false
+    }
+  ]
+}

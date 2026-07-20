@@ -1,0 +1,106 @@
+{
+  "schema_version": 1,
+  "run_id": "20260720T143345Z-57f7fa92",
+  "scenario_id": "parallel-three-different-tools",
+  "turns": [
+    {
+      "index": 0,
+      "request": {
+        "method": "POST",
+        "url": "http://localhost:11434/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "Get weather in Rome, time in Nairobi, and convert 25 USD to EUR.",
+              "role": "user"
+            }
+          ],
+          "model": "granite3.1-dense:8b",
+          "seed": 42,
+          "stream": false,
+          "temperature": 0.0,
+          "tool_choice": "required",
+          "tools": [
+            {
+              "function": {
+                "description": "Get weather for a city.",
+                "name": "get_weather",
+                "parameters": {
+                  "properties": {
+                    "city": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "city"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            },
+            {
+              "function": {
+                "description": "Get local time for a city.",
+                "name": "get_time",
+                "parameters": {
+                  "properties": {
+                    "city": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "city"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            },
+            {
+              "function": {
+                "description": "Convert an exact currency amount.",
+                "name": "convert_currency",
+                "parameters": {
+                  "properties": {
+                    "amount": {
+                      "type": "number"
+                    },
+                    "from": {
+                      "type": "string"
+                    },
+                    "to": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "amount",
+                    "from",
+                    "to"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-length": "551",
+          "content-type": "application/json",
+          "date": "Mon, 20 Jul 2026 14:34:02 GMT"
+        },
+        "body_raw": "{\"id\":\"chatcmpl-110\",\"object\":\"chat.completion\",\"created\":1784558042,\"model\":\"granite3.1-dense:8b\",\"system_fingerprint\":\"fp_ollama\",\"choices\":[{\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"\\u003ctool_call\\u003e[{\\\"arguments\\\":{\\\"city\\\": \\\"Rome\\\"}, \\\"name\\\": \\\"get_weather\\\"}, {\\\"arguments\\\": {\\\"city\\\": \\\"Nairobi\\\"}, \\\"name\\\": \\\"get_time\\\"}, {\\\"arguments\\\": {\\\"amount\\\": 25, \\\"from\\\": \\\"USD\\\", \\\"to\\\": \\\"EUR\\\"}, \\\"name\\\": \\\"convert_currency\\\"}]\"},\"finish_reason\":\"stop\"}],\"usage\":{\"prompt_tokens\":205,\"completion_tokens\":72,\"total_tokens\":277}}\n"
+      },
+      "retried": false
+    }
+  ]
+}

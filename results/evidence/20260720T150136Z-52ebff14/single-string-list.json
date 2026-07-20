@@ -1,0 +1,71 @@
+{
+  "schema_version": 1,
+  "run_id": "20260720T150136Z-52ebff14",
+  "scenario_id": "single-string-list",
+  "turns": [
+    {
+      "index": 0,
+      "request": {
+        "method": "POST",
+        "url": "http://127.0.0.1:8080/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "Create playlist road-test with tracks t-3, t-1, and t-8 in that order.",
+              "role": "user"
+            }
+          ],
+          "model": "/Users/bbadmin/.ollama/models/blobs/sha256-3c168af1dea0a414299c7d9077e100ac763370e5a98b3c53801a958a47f0a5db",
+          "seed": 42,
+          "stream": false,
+          "temperature": 0.0,
+          "tool_choice": "auto",
+          "tools": [
+            {
+              "function": {
+                "description": "Create a playlist from ordered track ids.",
+                "name": "create_playlist",
+                "parameters": {
+                  "properties": {
+                    "name": {
+                      "type": "string"
+                    },
+                    "track_ids": {
+                      "items": {
+                        "type": "string"
+                      },
+                      "type": "array"
+                    }
+                  },
+                  "required": [
+                    "name",
+                    "track_ids"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "access-control-allow-origin": "",
+          "content-length": "961",
+          "content-type": "application/json; charset=utf-8",
+          "keep-alive": "timeout=5, max=100",
+          "server": "llama.cpp"
+        },
+        "body_raw": "{\"choices\":[{\"finish_reason\":\"stop\",\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"Sure, here's a playlist with tracks T-3, T-1, and T-8 in that order:\\n\\n1. T-3: \\\"Song A\\\" by Artist X\\n2. T-1: \\\"Song B\\\" by Artist Y\\n3. T-8: \\\"Song C\\\" by Artist Z\\n\\nFeel free to replace the song titles and artist names with your actual choices!\"}}],\"created\":1784559732,\"model\":\"/Users/bbadmin/.ollama/models/blobs/sha256-3c168af1dea0a414299c7d9077e100ac763370e5a98b3c53801a958a47f0a5db\",\"system_fingerprint\":\"b10050-b15ca938a\",\"object\":\"chat.completion\",\"usage\":{\"completion_tokens\":81,\"prompt_tokens\":25,\"total_tokens\":106,\"prompt_tokens_details\":{\"cached_tokens\":0}},\"id\":\"chatcmpl-iaFVZ2n4rrrqFcCkjJbLBVghA44gpiht\",\"timings\":{\"cache_n\":0,\"prompt_n\":25,\"prompt_ms\":33.238,\"prompt_per_token_ms\":1.32952,\"prompt_per_second\":752.1511522955653,\"predicted_n\":81,\"predicted_ms\":575.068,\"predicted_per_token_ms\":7.099604938271605,\"predicted_per_second\":140.85290783003055}}"
+      },
+      "retried": false
+    }
+  ]
+}

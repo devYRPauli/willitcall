@@ -1,0 +1,54 @@
+{
+  "schema_version": 1,
+  "run_id": "20260720T143220Z-f499d0f4",
+  "scenario_id": "single-empty-arguments",
+  "turns": [
+    {
+      "index": 0,
+      "request": {
+        "method": "POST",
+        "url": "http://localhost:11434/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "Get the current service status now.",
+              "role": "user"
+            }
+          ],
+          "model": "llama3-groq-tool-use:8b",
+          "seed": 42,
+          "stream": false,
+          "temperature": 0.0,
+          "tool_choice": "required",
+          "tools": [
+            {
+              "function": {
+                "description": "Get the current service status.",
+                "name": "get_service_status",
+                "parameters": {
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-length": "430",
+          "content-type": "application/json",
+          "date": "Mon, 20 Jul 2026 14:32:44 GMT"
+        },
+        "body_raw": "{\"id\":\"chatcmpl-954\",\"object\":\"chat.completion\",\"created\":1784557964,\"model\":\"llama3-groq-tool-use:8b\",\"system_fingerprint\":\"fp_ollama\",\"choices\":[{\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"\",\"tool_calls\":[{\"id\":\"call_1aht7svo\",\"index\":0,\"type\":\"function\",\"function\":{\"name\":\"get_service_status\",\"arguments\":\"{}\"}}]},\"finish_reason\":\"tool_calls\"}],\"usage\":{\"prompt_tokens\":132,\"completion_tokens\":23,\"total_tokens\":155}}\n"
+      },
+      "retried": false
+    }
+  ]
+}

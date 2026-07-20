@@ -1,0 +1,66 @@
+{
+  "schema_version": 1,
+  "run_id": "20260720T144413Z-e9ac09f5",
+  "scenario_id": "single-integer-limit",
+  "turns": [
+    {
+      "index": 0,
+      "request": {
+        "method": "POST",
+        "url": "http://localhost:11434/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "List exactly 12 messages from the support mailbox.",
+              "role": "user"
+            }
+          ],
+          "model": "phi4-mini:latest",
+          "seed": 42,
+          "stream": false,
+          "temperature": 0.0,
+          "tool_choice": "auto",
+          "tools": [
+            {
+              "function": {
+                "description": "List a fixed number of messages.",
+                "name": "list_messages",
+                "parameters": {
+                  "properties": {
+                    "limit": {
+                      "type": "integer"
+                    },
+                    "mailbox": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "mailbox",
+                    "limit"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-length": "807",
+          "content-type": "application/json",
+          "date": "Mon, 20 Jul 2026 14:44:45 GMT"
+        },
+        "body_raw": "{\"id\":\"chatcmpl-478\",\"object\":\"chat.completion\",\"created\":1784558685,\"model\":\"phi4-mini:latest\",\"system_fingerprint\":\"fp_ollama\",\"choices\":[{\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"Sure, I will list 12 messages for you from the 'support' mailbox.\\n\\n[{\\\"message_id\\\":1,\\\"subject\\\":\\\"Issue with login\\\",\\\"status\\\":\\\"resolved\\\"},{\\\"message_id\\\":2,\\\"subject\\\":\\\"Request for refund\\\",\\\"status\\\":\\\"pending\\\"}]\\n\\n\\nPlease note that this is a simulated response and not actual data retrieved. If you're looking to retrieve real emails, you'll need access to an email service provider's API or interface where you can use the appropriate function calls with authentication as required by their systems.\"},\"finish_reason\":\"stop\"}],\"usage\":{\"prompt_tokens\":80,\"completion_tokens\":101,\"total_tokens\":181}}\n"
+      },
+      "retried": false
+    }
+  ]
+}

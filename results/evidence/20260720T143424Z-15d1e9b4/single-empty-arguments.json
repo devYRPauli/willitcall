@@ -1,0 +1,54 @@
+{
+  "schema_version": 1,
+  "run_id": "20260720T143424Z-15d1e9b4",
+  "scenario_id": "single-empty-arguments",
+  "turns": [
+    {
+      "index": 0,
+      "request": {
+        "method": "POST",
+        "url": "http://localhost:11434/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "Get the current service status now.",
+              "role": "user"
+            }
+          ],
+          "model": "mistral:7b",
+          "seed": 42,
+          "stream": false,
+          "temperature": 0.0,
+          "tool_choice": "required",
+          "tools": [
+            {
+              "function": {
+                "description": "Get the current service status.",
+                "name": "get_service_status",
+                "parameters": {
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-length": "285",
+          "content-type": "application/json",
+          "date": "Mon, 20 Jul 2026 14:34:59 GMT"
+        },
+        "body_raw": "{\"id\":\"chatcmpl-781\",\"object\":\"chat.completion\",\"created\":1784558099,\"model\":\"mistral:7b\",\"system_fingerprint\":\"fp_ollama\",\"choices\":[{\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"\"},\"finish_reason\":\"stop\"}],\"usage\":{\"prompt_tokens\":52,\"completion_tokens\":47,\"total_tokens\":99}}\n"
+      },
+      "retried": false
+    }
+  ]
+}

@@ -1,0 +1,68 @@
+{
+  "schema_version": 1,
+  "run_id": "20260720T150136Z-52ebff14",
+  "scenario_id": "negative-plain-text",
+  "turns": [
+    {
+      "index": 0,
+      "request": {
+        "method": "POST",
+        "url": "http://127.0.0.1:8080/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "In one plain text sentence, explain why leaves are green. Do not send email.",
+              "role": "user"
+            }
+          ],
+          "model": "/Users/bbadmin/.ollama/models/blobs/sha256-3c168af1dea0a414299c7d9077e100ac763370e5a98b3c53801a958a47f0a5db",
+          "seed": 42,
+          "stream": false,
+          "temperature": 0.0,
+          "tool_choice": "auto",
+          "tools": [
+            {
+              "function": {
+                "description": "Send an email to an exact address.",
+                "name": "send_email",
+                "parameters": {
+                  "properties": {
+                    "address": {
+                      "type": "string"
+                    },
+                    "body": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "address",
+                    "body"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "access-control-allow-origin": "",
+          "content-length": "846",
+          "content-type": "application/json; charset=utf-8",
+          "keep-alive": "timeout=5, max=100",
+          "server": "llama.cpp"
+        },
+        "body_raw": "{\"choices\":[{\"finish_reason\":\"stop\",\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"Leaves are green because they contain chlorophyll, which absorbs blue and red light most efficiently and reflects green light.\"}}],\"created\":1784559705,\"model\":\"/Users/bbadmin/.ollama/models/blobs/sha256-3c168af1dea0a414299c7d9077e100ac763370e5a98b3c53801a958a47f0a5db\",\"system_fingerprint\":\"b10050-b15ca938a\",\"object\":\"chat.completion\",\"usage\":{\"completion_tokens\":23,\"prompt_tokens\":20,\"total_tokens\":43,\"prompt_tokens_details\":{\"cached_tokens\":0}},\"id\":\"chatcmpl-CNkQ7cQvLLe6NwLLbXD9YJVGvtvUtdad\",\"timings\":{\"cache_n\":0,\"prompt_n\":20,\"prompt_ms\":33.02,\"prompt_per_token_ms\":1.6510000000000002,\"prompt_per_second\":605.6935190793458,\"predicted_n\":23,\"predicted_ms\":158.489,\"predicted_per_token_ms\":6.890826086956522,\"predicted_per_second\":145.1204815476153}}"
+      },
+      "retried": false
+    }
+  ]
+}

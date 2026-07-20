@@ -1,0 +1,108 @@
+{
+  "schema_version": 1,
+  "run_id": "20260720T145532Z-af40963b",
+  "scenario_id": "parallel-three-different-tools",
+  "turns": [
+    {
+      "index": 0,
+      "request": {
+        "method": "POST",
+        "url": "http://127.0.0.1:8080/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "Get weather in Rome, time in Nairobi, and convert 25 USD to EUR.",
+              "role": "user"
+            }
+          ],
+          "model": "/Users/bbadmin/gguf/watt-tool-8B.Q4_K_M.gguf",
+          "seed": 42,
+          "stream": false,
+          "temperature": 0.0,
+          "tool_choice": "required",
+          "tools": [
+            {
+              "function": {
+                "description": "Get weather for a city.",
+                "name": "get_weather",
+                "parameters": {
+                  "properties": {
+                    "city": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "city"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            },
+            {
+              "function": {
+                "description": "Get local time for a city.",
+                "name": "get_time",
+                "parameters": {
+                  "properties": {
+                    "city": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "city"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            },
+            {
+              "function": {
+                "description": "Convert an exact currency amount.",
+                "name": "convert_currency",
+                "parameters": {
+                  "properties": {
+                    "amount": {
+                      "type": "number"
+                    },
+                    "from": {
+                      "type": "string"
+                    },
+                    "to": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "amount",
+                    "from",
+                    "to"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "access-control-allow-origin": "",
+          "content-length": "1859",
+          "content-type": "application/json; charset=utf-8",
+          "keep-alive": "timeout=5, max=100",
+          "server": "llama.cpp"
+        },
+        "body_raw": "{\"choices\":[{\"finish_reason\":\"stop\",\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"I cannot directly provide real-time weather information, current time, or currency conversion rates. However, I can guide you on how to find this information:\\n\\n1. **Weather in Rome:**\\n   - You can check the current weather in Rome using online weather websites such as AccuWeather, Weather.com, or the National Weather Service (NWS) website. These websites provide up-to-date weather forecasts and conditions for various locations around the world.\\n\\n2. **Time in Nairobi:**\\n   - To find the current time in Nairobi, you can use a world clock website or app. These tools allow you to see the current time in different cities around the world, including Nairobi. Some popular world clock websites include WorldTimeBuddy, TimeAndDate, or WorldClock.\\n\\n3. **Convert 25 USD to EUR:**\\n   - You can use online currency conversion tools such as XE.com, Oanda.com, or Google Currency Converter to convert 25 USD to EUR. These tools provide the most up-to-date exchange rates and allow you to convert currencies easily.\\n\\nRemember, these services are subject to change and may not reflect the most current information. For the most accurate and up-to-date information, it's best to check these websites directly.\"}}],\"created\":1784559360,\"model\":\"/Users/bbadmin/gguf/watt-tool-8B.Q4_K_M.gguf\",\"system_fingerprint\":\"b10050-b15ca938a\",\"object\":\"chat.completion\",\"usage\":{\"completion_tokens\":252,\"prompt_tokens\":27,\"total_tokens\":279,\"prompt_tokens_details\":{\"cached_tokens\":7}},\"id\":\"chatcmpl-auluw6QlRP2um9fIdMLey5elOowUHwyW\",\"timings\":{\"cache_n\":7,\"prompt_n\":20,\"prompt_ms\":54.2,\"prompt_per_token_ms\":2.71,\"prompt_per_second\":369.00369003690037,\"predicted_n\":252,\"predicted_ms\":2847.808,\"predicted_per_token_ms\":11.300825396825397,\"predicted_per_second\":88.48911162550284}}"
+      },
+      "retried": false
+    }
+  ]
+}

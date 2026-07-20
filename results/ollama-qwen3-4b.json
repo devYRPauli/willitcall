@@ -34,6 +34,7 @@
       "category": "multi_turn",
       "status": "fail",
       "failure_reason": "turn 1: no tool call emitted",
+      "failure_class": "empty_response",
       "evidence_hash": "sha256:0776fad06c8416bef08797a34050ce1a7bf68e3bed7168cb310a4cb390108a6b",
       "evidence_path": "evidence/20260720T021238Z-9bd3f76b/multi-turn-flight-booking.json",
       "retried": false
@@ -43,6 +44,7 @@
       "category": "multi_turn",
       "status": "fail",
       "failure_reason": "turn 1: no tool call emitted",
+      "failure_class": "empty_response",
       "evidence_hash": "sha256:da85d0668d6444c59468febf2fc6d0630625530446fde5766d7ee1c4d7828735",
       "evidence_path": "evidence/20260720T021238Z-9bd3f76b/multi-turn-inventory-order.json",
       "retried": false
@@ -52,6 +54,7 @@
       "category": "multi_turn",
       "status": "fail",
       "failure_reason": "turn 1: no tool call emitted",
+      "failure_class": "empty_response",
       "evidence_hash": "sha256:3e828a5c00350bef639cdd5ed55da4e80bd48975201b8db33558d09021ab6811",
       "evidence_path": "evidence/20260720T021238Z-9bd3f76b/multi-turn-parallel-followup.json",
       "retried": false
@@ -61,6 +64,7 @@
       "category": "multi_turn",
       "status": "fail",
       "failure_reason": "turn 1: no tool call emitted",
+      "failure_class": "empty_response",
       "evidence_hash": "sha256:daacd8cc70307b4b5619d4b579d6b108e595307c8ece884eb6ac16b5fec9eeb0",
       "evidence_path": "evidence/20260720T021238Z-9bd3f76b/multi-turn-route.json",
       "retried": false
@@ -70,6 +74,7 @@
       "category": "multi_turn",
       "status": "fail",
       "failure_reason": "turn 1: no tool call emitted",
+      "failure_class": "empty_response",
       "evidence_hash": "sha256:8567430d56d304c0340d851c4dae7d66176c53b7abf6ff7c732b609d4a87f90f",
       "evidence_path": "evidence/20260720T021238Z-9bd3f76b/multi-turn-ticket-update.json",
       "retried": false
@@ -142,6 +147,7 @@
       "category": "negative_trap",
       "status": "fail",
       "failure_reason": "no tool call emitted",
+      "failure_class": "empty_response",
       "evidence_hash": "sha256:89ebea2d0804147f189183fd07639d0bb343b28bffba013747a5b2d13ed9e6d3",
       "evidence_path": "evidence/20260720T021238Z-9bd3f76b/negative-unicode-argument.json",
       "retried": false

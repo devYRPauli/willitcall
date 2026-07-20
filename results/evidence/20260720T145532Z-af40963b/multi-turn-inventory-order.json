@@ -1,0 +1,86 @@
+{
+  "schema_version": 1,
+  "run_id": "20260720T145532Z-af40963b",
+  "scenario_id": "multi-turn-inventory-order",
+  "turns": [
+    {
+      "index": 0,
+      "request": {
+        "method": "POST",
+        "url": "http://127.0.0.1:8080/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "Check inventory for SKU QZ-4 and order exactly 3 if available.",
+              "role": "user"
+            }
+          ],
+          "model": "/Users/bbadmin/gguf/watt-tool-8B.Q4_K_M.gguf",
+          "seed": 42,
+          "stream": false,
+          "temperature": 0.0,
+          "tool_choice": "auto",
+          "tools": [
+            {
+              "function": {
+                "description": "Check inventory for a SKU.",
+                "name": "check_inventory",
+                "parameters": {
+                  "properties": {
+                    "sku": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "sku"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            },
+            {
+              "function": {
+                "description": "Create an order for a SKU and quantity.",
+                "name": "create_order",
+                "parameters": {
+                  "properties": {
+                    "quantity": {
+                      "type": "integer"
+                    },
+                    "sku": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "sku",
+                    "quantity"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "access-control-allow-origin": "",
+          "content-length": "1415",
+          "content-type": "application/json; charset=utf-8",
+          "keep-alive": "timeout=5, max=100",
+          "server": "llama.cpp"
+        },
+        "body_raw": "{\"choices\":[{\"finish_reason\":\"stop\",\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"I cannot directly check inventory or place orders. However, I can guide you on how to do it:\\n\\n1. **Check Inventory:**\\n   - You can check the inventory for SKU QZ-4 through the company's inventory management system or by contacting the customer service department.\\n   - They will be able to provide you with the current stock level of SKU QZ-4.\\n\\n2. **Order Exactly 3:**\\n   - If the inventory check shows that there are at least 3 units of SKU QZ-4 available, you can proceed with the order.\\n   - You can place the order through the company's website, by phone, or by email, depending on the preferred method of communication.\\n\\nPlease note that you should confirm the availability of the items before placing the order to avoid any inconvenience.\"}}],\"created\":1784559339,\"model\":\"/Users/bbadmin/gguf/watt-tool-8B.Q4_K_M.gguf\",\"system_fingerprint\":\"b10050-b15ca938a\",\"object\":\"chat.completion\",\"usage\":{\"completion_tokens\":165,\"prompt_tokens\":26,\"total_tokens\":191,\"prompt_tokens_details\":{\"cached_tokens\":5}},\"id\":\"chatcmpl-zlGh4ABTN93XH3GaUWNwOJt0odHPGtDH\",\"timings\":{\"cache_n\":5,\"prompt_n\":21,\"prompt_ms\":54.325,\"prompt_per_token_ms\":2.586904761904762,\"prompt_per_second\":386.56235618959965,\"predicted_n\":165,\"predicted_ms\":1855.917,\"predicted_per_token_ms\":11.247981818181819,\"predicted_per_second\":88.904837877987}}"
+      },
+      "retried": false
+    }
+  ]
+}

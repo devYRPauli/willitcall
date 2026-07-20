@@ -1,7 +1,8 @@
 {
-  "schema_version": 1,
+  "schema_version": 2,
   "metadata": {
-    "timestamp": "2026-07-19T23:34:46Z",
+    "run_id": "20260720T143138Z-f43975a9",
+    "timestamp": "2026-07-20T14:31:38Z",
     "willitcall_version": "0.1.0",
     "endpoint": "http://localhost:11434/v1",
     "model_id": "qwen2.5:7b-instruct",
@@ -24,7 +25,8 @@
       "category": "multi_turn",
       "status": "pass",
       "failure_reason": null,
-      "evidence_hash": "sha256:49f860996afbae99e0da5df7980aa477f4cf4262c71695cfbd9e931ae41d3b24",
+      "evidence_hash": "sha256:a462ab4ded967bf2d8cf62e964284c90f4a5471ecff9e67d1504312a48b16747",
+      "evidence_path": "evidence/20260720T143138Z-f43975a9/multi-turn-calendar-followup.json",
       "retried": false
     },
     {
@@ -32,7 +34,8 @@
       "category": "multi_turn",
       "status": "pass",
       "failure_reason": null,
-      "evidence_hash": "sha256:d31e2159834b713aaadea1b8f6cb3b9a5efb3a73a0f5cc2415f9605c1fd5e79d",
+      "evidence_hash": "sha256:b8527581ba617d87ce266bc24a2f25a631821a6416d808d0900af1d205d6f91f",
+      "evidence_path": "evidence/20260720T143138Z-f43975a9/multi-turn-flight-booking.json",
       "retried": false
     },
     {
@@ -40,7 +43,8 @@
       "category": "multi_turn",
       "status": "pass",
       "failure_reason": null,
-      "evidence_hash": "sha256:fa5cce93bd968927d16c5c9b3aa79834fab7608400c4684441ecc6a34b981bf1",
+      "evidence_hash": "sha256:7db1608355c82b721ed1149d4a433b40a330534a527f369ff8a2af93016df585",
+      "evidence_path": "evidence/20260720T143138Z-f43975a9/multi-turn-inventory-order.json",
       "retried": false
     },
     {
@@ -48,7 +52,8 @@
       "category": "multi_turn",
       "status": "pass",
       "failure_reason": null,
-      "evidence_hash": "sha256:73467600dbd510dad0447e27c0f2fbfddc153b46f20ad7ce02c854d1063cd1e4",
+      "evidence_hash": "sha256:f94ad63d9e96fba776653f504c3f58bcb906148673fec8c70dbef593df95c1c5",
+      "evidence_path": "evidence/20260720T143138Z-f43975a9/multi-turn-parallel-followup.json",
       "retried": false
     },
     {
@@ -56,7 +61,8 @@
       "category": "multi_turn",
       "status": "pass",
       "failure_reason": null,
-      "evidence_hash": "sha256:81122c2e57c3445f896e886e52f52ed7fbedf07d3ad75bbef300872f3e490062",
+      "evidence_hash": "sha256:2ee808bad8efdad2391abc6985d3335b0959c86571b178a941cf9a63f27b82b0",
+      "evidence_path": "evidence/20260720T143138Z-f43975a9/multi-turn-route.json",
       "retried": false
     },
     {
@@ -64,7 +70,8 @@
       "category": "multi_turn",
       "status": "fail",
       "failure_reason": "turn 1: unexpected extra tool call: 'set_ticket_priority'",
-      "evidence_hash": "sha256:9ce645998bf8aa855a5b925e792e0d001730dd962f7c53d2b75f0a8779925b74",
+      "evidence_hash": "sha256:4d7106a4bb4cd3d40329bf277d31049d5244e693f8bf338a3cf9b2d395baf964",
+      "evidence_path": "evidence/20260720T143138Z-f43975a9/multi-turn-ticket-update.json",
       "retried": false
     },
     {
@@ -72,7 +79,8 @@
       "category": "multi_turn",
       "status": "pass",
       "failure_reason": null,
-      "evidence_hash": "sha256:987f54ebb71c460d0dff2327253d2e33df546ade886b0964da47bfb887885342",
+      "evidence_hash": "sha256:5280538c873b6fdf0ad3c0f8e815624d2c351ea5ba9398aaad68d53d1205922a",
+      "evidence_path": "evidence/20260720T143138Z-f43975a9/multi-turn-two-hop-chain.json",
       "retried": false
     },
     {
@@ -80,7 +88,8 @@
       "category": "negative_trap",
       "status": "pass",
       "failure_reason": null,
-      "evidence_hash": "sha256:f4a717f47db9f8b514ff0c1302d6361be118440cac1cf5c91e90820c6d39e718",
+      "evidence_hash": "sha256:609cb23dde5460c073a9aeb34ea261c533ed1bb4ac8ffe22243cefab4e0888fa",
+      "evidence_path": "evidence/20260720T143138Z-f43975a9/negative-auto-arithmetic.json",
       "retried": false
     },
     {
@@ -88,7 +97,8 @@
       "category": "negative_trap",
       "status": "pass",
       "failure_reason": null,
-      "evidence_hash": "sha256:5d695c3368cbc8f3d26eb16bbdf7b8ed2efd5c3577e353c11c38fab4dce7a17d",
+      "evidence_hash": "sha256:685ed8f1c0d90bdc22c335a11c023255fd4175537be946d621c3adc5c8766ef0",
+      "evidence_path": "evidence/20260720T143138Z-f43975a9/negative-auto-knowledge.json",
       "retried": false
     },
     {
@@ -96,7 +106,8 @@
       "category": "negative_trap",
       "status": "pass",
       "failure_reason": null,
-      "evidence_hash": "sha256:42b0d80203b3f40136e950532606549148b4e4181848f82dd57dedaa6ed8caf8",
+      "evidence_hash": "sha256:dc32d1ea26563fdd6931724813bde894b55f4ad1f8256fd6f33bb0f9e185472e",
+      "evidence_path": "evidence/20260720T143138Z-f43975a9/negative-greeting.json",
       "retried": false
     },
     {
@@ -104,7 +115,8 @@
       "category": "negative_trap",
       "status": "pass",
       "failure_reason": null,
-      "evidence_hash": "sha256:1e5862650c5d4035d321acf70b2759c5c1e724afa58d2ae14b70ee738f378a90",
+      "evidence_hash": "sha256:590b7676fed17e381d297de0505d46e26b76263fdab633512db3181cc2228c76",
+      "evidence_path": "evidence/20260720T143138Z-f43975a9/negative-invalid-schema.json",
       "retried": false
     },
     {
@@ -112,7 +124,8 @@
       "category": "negative_trap",
       "status": "fail",
       "failure_reason": "wrong value for 'token': expected abcdefghijklmnopqrstuvwxyz0123456789-ABCDEFGHIJKLMNOPQRSTUVWXYZ-abcdefghijklmnopqrstuvwxyz0123456789-ABCDEFGHIJKLMNOPQRSTUVWXYZ-abcdefghijklmnopqrstuvwxyz0123456789-ABCDEFGHIJKLMNOPQRSTUVWXYZ-abcdefghijklmnopqrstuvwxyz0123456789-ABCDEFGHIJKLMNOPQRSTUVWXYZ, got abcdefghijklmnopqrstuvwx0123456789-ABCDEFGHIJKLMNOPQRSTUVWXYZ-abcdefghijklmnopqrstuvwxyz0123456789-ABCDEFGHIJKLMNOPQRSTUVWXYZ-abcdefghijklmnopqrstuvwxyz0123456789-ABCDEFGHIJKLMNOPQRSTUVWXYZ-abcdefghijklmnopqrstuvwxyz0123456789-ABCDEFGHIJKLMNOPQRSTUVWXYZ",
-      "evidence_hash": "sha256:bb3bccea3f32dc4422844781eb80a28fe372b7b99c54b790fa2d9288f36c4903",
+      "evidence_hash": "sha256:58de55061cae9765e36a75f962ca3ae764977d0e4a0814be4e3924a7bddacfbb",
+      "evidence_path": "evidence/20260720T143138Z-f43975a9/negative-long-argument.json",
       "retried": false
     },
     {
@@ -120,7 +133,8 @@
       "category": "negative_trap",
       "status": "pass",
       "failure_reason": null,
-      "evidence_hash": "sha256:1283df7311eac4310cff6fd53fec44e28180bd2348966a1679b0c1aa1d220841",
+      "evidence_hash": "sha256:ce911288c67fecdb2a0414a991e52cc8acd072bbbbc1334405c673d337c2bd3a",
+      "evidence_path": "evidence/20260720T143138Z-f43975a9/negative-plain-text.json",
       "retried": false
     },
     {
@@ -128,7 +142,8 @@
       "category": "negative_trap",
       "status": "pass",
       "failure_reason": null,
-      "evidence_hash": "sha256:eadca0b3998b171b897114f015817b8401646e3f5f3f421ccba21332fc08d7eb",
+      "evidence_hash": "sha256:4bb7f91330ecd48158216ed500dd61124218bb04ba892077d4973dd81d37c7b3",
+      "evidence_path": "evidence/20260720T143138Z-f43975a9/negative-unicode-argument.json",
       "retried": false
     },
     {
@@ -136,7 +151,8 @@
       "category": "parallel_calls",
       "status": "pass",
       "failure_reason": null,
-      "evidence_hash": "sha256:a543c35b8db3828d55f55a77398e5c8f6946576ff06ab297c9d503bdd9d1430f",
+      "evidence_hash": "sha256:9be637607df98cffacc210fbfaef5f34602ea2e4efca2f4db0423e600c1113bf",
+      "evidence_path": "evidence/20260720T143138Z-f43975a9/parallel-city-time.json",
       "retried": false
     },
     {
@@ -144,7 +160,8 @@
       "category": "parallel_calls",
       "status": "pass",
       "failure_reason": null,
-      "evidence_hash": "sha256:f64230402893b1459a20de9a57c3cb7f670e8171ffcc51ba15c572634ebc3c64",
+      "evidence_hash": "sha256:ebbe5816ba58ce4619f7c1a729cd3fd7591f29c95da9ecec4b62fa860b7537a8",
+      "evidence_path": "evidence/20260720T143138Z-f43975a9/parallel-different-tools.json",
       "retried": false
     },
     {
@@ -152,7 +169,8 @@
       "category": "parallel_calls",
       "status": "pass",
       "failure_reason": null,
-      "evidence_hash": "sha256:3cab4d43cc63ac96e5b0cb8900fb071faf7ac88200f11b8694bbffd58901e2f2",
+      "evidence_hash": "sha256:5f97dd9035bee1223b06558bb5f15c31d489fb4e53b9d0efd51c862f78319e6f",
+      "evidence_path": "evidence/20260720T143138Z-f43975a9/parallel-three-cities.json",
       "retried": false
     },
     {
@@ -160,7 +178,8 @@
       "category": "parallel_calls",
       "status": "pass",
       "failure_reason": null,
-      "evidence_hash": "sha256:c2b3a784ca8870775bac6271e1e45c0c7121c6f8bb2313f46d77a3cf817fdd0a",
+      "evidence_hash": "sha256:4af03fd978ca483f201146f9aadff55cee92d8686d0a1595b62f5c9adb5441e4",
+      "evidence_path": "evidence/20260720T143138Z-f43975a9/parallel-three-different-tools.json",
       "retried": false
     },
     {
@@ -168,7 +187,8 @@
       "category": "parallel_calls",
       "status": "pass",
       "failure_reason": null,
-      "evidence_hash": "sha256:c34ee9a85741f71967c0ba0bd97d494c4733a9c607d33fc610b998323d482b50",
+      "evidence_hash": "sha256:2a4bbebbe16e2a216e7a76cd77fce26a8aec32e779edf006b06879ee4f53eee2",
+      "evidence_path": "evidence/20260720T143138Z-f43975a9/parallel-two-calculations.json",
       "retried": false
     },
     {
@@ -176,7 +196,8 @@
       "category": "parallel_calls",
       "status": "pass",
       "failure_reason": null,
-      "evidence_hash": "sha256:c295107f2c70948a92924ecbd2992f6b5ea7ec075147a65fa1be369db1b0953b",
+      "evidence_hash": "sha256:594be1e06de8c9dc4cb2a46213c3a0716e7cc04386459ae131dab114e9750b99",
+      "evidence_path": "evidence/20260720T143138Z-f43975a9/parallel-two-multiple-args.json",
       "retried": false
     },
     {
@@ -184,7 +205,8 @@
       "category": "parallel_calls",
       "status": "pass",
       "failure_reason": null,
-      "evidence_hash": "sha256:d2f20f45ed161012eb5f6540ae7306bb1474fc0645ac0bbe7026f0baaaeb9d6e",
+      "evidence_hash": "sha256:6d0367e0abbc8a3d65130094fd6eb4bba35f4170184eaa609cdd9857647988d7",
+      "evidence_path": "evidence/20260720T143138Z-f43975a9/parallel-two-searches.json",
       "retried": false
     },
     {
@@ -192,7 +214,8 @@
       "category": "parallel_calls",
       "status": "pass",
       "failure_reason": null,
-      "evidence_hash": "sha256:8d8430b0dc3f95239795ed52ddda488bea95422469681af87a8e6ef72bc70034",
+      "evidence_hash": "sha256:8ff5c936179b525f469a70fd4e6a6ee8d3f3cfd8600ae53086f7cf0fbc795ae5",
+      "evidence_path": "evidence/20260720T143138Z-f43975a9/parallel-weather-and-time.json",
       "retried": false
     },
     {
@@ -200,7 +223,14 @@
       "category": "single_call",
       "status": "fail",
       "failure_reason": "no tool call emitted",
-      "evidence_hash": "sha256:03ca1e47f43664a3f5388ae3a95ab8cbd7da7da372198f0ed83ac5ba3b0de3b8",
+      "failure_class": "empty_response",
+      "cause": {
+        "kind": "server-defect",
+        "reference": "docs/case-studies/2026-07-19-ollama-drops-valid-tool-calls.md",
+        "note": "Ollama 0.32.1 returned empty content while billing eval_count; the same weights served by llama.cpp emit a valid call 6/6."
+      },
+      "evidence_hash": "sha256:ac257afac166006be100c96d0c4a572aec8d700199124f2a748c218bc1821e5d",
+      "evidence_path": "evidence/20260720T143138Z-f43975a9/single-array-tags.json",
       "retried": false
     },
     {
@@ -208,7 +238,8 @@
       "category": "single_call",
       "status": "pass",
       "failure_reason": null,
-      "evidence_hash": "sha256:293bfe1dd236c6550356137d537f4a31205d8e16310b13c1fc9ea106785b355c",
+      "evidence_hash": "sha256:f3b7d531946b5a274225ea0e06ff6d12b37f2cc4fa9ff9aa26dd6ce3dadbfa3b",
+      "evidence_path": "evidence/20260720T143138Z-f43975a9/single-boolean-flag.json",
       "retried": false
     },
     {
@@ -216,7 +247,8 @@
       "category": "single_call",
       "status": "pass",
       "failure_reason": null,
-      "evidence_hash": "sha256:4244e5d0212be74fd7c9dc2c9d5a7e164773772bc364ace5e0218f6cec5cee1a",
+      "evidence_hash": "sha256:1cdd3a7f0d6b87f93bfa6dc1f397a67524e57518f8e48934da92948420da41eb",
+      "evidence_path": "evidence/20260720T143138Z-f43975a9/single-date-range.json",
       "retried": false
     },
     {
@@ -224,7 +256,8 @@
       "category": "single_call",
       "status": "pass",
       "failure_reason": null,
-      "evidence_hash": "sha256:5d2bbff4d083920682c0673c408d07cba4a998ee1ebbbead6109f69de0936383",
+      "evidence_hash": "sha256:ab04af1b58ceb9d2d4be06b87d391c32b82ebc1b318eb6243511182959de5afa",
+      "evidence_path": "evidence/20260720T143138Z-f43975a9/single-decimal-price.json",
       "retried": false
     },
     {
@@ -232,7 +265,8 @@
       "category": "single_call",
       "status": "pass",
       "failure_reason": null,
-      "evidence_hash": "sha256:33c82914a1bfdb69f9f3620312f9e9adfac014df914c68ad22cc609f83135ad0",
+      "evidence_hash": "sha256:c4bfd2eba706198f72d6f91ea65c0b81bc3238b376a43294cf2e5b07507134b7",
+      "evidence_path": "evidence/20260720T143138Z-f43975a9/single-empty-arguments.json",
       "retried": false
     },
     {
@@ -240,7 +274,8 @@
       "category": "single_call",
       "status": "pass",
       "failure_reason": null,
-      "evidence_hash": "sha256:35c799f94f741091684635923facb7fc6d836197db8efb768c62632ec5db8a2e",
+      "evidence_hash": "sha256:0adaf1ca531effa9b694f93d0aa79c16967412892f3dfadb40b4ece8a96464f3",
+      "evidence_path": "evidence/20260720T143138Z-f43975a9/single-enum-format.json",
       "retried": false
     },
     {
@@ -248,7 +283,8 @@
       "category": "single_call",
       "status": "pass",
       "failure_reason": null,
-      "evidence_hash": "sha256:aa61957206faa83b88c35333dd1ee28e97ef26c8a00ef089eb30d0ee745c0445",
+      "evidence_hash": "sha256:9df9960a0c16f35964e7b6e20bb4d130a561787cbb7c7a20babd555444e28218",
+      "evidence_path": "evidence/20260720T143138Z-f43975a9/single-integer-limit.json",
       "retried": false
     },
     {
@@ -256,7 +292,8 @@
       "category": "single_call",
       "status": "fail",
       "failure_reason": "schema violation: missing required field 'options'",
-      "evidence_hash": "sha256:ea115070a39ac3252fb8b8d170c0b549d8f0ca2d7a87c342865fef645dd98e3b",
+      "evidence_hash": "sha256:1779e03425fc7bc3af29ad3fe11b215375c1e6657a4d4aad5e98464e491039b6",
+      "evidence_path": "evidence/20260720T143138Z-f43975a9/single-nested-options.json",
       "retried": false
     },
     {
@@ -264,7 +301,8 @@
       "category": "single_call",
       "status": "pass",
       "failure_reason": null,
-      "evidence_hash": "sha256:e43d7dc1c59ee39d84a16d598be0bbd6bb0701f8a5fb3c3064731d4b537ec205",
+      "evidence_hash": "sha256:57535941c66a70667f64fcdd41eb050410d85055b279afc128c900a9629da285",
+      "evidence_path": "evidence/20260720T143138Z-f43975a9/single-optional-omitted.json",
       "retried": false
     },
     {
@@ -272,7 +310,8 @@
       "category": "single_call",
       "status": "pass",
       "failure_reason": null,
-      "evidence_hash": "sha256:4e89176730d328c928efcb066b0d426778b3767ce1eb7d1133ca99bc3a579c31",
+      "evidence_hash": "sha256:aeafac00a3ba79a958b4ad1918c7cd10ec8e1811d676653bfdf8ec3757b725d6",
+      "evidence_path": "evidence/20260720T143138Z-f43975a9/single-optional-present.json",
       "retried": false
     },
     {
@@ -280,7 +319,8 @@
       "category": "single_call",
       "status": "pass",
       "failure_reason": null,
-      "evidence_hash": "sha256:8d61d94ad9f977719e3c418f8b626bbaa60df6e32f9934c7ab3b804c72a66be9",
+      "evidence_hash": "sha256:4667995035fa789bcaa6f6381e9012299fe6cb43cf77c7ebb5f9798b25a37476",
+      "evidence_path": "evidence/20260720T143138Z-f43975a9/single-string-list.json",
       "retried": false
     },
     {
@@ -288,7 +328,8 @@
       "category": "single_call",
       "status": "pass",
       "failure_reason": null,
-      "evidence_hash": "sha256:6d4134ef7916cf2f1190df3d2aff5edab45bb78bb670e7ca25c687deba516ae7",
+      "evidence_hash": "sha256:c7f1ab299256d2825de01e39cbe531b26a9d7da0dc9e9f8db046ecd0169ec208",
+      "evidence_path": "evidence/20260720T143138Z-f43975a9/single-weather.json",
       "retried": false
     },
     {
@@ -296,7 +337,8 @@
       "category": "single_call",
       "status": "pass",
       "failure_reason": null,
-      "evidence_hash": "sha256:3eba5c340daebd3893557ea44d558ff1ad73271326f4c2f2c462dd416b3ac56f",
+      "evidence_hash": "sha256:dd1ea669d23f2f02d58282ae3a158f190140ee1623a70e0d32eae3344a5e4e44",
+      "evidence_path": "evidence/20260720T143138Z-f43975a9/single-zero-and-negative.json",
       "retried": false
     },
     {
@@ -304,7 +346,8 @@
       "category": "streaming",
       "status": "pass",
       "failure_reason": null,
-      "evidence_hash": "sha256:c5123eef5962d8365528e2059c061c1f887c60c66ef9a7399768d2ab84d2f859",
+      "evidence_hash": "sha256:1c9e5e547f2b53a64630997c95ad44a8da47c2405d230683ab1f5db57e52346c",
+      "evidence_path": "evidence/20260720T143138Z-f43975a9/streaming-array-arguments.json",
       "retried": false
     },
     {
@@ -312,7 +355,8 @@
       "category": "streaming",
       "status": "pass",
       "failure_reason": null,
-      "evidence_hash": "sha256:5a4c4c81a891a1a607f371ac0dd914b43c373cbe47668c2e5b24090785d12a99",
+      "evidence_hash": "sha256:793449a443f2d44f5b68dd6280fa0bf700dd2426cb39c4d7508cfbbb47e5dfcf",
+      "evidence_path": "evidence/20260720T143138Z-f43975a9/streaming-boolean-argument.json",
       "retried": false
     },
     {
@@ -320,7 +364,8 @@
       "category": "streaming",
       "status": "pass",
       "failure_reason": null,
-      "evidence_hash": "sha256:bf2b82fa635f3833323a8dfbdb9a3e53c2e04e7b354533133bca8c577cbabee5",
+      "evidence_hash": "sha256:a6b9a5d1c3e7d981245927c8d93eca1e9f5873b5779dd84df7d3d963750cb507",
+      "evidence_path": "evidence/20260720T143138Z-f43975a9/streaming-empty-arguments.json",
       "retried": false
     },
     {
@@ -328,7 +373,8 @@
       "category": "streaming",
       "status": "pass",
       "failure_reason": null,
-      "evidence_hash": "sha256:6e54422eb046a889f888dd0e248f66c0a198b01712ff822caa28fc0eed7e40a3",
+      "evidence_hash": "sha256:14bcbc1b7c3ecc6698034509bca2a710498c0b3c958d17418d63e07caa2d890e",
+      "evidence_path": "evidence/20260720T143138Z-f43975a9/streaming-enum-arguments.json",
       "retried": false
     },
     {
@@ -336,7 +382,8 @@
       "category": "streaming",
       "status": "pass",
       "failure_reason": null,
-      "evidence_hash": "sha256:80f80ecafbdcb03e70cc3d0b043d50fedbeb28a960dc853343d80cb916c5cca9",
+      "evidence_hash": "sha256:fdec00dcc198c93c5cfb0d463deb095d4d81a8972a1dc43142e97bad31826641",
+      "evidence_path": "evidence/20260720T143138Z-f43975a9/streaming-nested-arguments.json",
       "retried": false
     },
     {
@@ -344,7 +391,8 @@
       "category": "streaming",
       "status": "pass",
       "failure_reason": null,
-      "evidence_hash": "sha256:c0a6123d16e3c753d6a5cea89123cc7c4bc8dfcf98cf1ff32666b9ae55a73be2",
+      "evidence_hash": "sha256:d49bdc1ad7ca2e6c266bc62e82c03e44329578ffde6b86500e731c0134024559",
+      "evidence_path": "evidence/20260720T143138Z-f43975a9/streaming-parallel-three.json",
       "retried": false
     },
     {
@@ -352,7 +400,8 @@
       "category": "streaming",
       "status": "pass",
       "failure_reason": null,
-      "evidence_hash": "sha256:42ed8057b44350c99265ac9725be9acfdd7b3add9c13e90ffff3b516cfa6de6d",
+      "evidence_hash": "sha256:f5fe66dd428a53f7279778ab2b1c5cadf788db7199d8130ff004ed8285233705",
+      "evidence_path": "evidence/20260720T143138Z-f43975a9/streaming-parallel-two.json",
       "retried": false
     },
     {
@@ -360,7 +409,8 @@
       "category": "streaming",
       "status": "pass",
       "failure_reason": null,
-      "evidence_hash": "sha256:1db8cd0582341ad95329bf659f8baf8bae8431445c9eaf0de75c681352139862",
+      "evidence_hash": "sha256:a17a0ebcad96a7c0d6bcf6bb627d73c4708b610e4d4eb9425503614fbd960bd8",
+      "evidence_path": "evidence/20260720T143138Z-f43975a9/streaming-weather.json",
       "retried": false
     },
     {
@@ -368,7 +418,8 @@
       "category": "tool_choice_modes",
       "status": "pass",
       "failure_reason": null,
-      "evidence_hash": "sha256:feece52c2ca7b52fda62d467c85544500e4f040b51a0f43905f1ae4c8ca568ec",
+      "evidence_hash": "sha256:f51f8638401219b9187de7cd7e159320b1669da395b6d361377b7bae2cd49e5e",
+      "evidence_path": "evidence/20260720T143138Z-f43975a9/tool-choice-auto-call.json",
       "retried": false
     },
     {
@@ -376,7 +427,8 @@
       "category": "tool_choice_modes",
       "status": "pass",
       "failure_reason": null,
-      "evidence_hash": "sha256:40a503dfd6c03191bff72749f6991d91fa1b1e4b9a09deb049855432aae4703b",
+      "evidence_hash": "sha256:07582419842ea287f6af917ef21be97633f609e559ab965410a1b864797da9b2",
+      "evidence_path": "evidence/20260720T143138Z-f43975a9/tool-choice-auto-no-call.json",
       "retried": false
     },
     {
@@ -384,7 +436,8 @@
       "category": "tool_choice_modes",
       "status": "pass",
       "failure_reason": null,
-      "evidence_hash": "sha256:384e436b2c24acf06159e0133b1cf7fc53a10d38843596c22acd9cc1bc2dd105",
+      "evidence_hash": "sha256:0e5b34432a121b9c24033ebbb507ec4f85312749355f4f1240e04bf0fb416a58",
+      "evidence_path": "evidence/20260720T143138Z-f43975a9/tool-choice-named.json",
       "retried": false
     },
     {
@@ -392,7 +445,8 @@
       "category": "tool_choice_modes",
       "status": "pass",
       "failure_reason": null,
-      "evidence_hash": "sha256:41fa048f722e49d07d1e8e1eb8657d12d9e91d363b69186ecb088d2d34ac3415",
+      "evidence_hash": "sha256:0328b8a5c663621c2d1118eb07ade36d4916a9eec67c69cc03b1b611dccc2368",
+      "evidence_path": "evidence/20260720T143138Z-f43975a9/tool-choice-named-empty.json",
       "retried": false
     },
     {
@@ -400,7 +454,8 @@
       "category": "tool_choice_modes",
       "status": "pass",
       "failure_reason": null,
-      "evidence_hash": "sha256:fefb0eec64f62af22e46098b3858b4e7b913d8a0b8cccec8bee17c2ffa23ccd9",
+      "evidence_hash": "sha256:f0fd87f3a1bddf4d1c33bb28050f5e977eb4873fc12572af9ce7728f5bd6005f",
+      "evidence_path": "evidence/20260720T143138Z-f43975a9/tool-choice-none.json",
       "retried": false
     },
     {
@@ -408,7 +463,8 @@
       "category": "tool_choice_modes",
       "status": "pass",
       "failure_reason": null,
-      "evidence_hash": "sha256:390d4d96edcfbab9c35b49acdf3ca4946248256ddc414c04e644dbe8584823e2",
+      "evidence_hash": "sha256:34cab819bf4ec77f167d409eb2c202e038d59395180e2815a7f1f4b85c790ce9",
+      "evidence_path": "evidence/20260720T143138Z-f43975a9/tool-choice-required.json",
       "retried": false
     },
     {
@@ -416,7 +472,8 @@
       "category": "tool_choice_modes",
       "status": "pass",
       "failure_reason": null,
-      "evidence_hash": "sha256:36eeaeee3308bf23af34895b3a373652af8a398f153a6498cad84b69f61d2931",
+      "evidence_hash": "sha256:ca0bb576c41cbef7b4b0b0700708d497346de173110250a2700a544943f1b2f9",
+      "evidence_path": "evidence/20260720T143138Z-f43975a9/tool-choice-required-empty.json",
       "retried": false
     }
   ],

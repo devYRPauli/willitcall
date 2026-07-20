@@ -1,0 +1,64 @@
+{
+  "schema_version": 1,
+  "run_id": "20260720T150136Z-52ebff14",
+  "scenario_id": "parallel-city-time",
+  "turns": [
+    {
+      "index": 0,
+      "request": {
+        "method": "POST",
+        "url": "http://127.0.0.1:8080/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "What time is it in Boston and Tokyo?",
+              "role": "user"
+            }
+          ],
+          "model": "/Users/bbadmin/.ollama/models/blobs/sha256-3c168af1dea0a414299c7d9077e100ac763370e5a98b3c53801a958a47f0a5db",
+          "seed": 42,
+          "stream": false,
+          "temperature": 0.0,
+          "tool_choice": "required",
+          "tools": [
+            {
+              "function": {
+                "description": "Get the local time for a city.",
+                "name": "get_time",
+                "parameters": {
+                  "properties": {
+                    "city": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "city"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "access-control-allow-origin": "",
+          "content-length": "1272",
+          "content-type": "application/json; charset=utf-8",
+          "keep-alive": "timeout=5, max=100",
+          "server": "llama.cpp"
+        },
+        "body_raw": "{\"choices\":[{\"finish_reason\":\"stop\",\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"As of the latest update, the time in Boston, Massachusetts, USA, is 1:00 PM Eastern Daylight Time (EDT), which is UTC-4. In Tokyo, Japan, the time is 10:00 PM Japan Standard Time (JST), which is UTC+9. Please note that time differences can change due to daylight saving adjustments or other factors, so it's always a good idea to check a reliable time service or world clock for the most current times. As of the knowledge cutoff in 2023, daylight saving time is observed in Boston but not in Tokyo, which maintains Japan Standard Time year-round.\"}}],\"created\":1784559706,\"model\":\"/Users/bbadmin/.ollama/models/blobs/sha256-3c168af1dea0a414299c7d9077e100ac763370e5a98b3c53801a958a47f0a5db\",\"system_fingerprint\":\"b10050-b15ca938a\",\"object\":\"chat.completion\",\"usage\":{\"completion_tokens\":129,\"prompt_tokens\":12,\"total_tokens\":141,\"prompt_tokens_details\":{\"cached_tokens\":0}},\"id\":\"chatcmpl-aKMHiAJanqhMbGDkYAqQoAnAuvnPziQB\",\"timings\":{\"cache_n\":0,\"prompt_n\":12,\"prompt_ms\":33.071,\"prompt_per_token_ms\":2.7559166666666663,\"prompt_per_second\":362.8556741556047,\"predicted_n\":129,\"predicted_ms\":919.264,\"predicted_per_token_ms\":7.126077519379845,\"predicted_per_second\":140.32965502837052}}"
+      },
+      "retried": false
+    }
+  ]
+}
