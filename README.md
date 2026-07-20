@@ -113,19 +113,29 @@ a correct model geocodes `"Fenway Park, Boston, MA"`.
 
 ## Submitting a result
 
-The matrix will be fed by result files in `results/`. Two seed results are
-already there: `qwen2.5:7b-instruct` on Ollama (46/50) and
-`Qwen2.5-1.5B-Instruct-Q4_K_M` on llama.cpp (42/50), both from a 16GB M-series
-MacBook.
+The matrix is fed by result files in `results/`, each shipping the transcripts
+that back it. Seed results so far cover `qwen3` at 0.6b/1.7b/4b/8b,
+`llama3.1:8b` and `qwen2.5:7b-instruct` on Ollama, plus
+`Qwen2.5-1.5B-Instruct-Q4_K_M` on llama.cpp, all from a 16GB M-series MacBook.
 
 1. Run the full corpus against your endpoint, one model loaded at a time.
-2. Run `willitcall validate` on the output; it must pass against
-   `schemas/result-v1.schema.json`.
-3. Open a pull request adding the file under `results/`, and say what hardware
-   and server version produced it.
+   Running two models at once produces spurious `error` outcomes from resource
+   contention, not real measurements.
+2. Run `willitcall validate` on the output. Current results are schema
+   version 2 (`schemas/result-v2.schema.json`); version 1 files are still
+   accepted.
+3. Open a pull request adding the result file **and its `evidence/` directory**
+   under `results/`, and say what hardware and server version produced it.
 
-Do not hand-edit a result file. Every scenario record carries an evidence hash,
-and edited results are not comparable with anything else in the matrix.
+Every scenario writes a full request/response transcript to
+`evidence/<run_id>/<scenario-id>.json`, referenced from the result file, so any
+red cell can be inspected rather than taken on trust. Credential-bearing
+headers and URL query parameters are redacted at capture time, but read a
+transcript before publishing it if your endpoint is not local.
+
+Do not hand-edit a result file or a transcript. `evidence_hash` is the SHA-256
+of the transcript bytes, so edits are detectable and edited results are not
+comparable with anything else in the matrix.
 
 ## Roadmap
 
