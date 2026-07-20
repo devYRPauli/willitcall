@@ -126,6 +126,30 @@ the combined matrix.
 - Not an eval framework or observability product.
 - No hosted backend, no accounts, no telemetry.
 
+## Amendments (2026-07-19, post-M3, decided by owner)
+
+1. Evidence (implemented in M3, schema_version=2): every result file ships
+   full per-scenario request/response transcripts (auth-redacted, SHA-256
+   integrity hash OF the transcript) under evidence/. Red cells must be
+   defensible; hash-only evidence is not acceptable.
+2. Empty-response scoring rule (to implement in M4): a response with no
+   content AND no tool call must never silently score as model behavior.
+   The cell stays red (truthful for the combo) but carries a cause
+   annotation (e.g. cause: server-defect + case-study link) when isolation
+   proves the server at fault. Seeding protocol: any empty response is
+   cross-checked on a second server before the result is committed.
+   Rationale: M3 proved Ollama 0.32.1 discards well-formed tool calls its
+   own engine emits (same weights pass 6/6 via llama.cpp, empty 10/10 via
+   Ollama) - red tells users the truth, the annotation tells model authors
+   we are not blaming their weights.
+3. Contention preflight (to implement in M4): `run` refuses (or requires
+   --force) when another known inference server is responding on common
+   ports. Rationale: an overlapping server produced plausible-but-wrong
+   error counts during seeding; contributors have the same failure mode.
+4. Forensics methodology bar: no verdict from n=1; replicate (>= 5 runs per
+   arm) before recording a case-study conclusion. M2's single-sample
+   "description change fixes it" conclusion was overturned by M3.
+
 ## Naming / availability (verified 2026-07-19)
 
 - GitHub: no existing "willitcall" repos. npm 404, PyPI 404, crates.io "does
