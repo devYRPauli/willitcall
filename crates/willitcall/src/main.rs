@@ -1,4 +1,5 @@
 mod report;
+mod site;
 
 #[cfg(test)]
 #[path = "../../wic-core/tests/support/mod.rs"]
@@ -48,6 +49,7 @@ enum Command {
     Validate(ValidateArgs),
     Annotate(AnnotateArgs),
     Rescore(RescoreArgs),
+    Site(SiteArgs),
 }
 
 #[derive(Debug, Args)]
@@ -198,6 +200,16 @@ impl From<CauseArg> for CauseKind {
 struct RescoreArgs {
     #[arg(long)]
     result: PathBuf,
+}
+
+#[derive(Debug, Args)]
+struct SiteArgs {
+    #[arg(long)]
+    results: PathBuf,
+    #[arg(long)]
+    out: PathBuf,
+    #[arg(long, default_value = "https://github.com/devYRPauli/willitcall")]
+    repo_base: String,
 }
 
 #[derive(Debug)]
@@ -438,6 +450,16 @@ async fn execute_with_known_servers(
                 "rescored {}: {changed} scenario{} changed",
                 result_path.display(),
                 if changed == 1 { "" } else { "s" }
+            );
+            Ok(0)
+        }
+        Command::Site(args) => {
+            let count = site::generate(&args.results, &args.out, &args.repo_base)
+                .map_err(ExecuteError::Harness)?;
+            println!(
+                "generated {} from {count} result file{}",
+                args.out.display(),
+                if count == 1 { "" } else { "s" }
             );
             Ok(0)
         }
