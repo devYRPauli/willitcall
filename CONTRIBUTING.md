@@ -64,6 +64,12 @@ record_id = "rec-17"
 
 Never hand-edit a result file. Each scenario record carries an evidence hash, so edited results are not comparable.
 
+### Preflight metadata
+
+`metadata.preflight_override` is present only when `--force` allows a run despite detected foreign inference endpoints. Its `forced` flag is `true`, and `foreign_endpoints` records the endpoints that were detected.
+
+`metadata.preflight_ignored_ports` is present only when one or more `--ignore-port` flags narrow contention detection. It records the ignored port numbers, which were not probed and could have contained undetected inference servers.
+
 ### Failure classes
 
 `failure_class` is a single mechanical observation assigned only after a scenario fails. Its precedence is error status, then `empty_response`, then `unparsed_tool_call`, then a plain failure with no class. `empty_response` means the response had neither content nor a parsed tool call. `unparsed_tool_call` means content matched a registered tool-call shape whose function was offered and whose arguments passed that tool's parameter schema, but the server produced no parsed tool call. A `cause` is a separate human attribution.

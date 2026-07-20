@@ -19,7 +19,8 @@ use wic_core::result::{
     CauseKind, PreflightOverride, RunResult, Status,
 };
 use wic_core::runner::{
-    contention_preflight, preflight, run_scenarios, RunConfig, ServerConfig, ServerVersionProbe,
+    contention_preflight_ignoring_ports, preflight, run_scenarios, RunConfig, ServerConfig,
+    ServerVersionProbe,
 };
 use wic_core::score::classify_failure;
 use wic_core::{load_embedded_scenarios, load_scenarios_from_dir, ToolDefinition};
@@ -70,6 +71,8 @@ struct RunArgs {
     json: bool,
     #[arg(long)]
     force: bool,
+    #[arg(long, value_parser = clap::value_parser!(u16).range(1..))]
+    ignore_port: Vec<u16>,
     #[arg(long, value_parser = clap::builder::NonEmptyStringValueParser::new())]
     host_hardware_class: Option<String>,
     #[arg(long, value_parser = clap::builder::NonEmptyStringValueParser::new())]
@@ -397,9 +400,10 @@ async fn execute_with_known_servers(
             .map_err(|error| ExecuteError::Usage(error.to_string()))?;
             let endpoint =
                 resolve_endpoint(args.server, args.endpoint).map_err(ExecuteError::Usage)?;
-            let occupied = contention_preflight(&endpoint, known_servers)
-                .await
-                .map_err(ExecuteError::Preflight)?;
+            let occupied =
+                contention_preflight_ignoring_ports(&endpoint, known_servers, &args.ignore_port)
+                    .await
+                    .map_err(ExecuteError::Preflight)?;
             if !occupied.is_empty() && !args.force {
                 let endpoints = occupied
                     .iter()
@@ -436,6 +440,9 @@ async fn execute_with_known_servers(
                         .map(|endpoint| endpoint.endpoint)
                         .collect(),
                 });
+            }
+            if !args.ignore_port.is_empty() {
+                result.metadata.preflight_ignored_ports = Some(args.ignore_port);
             }
             write_result_atomic(&args.out, &result).map_err(|error| {
                 ExecuteError::Harness(format!(
@@ -739,6 +746,87 @@ mod tests {
         );
     }
 
+    #[tokio::test(flavor = "multi_thread", worker_threads = 2)]
+    async fn ignore_ports_are_written_to_result_metadata() {
+        let server = crate::support::MockServer::start().await;
+        let first_foreign = crate::support::MockServer::start().await;
+        let second_foreign = crate::support::MockServer::start().await;
+        let directory = tempfile::tempdir().expect("temp directory");
+        let scenario_path = directory.path().join("scenarios");
+        std::fs::create_dir(&scenario_path).expect("scenario directory");
+        let output_path = directory.path().join("result.json");
+        let cli = Cli::try_parse_from([
+            "willitcall".to_owned(),
+            "run".to_owned(),
+            "--endpoint".to_owned(),
+            server.endpoint(),
+            "--model".to_owned(),
+            "fixture-model".to_owned(),
+            "--scenarios".to_owned(),
+            scenario_path.display().to_string(),
+            "--out".to_owned(),
+            output_path.display().to_string(),
+            "--ignore-port".to_owned(),
+            first_foreign.port().to_string(),
+            "--ignore-port".to_owned(),
+            second_foreign.port().to_string(),
+        ])
+        .expect("run arguments should parse");
+
+        let code = execute_with_known_servers(
+            cli,
+            &[
+                (first_foreign.port(), "First server"),
+                (second_foreign.port(), "Second server"),
+            ],
+        )
+        .await
+        .expect("ignored servers should allow the run");
+
+        assert_eq!(code, 0);
+        let document: serde_json::Value =
+            serde_json::from_slice(&std::fs::read(output_path).expect("result file"))
+                .expect("valid result JSON");
+        assert_eq!(
+            document["metadata"]["preflight_ignored_ports"],
+            serde_json::json!([first_foreign.port(), second_foreign.port()])
+        );
+    }
+
+    #[tokio::test(flavor = "multi_thread", worker_threads = 2)]
+    async fn result_without_ignored_ports_omits_metadata_field() {
+        let server = crate::support::MockServer::start().await;
+        let directory = tempfile::tempdir().expect("temp directory");
+        let scenario_path = directory.path().join("scenarios");
+        std::fs::create_dir(&scenario_path).expect("scenario directory");
+        let output_path = directory.path().join("result.json");
+        let cli = Cli::try_parse_from([
+            "willitcall".to_owned(),
+            "run".to_owned(),
+            "--endpoint".to_owned(),
+            server.endpoint(),
+            "--model".to_owned(),
+            "fixture-model".to_owned(),
+            "--scenarios".to_owned(),
+            scenario_path.display().to_string(),
+            "--out".to_owned(),
+            output_path.display().to_string(),
+        ])
+        .expect("run arguments should parse");
+
+        let code = execute_with_known_servers(cli, &[])
+            .await
+            .expect("run should succeed");
+
+        assert_eq!(code, 0);
+        let document: serde_json::Value =
+            serde_json::from_slice(&std::fs::read(output_path).expect("result file"))
+                .expect("valid result JSON");
+        assert!(document["metadata"]
+            .get("preflight_ignored_ports")
+            .is_none());
+    }
+
     #[test]
     fn run_defaults_output_and_timeout() {
         let cli = Cli::try_parse_from([
@@ -811,6 +899,7 @@ mod tests {
                     max_tokens: Some(1024),
                 },
                 preflight_override: None,
+                preflight_ignored_ports: None,
             },
             scenarios: vec![
                 ScenarioOutcome {
@@ -890,6 +979,7 @@ mod tests {
                     max_tokens: None,
                 },
                 preflight_override: None,
+                preflight_ignored_ports: None,
             },
             scenarios: Vec::new(),
             totals: Totals {

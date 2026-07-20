@@ -35,6 +35,8 @@ pub struct RunMetadata {
     pub sampling: SamplingParams,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub preflight_override: Option<PreflightOverride>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub preflight_ignored_ports: Option<Vec<u16>>,
 }
 
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
@@ -437,6 +439,7 @@ mod tests {
                     max_tokens: Some(1024),
                 },
                 preflight_override: None,
+                preflight_ignored_ports: None,
             },
             scenarios: vec![ScenarioOutcome {
                 id: "single-weather".to_owned(),
@@ -467,6 +470,7 @@ mod tests {
 
         assert!(json.starts_with("{\"schema_version\":2,"));
         assert!(!json.contains("preflight_override"));
+        assert!(!json.contains("preflight_ignored_ports"));
     }
 
     #[test]
@@ -541,6 +545,7 @@ mod tests {
             forced: true,
             foreign_endpoints: vec!["127.0.0.1:11434".to_owned()],
         });
+        result.metadata.preflight_ignored_ports = Some(vec![8000, 9000]);
         result.scenarios = [
             (ScenarioCategory::SingleCall, Status::Pass),
             (ScenarioCategory::ParallelCalls, Status::Fail),

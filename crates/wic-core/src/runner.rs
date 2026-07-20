@@ -150,6 +150,14 @@ pub async fn contention_preflight(
     endpoint: &str,
     known_servers: &[(u16, &str)],
 ) -> Result<Vec<OccupiedEndpoint>, String> {
+    contention_preflight_ignoring_ports(endpoint, known_servers, &[]).await
+}
+
+pub async fn contention_preflight_ignoring_ports(
+    endpoint: &str,
+    known_servers: &[(u16, &str)],
+    ignored_ports: &[u16],
+) -> Result<Vec<OccupiedEndpoint>, String> {
     const CONNECT_TIMEOUT: Duration = Duration::from_millis(300);
     const IDENTIFICATION_TIMEOUT: Duration = Duration::from_secs(2);
 
@@ -186,7 +194,7 @@ pub async fn contention_preflight(
     let client = reqwest::Client::new();
     let mut probe_tasks = Vec::new();
     for (address, server) in probes {
-        if target_addresses.contains(&address) {
+        if target_addresses.contains(&address) || ignored_ports.contains(&address.port()) {
             continue;
         }
         if let Some(server) = server {
@@ -290,6 +298,7 @@ pub async fn run_scenarios(
             environment: Some(config.environment.clone()),
             sampling: config.sampling.clone(),
             preflight_override: None,
+            preflight_ignored_ports: None,
         },
         scenarios: outcomes,
         totals,
@@ -693,6 +702,50 @@ mod tests {
         .expect("probe succeeds");
 
         assert!(occupied.is_empty());
+        task.abort();
+    }
+
+    #[tokio::test]
+    async fn contention_probe_skips_ignored_valid_server() {
+        let (port, task) = models_server(
+            StatusCode::OK,
+            "application/json",
+            r#"{"object":"list","data":[{"id":"fixture-model"}]}"#,
+        )
+        .await;
+
+        let occupied = super::contention_preflight_ignoring_ports(
+            "http://127.0.0.1:65535/v1",
+            &[(port, "Test server")],
+            &[port],
+        )
+        .await
+        .expect("probe succeeds");
+
+        assert!(occupied.is_empty());
+        task.abort();
+    }
+
+    #[tokio::test]
+    async fn contention_probe_still_reports_non_ignored_valid_server() {
+        let (port, task) = models_server(
+            StatusCode::OK,
+            "application/json",
+            r#"{"object":"list","data":[{"id":"fixture-model"}]}"#,
+        )
+        .await;
+
+        let occupied = super::contention_preflight_ignoring_ports(
+            "http://127.0.0.1:65535/v1",
+            &[(port, "Test server")],
+            &[],
+        )
+        .await
+        .expect("probe succeeds");
+
+        assert_eq!(occupied.len(), 1);
+        assert_eq!(occupied[0].endpoint, format!("127.0.0.1:{port}"));
+        assert_eq!(occupied[0].server, "Test server");
         task.abort();
     }
 
