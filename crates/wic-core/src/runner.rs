@@ -151,6 +151,7 @@ pub async fn contention_preflight(
     known_servers: &[(u16, &str)],
 ) -> Result<Vec<OccupiedEndpoint>, String> {
     const CONNECT_TIMEOUT: Duration = Duration::from_millis(300);
+    const IDENTIFICATION_TIMEOUT: Duration = Duration::from_secs(2);
 
     let url = reqwest::Url::parse(endpoint)
         .map_err(|error| format!("invalid target endpoint: {error}"))?;
@@ -182,19 +183,63 @@ pub async fn contention_preflight(
         }
     }
 
-    let mut occupied = Vec::new();
+    let client = reqwest::Client::new();
+    let mut probe_tasks = Vec::new();
     for (address, server) in probes {
-        let responding =
-            tokio::time::timeout(CONNECT_TIMEOUT, tokio::net::TcpStream::connect(address))
-                .await
-                .is_ok_and(|result| result.is_ok());
-        if responding && !target_addresses.contains(&address) {
-            if let Some(server) = server {
-                occupied.push(OccupiedEndpoint {
-                    endpoint: address.to_string(),
-                    server: server.to_owned(),
-                });
-            }
+        if target_addresses.contains(&address) {
+            continue;
+        }
+        if let Some(server) = server {
+            let client = client.clone();
+            let server = server.to_owned();
+            probe_tasks.push(tokio::spawn(async move {
+                let responding =
+                    tokio::time::timeout(CONNECT_TIMEOUT, tokio::net::TcpStream::connect(address))
+                        .await
+                        .is_ok_and(|result| result.is_ok());
+                let identified = if responding {
+                    tokio::time::timeout(IDENTIFICATION_TIMEOUT, async {
+                        let Ok(response) = client
+                            .get(format!("http://{address}/v1/models"))
+                            .send()
+                            .await
+                        else {
+                            return false;
+                        };
+                        if response.status() != reqwest::StatusCode::OK {
+                            return false;
+                        }
+                        response.json::<Value>().await.is_ok_and(|body| {
+                            body.get("object").and_then(Value::as_str) == Some("list")
+                                || body
+                                    .get("data")
+                                    .is_some_and(|data| data.is_array() || data.is_null())
+                        })
+                    })
+                    .await
+                    .unwrap_or(false)
+                } else {
+                    false
+                };
+                (address, server, responding, identified)
+            }));
+        }
+    }
+
+    let mut occupied = Vec::new();
+    for probe_task in probe_tasks {
+        let (address, server, responding, identified) = probe_task
+            .await
+            .map_err(|error| format!("contention probe failed: {error}"))?;
+        if identified {
+            occupied.push(OccupiedEndpoint {
+                endpoint: address.to_string(),
+                server,
+            });
+        } else if responding {
+            eprintln!(
+                "warning: {address} is open but was not identified as an inference server; not treating it as contention"
+            );
         }
     }
     Ok(occupied)
@@ -551,7 +596,37 @@ fn civil_from_days(days_since_epoch: i64) -> (i64, i64, i64) {
 
 #[cfg(test)]
 mod tests {
+    use axum::body::Body;
+    use axum::http::{header, Response, StatusCode};
+    use axum::routing::get;
+    use axum::Router;
     use tokio::net::TcpListener;
+    use tokio::task::JoinHandle;
+
+    async fn models_server(
+        status: StatusCode,
+        content_type: &'static str,
+        body: &'static str,
+    ) -> (u16, JoinHandle<()>) {
+        let listener = TcpListener::bind("127.0.0.1:0")
+            .await
+            .expect("bind models server");
+        let port = listener.local_addr().expect("models server address").port();
+        let app = Router::new().route(
+            "/v1/models",
+            get(move || async move {
+                Response::builder()
+                    .status(status)
+                    .header(header::CONTENT_TYPE, content_type)
+                    .body(Body::from(body))
+                    .expect("valid models response")
+            }),
+        );
+        let task = tokio::spawn(async move {
+            axum::serve(listener, app).await.expect("run models server");
+        });
+        (port, task)
+    }
 
     #[test]
     fn run_config_collects_environment_and_accepts_hardware_override() {
@@ -602,11 +677,13 @@ mod tests {
     }
 
     #[tokio::test]
-    async fn contention_probe_ignores_the_responding_target_port() {
-        let listener = TcpListener::bind("127.0.0.1:0")
-            .await
-            .expect("bind target listener");
-        let port = listener.local_addr().expect("listener address").port();
+    async fn contention_probe_ignores_identified_target_port() {
+        let (port, task) = models_server(
+            StatusCode::OK,
+            "application/json",
+            r#"{"object":"list","data":[{"id":"fixture-model"}]}"#,
+        )
+        .await;
 
         let occupied = super::contention_preflight(
             &format!("http://127.0.0.1:{port}/v1"),
@@ -616,10 +693,11 @@ mod tests {
         .expect("probe succeeds");
 
         assert!(occupied.is_empty());
+        task.abort();
     }
 
     #[tokio::test]
-    async fn contention_probe_reports_a_responding_foreign_port() {
+    async fn contention_probe_ignores_unidentified_silent_foreign_port() {
         let listener = TcpListener::bind("127.0.0.1:0")
             .await
             .expect("bind foreign listener");
@@ -630,9 +708,92 @@ mod tests {
                 .await
                 .expect("probe succeeds");
 
+        assert!(occupied.is_empty());
+    }
+
+    #[tokio::test]
+    async fn contention_probe_ignores_foreign_http_404() {
+        let (port, task) = models_server(StatusCode::NOT_FOUND, "text/plain", "not found").await;
+
+        let occupied =
+            super::contention_preflight("http://127.0.0.1:65535/v1", &[(port, "Test server")])
+                .await
+                .expect("probe succeeds");
+
+        assert!(occupied.is_empty());
+        task.abort();
+    }
+
+    #[tokio::test]
+    async fn contention_probe_ignores_foreign_html_response() {
+        let (port, task) = models_server(
+            StatusCode::OK,
+            "text/html",
+            "<html><body>developer server</body></html>",
+        )
+        .await;
+
+        let occupied =
+            super::contention_preflight("http://127.0.0.1:65535/v1", &[(port, "Test server")])
+                .await
+                .expect("probe succeeds");
+
+        assert!(occupied.is_empty());
+        task.abort();
+    }
+
+    #[tokio::test]
+    async fn contention_probe_ignores_foreign_non_model_json() {
+        let (port, task) =
+            models_server(StatusCode::OK, "application/json", r#"{"status":"ok"}"#).await;
+
+        let occupied =
+            super::contention_preflight("http://127.0.0.1:65535/v1", &[(port, "Test server")])
+                .await
+                .expect("probe succeeds");
+
+        assert!(occupied.is_empty());
+        task.abort();
+    }
+
+    #[tokio::test]
+    async fn contention_probe_identifies_ollama_with_zero_models_as_contention() {
+        let (port, task) = models_server(
+            StatusCode::OK,
+            "application/json",
+            r#"{"object":"list","data":null}"#,
+        )
+        .await;
+
+        let occupied =
+            super::contention_preflight("http://127.0.0.1:65535/v1", &[(port, "Ollama")])
+                .await
+                .expect("probe succeeds");
+
+        assert_eq!(occupied.len(), 1);
+        assert_eq!(occupied[0].endpoint, format!("127.0.0.1:{port}"));
+        assert_eq!(occupied[0].server, "Ollama");
+        task.abort();
+    }
+
+    #[tokio::test]
+    async fn contention_probe_reports_identified_foreign_server() {
+        let (port, task) = models_server(
+            StatusCode::OK,
+            "application/json",
+            r#"{"object":"list","data":[{"id":"fixture-model"}]}"#,
+        )
+        .await;
+
+        let occupied =
+            super::contention_preflight("http://127.0.0.1:65535/v1", &[(port, "Test server")])
+                .await
+                .expect("probe succeeds");
+
         assert_eq!(occupied.len(), 1);
         assert_eq!(occupied[0].endpoint, format!("127.0.0.1:{port}"));
         assert_eq!(occupied[0].server, "Test server");
+        task.abort();
     }
 
     #[test]

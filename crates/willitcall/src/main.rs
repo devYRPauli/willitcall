@@ -663,10 +663,8 @@ mod tests {
             .await
             .expect("bind target listener");
         let target_port = target.local_addr().expect("target address").port();
-        let foreign = tokio::net::TcpListener::bind("127.0.0.1:0")
-            .await
-            .expect("bind foreign listener");
-        let foreign_port = foreign.local_addr().expect("foreign address").port();
+        let foreign = crate::support::MockServer::start().await;
+        let foreign_port = foreign.port();
         let directory = tempfile::tempdir().expect("temp directory");
         let output_path = directory.path().join("result.json");
         let cli = Cli::try_parse_from([
@@ -700,10 +698,8 @@ mod tests {
     #[tokio::test(flavor = "multi_thread", worker_threads = 2)]
     async fn force_records_the_contention_override_in_the_result() {
         let server = crate::support::MockServer::start().await;
-        let foreign = tokio::net::TcpListener::bind("127.0.0.1:0")
-            .await
-            .expect("bind foreign listener");
-        let foreign_port = foreign.local_addr().expect("foreign address").port();
+        let foreign = crate::support::MockServer::start().await;
+        let foreign_port = foreign.port();
         let directory = tempfile::tempdir().expect("temp directory");
         let scenario_path = directory.path().join("scenarios");
         std::fs::create_dir(&scenario_path).expect("scenario directory");

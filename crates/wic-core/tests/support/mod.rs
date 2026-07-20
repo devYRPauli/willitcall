@@ -87,6 +87,10 @@ impl MockServer {
         format!("http://{}/v1", self.address)
     }
 
+    pub fn port(&self) -> u16 {
+        self.address.port()
+    }
+
     pub fn requests(&self) -> Vec<serde_json::Value> {
         self.state.lock().expect("mock state lock").requests.clone()
     }
