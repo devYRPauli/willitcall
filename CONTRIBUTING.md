@@ -63,3 +63,7 @@ record_id = "rec-17"
 3. Open a pull request adding the file under `results/`, and state the hardware and server version used.
 
 Never hand-edit a result file. Each scenario record carries an evidence hash, so edited results are not comparable.
+
+### Failure classes
+
+`failure_class` is a single mechanical observation assigned only after a scenario fails. Its precedence is error status, then `empty_response`, then `unparsed_tool_call`, then a plain failure with no class. `empty_response` means the response had neither content nor a parsed tool call. `unparsed_tool_call` means content matched a registered tool-call shape whose function was offered and whose arguments passed that tool's parameter schema, but the server produced no parsed tool call. A `cause` is a separate human attribution.

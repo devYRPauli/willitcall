@@ -95,3 +95,34 @@ async fn empty_response_preserves_negative_trap_pass() {
 
     assert_eq!(result.scenarios[0].status, wic_core::result::Status::Pass);
 }
+
+#[tokio::test]
+async fn runner_classifies_unparsed_tool_calls_without_changing_status() {
+    let server = MockServer::start_scripted(
+        "fixture-model",
+        vec![ScriptedResponse::Json(completion(json!(
+            r#"<tool_call>[{"arguments":{"city":"Boston"},"name":"get_weather"}]"#
+        )))],
+    )
+    .await;
+    let directory = tempfile::tempdir().expect("temp directory");
+    let config = RunConfig::new(
+        server.endpoint(),
+        "fixture-model".to_owned(),
+        Duration::from_secs(5),
+    );
+
+    let result = run_scenarios(
+        &config,
+        &[single_weather()],
+        &directory.path().join("result.json"),
+    )
+    .await
+    .expect("run scenario");
+
+    assert_eq!(result.scenarios[0].status, wic_core::result::Status::Fail);
+    assert_eq!(
+        result.scenarios[0].failure_class.as_deref(),
+        Some("unparsed_tool_call")
+    );
+}

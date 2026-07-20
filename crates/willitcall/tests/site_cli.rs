@@ -156,6 +156,14 @@ fn site_generates_v1_and_v2_rows_ratios_links_and_badges() {
         Some("evidence/fixture/stream-empty.json"),
     );
     empty["failure_class"] = json!("empty_response");
+    let mut unparsed = scenario(
+        "single-unparsed",
+        "single_call",
+        "fail",
+        Some("no tool call emitted"),
+        Some("evidence/fixture/single-unparsed.json"),
+    );
+    unparsed["failure_class"] = json!("unparsed_tool_call");
     write_result(
         &results.join("llamacpp-blob-model.json"),
         2,
@@ -164,6 +172,7 @@ fn site_generates_v1_and_v2_rows_ratios_links_and_badges() {
         "llamacpp",
         vec![
             scenario("single-ok", "single_call", "pass", None, None),
+            unparsed,
             caused,
             empty,
             scenario("choice-ok", "tool_choice_modes", "pass", None, None),
@@ -215,6 +224,7 @@ fn site_generates_v1_and_v2_rows_ratios_links_and_badges() {
     ));
     assert!(index.contains("server defect"));
     assert!(index.contains("empty response"));
+    assert!(index.contains("<span class=\"badge neutral unparsed\">unparsed tool call</span>"));
     assert!(index.contains("A cell measures the whole stack"));
     assert!(index.contains("single run per cell unless stated otherwise"));
     assert!(index.contains("docs/case-studies/"));

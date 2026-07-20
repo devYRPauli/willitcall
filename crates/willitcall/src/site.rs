@@ -358,9 +358,13 @@ fn render_annotation(
             )
             .expect("write HTML");
         }
-    } else if scenario.failure_class.as_deref() == Some("empty_response") {
+    }
+    if scenario.failure_class.as_deref() == Some("empty_response") {
         html.push_str(" <span class=\"badge neutral\">empty response</span>");
+    } else if scenario.failure_class.as_deref() == Some("unparsed_tool_call") {
+        html.push_str(" <span class=\"badge neutral unparsed\">unparsed tool call</span>");
     } else if schema_version == 1
+        && scenario.cause.is_none()
         && scenario.status != Status::Pass
         && scenario.evidence_hash.is_some()
     {
@@ -665,6 +669,7 @@ thead code { color: inherit; }
 .badge { display: inline-block; margin-left: 0.45rem; padding: 0.12rem 0.42rem; border-radius: 999px; font-size: 0.7rem; font-weight: 800; text-decoration: none; }
 .badge.cause { color: #632014; background: #ffe0d4; border: 1px solid #e6a18d; }
 .badge.neutral { color: var(--neutral-ink); background: var(--neutral-bg); border: 1px solid #bcc7cf; }
+.badge.neutral.unparsed { color: #4a3410; background: #fdf0d5; border: 1px solid #d9b877; }
 
 .submit-page { max-width: 58rem; }
 .submit-page section { margin-bottom: 2.5rem; }

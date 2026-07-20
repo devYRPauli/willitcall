@@ -123,7 +123,12 @@ fn write_result_fixture(path: &std::path::Path, schema_version: u32, mut scenari
     .expect("write result fixture");
 }
 
-fn write_transcript_fixture(result_path: &std::path::Path, evidence_path: &str, body_raw: &str) {
+fn write_transcript_fixture(
+    result_path: &std::path::Path,
+    evidence_path: &str,
+    body_raw: &str,
+    tools: Value,
+) {
     let path = result_path
         .parent()
         .expect("result parent")
@@ -134,6 +139,9 @@ fn write_transcript_fixture(result_path: &std::path::Path, evidence_path: &str, 
         "run_id": "20260720T120000Z-fixture",
         "scenario_id": "fixture",
         "turns": [{
+            "request": {
+                "body": {"tools": tools}
+            },
             "response": {
                 "body_raw": body_raw
             }
@@ -316,11 +324,13 @@ async fn rescore_classifies_empty_json_and_sse_responses() {
         &result_path,
         "evidence/empty-json.json",
         &completion(json!([]), Value::Null),
+        json!([]),
     );
     write_transcript_fixture(
         &result_path,
         "evidence/empty-sse.json",
         "data: {\"choices\":[{\"delta\":{}}]}\n\ndata: [DONE]\n\n",
+        json!([]),
     );
 
     let output = run_binary(vec![
@@ -362,6 +372,7 @@ async fn rescore_leaves_a_response_with_content_untouched() {
         &result_path,
         "evidence/content.json",
         &completion(json!([]), json!("answer")),
+        json!([]),
     );
 
     let output = run_binary(vec![
@@ -383,6 +394,59 @@ async fn rescore_leaves_a_response_with_content_untouched() {
 }
 
 #[tokio::test(flavor = "multi_thread", worker_threads = 2)]
+async fn rescore_classifies_a_valid_unparsed_tool_call() {
+    let directory = tempfile::tempdir().expect("temp directory");
+    let result_path = directory.path().join("result.json");
+    write_result_fixture(
+        &result_path,
+        2,
+        vec![scenario_fixture(
+            "custom-weather",
+            None,
+            Some("evidence/custom-weather.json"),
+        )],
+    );
+    write_transcript_fixture(
+        &result_path,
+        "evidence/custom-weather.json",
+        &completion(json!([]), json!(r#"[`get_weather` {"city": "Boston"}]"#)),
+        json!([{
+            "type": "function",
+            "function": {
+                "name": "get_weather",
+                "description": "Get weather",
+                "parameters": {
+                    "type": "object",
+                    "required": ["city"],
+                    "properties": {"city": {"type": "string"}}
+                }
+            }
+        }]),
+    );
+
+    let output = run_binary(vec![
+        "rescore".to_owned(),
+        "--result".to_owned(),
+        result_path.display().to_string(),
+    ])
+    .await;
+
+    assert_eq!(
+        output.status.code(),
+        Some(0),
+        "{}",
+        String::from_utf8_lossy(&output.stderr)
+    );
+    let result: Value =
+        serde_json::from_slice(&fs::read(result_path).expect("result file")).expect("valid JSON");
+    assert_eq!(result["scenarios"][0]["status"], "fail");
+    assert_eq!(
+        result["scenarios"][0]["failure_class"],
+        "unparsed_tool_call"
+    );
+}
+
+#[tokio::test(flavor = "multi_thread", worker_threads = 2)]
 async fn rescore_reports_an_unparseable_transcript_without_writing() {
     let directory = tempfile::tempdir().expect("temp directory");
     let result_path = directory.path().join("result.json");
@@ -395,7 +459,12 @@ async fn rescore_reports_an_unparseable_transcript_without_writing() {
             Some("evidence/broken.json"),
         )],
     );
-    write_transcript_fixture(&result_path, "evidence/broken.json", "not JSON or SSE");
+    write_transcript_fixture(
+        &result_path,
+        "evidence/broken.json",
+        "not JSON or SSE",
+        json!([]),
+    );
     let before = fs::read(&result_path).expect("result bytes");
 
     let output = run_binary(vec![

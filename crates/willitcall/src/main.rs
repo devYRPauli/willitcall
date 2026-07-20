@@ -21,8 +21,8 @@ use wic_core::result::{
 use wic_core::runner::{
     contention_preflight, preflight, run_scenarios, RunConfig, ServerConfig, ServerVersionProbe,
 };
-use wic_core::score::is_empty_response;
-use wic_core::{load_embedded_scenarios, load_scenarios_from_dir};
+use wic_core::score::classify_failure;
+use wic_core::{load_embedded_scenarios, load_scenarios_from_dir, ToolDefinition};
 
 const EXIT_USAGE: u8 = 2;
 const EXIT_PREFLIGHT: u8 = 3;
@@ -274,16 +274,23 @@ fn annotate(args: AnnotateArgs) -> Result<usize, ExecuteError> {
     Ok(count)
 }
 
-fn parse_transcript_response(path: &Path) -> Result<AssistantResponse, String> {
+fn parse_transcript(path: &Path) -> Result<(AssistantResponse, Vec<ToolDefinition>), String> {
     let bytes = std::fs::read(path)
         .map_err(|error| format!("failed to read transcript {}: {error}", path.display()))?;
     let transcript: serde_json::Value = serde_json::from_slice(&bytes)
         .map_err(|error| format!("failed to parse transcript {}: {error}", path.display()))?;
-    let body = transcript
+    let final_turn = transcript
         .get("turns")
         .and_then(serde_json::Value::as_array)
         .and_then(|turns| turns.last())
-        .and_then(|turn| turn.get("response"))
+        .ok_or_else(|| {
+            format!(
+                "failed to parse transcript {}: no final turn",
+                path.display()
+            )
+        })?;
+    let body = final_turn
+        .get("response")
         .and_then(|response| response.get("body_raw"))
         .and_then(serde_json::Value::as_str)
         .ok_or_else(|| {
@@ -292,13 +299,42 @@ fn parse_transcript_response(path: &Path) -> Result<AssistantResponse, String> {
                 path.display()
             )
         })?;
+    let tools = match final_turn.pointer("/request/body/tools") {
+        None => Vec::new(),
+        Some(tools) => tools
+            .as_array()
+            .ok_or_else(|| {
+                format!(
+                    "failed to parse transcript {}: request tools is not an array",
+                    path.display()
+                )
+            })?
+            .iter()
+            .enumerate()
+            .map(|(index, tool)| {
+                let function = tool.get("function").cloned().ok_or_else(|| {
+                    format!(
+                        "failed to parse transcript {}: request tool {index} has no function",
+                        path.display()
+                    )
+                })?;
+                serde_json::from_value(function).map_err(|error| {
+                    format!(
+                        "failed to parse transcript {}: invalid request tool {index}: {error}",
+                        path.display()
+                    )
+                })
+            })
+            .collect::<Result<Vec<_>, _>>()?,
+    };
 
-    if body.trim_start().starts_with("data:") {
+    let response = if body.trim_start().starts_with("data:") {
         let payloads = parse_sse_data(body.as_bytes())?;
         reassemble_sse_payloads(&payloads)
     } else {
         parse_non_streaming(body.as_bytes())
-    }
+    }?;
+    Ok((response, tools))
 }
 
 fn rescore(args: RescoreArgs) -> Result<(usize, Vec<String>), ExecuteError> {
@@ -318,10 +354,15 @@ fn rescore(args: RescoreArgs) -> Result<(usize, Vec<String>), ExecuteError> {
             continue;
         };
         let path = result_parent.join(evidence_path);
-        match parse_transcript_response(&path) {
-            Ok(response) => {
-                if is_empty_response(response.content.as_deref(), &response.tool_calls) {
-                    outcome.failure_class = Some("empty_response".to_owned());
+        match parse_transcript(&path) {
+            Ok((response, tools)) => {
+                if let Some(failure_class) = classify_failure(
+                    outcome.status,
+                    &tools,
+                    response.content.as_deref(),
+                    &response.tool_calls,
+                ) {
+                    outcome.failure_class = Some(failure_class.to_owned());
                     changed += 1;
                 }
             }

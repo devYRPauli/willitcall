@@ -1,6 +1,7 @@
 use serde_json::json;
 use wic_core::client::ToolCall;
-use wic_core::score::{score_calls, score_response};
+use wic_core::result::Status;
+use wic_core::score::{classify_failure, score_calls, score_response};
 use wic_core::{ArgumentsMatch, ExpectedCall, ToolDefinition};
 
 fn weather_tool() -> ToolDefinition {
@@ -97,6 +98,92 @@ fn empty_response_is_distinct_from_text_without_a_tool_call() {
 #[test]
 fn empty_response_preserves_a_negative_trap_pass() {
     assert!(score_response(&[weather_tool()], &[], ArgumentsMatch::Exact, None, &[]).is_ok());
+}
+
+#[test]
+fn unparsed_tool_call_shapes_classify_valid_offered_calls() {
+    let tools = [weather_tool()];
+    let expected = [expected("get_weather", json!({"city": "Boston"}))];
+
+    for content in [
+        r#"<tool_call>[{"arguments":{"city":"Boston"},"name":"get_weather"}]"#,
+        r#"<tool_call>{"name":"get_weather","arguments":{"city":"Boston"}}"#,
+        r#"[`get_weather` {"city": "Boston"}]"#,
+        r#"`get_weather` {"city": "Boston"}"#,
+    ] {
+        let failure = score_response(&tools, &expected, ArgumentsMatch::Exact, Some(content), &[])
+            .expect_err("unparsed call must remain a failing verdict");
+        assert_eq!(
+            failure.failure_class.as_deref(),
+            Some("unparsed_tool_call"),
+            "{content}"
+        );
+    }
+}
+
+#[test]
+fn unparsed_tool_call_near_misses_remain_plain_failures() {
+    let tools = [weather_tool()];
+    let expected = [expected("get_weather", json!({"city": "Boston"}))];
+
+    for content in [
+        r#"<tool_call>[{"arguments":{"city":"Boston"},"name":"get_weather"}"#,
+        r#"<tool_call>[{"arguments":{"city":"Boston"},"name":"get_forecast"}]"#,
+        r#"<tool_call>[{"arguments":{},"name":"get_weather"}]"#,
+        r#"[`get_weather` {"city": 42}]"#,
+        "I would use `get_weather` for that",
+        "```text\n[`get_weather` {\"city\": \"Boston\"}]\n```",
+    ] {
+        let failure = score_response(&tools, &expected, ArgumentsMatch::Exact, Some(content), &[])
+            .expect_err("missing parsed call must fail");
+        assert_ne!(
+            failure.failure_class.as_deref(),
+            Some("unparsed_tool_call"),
+            "{content}"
+        );
+    }
+}
+
+#[test]
+fn unparsed_tool_call_preserves_a_negative_trap_pass() {
+    assert!(score_response(
+        &[weather_tool()],
+        &[],
+        ArgumentsMatch::Exact,
+        Some(r#"[`get_weather` {"city": "Boston"}]"#),
+        &[]
+    )
+    .is_ok());
+}
+
+#[test]
+fn failure_class_precedence_is_explicit_and_status_preserving() {
+    let tools = [weather_tool()];
+    let unparsed = Some(r#"[`get_weather` {"city": "Boston"}]"#);
+
+    assert_eq!(classify_failure(Status::Error, &tools, None, &[]), None);
+    assert_eq!(
+        classify_failure(Status::Fail, &tools, None, &[]),
+        Some("empty_response")
+    );
+    assert_eq!(
+        classify_failure(Status::Fail, &tools, unparsed, &[]),
+        Some("unparsed_tool_call")
+    );
+    assert_eq!(
+        classify_failure(
+            Status::Fail,
+            &tools,
+            unparsed,
+            &[actual("get_weather", r#"{"city":"Boston"}"#)]
+        ),
+        None
+    );
+    assert_eq!(classify_failure(Status::Pass, &tools, unparsed, &[]), None);
+    assert_eq!(
+        classify_failure(Status::Fail, &tools, Some("I cannot call that tool."), &[]),
+        None
+    );
 }
 
 #[test]

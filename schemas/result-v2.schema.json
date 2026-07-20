@@ -156,7 +156,8 @@
           "type": ["string", "null"]
         },
         "failure_class": {
-          "enum": ["empty_response"]
+          "description": "Single mechanical classification for an already-failing scenario. Precedence: error status > empty_response > unparsed_tool_call > plain fail with no failure_class. Classification never changes status.",
+          "enum": ["empty_response", "unparsed_tool_call"]
         },
         "cause": {
           "$ref": "#/$defs/cause"

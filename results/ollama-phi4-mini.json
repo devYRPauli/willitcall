@@ -322,6 +322,7 @@
       "category": "single_call",
       "status": "fail",
       "failure_reason": "no tool call emitted",
+      "failure_class": "unparsed_tool_call",
       "evidence_hash": "sha256:93d0f32505b2c0aa6ab98dd19e9297d6aa83bf69de65548441114ab2bdc0de89",
       "evidence_path": "evidence/20260720T144413Z-e9ac09f5/single-weather.json",
       "retried": false

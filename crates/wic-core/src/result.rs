@@ -543,7 +543,7 @@ mod tests {
             status,
             failure_reason: matches!(status, Status::Fail | Status::Error)
                 .then(|| "fixture failure".to_owned()),
-            failure_class: matches!(status, Status::Fail).then(|| "empty_response".to_owned()),
+            failure_class: matches!(status, Status::Fail).then(|| "unparsed_tool_call".to_owned()),
             cause: matches!(status, Status::Fail).then_some(Cause {
                 kind: CauseKind::Unknown,
                 reference: None,

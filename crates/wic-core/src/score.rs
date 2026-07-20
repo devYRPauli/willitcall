@@ -2,7 +2,17 @@ use serde_json::Value;
 use unicode_normalization::UnicodeNormalization;
 
 use crate::client::ToolCall;
+use crate::result::Status;
 use crate::{ArgumentsMatch, ExpectedCall, ToolDefinition};
+
+struct UnparsedToolCall {
+    name: String,
+    arguments: Value,
+}
+
+type ToolCallShape = fn(&str) -> Option<Vec<UnparsedToolCall>>;
+
+const TOOL_CALL_SHAPES: [ToolCallShape; 2] = [granite_tool_call_tag, phi4_backtick];
 
 #[derive(Debug, Eq, PartialEq)]
 pub struct ScoreFailure {
@@ -17,19 +27,106 @@ pub fn score_response(
     content: Option<&str>,
     actual: &[ToolCall],
 ) -> Result<(), ScoreFailure> {
-    let empty_response = is_empty_response(content, actual);
     score_calls(tools, expected, default_policy, actual).map_err(|reason| ScoreFailure {
-        reason: if empty_response {
+        failure_class: classify_failure(Status::Fail, tools, content, actual).map(str::to_owned),
+        reason: if is_empty_response(content, actual) {
             "empty response: no content and no tool call".to_owned()
         } else {
             reason
         },
-        failure_class: empty_response.then(|| "empty_response".to_owned()),
     })
+}
+
+pub fn classify_failure(
+    status: Status,
+    tools: &[ToolDefinition],
+    content: Option<&str>,
+    actual: &[ToolCall],
+) -> Option<&'static str> {
+    match status {
+        Status::Error => None,
+        Status::Fail if is_empty_response(content, actual) => Some("empty_response"),
+        Status::Fail if is_unparsed_tool_call(tools, content, actual) => Some("unparsed_tool_call"),
+        Status::Pass | Status::Fail | Status::Skipped => None,
+    }
 }
 
 pub fn is_empty_response(content: Option<&str>, actual: &[ToolCall]) -> bool {
     actual.is_empty() && matches!(content, None | Some(""))
+}
+
+fn is_unparsed_tool_call(
+    tools: &[ToolDefinition],
+    content: Option<&str>,
+    actual: &[ToolCall],
+) -> bool {
+    if !actual.is_empty() {
+        return false;
+    }
+    let Some(content) = content else {
+        return false;
+    };
+
+    // These shapes occur under multiple server presets, so the registry is global.
+    TOOL_CALL_SHAPES.iter().any(|extract| {
+        extract(content).is_some_and(|calls| {
+            !calls.is_empty()
+                && calls.iter().all(|call| {
+                    tools
+                        .iter()
+                        .find(|tool| tool.name == call.name)
+                        .is_some_and(|tool| {
+                            validate_schema(&tool.parameters, &call.arguments, "").is_ok()
+                        })
+                })
+        })
+    })
+}
+
+fn granite_tool_call_tag(content: &str) -> Option<Vec<UnparsedToolCall>> {
+    let value: Value = serde_json::from_str(content.strip_prefix("<tool_call>")?).ok()?;
+    let values = match value {
+        Value::Array(values) if !values.is_empty() => values,
+        Value::Object(_) => vec![value],
+        _ => return None,
+    };
+    values.into_iter().map(unparsed_named_call).collect()
+}
+
+fn phi4_backtick(content: &str) -> Option<Vec<UnparsedToolCall>> {
+    let inner = if let Some(inner) = content.strip_prefix('[') {
+        inner.strip_suffix(']')?
+    } else {
+        content
+    };
+    let name_and_arguments = inner.strip_prefix('`')?;
+    let name_end = name_and_arguments.find('`')?;
+    let name = &name_and_arguments[..name_end];
+    if name.is_empty() {
+        return None;
+    }
+    let arguments: Value =
+        serde_json::from_str(name_and_arguments[name_end + 1..].trim_start()).ok()?;
+    if !arguments.is_object() {
+        return None;
+    }
+    Some(vec![UnparsedToolCall {
+        name: name.to_owned(),
+        arguments,
+    }])
+}
+
+fn unparsed_named_call(value: Value) -> Option<UnparsedToolCall> {
+    let object = value.as_object()?;
+    if object.len() != 2 {
+        return None;
+    }
+    let name = object.get("name")?.as_str()?.to_owned();
+    let arguments = object.get("arguments")?.clone();
+    if !arguments.is_object() {
+        return None;
+    }
+    Some(UnparsedToolCall { name, arguments })
 }
 
 pub fn score_calls(

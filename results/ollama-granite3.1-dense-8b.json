@@ -25,6 +25,7 @@
       "category": "multi_turn",
       "status": "fail",
       "failure_reason": "turn 1: no tool call emitted",
+      "failure_class": "unparsed_tool_call",
       "evidence_hash": "sha256:791aafe209a78c58757ad732abc41a8814d82ff134dec4fb18b09a6b684d19ee",
       "evidence_path": "evidence/20260720T143345Z-57f7fa92/multi-turn-calendar-followup.json",
       "retried": false
@@ -34,6 +35,7 @@
       "category": "multi_turn",
       "status": "fail",
       "failure_reason": "turn 1: no tool call emitted",
+      "failure_class": "unparsed_tool_call",
       "evidence_hash": "sha256:fb6ae19a861c58df5727b4a3254dad5ded3ab9197a663653936f60d29108ed5b",
       "evidence_path": "evidence/20260720T143345Z-57f7fa92/multi-turn-flight-booking.json",
       "retried": false
@@ -43,6 +45,7 @@
       "category": "multi_turn",
       "status": "fail",
       "failure_reason": "turn 1: no tool call emitted",
+      "failure_class": "unparsed_tool_call",
       "evidence_hash": "sha256:e36aee81c337102fffdc49402425f96c1ca6afe8b7da0b12cc2dec8c8f54637e",
       "evidence_path": "evidence/20260720T143345Z-57f7fa92/multi-turn-inventory-order.json",
       "retried": false
@@ -52,6 +55,7 @@
       "category": "multi_turn",
       "status": "fail",
       "failure_reason": "turn 1: no tool call emitted",
+      "failure_class": "unparsed_tool_call",
       "evidence_hash": "sha256:e504958054da6e0a707cc179cd0ab656d8e7e366b7a869333b21c27fecade8c5",
       "evidence_path": "evidence/20260720T143345Z-57f7fa92/multi-turn-parallel-followup.json",
       "retried": false
@@ -61,6 +65,7 @@
       "category": "multi_turn",
       "status": "fail",
       "failure_reason": "turn 1: no tool call emitted",
+      "failure_class": "unparsed_tool_call",
       "evidence_hash": "sha256:c2b304554b822f14795179d3ad69c0eb3b7f784bb1c98bdcdaca4d081e65c461",
       "evidence_path": "evidence/20260720T143345Z-57f7fa92/multi-turn-route.json",
       "retried": false
@@ -70,6 +75,7 @@
       "category": "multi_turn",
       "status": "fail",
       "failure_reason": "turn 1: no tool call emitted",
+      "failure_class": "unparsed_tool_call",
       "evidence_hash": "sha256:4aed44d7a853aa1858d62141eaa477c6e76ef3449d56c952c19a6936be017727",
       "evidence_path": "evidence/20260720T143345Z-57f7fa92/multi-turn-ticket-update.json",
       "retried": false
@@ -79,6 +85,7 @@
       "category": "multi_turn",
       "status": "fail",
       "failure_reason": "turn 1: no tool call emitted",
+      "failure_class": "unparsed_tool_call",
       "evidence_hash": "sha256:206fc2ca8f1e8fb1f3a4c84c553fc046297f1e500de01e733a8b5c2cb50ae839",
       "evidence_path": "evidence/20260720T143345Z-57f7fa92/multi-turn-two-hop-chain.json",
       "retried": false
@@ -124,6 +131,7 @@
       "category": "negative_trap",
       "status": "fail",
       "failure_reason": "no tool call emitted",
+      "failure_class": "unparsed_tool_call",
       "evidence_hash": "sha256:2a37040f553f9f73af24a662160e8256798136167d67a6680b69ab4394ec7c56",
       "evidence_path": "evidence/20260720T143345Z-57f7fa92/negative-long-argument.json",
       "retried": false
@@ -151,6 +159,7 @@
       "category": "parallel_calls",
       "status": "fail",
       "failure_reason": "no tool call emitted",
+      "failure_class": "unparsed_tool_call",
       "evidence_hash": "sha256:6829a0d3ad1091a305fda888cc2f53b9e2c02fb78f7ccd8f32c48e1b3e4825c6",
       "evidence_path": "evidence/20260720T143345Z-57f7fa92/parallel-city-time.json",
       "retried": false
@@ -160,6 +169,7 @@
       "category": "parallel_calls",
       "status": "fail",
       "failure_reason": "no tool call emitted",
+      "failure_class": "unparsed_tool_call",
       "evidence_hash": "sha256:4fa015d60a7e8ee38c38e39e4531efa930a5d7e93d8613d97da9988837a5367d",
       "evidence_path": "evidence/20260720T143345Z-57f7fa92/parallel-different-tools.json",
       "retried": false
@@ -169,6 +179,7 @@
       "category": "parallel_calls",
       "status": "fail",
       "failure_reason": "no tool call emitted",
+      "failure_class": "unparsed_tool_call",
       "evidence_hash": "sha256:561bd74d13987c9010e09989746edc438c650722590a5a1d867a3b792730a542",
       "evidence_path": "evidence/20260720T143345Z-57f7fa92/parallel-three-cities.json",
       "retried": false
@@ -178,6 +189,7 @@
       "category": "parallel_calls",
       "status": "fail",
       "failure_reason": "no tool call emitted",
+      "failure_class": "unparsed_tool_call",
       "evidence_hash": "sha256:a69f21adcd787e5d698c61dbc0d34c74b74264f4f4f3df10d03afd5fd8810850",
       "evidence_path": "evidence/20260720T143345Z-57f7fa92/parallel-three-different-tools.json",
       "retried": false
@@ -187,6 +199,7 @@
       "category": "parallel_calls",
       "status": "fail",
       "failure_reason": "no tool call emitted",
+      "failure_class": "unparsed_tool_call",
       "evidence_hash": "sha256:8e10c255f817940885f5970b6f7f6d57d80982c9020277e01b59dbd0647157e2",
       "evidence_path": "evidence/20260720T143345Z-57f7fa92/parallel-two-calculations.json",
       "retried": false
@@ -196,6 +209,7 @@
       "category": "parallel_calls",
       "status": "fail",
       "failure_reason": "no tool call emitted",
+      "failure_class": "unparsed_tool_call",
       "evidence_hash": "sha256:159167ad714505da5e4f826f07ea3572e4fc72c98b7252b313cbde57d94d58c2",
       "evidence_path": "evidence/20260720T143345Z-57f7fa92/parallel-two-multiple-args.json",
       "retried": false
@@ -205,6 +219,7 @@
       "category": "parallel_calls",
       "status": "fail",
       "failure_reason": "no tool call emitted",
+      "failure_class": "unparsed_tool_call",
       "evidence_hash": "sha256:4105b4ffe1fbb45a397cdd7d9c50cd6894ac71579b6bb1ce4b75cd66a0a17114",
       "evidence_path": "evidence/20260720T143345Z-57f7fa92/parallel-two-searches.json",
       "retried": false
@@ -214,6 +229,7 @@
       "category": "parallel_calls",
       "status": "fail",
       "failure_reason": "no tool call emitted",
+      "failure_class": "unparsed_tool_call",
       "evidence_hash": "sha256:c598b19706d940893ed189782f0ac4eaabe7a387e9d340d372b88495c98ae596",
       "evidence_path": "evidence/20260720T143345Z-57f7fa92/parallel-weather-and-time.json",
       "retried": false
@@ -232,6 +248,7 @@
       "category": "single_call",
       "status": "fail",
       "failure_reason": "no tool call emitted",
+      "failure_class": "unparsed_tool_call",
       "evidence_hash": "sha256:95a42f6d5e9b0f017cf039df70c49c151b995fcda265d7e75e36d9770269bd5c",
       "evidence_path": "evidence/20260720T143345Z-57f7fa92/single-boolean-flag.json",
       "retried": false
@@ -241,6 +258,7 @@
       "category": "single_call",
       "status": "fail",
       "failure_reason": "no tool call emitted",
+      "failure_class": "unparsed_tool_call",
       "evidence_hash": "sha256:dfac5ddc6d42b98c75f130f4838d91c4a1d45e4b7ee76210f57ee73f0368c0c7",
       "evidence_path": "evidence/20260720T143345Z-57f7fa92/single-date-range.json",
       "retried": false
@@ -250,6 +268,7 @@
       "category": "single_call",
       "status": "fail",
       "failure_reason": "no tool call emitted",
+      "failure_class": "unparsed_tool_call",
       "evidence_hash": "sha256:8ad4d0276a79a5042fbe4c976fd80c2673f65c90697f598f03edbb2f0cf1ec0a",
       "evidence_path": "evidence/20260720T143345Z-57f7fa92/single-decimal-price.json",
       "retried": false
@@ -259,6 +278,7 @@
       "category": "single_call",
       "status": "fail",
       "failure_reason": "no tool call emitted",
+      "failure_class": "unparsed_tool_call",
       "evidence_hash": "sha256:6bfb834eff1f04800d1ae86fc75037cbd74de8e39cfc304b2c276accd11d815b",
       "evidence_path": "evidence/20260720T143345Z-57f7fa92/single-empty-arguments.json",
       "retried": false
@@ -268,6 +288,7 @@
       "category": "single_call",
       "status": "fail",
       "failure_reason": "no tool call emitted",
+      "failure_class": "unparsed_tool_call",
       "evidence_hash": "sha256:befab8dea615714988a433b72ad57d47a9a27672db107ca116e01be8564fcfbd",
       "evidence_path": "evidence/20260720T143345Z-57f7fa92/single-enum-format.json",
       "retried": false
@@ -286,6 +307,7 @@
       "category": "single_call",
       "status": "fail",
       "failure_reason": "no tool call emitted",
+      "failure_class": "unparsed_tool_call",
       "evidence_hash": "sha256:b3ab2f2de8b5f556962f307b78d7dbc2d8c7e7b8fec90adcd0447fefd03031c5",
       "evidence_path": "evidence/20260720T143345Z-57f7fa92/single-nested-options.json",
       "retried": false
@@ -322,6 +344,7 @@
       "category": "single_call",
       "status": "fail",
       "failure_reason": "no tool call emitted",
+      "failure_class": "unparsed_tool_call",
       "evidence_hash": "sha256:1aea387cb1e6f4d606973e8628762e797865705525fdf407eeba105feec099cf",
       "evidence_path": "evidence/20260720T143345Z-57f7fa92/single-weather.json",
       "retried": false
@@ -331,6 +354,7 @@
       "category": "single_call",
       "status": "fail",
       "failure_reason": "no tool call emitted",
+      "failure_class": "unparsed_tool_call",
       "evidence_hash": "sha256:1730b8052f33be650f6002c9a0e80bca1b0f08f4174b3b518018aee9170a5e77",
       "evidence_path": "evidence/20260720T143345Z-57f7fa92/single-zero-and-negative.json",
       "retried": false
@@ -349,6 +373,7 @@
       "category": "streaming",
       "status": "fail",
       "failure_reason": "no tool call emitted",
+      "failure_class": "unparsed_tool_call",
       "evidence_hash": "sha256:4b8adc67dbe79750a0e23356a31773f10a1fa0fce9933ad20c60a7cd434014c9",
       "evidence_path": "evidence/20260720T143345Z-57f7fa92/streaming-boolean-argument.json",
       "retried": false
@@ -358,6 +383,7 @@
       "category": "streaming",
       "status": "fail",
       "failure_reason": "no tool call emitted",
+      "failure_class": "unparsed_tool_call",
       "evidence_hash": "sha256:bef413b619db3e73c161639101c85efa3daaefa3da449466f2a1ba5d9f892f18",
       "evidence_path": "evidence/20260720T143345Z-57f7fa92/streaming-empty-arguments.json",
       "retried": false
@@ -367,6 +393,7 @@
       "category": "streaming",
       "status": "fail",
       "failure_reason": "no tool call emitted",
+      "failure_class": "unparsed_tool_call",
       "evidence_hash": "sha256:b7454453f683903e57d8a6cb512be23deff6a779633a735e6776d5517db9fb88",
       "evidence_path": "evidence/20260720T143345Z-57f7fa92/streaming-enum-arguments.json",
       "retried": false
@@ -376,6 +403,7 @@
       "category": "streaming",
       "status": "fail",
       "failure_reason": "no tool call emitted",
+      "failure_class": "unparsed_tool_call",
       "evidence_hash": "sha256:7cbbd54aef1d42b2c0adf9e8adf2f9a43586d8ed7cabb85f88c721f6995fc63e",
       "evidence_path": "evidence/20260720T143345Z-57f7fa92/streaming-nested-arguments.json",
       "retried": false
@@ -385,6 +413,7 @@
       "category": "streaming",
       "status": "fail",
       "failure_reason": "no tool call emitted",
+      "failure_class": "unparsed_tool_call",
       "evidence_hash": "sha256:489969adf5acfd882c9726fa2efd567bd328e883c8bdfdb5fcf9f2cdad82b836",
       "evidence_path": "evidence/20260720T143345Z-57f7fa92/streaming-parallel-three.json",
       "retried": false
@@ -394,6 +423,7 @@
       "category": "streaming",
       "status": "fail",
       "failure_reason": "no tool call emitted",
+      "failure_class": "unparsed_tool_call",
       "evidence_hash": "sha256:ed03a76a502048e2101d87e3343ae6e96797101c306b8ae5d579053f0a5fb8c6",
       "evidence_path": "evidence/20260720T143345Z-57f7fa92/streaming-parallel-two.json",
       "retried": false
@@ -403,6 +433,7 @@
       "category": "streaming",
       "status": "fail",
       "failure_reason": "no tool call emitted",
+      "failure_class": "unparsed_tool_call",
       "evidence_hash": "sha256:97099665c64df295fc97e4ced96210cc72fe2bf9b51305f350ea5852e3f9a9b8",
       "evidence_path": "evidence/20260720T143345Z-57f7fa92/streaming-weather.json",
       "retried": false
@@ -412,6 +443,7 @@
       "category": "tool_choice_modes",
       "status": "fail",
       "failure_reason": "no tool call emitted",
+      "failure_class": "unparsed_tool_call",
       "evidence_hash": "sha256:a37dde16523aabcbbd4ee2782470fcc6cb4b209b2107fbbd5cd91ae3965e7554",
       "evidence_path": "evidence/20260720T143345Z-57f7fa92/tool-choice-auto-call.json",
       "retried": false
@@ -430,6 +462,7 @@
       "category": "tool_choice_modes",
       "status": "fail",
       "failure_reason": "no tool call emitted",
+      "failure_class": "unparsed_tool_call",
       "evidence_hash": "sha256:16d6b904096441f39ae34f80d4d6929079d5922f988095385b90138a0d688c9f",
       "evidence_path": "evidence/20260720T143345Z-57f7fa92/tool-choice-named.json",
       "retried": false
@@ -457,6 +490,7 @@
       "category": "tool_choice_modes",
       "status": "fail",
       "failure_reason": "no tool call emitted",
+      "failure_class": "unparsed_tool_call",
       "evidence_hash": "sha256:30b0b8f86f1e957ab47b46e86691780687f741b09ed991053cd77201fe2a3906",
       "evidence_path": "evidence/20260720T143345Z-57f7fa92/tool-choice-required.json",
       "retried": false
@@ -466,6 +500,7 @@
       "category": "tool_choice_modes",
       "status": "fail",
       "failure_reason": "no tool call emitted",
+      "failure_class": "unparsed_tool_call",
       "evidence_hash": "sha256:7dabea8ffd1469c425312aa1b9f1ed59662b3b88d43800c35200769432c81104",
       "evidence_path": "evidence/20260720T143345Z-57f7fa92/tool-choice-required-empty.json",
       "retried": false
