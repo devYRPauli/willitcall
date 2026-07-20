@@ -1,0 +1,98 @@
+{
+  "A": {
+    "variant": "A",
+    "description": "Apply tags to a document.",
+    "request": {
+      "model": "qwen2.5-7b-instruct-q4km",
+      "messages": [
+        {
+          "role": "user",
+          "content": "Tag document doc-17 with exactly alpha, beta, and gamma in that order."
+        }
+      ],
+      "tools": [
+        {
+          "type": "function",
+          "function": {
+            "name": "tag_document",
+            "description": "Apply tags to a document.",
+            "parameters": {
+              "type": "object",
+              "required": [
+                "document_id",
+                "tags"
+              ],
+              "properties": {
+                "document_id": {
+                  "type": "string"
+                },
+                "tags": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      ],
+      "tool_choice": "auto",
+      "stream": false,
+      "temperature": 0.0,
+      "top_p": 1.0,
+      "seed": 42,
+      "max_tokens": 1024
+    },
+    "response_status": 200,
+    "response_body_raw": "{\"choices\":[{\"finish_reason\":\"tool_calls\",\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"\",\"tool_calls\":[{\"type\":\"function\",\"function\":{\"name\":\"tag_document\",\"arguments\":\"{\\\"document_id\\\": \\\"doc-17\\\", \\\"tags\\\": [\\\"alpha\\\", \\\"beta\\\", \\\"gamma\\\"]}\"},\"id\":\"VJ4YcT3uM8gEV5Az0bDUtaJPfDlYwNET\"}]}}],\"created\":1784508835,\"model\":\"qwen2.5-7b-instruct-q4km\",\"system_fingerprint\":\"b10050-b15ca938a\",\"object\":\"chat.completion\",\"usage\":{\"completion_tokens\":37,\"prompt_tokens\":204,\"total_tokens\":241,\"prompt_tokens_details\":{\"cached_tokens\":0}},\"id\":\"chatcmpl-0NM6IWEtOE9iJL2GVYRWM0qzD3mzjvxF\",\"timings\":{\"cache_n\":0,\"prompt_n\":204,\"prompt_ms\":1014.794,\"prompt_per_token_ms\":4.974480392156862,\"prompt_per_second\":201.02602104466524,\"predicted_n\":37,\"predicted_ms\":1477.84,\"predicted_per_token_ms\":39.94162162162162,\"predicted_per_second\":25.036539814864938}}"
+  },
+  "B": {
+    "variant": "B",
+    "description": "Apply a list of tags to a document.",
+    "request": {
+      "model": "qwen2.5-7b-instruct-q4km",
+      "messages": [
+        {
+          "role": "user",
+          "content": "Tag document doc-17 with exactly alpha, beta, and gamma in that order."
+        }
+      ],
+      "tools": [
+        {
+          "type": "function",
+          "function": {
+            "name": "tag_document",
+            "description": "Apply a list of tags to a document.",
+            "parameters": {
+              "type": "object",
+              "required": [
+                "document_id",
+                "tags"
+              ],
+              "properties": {
+                "document_id": {
+                  "type": "string"
+                },
+                "tags": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      ],
+      "tool_choice": "auto",
+      "stream": false,
+      "temperature": 0.0,
+      "top_p": 1.0,
+      "seed": 42,
+      "max_tokens": 1024
+    },
+    "response_status": 200,
+    "response_body_raw": "{\"choices\":[{\"finish_reason\":\"tool_calls\",\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"\",\"tool_calls\":[{\"type\":\"function\",\"function\":{\"name\":\"tag_document\",\"arguments\":\"{\\\"document_id\\\": \\\"doc-17\\\", \\\"tags\\\": [\\\"alpha\\\", \\\"beta\\\", \\\"gamma\\\"]}\"},\"id\":\"lzOc7RIvcDUSioGn9i2dibf1aXjqmAEw\"}]}}],\"created\":1784508841,\"model\":\"qwen2.5-7b-instruct-q4km\",\"system_fingerprint\":\"b10050-b15ca938a\",\"object\":\"chat.completion\",\"usage\":{\"completion_tokens\":37,\"prompt_tokens\":207,\"total_tokens\":244,\"prompt_tokens_details\":{\"cached_tokens\":75}},\"id\":\"chatcmpl-UUbU4tVtm3xG6cZwpauRpPA9y0wSjN0J\",\"timings\":{\"cache_n\":75,\"prompt_n\":132,\"prompt_ms\":693.744,\"prompt_per_token_ms\":5.255636363636364,\"prompt_per_second\":190.27191586521826,\"predicted_n\":37,\"predicted_ms\":1545.519,\"predicted_per_token_ms\":41.770783783783784,\"predicted_per_second\":23.940178024340042}}"
+  }
+}

@@ -1,0 +1,98 @@
+{
+  "A": {
+    "variant": "A",
+    "description": "Apply tags to a document.",
+    "request": {
+      "model": "qwen2.5:7b-instruct",
+      "messages": [
+        {
+          "role": "user",
+          "content": "Tag document doc-17 with exactly alpha, beta, and gamma in that order."
+        }
+      ],
+      "tools": [
+        {
+          "type": "function",
+          "function": {
+            "name": "tag_document",
+            "description": "Apply tags to a document.",
+            "parameters": {
+              "type": "object",
+              "required": [
+                "document_id",
+                "tags"
+              ],
+              "properties": {
+                "document_id": {
+                  "type": "string"
+                },
+                "tags": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      ],
+      "tool_choice": "auto",
+      "stream": false,
+      "temperature": 0.0,
+      "top_p": 1.0,
+      "seed": 42,
+      "max_tokens": 1024
+    },
+    "response_status": 200,
+    "response_body_raw": "{\"id\":\"chatcmpl-392\",\"object\":\"chat.completion\",\"created\":1784508668,\"model\":\"qwen2.5:7b-instruct\",\"system_fingerprint\":\"fp_ollama\",\"choices\":[{\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"\"},\"finish_reason\":\"stop\"}],\"usage\":{\"prompt_tokens\":177,\"completion_tokens\":40,\"total_tokens\":217}}\n"
+  },
+  "B": {
+    "variant": "B",
+    "description": "Apply a list of tags to a document.",
+    "request": {
+      "model": "qwen2.5:7b-instruct",
+      "messages": [
+        {
+          "role": "user",
+          "content": "Tag document doc-17 with exactly alpha, beta, and gamma in that order."
+        }
+      ],
+      "tools": [
+        {
+          "type": "function",
+          "function": {
+            "name": "tag_document",
+            "description": "Apply a list of tags to a document.",
+            "parameters": {
+              "type": "object",
+              "required": [
+                "document_id",
+                "tags"
+              ],
+              "properties": {
+                "document_id": {
+                  "type": "string"
+                },
+                "tags": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      ],
+      "tool_choice": "auto",
+      "stream": false,
+      "temperature": 0.0,
+      "top_p": 1.0,
+      "seed": 42,
+      "max_tokens": 1024
+    },
+    "response_status": 200,
+    "response_body_raw": "{\"id\":\"chatcmpl-852\",\"object\":\"chat.completion\",\"created\":1784508678,\"model\":\"qwen2.5:7b-instruct\",\"system_fingerprint\":\"fp_ollama\",\"choices\":[{\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"\"},\"finish_reason\":\"stop\"}],\"usage\":{\"prompt_tokens\":180,\"completion_tokens\":36,\"total_tokens\":216}}\n"
+  }
+}
