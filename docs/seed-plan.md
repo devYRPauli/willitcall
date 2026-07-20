@@ -106,3 +106,24 @@ One model in memory at a time. `ollama stop <tag>` or kill `llama-server`
 between runs. Every result file is schema-validated before it is committed.
 Result plus evidence transcripts are committed together, so every red cell in
 the published matrix has a full request/response transcript behind it.
+
+## Outcome (2026-07-20, M4)
+
+All 15 cells are seeded. Wave 1 was measured on an M1 Pro; waves 2 and 3 on an
+M4 Max, both with Ollama 0.32.1 and llama.cpp b10050. Notes worth carrying:
+
+- `phi4-mini` must be requested as `phi4-mini:latest`. The preflight compares
+  the model id against `/v1/models` exactly, and the bare name is rejected.
+- `gemma3:4b` and `gemma3:12b` do not produce a measurement at all: Ollama
+  answers every request carrying `tools` with HTTP 400 `does not support
+  tools`, so both cells are 50 errors rather than 50 failures.
+- watt-tool-8B has no official Ollama tag and `ollama pull hf.co/...` fails on
+  0.32.1 with a redirect-realm error, so it was seeded through llama.cpp from
+  mradermacher/watt-tool-8B-GGUF Q4_K_M. It answers in prose without
+  attempting a call, which is consistent with the reported template problem.
+- granite3.1-dense:8b and phi4-mini emit correct calls in their own formats
+  that neither server parses. Serving the same Ollama blobs through llama.cpp
+  reproduces both scores exactly, which is what rules out a single-server
+  defect. See the proposed amendment 5 in the design spec.
+- The quant axis (Q8_0, Q3_K_M controls) is still untouched; every seeded cell
+  is the default tag.

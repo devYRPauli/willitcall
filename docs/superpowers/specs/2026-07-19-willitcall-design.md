@@ -150,6 +150,37 @@ the combined matrix.
    arm) before recording a case-study conclusion. M2's single-sample
    "description change fixes it" conclusion was overturned by M3.
 
+## Proposed amendments (2026-07-20, post-M4, awaiting owner decision)
+
+5. Unparsed-tool-call failure class (PROPOSED, not implemented). M4 seeding
+   found a failure mode the current vocabulary cannot express. granite3.1-dense:8b
+   emits `<tool_call>[{"arguments":{"city":"Boston"},"name":"get_weather"}]`
+   and phi4-mini emits ``[`get_weather` {"city": "Boston"}]`` - both are
+   well-formed calls with the right function and arguments, in the model's own
+   format, left sitting in `content` because the server never parsed them into
+   `tool_calls`. Both score 7/50 on Ollama AND 7/50 on llama.cpp when the same
+   Ollama blob is served through llama.cpp, so this is neither an
+   `empty_response` nor a `server-defect` attributable to one server: it is a
+   format/parser mismatch across the ecosystem.
+   - Why it matters: as recorded today these cells are indistinguishable from
+     "the model cannot call tools", which is false and is exactly the kind of
+     misattribution amendment 2 exists to prevent. The 7 scenarios each model
+     passes are precisely the negative traps, where emitting no parsed call is
+     the correct answer.
+   - Proposal: add `failure_class: "unparsed_tool_call"`, set mechanically when
+     a failing scenario has no `tool_calls` AND its response content matches a
+     known tool-call shape. The detection rule must be conservative and
+     evidence-backed, since a false positive credits a model with a call it
+     never made; a per-server-preset list of known shapes is preferred over one
+     loose regex.
+   - Open question for the owner: is `failure_class` a single value, or does a
+     scenario need to carry several (an unparsed call is also, in a sense, a
+     parse failure of the stack)? Deciding this before implementing avoids a
+     second schema change.
+   - Sample basis: 2 models x 2 servers, 50 scenarios each, single run per arm.
+     Under amendment 4 this is below the bar for a case-study verdict; it needs
+     >= 5 runs per arm before any conclusion is published as such.
+
 ## Naming / availability (verified 2026-07-19)
 
 - GitHub: no existing "willitcall" repos. npm 404, PyPI 404, crates.io "does
