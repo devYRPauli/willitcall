@@ -1,0 +1,72 @@
+{
+  "schema_version": 1,
+  "run_id": "20260720T191246Z-c356059e",
+  "scenario_id": "single-date-range",
+  "turns": [
+    {
+      "index": 0,
+      "request": {
+        "method": "POST",
+        "url": "http://127.0.0.1:8080/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "Find events in Denver from 2026-08-03 through 2026-08-05.",
+              "role": "user"
+            }
+          ],
+          "model": "/Users/bbadmin/.ollama/models/blobs/sha256-44d19d212d76a6f3fc442e8411fdb44ea6b67ceccfb00be4b4345c9a4cf813e8",
+          "seed": 42,
+          "stream": false,
+          "temperature": 0.0,
+          "tool_choice": "auto",
+          "tools": [
+            {
+              "function": {
+                "description": "Find events in an inclusive date range.",
+                "name": "find_events",
+                "parameters": {
+                  "properties": {
+                    "city": {
+                      "type": "string"
+                    },
+                    "end_date": {
+                      "type": "string"
+                    },
+                    "start_date": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "city",
+                    "start_date",
+                    "end_date"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "access-control-allow-origin": "",
+          "content-length": "871",
+          "content-type": "application/json; charset=utf-8",
+          "keep-alive": "timeout=5, max=100",
+          "server": "llama.cpp"
+        },
+        "body_raw": "{\"choices\":[{\"finish_reason\":\"stop\",\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"<tool_call>[{\\\"arguments\\\": {\\\"city\\\": \\\"Denver\\\", \\\"start_date\\\": \\\"2026-08-03\\\", \\\"end_date\\\": \\\"2026-08-05\\\"}, \\\"name\\\": \\\"find_events\\\"}]\"}}],\"created\":1784574787,\"model\":\"/Users/bbadmin/.ollama/models/blobs/sha256-44d19d212d76a6f3fc442e8411fdb44ea6b67ceccfb00be4b4345c9a4cf813e8\",\"system_fingerprint\":\"b10050-b15ca938a\",\"object\":\"chat.completion\",\"usage\":{\"completion_tokens\":58,\"prompt_tokens\":286,\"total_tokens\":344,\"prompt_tokens_details\":{\"cached_tokens\":133}},\"id\":\"chatcmpl-6Ft0oLNXiiwU3Knj710CtZe1GfFThxy8\",\"timings\":{\"cache_n\":133,\"prompt_n\":153,\"prompt_ms\":214.146,\"prompt_per_token_ms\":1.3996470588235292,\"prompt_per_second\":714.4658317222829,\"predicted_n\":58,\"predicted_ms\":724.985,\"predicted_per_token_ms\":12.499741379310345,\"predicted_per_second\":80.00165520665945}}"
+      },
+      "retried": false
+    }
+  ]
+}

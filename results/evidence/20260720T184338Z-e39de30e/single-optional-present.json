@@ -1,0 +1,67 @@
+{
+  "schema_version": 1,
+  "run_id": "20260720T184338Z-e39de30e",
+  "scenario_id": "single-optional-present",
+  "turns": [
+    {
+      "index": 0,
+      "request": {
+        "method": "POST",
+        "url": "http://127.0.0.1:8080/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "Search the catalog for brass compass and return exactly 4 results.",
+              "role": "user"
+            }
+          ],
+          "model": "Qwen/Qwen2.5-7B-Instruct-GGUF:Q4_K_M",
+          "seed": 42,
+          "stream": false,
+          "temperature": 0.0,
+          "tool_choice": "auto",
+          "tools": [
+            {
+              "function": {
+                "description": "Search a catalog with an optional result limit.",
+                "name": "search_catalog",
+                "parameters": {
+                  "properties": {
+                    "limit": {
+                      "type": "integer"
+                    },
+                    "query": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "query"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "access-control-allow-origin": "",
+          "content-length": "832",
+          "content-type": "application/json; charset=utf-8",
+          "keep-alive": "timeout=5, max=100",
+          "server": "llama.cpp"
+        },
+        "body_raw": "{\"choices\":[{\"finish_reason\":\"tool_calls\",\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"\",\"tool_calls\":[{\"type\":\"function\",\"function\":{\"name\":\"search_catalog\",\"arguments\":\"{\\\"query\\\": \\\"brass compass\\\", \\\"limit\\\": 4}\"},\"id\":\"KjmS1ziQPPqTsuYZ8rmvytZNnsMWiqrM\"}]}}],\"created\":1784573042,\"model\":\"Qwen/Qwen2.5-7B-Instruct-GGUF:Q4_K_M\",\"system_fingerprint\":\"b10050-b15ca938a\",\"object\":\"chat.completion\",\"usage\":{\"completion_tokens\":28,\"prompt_tokens\":188,\"total_tokens\":216,\"prompt_tokens_details\":{\"cached_tokens\":176}},\"id\":\"chatcmpl-jXPetbqpkcLDMnrPrllX49KGOkJhR4uW\",\"timings\":{\"cache_n\":176,\"prompt_n\":12,\"prompt_ms\":55.169,\"prompt_per_token_ms\":4.597416666666667,\"prompt_per_second\":217.5134586452537,\"predicted_n\":28,\"predicted_ms\":311.63,\"predicted_per_token_ms\":11.129642857142857,\"predicted_per_second\":89.85014279754837}}"
+      },
+      "retried": false
+    }
+  ]
+}

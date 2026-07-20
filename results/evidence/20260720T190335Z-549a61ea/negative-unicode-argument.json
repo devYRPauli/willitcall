@@ -1,0 +1,67 @@
+{
+  "schema_version": 1,
+  "run_id": "20260720T190335Z-549a61ea",
+  "scenario_id": "negative-unicode-argument",
+  "turns": [
+    {
+      "index": 0,
+      "request": {
+        "method": "POST",
+        "url": "http://127.0.0.1:8080/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "Get the weather for the exact city name München.",
+              "role": "user"
+            }
+          ],
+          "model": "bartowski/Meta-Llama-3.1-8B-Instruct-GGUF:Q3_K_M",
+          "seed": 42,
+          "stream": false,
+          "temperature": 0.0,
+          "tool_choice": "auto",
+          "tools": [
+            {
+              "function": {
+                "description": "Get weather for a city with an optional country code.",
+                "name": "get_weather",
+                "parameters": {
+                  "properties": {
+                    "city": {
+                      "type": "string"
+                    },
+                    "country_code": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "city"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "access-control-allow-origin": "",
+          "content-length": "853",
+          "content-type": "application/json; charset=utf-8",
+          "keep-alive": "timeout=5, max=100",
+          "server": "llama.cpp"
+        },
+        "body_raw": "{\"choices\":[{\"finish_reason\":\"tool_calls\",\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"\",\"tool_calls\":[{\"type\":\"function\",\"function\":{\"name\":\"get_weather\",\"arguments\":\"{\\\"city\\\": \\\"M\\\\u00fcnchen\\\", \\\"country_code\\\": \\\"\\\"}\"},\"id\":\"x9VjCo1EgLxdKfn0B6jc2qLzS8fHWk19\"}]}}],\"created\":1784574231,\"model\":\"bartowski/Meta-Llama-3.1-8B-Instruct-GGUF:Q3_K_M\",\"system_fingerprint\":\"b10050-b15ca938a\",\"object\":\"chat.completion\",\"usage\":{\"completion_tokens\":28,\"prompt_tokens\":202,\"total_tokens\":230,\"prompt_tokens_details\":{\"cached_tokens\":104}},\"id\":\"chatcmpl-lSJ5xnxSKActg9KOmiDWdmDatR8rXgfi\",\"timings\":{\"cache_n\":104,\"prompt_n\":98,\"prompt_ms\":160.866,\"prompt_per_token_ms\":1.6414897959183674,\"prompt_per_second\":609.2026904380042,\"predicted_n\":28,\"predicted_ms\":388.056,\"predicted_per_token_ms\":13.859142857142857,\"predicted_per_second\":72.15453439709732}}"
+      },
+      "retried": false
+    }
+  ]
+}

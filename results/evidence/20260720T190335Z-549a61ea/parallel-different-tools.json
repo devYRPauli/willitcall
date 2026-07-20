@@ -1,0 +1,82 @@
+{
+  "schema_version": 1,
+  "run_id": "20260720T190335Z-549a61ea",
+  "scenario_id": "parallel-different-tools",
+  "turns": [
+    {
+      "index": 0,
+      "request": {
+        "method": "POST",
+        "url": "http://127.0.0.1:8080/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "Get the weather in Oslo and the local time in Cairo.",
+              "role": "user"
+            }
+          ],
+          "model": "bartowski/Meta-Llama-3.1-8B-Instruct-GGUF:Q3_K_M",
+          "seed": 42,
+          "stream": false,
+          "temperature": 0.0,
+          "tool_choice": "required",
+          "tools": [
+            {
+              "function": {
+                "description": "Get weather for a city.",
+                "name": "get_weather",
+                "parameters": {
+                  "properties": {
+                    "city": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "city"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            },
+            {
+              "function": {
+                "description": "Get local time for a city.",
+                "name": "get_time",
+                "parameters": {
+                  "properties": {
+                    "city": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "city"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "access-control-allow-origin": "",
+          "content-length": "809",
+          "content-type": "application/json; charset=utf-8",
+          "keep-alive": "timeout=5, max=100",
+          "server": "llama.cpp"
+        },
+        "body_raw": "{\"choices\":[{\"finish_reason\":\"tool_calls\",\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"\",\"tool_calls\":[{\"type\":\"function\",\"function\":{\"name\":\"get_weather\",\"arguments\":\"{\\\"city\\\": \\\"Oslo\\\"}\"},\"id\":\"KlUs3unZs7W8FVuDtcFmHQZs2QFGtFUP\"}]}}],\"created\":1784574232,\"model\":\"bartowski/Meta-Llama-3.1-8B-Instruct-GGUF:Q3_K_M\",\"system_fingerprint\":\"b10050-b15ca938a\",\"object\":\"chat.completion\",\"usage\":{\"completion_tokens\":20,\"prompt_tokens\":266,\"total_tokens\":286,\"prompt_tokens_details\":{\"cached_tokens\":105}},\"id\":\"chatcmpl-dEWry0JJMOYTR0UAbGA1x98R0Qvr3fN1\",\"timings\":{\"cache_n\":105,\"prompt_n\":161,\"prompt_ms\":234.964,\"prompt_per_token_ms\":1.4594037267080746,\"prompt_per_second\":685.2113515261913,\"predicted_n\":20,\"predicted_ms\":286.553,\"predicted_per_token_ms\":14.32765,\"predicted_per_second\":69.795116435703}}"
+      },
+      "retried": false
+    }
+  ]
+}

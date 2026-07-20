@@ -1,0 +1,68 @@
+{
+  "schema_version": 1,
+  "run_id": "20260720T191346Z-7b026ba7",
+  "scenario_id": "negative-invalid-schema",
+  "turns": [
+    {
+      "index": 0,
+      "request": {
+        "method": "POST",
+        "url": "http://127.0.0.1:8080/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "Set the temperature unit to kelvin. If the schema cannot express it, explain that in plain text without calling a tool.",
+              "role": "user"
+            }
+          ],
+          "model": "/Users/bbadmin/.ollama/models/blobs/sha256-3c168af1dea0a414299c7d9077e100ac763370e5a98b3c53801a958a47f0a5db",
+          "seed": 42,
+          "stream": false,
+          "temperature": 0.0,
+          "tool_choice": "auto",
+          "tools": [
+            {
+              "function": {
+                "description": "Set one supported temperature unit.",
+                "name": "set_temperature_unit",
+                "parameters": {
+                  "properties": {
+                    "unit": {
+                      "enum": [
+                        "celsius",
+                        "fahrenheit"
+                      ],
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "unit"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "access-control-allow-origin": "",
+          "content-length": "1399",
+          "content-type": "application/json; charset=utf-8",
+          "keep-alive": "timeout=5, max=100",
+          "server": "llama.cpp"
+        },
+        "body_raw": "{\"choices\":[{\"finish_reason\":\"stop\",\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"If the schema cannot express the temperature unit as Kelvin, it means that the temperature values are likely provided in another unit, such as Celsius or Fahrenheit. Kelvin is a unit of absolute temperature used in the physical sciences, and it is not commonly used in everyday contexts. If you need to convert a temperature from Celsius or Fahrenheit to Kelvin, you can use the following formulas:\\n\\n- To convert Celsius to Kelvin: K = °C + 273.15\\n- To convert Fahrenheit to Kelvin: K = (°F + 459.67) * 5/9\\n\\nIf the schema only allows for Celsius or Fahrenheit, you would need to manually convert the values to Kelvin using these formulas before interpreting the data.\"}}],\"created\":1784574834,\"model\":\"/Users/bbadmin/.ollama/models/blobs/sha256-3c168af1dea0a414299c7d9077e100ac763370e5a98b3c53801a958a47f0a5db\",\"system_fingerprint\":\"b10050-b15ca938a\",\"object\":\"chat.completion\",\"usage\":{\"completion_tokens\":144,\"prompt_tokens\":28,\"total_tokens\":172,\"prompt_tokens_details\":{\"cached_tokens\":0}},\"id\":\"chatcmpl-pTXsozOw8LmtDYxdMT71XIk3ZH3fFx8l\",\"timings\":{\"cache_n\":0,\"prompt_n\":28,\"prompt_ms\":33.805,\"prompt_per_token_ms\":1.2073214285714287,\"prompt_per_second\":828.2798402603165,\"predicted_n\":144,\"predicted_ms\":1026.074,\"predicted_per_token_ms\":7.125513888888889,\"predicted_per_second\":140.3407551502133}}"
+      },
+      "retried": false
+    }
+  ]
+}

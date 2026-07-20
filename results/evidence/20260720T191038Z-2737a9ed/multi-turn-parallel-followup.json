@@ -1,0 +1,217 @@
+{
+  "schema_version": 1,
+  "run_id": "20260720T191038Z-2737a9ed",
+  "scenario_id": "multi-turn-parallel-followup",
+  "turns": [
+    {
+      "index": 0,
+      "request": {
+        "method": "POST",
+        "url": "http://127.0.0.1:8080/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "Get temperatures for Boston and Tokyo, then compare the returned values.",
+              "role": "user"
+            }
+          ],
+          "model": "Qwen/Qwen2.5-1.5B-Instruct-GGUF:Q3_K_M",
+          "seed": 42,
+          "stream": false,
+          "temperature": 0.0,
+          "tool_choice": "auto",
+          "tools": [
+            {
+              "function": {
+                "description": "Get the temperature for a city.",
+                "name": "get_temperature",
+                "parameters": {
+                  "properties": {
+                    "city": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "city"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            },
+            {
+              "function": {
+                "description": "Compare two named city temperatures.",
+                "name": "compare_temperatures",
+                "parameters": {
+                  "properties": {
+                    "first_city": {
+                      "description": "The city the user mentioned first.",
+                      "type": "string"
+                    },
+                    "first_value": {
+                      "type": "number"
+                    },
+                    "second_city": {
+                      "description": "The city the user mentioned second.",
+                      "type": "string"
+                    },
+                    "second_value": {
+                      "type": "number"
+                    }
+                  },
+                  "required": [
+                    "first_city",
+                    "first_value",
+                    "second_city",
+                    "second_value"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "access-control-allow-origin": "",
+          "content-length": "958",
+          "content-type": "application/json; charset=utf-8",
+          "keep-alive": "timeout=5, max=100",
+          "server": "llama.cpp"
+        },
+        "body_raw": "{\"choices\":[{\"finish_reason\":\"tool_calls\",\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"\",\"tool_calls\":[{\"type\":\"function\",\"function\":{\"name\":\"get_temperature\",\"arguments\":\"{\\n\\\"city\\\": \\\"Boston\\\"\\n}\"},\"id\":\"iTW7m3OLTyLJCk9ej9XDUulaGBd8BA1I\"},{\"type\":\"function\",\"function\":{\"name\":\"get_temperature\",\"arguments\":\"{\\n\\\"city\\\": \\\"Tokyo\\\"\\n}\"},\"id\":\"TCADyTRlejlyavRD7JzARk2dk6f6KaSs\"}]}}],\"created\":1784574640,\"model\":\"Qwen/Qwen2.5-1.5B-Instruct-GGUF:Q3_K_M\",\"system_fingerprint\":\"b10050-b15ca938a\",\"object\":\"chat.completion\",\"usage\":{\"completion_tokens\":47,\"prompt_tokens\":300,\"total_tokens\":347,\"prompt_tokens_details\":{\"cached_tokens\":67}},\"id\":\"chatcmpl-sQ2qRglu43NM0T1gKb16vhgamfkwL7Yy\",\"timings\":{\"cache_n\":67,\"prompt_n\":233,\"prompt_ms\":64.407,\"prompt_per_token_ms\":0.27642489270386267,\"prompt_per_second\":3617.6192028816745,\"predicted_n\":47,\"predicted_ms\":212.495,\"predicted_per_token_ms\":4.521170212765957,\"predicted_per_second\":221.18167486293794}}"
+      },
+      "retried": false
+    },
+    {
+      "index": 1,
+      "request": {
+        "method": "POST",
+        "url": "http://127.0.0.1:8080/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "Get temperatures for Boston and Tokyo, then compare the returned values.",
+              "role": "user"
+            },
+            {
+              "content": "",
+              "role": "assistant",
+              "tool_calls": [
+                {
+                  "function": {
+                    "arguments": "{\n\"city\": \"Boston\"\n}",
+                    "name": "get_temperature"
+                  },
+                  "id": "iTW7m3OLTyLJCk9ej9XDUulaGBd8BA1I",
+                  "type": "function"
+                },
+                {
+                  "function": {
+                    "arguments": "{\n\"city\": \"Tokyo\"\n}",
+                    "name": "get_temperature"
+                  },
+                  "id": "TCADyTRlejlyavRD7JzARk2dk6f6KaSs",
+                  "type": "function"
+                }
+              ]
+            },
+            {
+              "content": "{\"city\":\"Boston\",\"temperature\":21}",
+              "role": "tool",
+              "tool_call_id": "iTW7m3OLTyLJCk9ej9XDUulaGBd8BA1I"
+            },
+            {
+              "content": "{\"city\":\"Tokyo\",\"temperature\":28}",
+              "role": "tool",
+              "tool_call_id": "TCADyTRlejlyavRD7JzARk2dk6f6KaSs"
+            }
+          ],
+          "model": "Qwen/Qwen2.5-1.5B-Instruct-GGUF:Q3_K_M",
+          "seed": 42,
+          "stream": false,
+          "temperature": 0.0,
+          "tool_choice": "auto",
+          "tools": [
+            {
+              "function": {
+                "description": "Get the temperature for a city.",
+                "name": "get_temperature",
+                "parameters": {
+                  "properties": {
+                    "city": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "city"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            },
+            {
+              "function": {
+                "description": "Compare two named city temperatures.",
+                "name": "compare_temperatures",
+                "parameters": {
+                  "properties": {
+                    "first_city": {
+                      "description": "The city the user mentioned first.",
+                      "type": "string"
+                    },
+                    "first_value": {
+                      "type": "number"
+                    },
+                    "second_city": {
+                      "description": "The city the user mentioned second.",
+                      "type": "string"
+                    },
+                    "second_value": {
+                      "type": "number"
+                    }
+                  },
+                  "required": [
+                    "first_city",
+                    "first_value",
+                    "second_city",
+                    "second_value"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "access-control-allow-origin": "",
+          "content-length": "876",
+          "content-type": "application/json; charset=utf-8",
+          "keep-alive": "timeout=5, max=100",
+          "server": "llama.cpp"
+        },
+        "body_raw": "{\"choices\":[{\"finish_reason\":\"stop\",\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"The temperature in Boston is 21 degrees Celsius. The temperature in Tokyo is 28 degrees Celsius.\\n\\nNow, let's compare the temperatures:\\n\\n- Boston: 21°C\\n- Tokyo: 28°C\\n\\nTokyo has a higher temperature than Boston.\"}}],\"created\":1784574640,\"model\":\"Qwen/Qwen2.5-1.5B-Instruct-GGUF:Q3_K_M\",\"system_fingerprint\":\"b10050-b15ca938a\",\"object\":\"chat.completion\",\"usage\":{\"completion_tokens\":56,\"prompt_tokens\":387,\"total_tokens\":443,\"prompt_tokens_details\":{\"cached_tokens\":302}},\"id\":\"chatcmpl-eVWL8JiOnOnZQLL06jyRtzYRfhPkwANc\",\"timings\":{\"cache_n\":302,\"prompt_n\":85,\"prompt_ms\":34.528,\"prompt_per_token_ms\":0.40621176470588233,\"prompt_per_second\":2461.77015755329,\"predicted_n\":56,\"predicted_ms\":253.258,\"predicted_per_token_ms\":4.522464285714286,\"predicted_per_second\":221.1183852040212}}"
+      },
+      "retried": false
+    }
+  ]
+}

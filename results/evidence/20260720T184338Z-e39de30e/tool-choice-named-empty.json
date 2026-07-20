@@ -1,0 +1,71 @@
+{
+  "schema_version": 1,
+  "run_id": "20260720T184338Z-e39de30e",
+  "scenario_id": "tool-choice-named-empty",
+  "turns": [
+    {
+      "index": 0,
+      "request": {
+        "method": "POST",
+        "url": "http://127.0.0.1:8080/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "Get the current deployment region.",
+              "role": "user"
+            }
+          ],
+          "model": "Qwen/Qwen2.5-7B-Instruct-GGUF:Q4_K_M",
+          "seed": 42,
+          "stream": false,
+          "temperature": 0.0,
+          "tool_choice": {
+            "function": {
+              "name": "current_region"
+            },
+            "type": "function"
+          },
+          "tools": [
+            {
+              "function": {
+                "description": "Get the current deployment region.",
+                "name": "current_region",
+                "parameters": {
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            },
+            {
+              "function": {
+                "description": "Get the current deployment zone.",
+                "name": "current_zone",
+                "parameters": {
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "access-control-allow-origin": "",
+          "content-length": "784",
+          "content-type": "application/json; charset=utf-8",
+          "keep-alive": "timeout=5, max=100",
+          "server": "llama.cpp"
+        },
+        "body_raw": "{\"choices\":[{\"finish_reason\":\"tool_calls\",\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"\",\"tool_calls\":[{\"type\":\"function\",\"function\":{\"name\":\"current_region\",\"arguments\":\"{}\"},\"id\":\"GxgPzh3vPx5ZEy1g4RUnjWgkKy9iKKjF\"}]}}],\"created\":1784573048,\"model\":\"Qwen/Qwen2.5-7B-Instruct-GGUF:Q4_K_M\",\"system_fingerprint\":\"b10050-b15ca938a\",\"object\":\"chat.completion\",\"usage\":{\"completion_tokens\":16,\"prompt_tokens\":186,\"total_tokens\":202,\"prompt_tokens_details\":{\"cached_tokens\":67}},\"id\":\"chatcmpl-lYcVgOqxsCZZDLmx7Z34vl5qYb5pbqus\",\"timings\":{\"cache_n\":67,\"prompt_n\":119,\"prompt_ms\":144.567,\"prompt_per_token_ms\":1.2148487394957983,\"prompt_per_second\":823.1477446443516,\"predicted_n\":16,\"predicted_ms\":177.009,\"predicted_per_token_ms\":11.0630625,\"predicted_per_second\":90.39088407934061}}"
+      },
+      "retried": false
+    }
+  ]
+}

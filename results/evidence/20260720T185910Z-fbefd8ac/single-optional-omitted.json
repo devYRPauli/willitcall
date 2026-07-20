@@ -1,0 +1,67 @@
+{
+  "schema_version": 1,
+  "run_id": "20260720T185910Z-fbefd8ac",
+  "scenario_id": "single-optional-omitted",
+  "turns": [
+    {
+      "index": 0,
+      "request": {
+        "method": "POST",
+        "url": "http://127.0.0.1:8080/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "Search the catalog for brass compass. Do not set a result limit.",
+              "role": "user"
+            }
+          ],
+          "model": "bartowski/Meta-Llama-3.1-8B-Instruct-GGUF:Q4_K_M",
+          "seed": 42,
+          "stream": false,
+          "temperature": 0.0,
+          "tool_choice": "auto",
+          "tools": [
+            {
+              "function": {
+                "description": "Search a catalog with an optional result limit.",
+                "name": "search_catalog",
+                "parameters": {
+                  "properties": {
+                    "limit": {
+                      "type": "integer"
+                    },
+                    "query": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "query"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "access-control-allow-origin": "",
+          "content-length": "854",
+          "content-type": "application/json; charset=utf-8",
+          "keep-alive": "timeout=5, max=100",
+          "server": "llama.cpp"
+        },
+        "body_raw": "{\"choices\":[{\"finish_reason\":\"tool_calls\",\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"\",\"tool_calls\":[{\"type\":\"function\",\"function\":{\"name\":\"search_catalog\",\"arguments\":\"{\\\"query\\\": \\\"brass compass\\\", \\\"limit\\\": \\\"null\\\"}\"},\"id\":\"xSJtBYyUCI2ScwPGmt9otkOOAPpfqMyC\"}]}}],\"created\":1784573972,\"model\":\"bartowski/Meta-Llama-3.1-8B-Instruct-GGUF:Q4_K_M\",\"system_fingerprint\":\"b10050-b15ca938a\",\"object\":\"chat.completion\",\"usage\":{\"completion_tokens\":26,\"prompt_tokens\":203,\"total_tokens\":229,\"prompt_tokens_details\":{\"cached_tokens\":104}},\"id\":\"chatcmpl-IRlhUERrvOjj8ZodzoesPeBH3CLNmrS3\",\"timings\":{\"cache_n\":104,\"prompt_n\":99,\"prompt_ms\":153.667,\"prompt_per_token_ms\":1.5521919191919191,\"prompt_per_second\":644.2502293921272,\"predicted_n\":26,\"predicted_ms\":283.503,\"predicted_per_token_ms\":10.903961538461537,\"predicted_per_second\":91.70978790347897}}"
+      },
+      "retried": false
+    }
+  ]
+}

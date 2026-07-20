@@ -1,0 +1,82 @@
+{
+  "schema_version": 1,
+  "run_id": "20260720T192441Z-7f3fc9b9",
+  "scenario_id": "single-nested-options",
+  "turns": [
+    {
+      "index": 0,
+      "request": {
+        "method": "POST",
+        "url": "http://localhost:11434/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "Render 'red circle' at width 640 and height 480 with transparency enabled.",
+              "role": "user"
+            }
+          ],
+          "model": "phi4-mini:latest",
+          "seed": 42,
+          "stream": false,
+          "temperature": 0.0,
+          "tool_choice": "auto",
+          "tools": [
+            {
+              "function": {
+                "description": "Render an image with explicit options.",
+                "name": "render_image",
+                "parameters": {
+                  "properties": {
+                    "options": {
+                      "properties": {
+                        "height": {
+                          "type": "integer"
+                        },
+                        "transparent": {
+                          "type": "boolean"
+                        },
+                        "width": {
+                          "type": "integer"
+                        }
+                      },
+                      "required": [
+                        "width",
+                        "height",
+                        "transparent"
+                      ],
+                      "type": "object"
+                    },
+                    "prompt": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "prompt",
+                    "options"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-length": "1476",
+          "content-type": "application/json",
+          "date": "Mon, 20 Jul 2026 19:26:01 GMT"
+        },
+        "body_raw": "{\"id\":\"chatcmpl-965\",\"object\":\"chat.completion\",\"created\":1784575561,\"model\":\"phi4-mini:latest\",\"system_fingerprint\":\"fp_ollama\",\"choices\":[{\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"I'm sorry, but it seems there might be a misunderstanding regarding the capabilities I can assist you with directly through this interface as of my last update in April 2023. I'm unable to execute or simulate real-time functions like rendering images based on specific prompts such as creating an image from text descriptions (e.g., \\\"render 'red circle' at width 640 and height 480 with transparency enabled\\\") without the appropriate tools being integrated into this environment.\\n\\nHowever, I can guide you through how it might be done using programming libraries or software that supports these functionalities. For instance:\\n\\n1. **Using Python**: You could use a library like PIL (Python Imaging Library) to create an image of a red circle with specified dimensions and transparency.\\n2. **Online Tools**: There are online platforms where you can input text descriptions, and they will generate images for you based on those prompts.\\n\\nIf you're looking into how this might be done programmatically or through specific software tools, I'd recommend checking the documentation relevant to your tool of choice (e.g., PIL/Pillow in Python) which would provide a detailed guide.\"},\"finish_reason\":\"stop\"}],\"usage\":{\"prompt_tokens\":116,\"completion_tokens\":224,\"total_tokens\":340}}\n"
+      },
+      "retried": false
+    }
+  ]
+}

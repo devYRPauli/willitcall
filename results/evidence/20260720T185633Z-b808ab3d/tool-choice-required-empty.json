@@ -1,0 +1,56 @@
+{
+  "schema_version": 1,
+  "run_id": "20260720T185633Z-b808ab3d",
+  "scenario_id": "tool-choice-required-empty",
+  "turns": [
+    {
+      "index": 0,
+      "request": {
+        "method": "POST",
+        "url": "http://127.0.0.1:8080/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "Get the current sequence number.",
+              "role": "user"
+            }
+          ],
+          "model": "bartowski/Meta-Llama-3.1-8B-Instruct-GGUF:Q8_0",
+          "seed": 42,
+          "stream": false,
+          "temperature": 0.0,
+          "tool_choice": "required",
+          "tools": [
+            {
+              "function": {
+                "description": "Get the current sequence number.",
+                "name": "current_sequence",
+                "parameters": {
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "access-control-allow-origin": "",
+          "content-length": "803",
+          "content-type": "application/json; charset=utf-8",
+          "keep-alive": "timeout=5, max=100",
+          "server": "llama.cpp"
+        },
+        "body_raw": "{\"choices\":[{\"finish_reason\":\"tool_calls\",\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"\",\"tool_calls\":[{\"type\":\"function\",\"function\":{\"name\":\"current_sequence\",\"arguments\":\"{}\"},\"id\":\"mVtYi4f5agE7VVKgCdTsfGrn2D3zp6LG\"}]}}],\"created\":1784573834,\"model\":\"bartowski/Meta-Llama-3.1-8B-Instruct-GGUF:Q8_0\",\"system_fingerprint\":\"b10050-b15ca938a\",\"object\":\"chat.completion\",\"usage\":{\"completion_tokens\":14,\"prompt_tokens\":146,\"total_tokens\":160,\"prompt_tokens_details\":{\"cached_tokens\":104}},\"id\":\"chatcmpl-HQrd8QvmRe5GAd1IusxzkypBosWIzmfL\",\"timings\":{\"cache_n\":104,\"prompt_n\":42,\"prompt_ms\":84.654,\"prompt_per_token_ms\":2.0155714285714286,\"prompt_per_second\":496.137217378978,\"predicted_n\":14,\"predicted_ms\":227.328,\"predicted_per_token_ms\":16.237714285714286,\"predicted_per_second\":61.58502252252252}}"
+      },
+      "retried": false
+    }
+  ]
+}

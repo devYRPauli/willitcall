@@ -1,0 +1,68 @@
+{
+  "schema_version": 1,
+  "run_id": "20260720T185633Z-b808ab3d",
+  "scenario_id": "parallel-two-calculations",
+  "turns": [
+    {
+      "index": 0,
+      "request": {
+        "method": "POST",
+        "url": "http://127.0.0.1:8080/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "Use separate calls to divide 42 by 6 and divide 10 by 4.",
+              "role": "user"
+            }
+          ],
+          "model": "bartowski/Meta-Llama-3.1-8B-Instruct-GGUF:Q8_0",
+          "seed": 42,
+          "stream": false,
+          "temperature": 0.0,
+          "tool_choice": "required",
+          "tools": [
+            {
+              "function": {
+                "description": "Divide one number by another.",
+                "name": "divide",
+                "parameters": {
+                  "properties": {
+                    "dividend": {
+                      "type": "number"
+                    },
+                    "divisor": {
+                      "type": "number"
+                    }
+                  },
+                  "required": [
+                    "dividend",
+                    "divisor"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "access-control-allow-origin": "",
+          "content-length": "818",
+          "content-type": "application/json; charset=utf-8",
+          "keep-alive": "timeout=5, max=100",
+          "server": "llama.cpp"
+        },
+        "body_raw": "{\"choices\":[{\"finish_reason\":\"tool_calls\",\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"\",\"tool_calls\":[{\"type\":\"function\",\"function\":{\"name\":\"divide\",\"arguments\":\"{\\\"dividend\\\": 42, \\\"divisor\\\": 6}\"},\"id\":\"TMcTVIudA1B6gZzdRoiV6FaOd1bcfY0W\"}]}}],\"created\":1784573816,\"model\":\"bartowski/Meta-Llama-3.1-8B-Instruct-GGUF:Q8_0\",\"system_fingerprint\":\"b10050-b15ca938a\",\"object\":\"chat.completion\",\"usage\":{\"completion_tokens\":25,\"prompt_tokens\":212,\"total_tokens\":237,\"prompt_tokens_details\":{\"cached_tokens\":104}},\"id\":\"chatcmpl-AeX5A6l3lyzUCHsWBV6mOfuVnZooz6p5\",\"timings\":{\"cache_n\":104,\"prompt_n\":108,\"prompt_ms\":147.634,\"prompt_per_token_ms\":1.3669814814814814,\"prompt_per_second\":731.5388054242248,\"predicted_n\":25,\"predicted_ms\":426.492,\"predicted_per_token_ms\":17.05968,\"predicted_per_second\":58.61774664003075}}"
+      },
+      "retried": false
+    }
+  ]
+}

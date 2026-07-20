@@ -1,0 +1,67 @@
+{
+  "schema_version": 1,
+  "run_id": "20260720T191115Z-c7b8ebe4",
+  "scenario_id": "single-optional-omitted",
+  "turns": [
+    {
+      "index": 0,
+      "request": {
+        "method": "POST",
+        "url": "http://127.0.0.1:8080/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "Search the catalog for brass compass. Do not set a result limit.",
+              "role": "user"
+            }
+          ],
+          "model": "/Users/bbadmin/gguf/watt-tool-8B.Q4_K_M.gguf",
+          "seed": 42,
+          "stream": false,
+          "temperature": 0.0,
+          "tool_choice": "auto",
+          "tools": [
+            {
+              "function": {
+                "description": "Search a catalog with an optional result limit.",
+                "name": "search_catalog",
+                "parameters": {
+                  "properties": {
+                    "limit": {
+                      "type": "integer"
+                    },
+                    "query": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "query"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "access-control-allow-origin": "",
+          "content-length": "1841",
+          "content-type": "application/json; charset=utf-8",
+          "keep-alive": "timeout=5, max=100",
+          "server": "llama.cpp"
+        },
+        "body_raw": "{\"choices\":[{\"finish_reason\":\"stop\",\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"I cannot directly search the catalog for a brass compass as I do not have access to a specific catalog or database. However, I can provide you with some general information about brass compasses and where you might be able to find one.\\n\\nA brass compass is a type of compass that uses a brass body and is often used for navigation and surveying. It typically includes a rotating bezel, a magnetic needle, and a direction-of-travel arrow. Brass compasses are durable and resistant to corrosion, making them a popular choice for outdoor activities and professional use.\\n\\nYou can find brass compasses at various online retailers, outdoor gear stores, and specialty navigation shops. Some popular places to look include:\\n\\n1. Online Retailers: Amazon, REI, and other online retailers often carry a wide selection of compasses, including brass models.\\n2. Outdoor Gear Stores: Local outdoor gear stores and specialty shops may carry brass compasses from various brands.\\n3. Navigation Shops: Stores that specialize in navigation and surveying equipment may carry high-quality brass compasses.\\n\\nIf you need more specific information or have any other questions, feel free to ask!\"}}],\"created\":1784574720,\"model\":\"/Users/bbadmin/gguf/watt-tool-8B.Q4_K_M.gguf\",\"system_fingerprint\":\"b10050-b15ca938a\",\"object\":\"chat.completion\",\"usage\":{\"completion_tokens\":229,\"prompt_tokens\":24,\"total_tokens\":253,\"prompt_tokens_details\":{\"cached_tokens\":5}},\"id\":\"chatcmpl-hkrkfhx3szGTJ7b6h8LVfSMMQiDhQKQu\",\"timings\":{\"cache_n\":5,\"prompt_n\":19,\"prompt_ms\":55.707,\"prompt_per_token_ms\":2.931947368421053,\"prompt_per_second\":341.0702425188935,\"predicted_n\":229,\"predicted_ms\":2580.817,\"predicted_per_token_ms\":11.269943231441047,\"predicted_per_second\":88.73159158514532}}"
+      },
+      "retried": false
+    }
+  ]
+}

@@ -1,0 +1,64 @@
+{
+  "schema_version": 1,
+  "run_id": "20260720T190726Z-21133f9c",
+  "scenario_id": "parallel-two-searches",
+  "turns": [
+    {
+      "index": 0,
+      "request": {
+        "method": "POST",
+        "url": "http://127.0.0.1:8080/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "Run separate document searches for 'alpha protocol' and 'beta protocol'.",
+              "role": "user"
+            }
+          ],
+          "model": "Qwen/Qwen2.5-1.5B-Instruct-GGUF:Q8_0",
+          "seed": 42,
+          "stream": false,
+          "temperature": 0.0,
+          "tool_choice": "required",
+          "tools": [
+            {
+              "function": {
+                "description": "Search documents for an exact query.",
+                "name": "search_docs",
+                "parameters": {
+                  "properties": {
+                    "query": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "query"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "access-control-allow-origin": "",
+          "content-length": "957",
+          "content-type": "application/json; charset=utf-8",
+          "keep-alive": "timeout=5, max=100",
+          "server": "llama.cpp"
+        },
+        "body_raw": "{\"choices\":[{\"finish_reason\":\"tool_calls\",\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"\",\"tool_calls\":[{\"type\":\"function\",\"function\":{\"name\":\"search_docs\",\"arguments\":\"{\\\"query\\\": \\\"alpha protocol\\\"}\"},\"id\":\"bJz9YKt7AO0IP6GnnV1oNmjKw5d3DYKj\"},{\"type\":\"function\",\"function\":{\"name\":\"search_docs\",\"arguments\":\"{\\\"query\\\": \\\"beta protocol\\\"}\"},\"id\":\"fgWEduB2OmVVFqPVAZFJvTtK6i1Ddn6y\"}]}}],\"created\":1784574452,\"model\":\"Qwen/Qwen2.5-1.5B-Instruct-GGUF:Q8_0\",\"system_fingerprint\":\"b10050-b15ca938a\",\"object\":\"chat.completion\",\"usage\":{\"completion_tokens\":42,\"prompt_tokens\":178,\"total_tokens\":220,\"prompt_tokens_details\":{\"cached_tokens\":67}},\"id\":\"chatcmpl-HowMA7Tjab3iKiQiyC7USeOjGmQ274nl\",\"timings\":{\"cache_n\":67,\"prompt_n\":111,\"prompt_ms\":34.905,\"prompt_per_token_ms\":0.31445945945945947,\"prompt_per_second\":3180.0601633003866,\"predicted_n\":42,\"predicted_ms\":209.532,\"predicted_per_token_ms\":4.988857142857143,\"predicted_per_second\":200.4467098104347}}"
+      },
+      "retried": false
+    }
+  ]
+}

@@ -1,0 +1,64 @@
+{
+  "schema_version": 1,
+  "run_id": "20260720T185633Z-b808ab3d",
+  "scenario_id": "single-weather",
+  "turns": [
+    {
+      "index": 0,
+      "request": {
+        "method": "POST",
+        "url": "http://127.0.0.1:8080/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "What is the weather in Boston?",
+              "role": "user"
+            }
+          ],
+          "model": "bartowski/Meta-Llama-3.1-8B-Instruct-GGUF:Q8_0",
+          "seed": 42,
+          "stream": false,
+          "temperature": 0.0,
+          "tool_choice": "auto",
+          "tools": [
+            {
+              "function": {
+                "description": "Get the current weather for a city.",
+                "name": "get_weather",
+                "parameters": {
+                  "properties": {
+                    "city": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "city"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "access-control-allow-origin": "",
+          "content-length": "819",
+          "content-type": "application/json; charset=utf-8",
+          "keep-alive": "timeout=5, max=100",
+          "server": "llama.cpp"
+        },
+        "body_raw": "{\"choices\":[{\"finish_reason\":\"tool_calls\",\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"\",\"tool_calls\":[{\"type\":\"function\",\"function\":{\"name\":\"get_weather\",\"arguments\":\"{\\\"city\\\": \\\"Boston\\\"}\"},\"id\":\"jeTH1KZfHD36XvIdtROv0nr44ffeqiAm\"}]}}],\"created\":1784573826,\"model\":\"bartowski/Meta-Llama-3.1-8B-Instruct-GGUF:Q8_0\",\"system_fingerprint\":\"b10050-b15ca938a\",\"object\":\"chat.completion\",\"usage\":{\"completion_tokens\":18,\"prompt_tokens\":181,\"total_tokens\":199,\"prompt_tokens_details\":{\"cached_tokens\":104}},\"id\":\"chatcmpl-MI67IUx8p9vbyt6Jg1GPKIcjWqckt9f5\",\"timings\":{\"cache_n\":104,\"prompt_n\":77,\"prompt_ms\":112.603,\"prompt_per_token_ms\":1.4623766233766233,\"prompt_per_second\":683.818370736126,\"predicted_n\":18,\"predicted_ms\":297.321,\"predicted_per_token_ms\":16.517833333333336,\"predicted_per_second\":60.54062780631035}}"
+      },
+      "retried": false
+    }
+  ]
+}

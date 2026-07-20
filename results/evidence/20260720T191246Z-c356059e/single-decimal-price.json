@@ -1,0 +1,68 @@
+{
+  "schema_version": 1,
+  "run_id": "20260720T191246Z-c356059e",
+  "scenario_id": "single-decimal-price",
+  "turns": [
+    {
+      "index": 0,
+      "request": {
+        "method": "POST",
+        "url": "http://127.0.0.1:8080/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "Set the price of SKU AX-9 to exactly 19.95.",
+              "role": "user"
+            }
+          ],
+          "model": "/Users/bbadmin/.ollama/models/blobs/sha256-44d19d212d76a6f3fc442e8411fdb44ea6b67ceccfb00be4b4345c9a4cf813e8",
+          "seed": 42,
+          "stream": false,
+          "temperature": 0.0,
+          "tool_choice": "auto",
+          "tools": [
+            {
+              "function": {
+                "description": "Set the price of a product.",
+                "name": "set_price",
+                "parameters": {
+                  "properties": {
+                    "price": {
+                      "type": "number"
+                    },
+                    "sku": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "sku",
+                    "price"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "access-control-allow-origin": "",
+          "content-length": "822",
+          "content-type": "application/json; charset=utf-8",
+          "keep-alive": "timeout=5, max=100",
+          "server": "llama.cpp"
+        },
+        "body_raw": "{\"choices\":[{\"finish_reason\":\"stop\",\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"<tool_call>[{\\\"arguments\\\": {\\\"sku\\\": \\\"AX-9\\\", \\\"price\\\": 19.95}, \\\"name\\\": \\\"set_price\\\"}]\"}}],\"created\":1784574788,\"model\":\"/Users/bbadmin/.ollama/models/blobs/sha256-44d19d212d76a6f3fc442e8411fdb44ea6b67ceccfb00be4b4345c9a4cf813e8\",\"system_fingerprint\":\"b10050-b15ca938a\",\"object\":\"chat.completion\",\"usage\":{\"completion_tokens\":35,\"prompt_tokens\":247,\"total_tokens\":282,\"prompt_tokens_details\":{\"cached_tokens\":133}},\"id\":\"chatcmpl-UYqkNCDvHo2P1DjMlLuEKtjDkAfVukMy\",\"timings\":{\"cache_n\":133,\"prompt_n\":114,\"prompt_ms\":177.666,\"prompt_per_token_ms\":1.5584736842105262,\"prompt_per_second\":641.6534396001487,\"predicted_n\":35,\"predicted_ms\":432.191,\"predicted_per_token_ms\":12.348314285714284,\"predicted_per_second\":80.98271366132103}}"
+      },
+      "retried": false
+    }
+  ]
+}

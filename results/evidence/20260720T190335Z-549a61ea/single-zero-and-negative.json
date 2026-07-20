@@ -1,0 +1,68 @@
+{
+  "schema_version": 1,
+  "run_id": "20260720T190335Z-549a61ea",
+  "scenario_id": "single-zero-and-negative",
+  "turns": [
+    {
+      "index": 0,
+      "request": {
+        "method": "POST",
+        "url": "http://127.0.0.1:8080/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "Set the axis range from -12.5 to 0.",
+              "role": "user"
+            }
+          ],
+          "model": "bartowski/Meta-Llama-3.1-8B-Instruct-GGUF:Q3_K_M",
+          "seed": 42,
+          "stream": false,
+          "temperature": 0.0,
+          "tool_choice": "auto",
+          "tools": [
+            {
+              "function": {
+                "description": "Set an axis range.",
+                "name": "set_axis_range",
+                "parameters": {
+                  "properties": {
+                    "maximum": {
+                      "type": "number"
+                    },
+                    "minimum": {
+                      "type": "number"
+                    }
+                  },
+                  "required": [
+                    "minimum",
+                    "maximum"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "access-control-allow-origin": "",
+          "content-length": "839",
+          "content-type": "application/json; charset=utf-8",
+          "keep-alive": "timeout=5, max=100",
+          "server": "llama.cpp"
+        },
+        "body_raw": "{\"choices\":[{\"finish_reason\":\"tool_calls\",\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"\",\"tool_calls\":[{\"type\":\"function\",\"function\":{\"name\":\"set_axis_range\",\"arguments\":\"{\\\"minimum\\\": -12.5, \\\"maximum\\\": 0}\"},\"id\":\"WyC4GBn8RnmbytzpR2iB1N9OasJWPUEQ\"}]}}],\"created\":1784574244,\"model\":\"bartowski/Meta-Llama-3.1-8B-Instruct-GGUF:Q3_K_M\",\"system_fingerprint\":\"b10050-b15ca938a\",\"object\":\"chat.completion\",\"usage\":{\"completion_tokens\":27,\"prompt_tokens\":203,\"total_tokens\":230,\"prompt_tokens_details\":{\"cached_tokens\":104}},\"id\":\"chatcmpl-NTX9ZnqJvIqrXKw2IQiDT2sQSmBmIPot\",\"timings\":{\"cache_n\":104,\"prompt_n\":99,\"prompt_ms\":160.781,\"prompt_per_token_ms\":1.6240505050505052,\"prompt_per_second\":615.7443976589273,\"predicted_n\":27,\"predicted_ms\":373.726,\"predicted_per_token_ms\":13.841703703703704,\"predicted_per_second\":72.24544184777082}}"
+      },
+      "retried": false
+    }
+  ]
+}

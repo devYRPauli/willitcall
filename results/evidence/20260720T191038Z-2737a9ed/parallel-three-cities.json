@@ -1,0 +1,64 @@
+{
+  "schema_version": 1,
+  "run_id": "20260720T191038Z-2737a9ed",
+  "scenario_id": "parallel-three-cities",
+  "turns": [
+    {
+      "index": 0,
+      "request": {
+        "method": "POST",
+        "url": "http://127.0.0.1:8080/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "Get weather for Austin, Dublin, and Seoul with three calls.",
+              "role": "user"
+            }
+          ],
+          "model": "Qwen/Qwen2.5-1.5B-Instruct-GGUF:Q3_K_M",
+          "seed": 42,
+          "stream": false,
+          "temperature": 0.0,
+          "tool_choice": "required",
+          "tools": [
+            {
+              "function": {
+                "description": "Get weather for a city.",
+                "name": "get_weather",
+                "parameters": {
+                  "properties": {
+                    "city": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "city"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "access-control-allow-origin": "",
+          "content-length": "1073",
+          "content-type": "application/json; charset=utf-8",
+          "keep-alive": "timeout=5, max=100",
+          "server": "llama.cpp"
+        },
+        "body_raw": "{\"choices\":[{\"finish_reason\":\"tool_calls\",\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"\",\"tool_calls\":[{\"type\":\"function\",\"function\":{\"name\":\"get_weather\",\"arguments\":\"{\\\"city\\\": \\\"Austin\\\"}\"},\"id\":\"2PIz1sZeqLVCnxW9JB1XNKQdkH4hNHhR\"},{\"type\":\"function\",\"function\":{\"name\":\"get_weather\",\"arguments\":\"{\\\"city\\\": \\\"Dublin\\\"}\"},\"id\":\"imEGx5xmLmiwewsSVFjsjBoykAspgq8p\"},{\"type\":\"function\",\"function\":{\"name\":\"get_weather\",\"arguments\":\"{\\\"city\\\": \\\"Seoul\\\"}\"},\"id\":\"UvWAGDFqrLXR7DA19CUCCdrznFwbcmbH\"}]}}],\"created\":1784574643,\"model\":\"Qwen/Qwen2.5-1.5B-Instruct-GGUF:Q3_K_M\",\"system_fingerprint\":\"b10050-b15ca938a\",\"object\":\"chat.completion\",\"usage\":{\"completion_tokens\":62,\"prompt_tokens\":176,\"total_tokens\":238,\"prompt_tokens_details\":{\"cached_tokens\":109}},\"id\":\"chatcmpl-QIILG0l7OKXhZ814KTibWmYsAhtFFXkP\",\"timings\":{\"cache_n\":109,\"prompt_n\":67,\"prompt_ms\":33.635,\"prompt_per_token_ms\":0.5020149253731343,\"prompt_per_second\":1991.9726475397654,\"predicted_n\":62,\"predicted_ms\":280.926,\"predicted_per_token_ms\":4.531064516129032,\"predicted_per_second\":220.69868933455786}}"
+      },
+      "retried": false
+    }
+  ]
+}

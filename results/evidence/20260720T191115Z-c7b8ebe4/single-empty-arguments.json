@@ -1,0 +1,56 @@
+{
+  "schema_version": 1,
+  "run_id": "20260720T191115Z-c7b8ebe4",
+  "scenario_id": "single-empty-arguments",
+  "turns": [
+    {
+      "index": 0,
+      "request": {
+        "method": "POST",
+        "url": "http://127.0.0.1:8080/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "Get the current service status now.",
+              "role": "user"
+            }
+          ],
+          "model": "/Users/bbadmin/gguf/watt-tool-8B.Q4_K_M.gguf",
+          "seed": 42,
+          "stream": false,
+          "temperature": 0.0,
+          "tool_choice": "required",
+          "tools": [
+            {
+              "function": {
+                "description": "Get the current service status.",
+                "name": "get_service_status",
+                "parameters": {
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "access-control-allow-origin": "",
+          "content-length": "1438",
+          "content-type": "application/json; charset=utf-8",
+          "keep-alive": "timeout=5, max=100",
+          "server": "llama.cpp"
+        },
+        "body_raw": "{\"choices\":[{\"finish_reason\":\"stop\",\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"I'm unable to provide real-time service status updates. However, I can suggest some ways to check the current service status:\\n\\n1. **Check the official website or social media**: Many service providers have their own websites or social media accounts where they post updates about service status.\\n2. **Use a service status checker tool**: There are various online tools that allow you to check the status of a particular service. These tools often provide real-time updates and can be accessed through a web browser.\\n3. **Contact the service provider directly**: If you're unable to find the information online, you can contact the service provider directly through their customer support number or email.\\n\\nPlease let me know if there's anything else I can help you with!\"}}],\"created\":1784574715,\"model\":\"/Users/bbadmin/gguf/watt-tool-8B.Q4_K_M.gguf\",\"system_fingerprint\":\"b10050-b15ca938a\",\"object\":\"chat.completion\",\"usage\":{\"completion_tokens\":148,\"prompt_tokens\":17,\"total_tokens\":165,\"prompt_tokens_details\":{\"cached_tokens\":5}},\"id\":\"chatcmpl-6S5jHVxyYYa5ITjysEhtYlgufakNiBHe\",\"timings\":{\"cache_n\":5,\"prompt_n\":12,\"prompt_ms\":54.524,\"prompt_per_token_ms\":4.543666666666667,\"prompt_per_second\":220.0865673831707,\"predicted_n\":148,\"predicted_ms\":1663.633,\"predicted_per_token_ms\":11.240763513513514,\"predicted_per_second\":88.96192850225981}}"
+      },
+      "retried": false
+    }
+  ]
+}

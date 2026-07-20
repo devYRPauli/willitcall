@@ -1,0 +1,92 @@
+{
+  "schema_version": 1,
+  "run_id": "20260720T192441Z-7f3fc9b9",
+  "scenario_id": "parallel-two-multiple-args",
+  "turns": [
+    {
+      "index": 0,
+      "request": {
+        "method": "POST",
+        "url": "http://localhost:11434/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "Book room Cedar on 2026-09-02 at hour 14 and reserve a car in Boise on 2026-09-03.",
+              "role": "user"
+            }
+          ],
+          "model": "phi4-mini:latest",
+          "seed": 42,
+          "stream": false,
+          "temperature": 0.0,
+          "tool_choice": "required",
+          "tools": [
+            {
+              "function": {
+                "description": "Book a room for an exact date and hour.",
+                "name": "book_room",
+                "parameters": {
+                  "properties": {
+                    "date": {
+                      "type": "string"
+                    },
+                    "hour": {
+                      "type": "integer"
+                    },
+                    "room": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "room",
+                    "date",
+                    "hour"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            },
+            {
+              "function": {
+                "description": "Reserve a car in a city for an exact date.",
+                "name": "reserve_car",
+                "parameters": {
+                  "properties": {
+                    "city": {
+                      "type": "string"
+                    },
+                    "date": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "city",
+                    "date"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-length": "951",
+          "content-type": "application/json",
+          "date": "Mon, 20 Jul 2026 19:25:35 GMT"
+        },
+        "body_raw": "{\"id\":\"chatcmpl-842\",\"object\":\"chat.completion\",\"created\":1784575535,\"model\":\"phi4-mini:latest\",\"system_fingerprint\":\"fp_ollama\",\"choices\":[{\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"I'm sorry, but the dates provided seem to be incorrect as they are not formatted properly (e.g., \\\"2026-09-02\\\" is missing leading zeros). Could you please provide them with correct formatting? For example: September 2nd, 2023 should ideally look like this if we were using a standard date format of YYYY-MM-DD. Additionally, the hour for booking room Cedar needs to be specified in an integer (24-hour clock), such as \\\"14\\\" which would represent 2 PM.\\n\\nIf you provide me with correctly formatted dates and times along with any specific details needed for reserving both the car and hotel rooms like duration or type of vehicle/car, I can assist further.\"},\"finish_reason\":\"stop\"}],\"usage\":{\"prompt_tokens\":164,\"completion_tokens\":143,\"total_tokens\":307}}\n"
+      },
+      "retried": false
+    }
+  ]
+}

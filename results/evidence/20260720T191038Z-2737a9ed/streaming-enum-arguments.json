@@ -1,0 +1,75 @@
+{
+  "schema_version": 1,
+  "run_id": "20260720T191038Z-2737a9ed",
+  "scenario_id": "streaming-enum-arguments",
+  "turns": [
+    {
+      "index": 0,
+      "request": {
+        "method": "POST",
+        "url": "http://127.0.0.1:8080/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "Set the log level for payments to warn.",
+              "role": "user"
+            }
+          ],
+          "model": "Qwen/Qwen2.5-1.5B-Instruct-GGUF:Q3_K_M",
+          "seed": 42,
+          "stream": true,
+          "temperature": 0.0,
+          "tool_choice": "auto",
+          "tools": [
+            {
+              "function": {
+                "description": "Set a supported log level.",
+                "name": "set_log_level",
+                "parameters": {
+                  "properties": {
+                    "level": {
+                      "enum": [
+                        "debug",
+                        "info",
+                        "warn",
+                        "error"
+                      ],
+                      "type": "string"
+                    },
+                    "service": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "service",
+                    "level"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "access-control-allow-origin": "",
+          "content-type": "text/event-stream",
+          "keep-alive": "timeout=5, max=100",
+          "server": "llama.cpp",
+          "transfer-encoding": "chunked",
+          "x-accel-buffering": "no"
+        },
+        "body_raw": "data: {\"choices\":[{\"finish_reason\":null,\"index\":0,\"delta\":{\"role\":\"assistant\",\"content\":null}}],\"created\":1784574647,\"id\":\"chatcmpl-ABGnDORLOgdwr254TDWqVdnZyIXDmxTa\",\"model\":\"Qwen/Qwen2.5-1.5B-Instruct-GGUF:Q3_K_M\",\"system_fingerprint\":\"b10050-b15ca938a\",\"object\":\"chat.completion.chunk\"}\n\ndata: {\"choices\":[{\"finish_reason\":null,\"index\":0,\"delta\":{\"tool_calls\":[{\"index\":0,\"id\":\"9KDo6PVMXxn5Ty7Q44SP0vlJ5NEClvyg\",\"type\":\"function\",\"function\":{\"name\":\"set_log_level\",\"arguments\":\"{\"}}]}}],\"created\":1784574647,\"id\":\"chatcmpl-ABGnDORLOgdwr254TDWqVdnZyIXDmxTa\",\"model\":\"Qwen/Qwen2.5-1.5B-Instruct-GGUF:Q3_K_M\",\"system_fingerprint\":\"b10050-b15ca938a\",\"object\":\"chat.completion.chunk\"}\n\ndata: {\"choices\":[{\"finish_reason\":null,\"index\":0,\"delta\":{\"tool_calls\":[{\"index\":0,\"function\":{\"arguments\":\"\\\"\"}}]}}],\"created\":1784574647,\"id\":\"chatcmpl-ABGnDORLOgdwr254TDWqVdnZyIXDmxTa\",\"model\":\"Qwen/Qwen2.5-1.5B-Instruct-GGUF:Q3_K_M\",\"system_fingerprint\":\"b10050-b15ca938a\",\"object\":\"chat.completion.chunk\"}\n\ndata: {\"choices\":[{\"finish_reason\":null,\"index\":0,\"delta\":{\"tool_calls\":[{\"index\":0,\"function\":{\"arguments\":\"level\"}}]}}],\"created\":1784574648,\"id\":\"chatcmpl-ABGnDORLOgdwr254TDWqVdnZyIXDmxTa\",\"model\":\"Qwen/Qwen2.5-1.5B-Instruct-GGUF:Q3_K_M\",\"system_fingerprint\":\"b10050-b15ca938a\",\"object\":\"chat.completion.chunk\"}\n\ndata: {\"choices\":[{\"finish_reason\":null,\"index\":0,\"delta\":{\"tool_calls\":[{\"index\":0,\"function\":{\"arguments\":\"\\\":\"}}]}}],\"created\":1784574648,\"id\":\"chatcmpl-ABGnDORLOgdwr254TDWqVdnZyIXDmxTa\",\"model\":\"Qwen/Qwen2.5-1.5B-Instruct-GGUF:Q3_K_M\",\"system_fingerprint\":\"b10050-b15ca938a\",\"object\":\"chat.completion.chunk\"}\n\ndata: {\"choices\":[{\"finish_reason\":null,\"index\":0,\"delta\":{\"tool_calls\":[{\"index\":0,\"function\":{\"arguments\":\" \\\"\"}}]}}],\"created\":1784574648,\"id\":\"chatcmpl-ABGnDORLOgdwr254TDWqVdnZyIXDmxTa\",\"model\":\"Qwen/Qwen2.5-1.5B-Instruct-GGUF:Q3_K_M\",\"system_fingerprint\":\"b10050-b15ca938a\",\"object\":\"chat.completion.chunk\"}\n\ndata: {\"choices\":[{\"finish_reason\":null,\"index\":0,\"delta\":{\"tool_calls\":[{\"index\":0,\"function\":{\"arguments\":\"warn\"}}]}}],\"created\":1784574648,\"id\":\"chatcmpl-ABGnDORLOgdwr254TDWqVdnZyIXDmxTa\",\"model\":\"Qwen/Qwen2.5-1.5B-Instruct-GGUF:Q3_K_M\",\"system_fingerprint\":\"b10050-b15ca938a\",\"object\":\"chat.completion.chunk\"}\n\ndata: {\"choices\":[{\"finish_reason\":null,\"index\":0,\"delta\":{\"tool_calls\":[{\"index\":0,\"function\":{\"arguments\":\"\\\",\"}}]}}],\"created\":1784574648,\"id\":\"chatcmpl-ABGnDORLOgdwr254TDWqVdnZyIXDmxTa\",\"model\":\"Qwen/Qwen2.5-1.5B-Instruct-GGUF:Q3_K_M\",\"system_fingerprint\":\"b10050-b15ca938a\",\"object\":\"chat.completion.chunk\"}\n\ndata: {\"choices\":[{\"finish_reason\":null,\"index\":0,\"delta\":{\"tool_calls\":[{\"index\":0,\"function\":{\"arguments\":\" \\\"\"}}]}}],\"created\":1784574648,\"id\":\"chatcmpl-ABGnDORLOgdwr254TDWqVdnZyIXDmxTa\",\"model\":\"Qwen/Qwen2.5-1.5B-Instruct-GGUF:Q3_K_M\",\"system_fingerprint\":\"b10050-b15ca938a\",\"object\":\"chat.completion.chunk\"}\n\ndata: {\"choices\":[{\"finish_reason\":null,\"index\":0,\"delta\":{\"tool_calls\":[{\"index\":0,\"function\":{\"arguments\":\"service\"}}]}}],\"created\":1784574648,\"id\":\"chatcmpl-ABGnDORLOgdwr254TDWqVdnZyIXDmxTa\",\"model\":\"Qwen/Qwen2.5-1.5B-Instruct-GGUF:Q3_K_M\",\"system_fingerprint\":\"b10050-b15ca938a\",\"object\":\"chat.completion.chunk\"}\n\ndata: {\"choices\":[{\"finish_reason\":null,\"index\":0,\"delta\":{\"tool_calls\":[{\"index\":0,\"function\":{\"arguments\":\"\\\":\"}}]}}],\"created\":1784574648,\"id\":\"chatcmpl-ABGnDORLOgdwr254TDWqVdnZyIXDmxTa\",\"model\":\"Qwen/Qwen2.5-1.5B-Instruct-GGUF:Q3_K_M\",\"system_fingerprint\":\"b10050-b15ca938a\",\"object\":\"chat.completion.chunk\"}\n\ndata: {\"choices\":[{\"finish_reason\":null,\"index\":0,\"delta\":{\"tool_calls\":[{\"index\":0,\"function\":{\"arguments\":\" \\\"\"}}]}}],\"created\":1784574648,\"id\":\"chatcmpl-ABGnDORLOgdwr254TDWqVdnZyIXDmxTa\",\"model\":\"Qwen/Qwen2.5-1.5B-Instruct-GGUF:Q3_K_M\",\"system_fingerprint\":\"b10050-b15ca938a\",\"object\":\"chat.completion.chunk\"}\n\ndata: {\"choices\":[{\"finish_reason\":null,\"index\":0,\"delta\":{\"tool_calls\":[{\"index\":0,\"function\":{\"arguments\":\"payments\"}}]}}],\"created\":1784574648,\"id\":\"chatcmpl-ABGnDORLOgdwr254TDWqVdnZyIXDmxTa\",\"model\":\"Qwen/Qwen2.5-1.5B-Instruct-GGUF:Q3_K_M\",\"system_fingerprint\":\"b10050-b15ca938a\",\"object\":\"chat.completion.chunk\"}\n\ndata: {\"choices\":[{\"finish_reason\":null,\"index\":0,\"delta\":{\"tool_calls\":[{\"index\":0,\"function\":{\"arguments\":\"\\\"}\"}}]}}],\"created\":1784574648,\"id\":\"chatcmpl-ABGnDORLOgdwr254TDWqVdnZyIXDmxTa\",\"model\":\"Qwen/Qwen2.5-1.5B-Instruct-GGUF:Q3_K_M\",\"system_fingerprint\":\"b10050-b15ca938a\",\"object\":\"chat.completion.chunk\"}\n\ndata: {\"choices\":[{\"finish_reason\":\"tool_calls\",\"index\":0,\"delta\":{}}],\"created\":1784574648,\"id\":\"chatcmpl-ABGnDORLOgdwr254TDWqVdnZyIXDmxTa\",\"model\":\"Qwen/Qwen2.5-1.5B-Instruct-GGUF:Q3_K_M\",\"system_fingerprint\":\"b10050-b15ca938a\",\"object\":\"chat.completion.chunk\",\"timings\":{\"cache_n\":67,\"prompt_n\":133,\"prompt_ms\":46.292,\"prompt_per_token_ms\":0.34806015037593985,\"prompt_per_second\":2873.06662058239,\"predicted_n\":27,\"predicted_ms\":120.529,\"predicted_per_token_ms\":4.464037037037037,\"predicted_per_second\":224.01247832471853}}\n\ndata: [DONE]\n\n"
+      },
+      "retried": false
+    }
+  ]
+}

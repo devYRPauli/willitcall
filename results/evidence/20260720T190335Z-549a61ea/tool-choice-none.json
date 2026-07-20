@@ -1,0 +1,64 @@
+{
+  "schema_version": 1,
+  "run_id": "20260720T190335Z-549a61ea",
+  "scenario_id": "tool-choice-none",
+  "turns": [
+    {
+      "index": 0,
+      "request": {
+        "method": "POST",
+        "url": "http://127.0.0.1:8080/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "Reply with the exact text: no tools",
+              "role": "user"
+            }
+          ],
+          "model": "bartowski/Meta-Llama-3.1-8B-Instruct-GGUF:Q3_K_M",
+          "seed": 42,
+          "stream": false,
+          "temperature": 0.0,
+          "tool_choice": "none",
+          "tools": [
+            {
+              "function": {
+                "description": "Get weather for a city.",
+                "name": "get_weather",
+                "parameters": {
+                  "properties": {
+                    "city": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "city"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "access-control-allow-origin": "",
+          "content-length": "739",
+          "content-type": "application/json; charset=utf-8",
+          "keep-alive": "timeout=5, max=100",
+          "server": "llama.cpp"
+        },
+        "body_raw": "{\"choices\":[{\"finish_reason\":\"stop\",\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"{\\\"name\\\": \\\"get_weather\\\", \\\"parameters\\\": {\\\"city\\\": \\\"New York\\\"}}\"}}],\"created\":1784574250,\"model\":\"bartowski/Meta-Llama-3.1-8B-Instruct-GGUF:Q3_K_M\",\"system_fingerprint\":\"b10050-b15ca938a\",\"object\":\"chat.completion\",\"usage\":{\"completion_tokens\":18,\"prompt_tokens\":180,\"total_tokens\":198,\"prompt_tokens_details\":{\"cached_tokens\":104}},\"id\":\"chatcmpl-pfz4pER6SmTeKBIblaurLZY6XwJ4QxMR\",\"timings\":{\"cache_n\":104,\"prompt_n\":76,\"prompt_ms\":123.126,\"prompt_per_token_ms\":1.6200789473684212,\"prompt_per_second\":617.2538700193297,\"predicted_n\":18,\"predicted_ms\":245.306,\"predicted_per_token_ms\":13.628111111111112,\"predicted_per_second\":73.37774045477892}}"
+      },
+      "retried": false
+    }
+  ]
+}

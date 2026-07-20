@@ -1,0 +1,64 @@
+{
+  "schema_version": 1,
+  "run_id": "20260720T191346Z-7b026ba7",
+  "scenario_id": "parallel-two-searches",
+  "turns": [
+    {
+      "index": 0,
+      "request": {
+        "method": "POST",
+        "url": "http://127.0.0.1:8080/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "Run separate document searches for 'alpha protocol' and 'beta protocol'.",
+              "role": "user"
+            }
+          ],
+          "model": "/Users/bbadmin/.ollama/models/blobs/sha256-3c168af1dea0a414299c7d9077e100ac763370e5a98b3c53801a958a47f0a5db",
+          "seed": 42,
+          "stream": false,
+          "temperature": 0.0,
+          "tool_choice": "required",
+          "tools": [
+            {
+              "function": {
+                "description": "Search documents for an exact query.",
+                "name": "search_docs",
+                "parameters": {
+                  "properties": {
+                    "query": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "query"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "access-control-allow-origin": "",
+          "content-length": "2188",
+          "content-type": "application/json; charset=utf-8",
+          "keep-alive": "timeout=5, max=100",
+          "server": "llama.cpp"
+        },
+        "body_raw": "{\"choices\":[{\"finish_reason\":\"stop\",\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"I'm unable to directly run searches or access external documents, but I can guide you on how to perform searches for 'alpha protocol' and 'beta protocol'. You can use various methods to search for these terms depending on your needs:\\n\\n1. **Online Search Engines**: Use search engines like Google, Bing, or DuckDuckGo. Simply type in the search bar \\\"alpha protocol\\\" and \\\"beta protocol\\\" to find relevant results.\\n\\n2. **Academic Databases**: If you're looking for scholarly articles or papers, databases like Google Scholar, PubMed, IEEE Xplore, or JSTOR can be very helpful. Search for \\\"alpha protocol\\\" and \\\"beta protocol\\\" in these databases.\\n\\n3. **Professional Networks**: Platforms like LinkedIn or ResearchGate can also be useful for finding professionals or organizations that might be working with these protocols.\\n\\n4. **Specific Websites**: If you know specific websites or forums related to your field of interest, you can search within those sites for more targeted information.\\n\\n5. **Libraries and Archives**: Many libraries and archives have digital collections that can be searched for specific documents. You can use their online search tools to look for \\\"alpha protocol\\\" and \\\"beta protocol\\\".\\n\\nRemember to use specific keywords or phrases to narrow down your search results for more relevant information. If you have any particular context or field in mind, it might help to include that in your search query for better results.\"}}],\"created\":1784574841,\"model\":\"/Users/bbadmin/.ollama/models/blobs/sha256-3c168af1dea0a414299c7d9077e100ac763370e5a98b3c53801a958a47f0a5db\",\"system_fingerprint\":\"b10050-b15ca938a\",\"object\":\"chat.completion\",\"usage\":{\"completion_tokens\":288,\"prompt_tokens\":17,\"total_tokens\":305,\"prompt_tokens_details\":{\"cached_tokens\":0}},\"id\":\"chatcmpl-qld4k2BX7lAX3qWqYYzP6xNdvACGyMKo\",\"timings\":{\"cache_n\":0,\"prompt_n\":17,\"prompt_ms\":33.636,\"prompt_per_token_ms\":1.9785882352941178,\"prompt_per_second\":505.4108693066952,\"predicted_n\":288,\"predicted_ms\":2059.561,\"predicted_per_token_ms\":7.151253472222223,\"predicted_per_second\":139.83562516478025}}"
+      },
+      "retried": false
+    }
+  ]
+}

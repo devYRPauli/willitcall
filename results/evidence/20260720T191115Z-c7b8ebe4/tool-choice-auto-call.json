@@ -1,0 +1,64 @@
+{
+  "schema_version": 1,
+  "run_id": "20260720T191115Z-c7b8ebe4",
+  "scenario_id": "tool-choice-auto-call",
+  "turns": [
+    {
+      "index": 0,
+      "request": {
+        "method": "POST",
+        "url": "http://127.0.0.1:8080/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "Get the temperature in Helsinki.",
+              "role": "user"
+            }
+          ],
+          "model": "/Users/bbadmin/gguf/watt-tool-8B.Q4_K_M.gguf",
+          "seed": 42,
+          "stream": false,
+          "temperature": 0.0,
+          "tool_choice": "auto",
+          "tools": [
+            {
+              "function": {
+                "description": "Get the temperature for a city.",
+                "name": "get_temperature",
+                "parameters": {
+                  "properties": {
+                    "city": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "city"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "access-control-allow-origin": "",
+          "content-length": "1532",
+          "content-type": "application/json; charset=utf-8",
+          "keep-alive": "timeout=5, max=100",
+          "server": "llama.cpp"
+        },
+        "body_raw": "{\"choices\":[{\"finish_reason\":\"stop\",\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"I'm unable to directly retrieve the current temperature in Helsinki. However, I can suggest some ways for you to find out the current temperature:\\n\\n1. **Check online weather websites**: Websites like AccuWeather, Weather.com, or the Finnish Meteorological Institute (FMI) provide up-to-date weather information, including temperature, for various locations around the world, including Helsinki.\\n\\n2. **Use a weather app**: Many smartphones have weather apps that can provide current and forecasted weather conditions, including temperature, for locations like Helsinki.\\n\\n3. **Check local news or weather reports**: Local news channels or websites often provide weather updates, including temperature, for the current day and the forecast for the next few days.\\n\\nPlease note that the temperature can vary depending on the time of day and other weather conditions.\"}}],\"created\":1784574735,\"model\":\"/Users/bbadmin/gguf/watt-tool-8B.Q4_K_M.gguf\",\"system_fingerprint\":\"b10050-b15ca938a\",\"object\":\"chat.completion\",\"usage\":{\"completion_tokens\":161,\"prompt_tokens\":16,\"total_tokens\":177,\"prompt_tokens_details\":{\"cached_tokens\":5}},\"id\":\"chatcmpl-xhAl1W1IFcqZFGcjvFXOQS38VrQa4sq1\",\"timings\":{\"cache_n\":5,\"prompt_n\":11,\"prompt_ms\":54.357,\"prompt_per_token_ms\":4.941545454545454,\"prompt_per_second\":202.36584064609895,\"predicted_n\":161,\"predicted_ms\":1808.866,\"predicted_per_token_ms\":11.235192546583852,\"predicted_per_second\":89.00604024842083}}"
+      },
+      "retried": false
+    }
+  ]
+}

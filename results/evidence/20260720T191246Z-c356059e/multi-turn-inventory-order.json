@@ -1,0 +1,86 @@
+{
+  "schema_version": 1,
+  "run_id": "20260720T191246Z-c356059e",
+  "scenario_id": "multi-turn-inventory-order",
+  "turns": [
+    {
+      "index": 0,
+      "request": {
+        "method": "POST",
+        "url": "http://127.0.0.1:8080/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "Check inventory for SKU QZ-4 and order exactly 3 if available.",
+              "role": "user"
+            }
+          ],
+          "model": "/Users/bbadmin/.ollama/models/blobs/sha256-44d19d212d76a6f3fc442e8411fdb44ea6b67ceccfb00be4b4345c9a4cf813e8",
+          "seed": 42,
+          "stream": false,
+          "temperature": 0.0,
+          "tool_choice": "auto",
+          "tools": [
+            {
+              "function": {
+                "description": "Check inventory for a SKU.",
+                "name": "check_inventory",
+                "parameters": {
+                  "properties": {
+                    "sku": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "sku"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            },
+            {
+              "function": {
+                "description": "Create an order for a SKU and quantity.",
+                "name": "create_order",
+                "parameters": {
+                  "properties": {
+                    "quantity": {
+                      "type": "integer"
+                    },
+                    "sku": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "sku",
+                    "quantity"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "access-control-allow-origin": "",
+          "content-length": "892",
+          "content-type": "application/json; charset=utf-8",
+          "keep-alive": "timeout=5, max=100",
+          "server": "llama.cpp"
+        },
+        "body_raw": "{\"choices\":[{\"finish_reason\":\"stop\",\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"<tool_call>[{\\\"arguments\\\": {\\\"sku\\\": \\\"QZ-4\\\"}, \\\"name\\\": \\\"check_inventory\\\"}, {\\\"arguments\\\": {\\\"sku\\\": \\\"QZ-4\\\", \\\"quantity\\\": 3}, \\\"name\\\": \\\"create_order\\\"}]\"}}],\"created\":1784574769,\"model\":\"/Users/bbadmin/.ollama/models/blobs/sha256-44d19d212d76a6f3fc442e8411fdb44ea6b67ceccfb00be4b4345c9a4cf813e8\",\"system_fingerprint\":\"b10050-b15ca938a\",\"object\":\"chat.completion\",\"usage\":{\"completion_tokens\":52,\"prompt_tokens\":334,\"total_tokens\":386,\"prompt_tokens_details\":{\"cached_tokens\":133}},\"id\":\"chatcmpl-ED7DayLdWZRJrmoVxFW0ayD484taZI5n\",\"timings\":{\"cache_n\":133,\"prompt_n\":201,\"prompt_ms\":301.324,\"prompt_per_token_ms\":1.4991243781094528,\"prompt_per_second\":667.0560592584726,\"predicted_n\":52,\"predicted_ms\":647.859,\"predicted_per_token_ms\":12.458826923076924,\"predicted_per_second\":80.2643785144607}}"
+      },
+      "retried": false
+    }
+  ]
+}

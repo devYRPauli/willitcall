@@ -1,0 +1,86 @@
+{
+  "schema_version": 1,
+  "run_id": "20260720T191115Z-c7b8ebe4",
+  "scenario_id": "multi-turn-route",
+  "turns": [
+    {
+      "index": 0,
+      "request": {
+        "method": "POST",
+        "url": "http://127.0.0.1:8080/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "Find a route to Fenway Park.",
+              "role": "user"
+            }
+          ],
+          "model": "/Users/bbadmin/gguf/watt-tool-8B.Q4_K_M.gguf",
+          "seed": 42,
+          "stream": false,
+          "temperature": 0.0,
+          "tool_choice": "auto",
+          "tools": [
+            {
+              "function": {
+                "description": "Resolve a place to coordinates.",
+                "name": "geocode",
+                "parameters": {
+                  "properties": {
+                    "place": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "place"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            },
+            {
+              "function": {
+                "description": "Get a route to coordinates.",
+                "name": "get_route",
+                "parameters": {
+                  "properties": {
+                    "latitude": {
+                      "type": "number"
+                    },
+                    "longitude": {
+                      "type": "number"
+                    }
+                  },
+                  "required": [
+                    "latitude",
+                    "longitude"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "access-control-allow-origin": "",
+          "content-length": "1956",
+          "content-type": "application/json; charset=utf-8",
+          "keep-alive": "timeout=5, max=100",
+          "server": "llama.cpp"
+        },
+        "body_raw": "{\"choices\":[{\"finish_reason\":\"stop\",\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"I'm sorry, but I cannot directly provide a route to Fenway Park as I don't have access to real-time traffic information or specific location details. However, I can suggest some general steps to help you find your way:\\n\\n1. **Use a GPS Navigation App**: Apps like Google Maps, Waze, or Apple Maps can provide you with the most up-to-date traffic information and the best route to Fenway Park. Simply enter the address of Fenway Park (4 Yawkey Way, Boston, MA 02215) and the app will guide you through the route.\\n\\n2. **Check for Public Transportation**: If you prefer not to drive, you can use public transportation. The MBTA (Massachusetts Bay Transportation Authority) has several options, including the Green Line (Kenmore Station) and the Orange Line (Back Bay Station), which are both within walking distance to Fenway Park.\\n\\n3. **Ask for Directions**: If you're in the area, you can ask locals for directions. Bostonians are known for their hospitality and can provide you with the most efficient route.\\n\\n4. **Use a Ride-hailing Service**: If you prefer not to drive or use public transportation, you can use a ride-hailing service like Uber or Lyft to get to Fenway Park.\\n\\nRemember to check for any road closures or construction before heading out. Enjoy your visit to Fenway Park!\"}}],\"created\":1784574687,\"model\":\"/Users/bbadmin/gguf/watt-tool-8B.Q4_K_M.gguf\",\"system_fingerprint\":\"b10050-b15ca938a\",\"object\":\"chat.completion\",\"usage\":{\"completion_tokens\":282,\"prompt_tokens\":18,\"total_tokens\":300,\"prompt_tokens_details\":{\"cached_tokens\":5}},\"id\":\"chatcmpl-R8bldcwbsEQMDaoemnCzlXSdRAHJN3WK\",\"timings\":{\"cache_n\":5,\"prompt_n\":13,\"prompt_ms\":54.556,\"prompt_per_token_ms\":4.196615384615384,\"prompt_per_second\":238.287264462204,\"predicted_n\":282,\"predicted_ms\":3182.396,\"predicted_per_token_ms\":11.28509219858156,\"predicted_per_second\":88.61247940231196}}"
+      },
+      "retried": false
+    }
+  ]
+}

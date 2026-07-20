@@ -1,0 +1,56 @@
+{
+  "schema_version": 1,
+  "run_id": "20260720T191038Z-2737a9ed",
+  "scenario_id": "single-empty-arguments",
+  "turns": [
+    {
+      "index": 0,
+      "request": {
+        "method": "POST",
+        "url": "http://127.0.0.1:8080/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "Get the current service status now.",
+              "role": "user"
+            }
+          ],
+          "model": "Qwen/Qwen2.5-1.5B-Instruct-GGUF:Q3_K_M",
+          "seed": 42,
+          "stream": false,
+          "temperature": 0.0,
+          "tool_choice": "required",
+          "tools": [
+            {
+              "function": {
+                "description": "Get the current service status.",
+                "name": "get_service_status",
+                "parameters": {
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "access-control-allow-origin": "",
+          "content-length": "797",
+          "content-type": "application/json; charset=utf-8",
+          "keep-alive": "timeout=5, max=100",
+          "server": "llama.cpp"
+        },
+        "body_raw": "{\"choices\":[{\"finish_reason\":\"tool_calls\",\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"\",\"tool_calls\":[{\"type\":\"function\",\"function\":{\"name\":\"get_service_status\",\"arguments\":\"{}\"},\"id\":\"Zmd8OCN90NsB88kvklFviPiNIuaGUoGQ\"}]}}],\"created\":1784574645,\"model\":\"Qwen/Qwen2.5-1.5B-Instruct-GGUF:Q3_K_M\",\"system_fingerprint\":\"b10050-b15ca938a\",\"object\":\"chat.completion\",\"usage\":{\"completion_tokens\":17,\"prompt_tokens\":152,\"total_tokens\":169,\"prompt_tokens_details\":{\"cached_tokens\":68}},\"id\":\"chatcmpl-Cd3CMTleywjc4RcrfohGZlhLXAUAdN2D\",\"timings\":{\"cache_n\":68,\"prompt_n\":84,\"prompt_ms\":33.965,\"prompt_per_token_ms\":0.40434523809523815,\"prompt_per_second\":2473.134108641248,\"predicted_n\":17,\"predicted_ms\":74.213,\"predicted_per_token_ms\":4.3654705882352935,\"predicted_per_second\":229.07037850511367}}"
+      },
+      "retried": false
+    }
+  ]
+}

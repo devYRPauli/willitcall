@@ -1,0 +1,90 @@
+{
+  "schema_version": 1,
+  "run_id": "20260720T191346Z-7b026ba7",
+  "scenario_id": "multi-turn-calendar-followup",
+  "turns": [
+    {
+      "index": 0,
+      "request": {
+        "method": "POST",
+        "url": "http://127.0.0.1:8080/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "Check my calendar on 2026-08-11, then create event Review at the available time.",
+              "role": "user"
+            }
+          ],
+          "model": "/Users/bbadmin/.ollama/models/blobs/sha256-3c168af1dea0a414299c7d9077e100ac763370e5a98b3c53801a958a47f0a5db",
+          "seed": 42,
+          "stream": false,
+          "temperature": 0.0,
+          "tool_choice": "auto",
+          "tools": [
+            {
+              "function": {
+                "description": "Get calendar availability for a date.",
+                "name": "get_calendar",
+                "parameters": {
+                  "properties": {
+                    "date": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "date"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            },
+            {
+              "function": {
+                "description": "Create an event at an exact date and time.",
+                "name": "create_event",
+                "parameters": {
+                  "properties": {
+                    "date": {
+                      "type": "string"
+                    },
+                    "time": {
+                      "type": "string"
+                    },
+                    "title": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "title",
+                    "date",
+                    "time"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "access-control-allow-origin": "",
+          "content-length": "1888",
+          "content-type": "application/json; charset=utf-8",
+          "keep-alive": "timeout=5, max=100",
+          "server": "llama.cpp"
+        },
+        "body_raw": "{\"choices\":[{\"finish_reason\":\"stop\",\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"I'm sorry, but I can't directly access your calendar or create events for you. However, I can guide you on how to create an event on your calendar for August 11, 2026. You can follow these steps based on the calendar application you're using:\\n\\n### For Google Calendar:\\n1. Open Google Calendar.\\n2. Click on the date field and select August 11, 2026.\\n3. Click on the \\\"+ Create\\\" button.\\n4. Enter \\\"Review\\\" as the title of the event.\\n5. Choose the time slot that is available.\\n6. Click on \\\"Save.\\\"\\n\\n### For Microsoft Outlook Calendar:\\n1. Open Outlook Calendar.\\n2. Click on the date field and select August 11, 2026.\\n3. Click on the \\\"+ New Event\\\" button.\\n4. Enter \\\"Review\\\" as the title of the event.\\n5. Choose the time slot that is available.\\n6. Click on \\\"Save.\\\"\\n\\n### For Apple Calendar:\\n1. Open the Calendar app.\\n2. Click on the date field and select August 11, 2026.\\n3. Click on the \\\"+ Add\\\" button.\\n4. Enter \\\"Review\\\" as the title of the event.\\n5. Choose the time slot that is available.\\n6. Click on \\\"Save.\\\"\\n\\nIf you need further assistance with any specific steps, please let me know which calendar application you're using!\"}}],\"created\":1784574828,\"model\":\"/Users/bbadmin/.ollama/models/blobs/sha256-3c168af1dea0a414299c7d9077e100ac763370e5a98b3c53801a958a47f0a5db\",\"system_fingerprint\":\"b10050-b15ca938a\",\"object\":\"chat.completion\",\"usage\":{\"completion_tokens\":281,\"prompt_tokens\":24,\"total_tokens\":305,\"prompt_tokens_details\":{\"cached_tokens\":0}},\"id\":\"chatcmpl-yNkRe7nGJOlcT5t0sqOZAzPxrQe6OxPl\",\"timings\":{\"cache_n\":0,\"prompt_n\":24,\"prompt_ms\":44.176,\"prompt_per_token_ms\":1.8406666666666667,\"prompt_per_second\":543.2814197754436,\"predicted_n\":281,\"predicted_ms\":2027.189,\"predicted_per_token_ms\":7.214195729537367,\"predicted_per_second\":138.61559035689322}}"
+      },
+      "retried": false
+    }
+  ]
+}

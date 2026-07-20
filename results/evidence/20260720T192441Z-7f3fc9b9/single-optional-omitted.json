@@ -1,0 +1,65 @@
+{
+  "schema_version": 1,
+  "run_id": "20260720T192441Z-7f3fc9b9",
+  "scenario_id": "single-optional-omitted",
+  "turns": [
+    {
+      "index": 0,
+      "request": {
+        "method": "POST",
+        "url": "http://localhost:11434/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "Search the catalog for brass compass. Do not set a result limit.",
+              "role": "user"
+            }
+          ],
+          "model": "phi4-mini:latest",
+          "seed": 42,
+          "stream": false,
+          "temperature": 0.0,
+          "tool_choice": "auto",
+          "tools": [
+            {
+              "function": {
+                "description": "Search a catalog with an optional result limit.",
+                "name": "search_catalog",
+                "parameters": {
+                  "properties": {
+                    "limit": {
+                      "type": "integer"
+                    },
+                    "query": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "query"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-length": "761",
+          "content-type": "application/json",
+          "date": "Mon, 20 Jul 2026 19:26:03 GMT"
+        },
+        "body_raw": "{\"id\":\"chatcmpl-262\",\"object\":\"chat.completion\",\"created\":1784575563,\"model\":\"phi4-mini:latest\",\"system_fingerprint\":\"fp_ollama\",\"choices\":[{\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"I'm sorry, but it seems there might be some confusion here. The function I mentioned earlier requires you to specify either omit or include parameters such as \\\"limit\\\" when searching in the catalog since it's an object with properties that need values assigned (like 'query' and optionally 'limit'). If you'd like me not to set a result limit for brass compasses, we can simply leave out this parameter. Would you still want me to search without specifying any limits?\"},\"finish_reason\":\"stop\"}],\"usage\":{\"prompt_tokens\":82,\"completion_tokens\":93,\"total_tokens\":175}}\n"
+      },
+      "retried": false
+    }
+  ]
+}

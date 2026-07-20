@@ -1,0 +1,90 @@
+{
+  "schema_version": 1,
+  "run_id": "20260720T190726Z-21133f9c",
+  "scenario_id": "multi-turn-calendar-followup",
+  "turns": [
+    {
+      "index": 0,
+      "request": {
+        "method": "POST",
+        "url": "http://127.0.0.1:8080/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "Check my calendar on 2026-08-11, then create event Review at the available time.",
+              "role": "user"
+            }
+          ],
+          "model": "Qwen/Qwen2.5-1.5B-Instruct-GGUF:Q8_0",
+          "seed": 42,
+          "stream": false,
+          "temperature": 0.0,
+          "tool_choice": "auto",
+          "tools": [
+            {
+              "function": {
+                "description": "Get calendar availability for a date.",
+                "name": "get_calendar",
+                "parameters": {
+                  "properties": {
+                    "date": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "date"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            },
+            {
+              "function": {
+                "description": "Create an event at an exact date and time.",
+                "name": "create_event",
+                "parameters": {
+                  "properties": {
+                    "date": {
+                      "type": "string"
+                    },
+                    "time": {
+                      "type": "string"
+                    },
+                    "title": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "title",
+                    "date",
+                    "time"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "access-control-allow-origin": "",
+          "content-length": "994",
+          "content-type": "application/json; charset=utf-8",
+          "keep-alive": "timeout=5, max=100",
+          "server": "llama.cpp"
+        },
+        "body_raw": "{\"choices\":[{\"finish_reason\":\"tool_calls\",\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"\",\"tool_calls\":[{\"type\":\"function\",\"function\":{\"name\":\"get_calendar\",\"arguments\":\"{\\\"date\\\": \\\"2026-08-11\\\"}\"},\"id\":\"QxII3IxLsUOf0ubcYjgE5koyufT5SR4H\"},{\"type\":\"function\",\"function\":{\"name\":\"create_event\",\"arguments\":\"{\\\"date\\\": \\\"2026-08-11\\\", \\\"time\\\": \\\"14:00\\\", \\\"title\\\": \\\"Review\\\"}\"},\"id\":\"zIlFLYrBsf9XqKdCYAqUmL27XpZl06lu\"}]}}],\"created\":1784574447,\"model\":\"Qwen/Qwen2.5-1.5B-Instruct-GGUF:Q8_0\",\"system_fingerprint\":\"b10050-b15ca938a\",\"object\":\"chat.completion\",\"usage\":{\"completion_tokens\":74,\"prompt_tokens\":272,\"total_tokens\":346,\"prompt_tokens_details\":{\"cached_tokens\":0}},\"id\":\"chatcmpl-U3XUzT9qDa1tEOs6sp0jd2f7HqKogGnj\",\"timings\":{\"cache_n\":0,\"prompt_n\":272,\"prompt_ms\":127.465,\"prompt_per_token_ms\":0.46862132352941177,\"prompt_per_second\":2133.9191150511906,\"predicted_n\":74,\"predicted_ms\":357.755,\"predicted_per_token_ms\":4.834527027027027,\"predicted_per_second\":206.84546686978518}}"
+      },
+      "retried": false
+    }
+  ]
+}

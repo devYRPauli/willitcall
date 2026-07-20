@@ -1,0 +1,57 @@
+{
+  "schema_version": 1,
+  "run_id": "20260720T190726Z-21133f9c",
+  "scenario_id": "streaming-empty-arguments",
+  "turns": [
+    {
+      "index": 0,
+      "request": {
+        "method": "POST",
+        "url": "http://127.0.0.1:8080/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "Get the service uptime.",
+              "role": "user"
+            }
+          ],
+          "model": "Qwen/Qwen2.5-1.5B-Instruct-GGUF:Q8_0",
+          "seed": 42,
+          "stream": true,
+          "temperature": 0.0,
+          "tool_choice": "required",
+          "tools": [
+            {
+              "function": {
+                "description": "Get service uptime.",
+                "name": "get_uptime",
+                "parameters": {
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "access-control-allow-origin": "",
+          "content-type": "text/event-stream",
+          "keep-alive": "timeout=5, max=100",
+          "server": "llama.cpp",
+          "transfer-encoding": "chunked",
+          "x-accel-buffering": "no"
+        },
+        "body_raw": "data: {\"choices\":[{\"finish_reason\":null,\"index\":0,\"delta\":{\"role\":\"assistant\",\"content\":null}}],\"created\":1784574456,\"id\":\"chatcmpl-eLdqqEuPTqe4xAkStGRBOQpzrfB7HkOa\",\"model\":\"Qwen/Qwen2.5-1.5B-Instruct-GGUF:Q8_0\",\"system_fingerprint\":\"b10050-b15ca938a\",\"object\":\"chat.completion.chunk\"}\n\ndata: {\"choices\":[{\"finish_reason\":null,\"index\":0,\"delta\":{\"tool_calls\":[{\"index\":0,\"id\":\"WpcYfC7pDwCYPZL9gBS9U1lN8sek6Mne\",\"type\":\"function\",\"function\":{\"name\":\"get_uptime\",\"arguments\":\"{\"}}]}}],\"created\":1784574456,\"id\":\"chatcmpl-eLdqqEuPTqe4xAkStGRBOQpzrfB7HkOa\",\"model\":\"Qwen/Qwen2.5-1.5B-Instruct-GGUF:Q8_0\",\"system_fingerprint\":\"b10050-b15ca938a\",\"object\":\"chat.completion.chunk\"}\n\ndata: {\"choices\":[{\"finish_reason\":null,\"index\":0,\"delta\":{\"tool_calls\":[{\"index\":0,\"function\":{\"arguments\":\"}\"}}]}}],\"created\":1784574456,\"id\":\"chatcmpl-eLdqqEuPTqe4xAkStGRBOQpzrfB7HkOa\",\"model\":\"Qwen/Qwen2.5-1.5B-Instruct-GGUF:Q8_0\",\"system_fingerprint\":\"b10050-b15ca938a\",\"object\":\"chat.completion.chunk\"}\n\ndata: {\"choices\":[{\"finish_reason\":\"tool_calls\",\"index\":0,\"delta\":{}}],\"created\":1784574456,\"id\":\"chatcmpl-eLdqqEuPTqe4xAkStGRBOQpzrfB7HkOa\",\"model\":\"Qwen/Qwen2.5-1.5B-Instruct-GGUF:Q8_0\",\"system_fingerprint\":\"b10050-b15ca938a\",\"object\":\"chat.completion.chunk\",\"timings\":{\"cache_n\":68,\"prompt_n\":80,\"prompt_ms\":31.004,\"prompt_per_token_ms\":0.38755,\"prompt_per_second\":2580.312217778351,\"predicted_n\":17,\"predicted_ms\":79.002,\"predicted_per_token_ms\":4.647176470588235,\"predicted_per_second\":215.1844257107415}}\n\ndata: [DONE]\n\n"
+      },
+      "retried": false
+    }
+  ]
+}

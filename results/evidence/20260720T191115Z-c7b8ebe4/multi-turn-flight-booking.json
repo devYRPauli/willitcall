@@ -1,0 +1,90 @@
+{
+  "schema_version": 1,
+  "run_id": "20260720T191115Z-c7b8ebe4",
+  "scenario_id": "multi-turn-flight-booking",
+  "turns": [
+    {
+      "index": 0,
+      "request": {
+        "method": "POST",
+        "url": "http://127.0.0.1:8080/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "Find a flight from BOS to DEN on 2026-10-04, then book the returned flight.",
+              "role": "user"
+            }
+          ],
+          "model": "/Users/bbadmin/gguf/watt-tool-8B.Q4_K_M.gguf",
+          "seed": 42,
+          "stream": false,
+          "temperature": 0.0,
+          "tool_choice": "auto",
+          "tools": [
+            {
+              "function": {
+                "description": "Find a flight for an exact route and date.",
+                "name": "find_flight",
+                "parameters": {
+                  "properties": {
+                    "date": {
+                      "type": "string"
+                    },
+                    "destination": {
+                      "type": "string"
+                    },
+                    "origin": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "origin",
+                    "destination",
+                    "date"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            },
+            {
+              "function": {
+                "description": "Book a flight by exact id.",
+                "name": "book_flight",
+                "parameters": {
+                  "properties": {
+                    "flight_id": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "flight_id"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "access-control-allow-origin": "",
+          "content-length": "1953",
+          "content-type": "application/json; charset=utf-8",
+          "keep-alive": "timeout=5, max=100",
+          "server": "llama.cpp"
+        },
+        "body_raw": "{\"choices\":[{\"finish_reason\":\"stop\",\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"I cannot directly book flights or access real-time flight information. However, I can provide you with some general guidance on how to find and book flights from Boston (BOS) to Denver (DEN) on October 4, 2026, and then book the return flight.\\n\\n1. **Use Flight Search Engines**: Websites like Expedia, Kayak, Skyscanner, or Google Flights can help you find flights from BOS to DEN on October 4, 2026. You can filter the results based on your preferred airlines, travel dates, and other preferences.\\n\\n2. **Check Airlines Directly**: You can also check the websites of airlines that operate from BOS to DEN, such as American Airlines, Delta Air Lines, United Airlines, or Frontier Airlines, to see if they have flights available on your desired date.\\n\\n3. **Book the Return Flight**: Once you have found a suitable flight from BOS to DEN, you can book the return flight from DEN to BOS on the same or a different airline, depending on your preferences and the availability of flights.\\n\\n4. **Confirm and Pay**: After selecting your flights, confirm the details, and proceed to pay for your tickets. Make sure to review the terms and conditions, including any travel restrictions or requirements.\\n\\nRemember to check for any travel advisories or restrictions before booking your flights.\"}}],\"created\":1784574680,\"model\":\"/Users/bbadmin/gguf/watt-tool-8B.Q4_K_M.gguf\",\"system_fingerprint\":\"b10050-b15ca938a\",\"object\":\"chat.completion\",\"usage\":{\"completion_tokens\":276,\"prompt_tokens\":33,\"total_tokens\":309,\"prompt_tokens_details\":{\"cached_tokens\":5}},\"id\":\"chatcmpl-mPo8rXiCG3vDCJnmOOoUa5i2sMBQhwyC\",\"timings\":{\"cache_n\":5,\"prompt_n\":28,\"prompt_ms\":55.114,\"prompt_per_token_ms\":1.9683571428571427,\"prompt_per_second\":508.03788511086117,\"predicted_n\":276,\"predicted_ms\":3113.9,\"predicted_per_token_ms\":11.282246376811594,\"predicted_per_second\":88.63483091942581}}"
+      },
+      "retried": false
+    }
+  ]
+}

@@ -1,0 +1,64 @@
+{
+  "schema_version": 1,
+  "run_id": "20260720T191246Z-c356059e",
+  "scenario_id": "negative-auto-knowledge",
+  "turns": [
+    {
+      "index": 0,
+      "request": {
+        "method": "POST",
+        "url": "http://127.0.0.1:8080/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "Name the largest ocean on Earth. Do not use a tool.",
+              "role": "user"
+            }
+          ],
+          "model": "/Users/bbadmin/.ollama/models/blobs/sha256-44d19d212d76a6f3fc442e8411fdb44ea6b67ceccfb00be4b4345c9a4cf813e8",
+          "seed": 42,
+          "stream": false,
+          "temperature": 0.0,
+          "tool_choice": "auto",
+          "tools": [
+            {
+              "function": {
+                "description": "Look up an order by exact id.",
+                "name": "lookup_order",
+                "parameters": {
+                  "properties": {
+                    "order_id": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "order_id"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "access-control-allow-origin": "",
+          "content-length": "777",
+          "content-type": "application/json; charset=utf-8",
+          "keep-alive": "timeout=5, max=100",
+          "server": "llama.cpp"
+        },
+        "body_raw": "{\"choices\":[{\"finish_reason\":\"stop\",\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"The largest ocean on Earth is the Pacific Ocean.\"}}],\"created\":1784574773,\"model\":\"/Users/bbadmin/.ollama/models/blobs/sha256-44d19d212d76a6f3fc442e8411fdb44ea6b67ceccfb00be4b4345c9a4cf813e8\",\"system_fingerprint\":\"b10050-b15ca938a\",\"object\":\"chat.completion\",\"usage\":{\"completion_tokens\":14,\"prompt_tokens\":230,\"total_tokens\":244,\"prompt_tokens_details\":{\"cached_tokens\":133}},\"id\":\"chatcmpl-zhFOt4UVGQWi3JbRn1Vk1Q0xTxomzMoV\",\"timings\":{\"cache_n\":133,\"prompt_n\":97,\"prompt_ms\":176.591,\"prompt_per_token_ms\":1.8205257731958764,\"prompt_per_second\":549.2918665164136,\"predicted_n\":14,\"predicted_ms\":165.275,\"predicted_per_token_ms\":11.805357142857144,\"predicted_per_second\":84.70730600514294}}"
+      },
+      "retried": false
+    }
+  ]
+}

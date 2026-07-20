@@ -1,0 +1,84 @@
+{
+  "schema_version": 1,
+  "run_id": "20260720T191115Z-c7b8ebe4",
+  "scenario_id": "single-nested-options",
+  "turns": [
+    {
+      "index": 0,
+      "request": {
+        "method": "POST",
+        "url": "http://127.0.0.1:8080/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "Render 'red circle' at width 640 and height 480 with transparency enabled.",
+              "role": "user"
+            }
+          ],
+          "model": "/Users/bbadmin/gguf/watt-tool-8B.Q4_K_M.gguf",
+          "seed": 42,
+          "stream": false,
+          "temperature": 0.0,
+          "tool_choice": "auto",
+          "tools": [
+            {
+              "function": {
+                "description": "Render an image with explicit options.",
+                "name": "render_image",
+                "parameters": {
+                  "properties": {
+                    "options": {
+                      "properties": {
+                        "height": {
+                          "type": "integer"
+                        },
+                        "transparent": {
+                          "type": "boolean"
+                        },
+                        "width": {
+                          "type": "integer"
+                        }
+                      },
+                      "required": [
+                        "width",
+                        "height",
+                        "transparent"
+                      ],
+                      "type": "object"
+                    },
+                    "prompt": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "prompt",
+                    "options"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "access-control-allow-origin": "",
+          "content-length": "1232",
+          "content-type": "application/json; charset=utf-8",
+          "keep-alive": "timeout=5, max=100",
+          "server": "llama.cpp"
+        },
+        "body_raw": "{\"choices\":[{\"finish_reason\":\"stop\",\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"The given request is to render a \\\"red circle\\\" at a specific width and height with transparency enabled. However, the provided information does not specify the exact method or tool to be used for rendering the circle. \\n\\nTo fulfill this request, I would need more details such as:\\n\\n1. The specific tool or software being used for rendering (e.g., Adobe Photoshop, GIMP, etc.).\\n2. The exact dimensions (width and height) of the circle.\\n3. The level of transparency desired (e.g., 50%, 75%, etc.).\\n\\nWithout these details, I cannot proceed with the rendering task.\"}}],\"created\":1784574718,\"model\":\"/Users/bbadmin/gguf/watt-tool-8B.Q4_K_M.gguf\",\"system_fingerprint\":\"b10050-b15ca938a\",\"object\":\"chat.completion\",\"usage\":{\"completion_tokens\":126,\"prompt_tokens\":27,\"total_tokens\":153,\"prompt_tokens_details\":{\"cached_tokens\":5}},\"id\":\"chatcmpl-qPXbHEB9J3MqrFfPZrtb2RPlEISmmMG1\",\"timings\":{\"cache_n\":5,\"prompt_n\":22,\"prompt_ms\":54.409,\"prompt_per_token_ms\":2.4731363636363635,\"prompt_per_second\":404.34486941498653,\"predicted_n\":126,\"predicted_ms\":1412.967,\"predicted_per_token_ms\":11.21402380952381,\"predicted_per_second\":89.17405714358509}}"
+      },
+      "retried": false
+    }
+  ]
+}

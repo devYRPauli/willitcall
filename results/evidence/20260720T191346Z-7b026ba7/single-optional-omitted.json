@@ -1,0 +1,67 @@
+{
+  "schema_version": 1,
+  "run_id": "20260720T191346Z-7b026ba7",
+  "scenario_id": "single-optional-omitted",
+  "turns": [
+    {
+      "index": 0,
+      "request": {
+        "method": "POST",
+        "url": "http://127.0.0.1:8080/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "Search the catalog for brass compass. Do not set a result limit.",
+              "role": "user"
+            }
+          ],
+          "model": "/Users/bbadmin/.ollama/models/blobs/sha256-3c168af1dea0a414299c7d9077e100ac763370e5a98b3c53801a958a47f0a5db",
+          "seed": 42,
+          "stream": false,
+          "temperature": 0.0,
+          "tool_choice": "auto",
+          "tools": [
+            {
+              "function": {
+                "description": "Search a catalog with an optional result limit.",
+                "name": "search_catalog",
+                "parameters": {
+                  "properties": {
+                    "limit": {
+                      "type": "integer"
+                    },
+                    "query": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "query"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "access-control-allow-origin": "",
+          "content-length": "1839",
+          "content-type": "application/json; charset=utf-8",
+          "keep-alive": "timeout=5, max=100",
+          "server": "llama.cpp"
+        },
+        "body_raw": "{\"choices\":[{\"finish_reason\":\"stop\",\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"I'm sorry, but I can't search the internet or access external databases directly. However, I can help you with general information on how to search for a brass compass in a catalog. You can use the following steps to find a brass compass:\\n\\n1. **Online Retailers**: Visit websites like Amazon, eBay, or specialty stores that sell vintage or antique items.\\n2. **Antique Shops**: Check out local antique shops or online antique stores like Abe's Vintage, Bone Shop, or 1stdibs.\\n3. **Specialized Forums**: Join forums or communities dedicated to antique collecting or brass items.\\n4. **Social Media**: Look for groups on platforms like Facebook or Reddit where collectors might be selling or trading items.\\n5. **Local Flea Markets**: Visit local flea markets or antique fairs where you might find unique items like a brass compass.\\n6. **Auction Sites**: Check out auction sites like Heritage Auctions or Bonhams for rare finds.\\n\\nIf you have specific preferences or requirements (like the compass's age, condition, or price range), make sure to include those details in your search to narrow down the results.\"}}],\"created\":1784574859,\"model\":\"/Users/bbadmin/.ollama/models/blobs/sha256-3c168af1dea0a414299c7d9077e100ac763370e5a98b3c53801a958a47f0a5db\",\"system_fingerprint\":\"b10050-b15ca938a\",\"object\":\"chat.completion\",\"usage\":{\"completion_tokens\":235,\"prompt_tokens\":17,\"total_tokens\":252,\"prompt_tokens_details\":{\"cached_tokens\":0}},\"id\":\"chatcmpl-I1QJ9W2FwMvg6Eg6VQpXjXwKs28Ejdew\",\"timings\":{\"cache_n\":0,\"prompt_n\":17,\"prompt_ms\":33.683,\"prompt_per_token_ms\":1.9813529411764705,\"prompt_per_second\":504.70563785886054,\"predicted_n\":235,\"predicted_ms\":1679.096,\"predicted_per_token_ms\":7.145089361702127,\"predicted_per_second\":139.9562621791726}}"
+      },
+      "retried": false
+    }
+  ]
+}

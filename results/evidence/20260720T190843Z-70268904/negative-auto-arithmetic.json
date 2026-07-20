@@ -1,0 +1,64 @@
+{
+  "schema_version": 1,
+  "run_id": "20260720T190843Z-70268904",
+  "scenario_id": "negative-auto-arithmetic",
+  "turns": [
+    {
+      "index": 0,
+      "request": {
+        "method": "POST",
+        "url": "http://127.0.0.1:8080/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "What is 19 plus 23? Answer without using a tool.",
+              "role": "user"
+            }
+          ],
+          "model": "Qwen/Qwen2.5-1.5B-Instruct-GGUF:Q4_K_M",
+          "seed": 42,
+          "stream": false,
+          "temperature": 0.0,
+          "tool_choice": "auto",
+          "tools": [
+            {
+              "function": {
+                "description": "Get weather for a city.",
+                "name": "get_weather",
+                "parameters": {
+                  "properties": {
+                    "city": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "city"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "access-control-allow-origin": "",
+          "content-length": "664",
+          "content-type": "application/json; charset=utf-8",
+          "keep-alive": "timeout=5, max=100",
+          "server": "llama.cpp"
+        },
+        "body_raw": "{\"choices\":[{\"finish_reason\":\"stop\",\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"19 plus 23 is 42.\"}}],\"created\":1784574525,\"model\":\"Qwen/Qwen2.5-1.5B-Instruct-GGUF:Q4_K_M\",\"system_fingerprint\":\"b10050-b15ca938a\",\"object\":\"chat.completion\",\"usage\":{\"completion_tokens\":12,\"prompt_tokens\":179,\"total_tokens\":191,\"prompt_tokens_details\":{\"cached_tokens\":67}},\"id\":\"chatcmpl-RRY5YXfHNoxxIDMOPetOvsDOLWfDLntV\",\"timings\":{\"cache_n\":67,\"prompt_n\":112,\"prompt_ms\":36.631,\"prompt_per_token_ms\":0.3270625,\"prompt_per_second\":3057.519587234856,\"predicted_n\":12,\"predicted_ms\":42.779,\"predicted_per_token_ms\":3.564916666666667,\"predicted_per_second\":280.5114659061689}}"
+      },
+      "retried": false
+    }
+  ]
+}

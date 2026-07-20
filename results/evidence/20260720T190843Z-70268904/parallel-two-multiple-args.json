@@ -1,0 +1,94 @@
+{
+  "schema_version": 1,
+  "run_id": "20260720T190843Z-70268904",
+  "scenario_id": "parallel-two-multiple-args",
+  "turns": [
+    {
+      "index": 0,
+      "request": {
+        "method": "POST",
+        "url": "http://127.0.0.1:8080/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "Book room Cedar on 2026-09-02 at hour 14 and reserve a car in Boise on 2026-09-03.",
+              "role": "user"
+            }
+          ],
+          "model": "Qwen/Qwen2.5-1.5B-Instruct-GGUF:Q4_K_M",
+          "seed": 42,
+          "stream": false,
+          "temperature": 0.0,
+          "tool_choice": "required",
+          "tools": [
+            {
+              "function": {
+                "description": "Book a room for an exact date and hour.",
+                "name": "book_room",
+                "parameters": {
+                  "properties": {
+                    "date": {
+                      "type": "string"
+                    },
+                    "hour": {
+                      "type": "integer"
+                    },
+                    "room": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "room",
+                    "date",
+                    "hour"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            },
+            {
+              "function": {
+                "description": "Reserve a car in a city for an exact date.",
+                "name": "reserve_car",
+                "parameters": {
+                  "properties": {
+                    "city": {
+                      "type": "string"
+                    },
+                    "date": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "city",
+                    "date"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "access-control-allow-origin": "",
+          "content-length": "1004",
+          "content-type": "application/json; charset=utf-8",
+          "keep-alive": "timeout=5, max=100",
+          "server": "llama.cpp"
+        },
+        "body_raw": "{\"choices\":[{\"finish_reason\":\"tool_calls\",\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"\",\"tool_calls\":[{\"type\":\"function\",\"function\":{\"name\":\"book_room\",\"arguments\":\"{\\\"date\\\": \\\"2026-09-02\\\", \\\"hour\\\": 14, \\\"room\\\": \\\"Cedar\\\"}\"},\"id\":\"7iji4WEOOw3G3OlOCAaLMaw8eSHUPjbR\"},{\"type\":\"function\",\"function\":{\"name\":\"reserve_car\",\"arguments\":\"{\\\"city\\\": \\\"Boise\\\", \\\"date\\\": \\\"2026-09-03\\\"}\"},\"id\":\"CFB090BRCNT5zV62isPs4NpEHW0y2hr5\"}]}}],\"created\":1784574528,\"model\":\"Qwen/Qwen2.5-1.5B-Instruct-GGUF:Q4_K_M\",\"system_fingerprint\":\"b10050-b15ca938a\",\"object\":\"chat.completion\",\"usage\":{\"completion_tokens\":79,\"prompt_tokens\":303,\"total_tokens\":382,\"prompt_tokens_details\":{\"cached_tokens\":67}},\"id\":\"chatcmpl-9XVi0kV0BgFR4MfsohdGYdKvFCmbKVKh\",\"timings\":{\"cache_n\":67,\"prompt_n\":236,\"prompt_ms\":62.062,\"prompt_per_token_ms\":0.2629745762711864,\"prompt_per_second\":3802.648963939287,\"predicted_n\":79,\"predicted_ms\":309.056,\"predicted_per_token_ms\":3.9121012658227845,\"predicted_per_second\":255.61710499068133}}"
+      },
+      "retried": false
+    }
+  ]
+}

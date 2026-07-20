@@ -1,0 +1,66 @@
+{
+  "schema_version": 1,
+  "run_id": "20260720T192441Z-7f3fc9b9",
+  "scenario_id": "single-zero-and-negative",
+  "turns": [
+    {
+      "index": 0,
+      "request": {
+        "method": "POST",
+        "url": "http://localhost:11434/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "Set the axis range from -12.5 to 0.",
+              "role": "user"
+            }
+          ],
+          "model": "phi4-mini:latest",
+          "seed": 42,
+          "stream": false,
+          "temperature": 0.0,
+          "tool_choice": "auto",
+          "tools": [
+            {
+              "function": {
+                "description": "Set an axis range.",
+                "name": "set_axis_range",
+                "parameters": {
+                  "properties": {
+                    "maximum": {
+                      "type": "number"
+                    },
+                    "minimum": {
+                      "type": "number"
+                    }
+                  },
+                  "required": [
+                    "minimum",
+                    "maximum"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-length": "1099",
+          "content-type": "application/json",
+          "date": "Mon, 20 Jul 2026 19:26:14 GMT"
+        },
+        "body_raw": "{\"id\":\"chatcmpl-165\",\"object\":\"chat.completion\",\"created\":1784575574,\"model\":\"phi4-mini:latest\",\"system_fingerprint\":\"fp_ollama\",\"choices\":[{\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"I'm sorry, but it seems like there might be a misunderstanding regarding your request and my capabilities as an AI developed by Microsoft. The function you mentioned requires two parameters: `maximum` and `minimum`, both of which should have numerical values representing numbers on either side for the axis range.\\n\\nTo set an axis from -12.5 to 0, I would need these specific instructions:\\n\\n```json\\n{\\n  \\\"type\\\": \\\"set_axis_range\\\",\\n  \\\"parameters\\\": {\\n    \\\"minimum\\\": -12.5,\\n    \\\"maximum\\\": 0\\n  }\\n}\\n```\\n\\nHowever, please note that as of my last update in early 2023, I'm unable to execute this function directly or change settings within a software application; I can only provide the structured data for you which would then need to be used by an appropriate system with such capabilities.\"},\"finish_reason\":\"stop\"}],\"usage\":{\"prompt_tokens\":80,\"completion_tokens\":172,\"total_tokens\":252}}\n"
+      },
+      "retried": false
+    }
+  ]
+}

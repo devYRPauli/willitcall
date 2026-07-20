@@ -1,0 +1,192 @@
+{
+  "schema_version": 1,
+  "run_id": "20260720T184915Z-0943c9ed",
+  "scenario_id": "multi-turn-flight-booking",
+  "turns": [
+    {
+      "index": 0,
+      "request": {
+        "method": "POST",
+        "url": "http://127.0.0.1:8080/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "Find a flight from BOS to DEN on 2026-10-04, then book the returned flight.",
+              "role": "user"
+            }
+          ],
+          "model": "Qwen/Qwen2.5-7B-Instruct-GGUF:Q3_K_M",
+          "seed": 42,
+          "stream": false,
+          "temperature": 0.0,
+          "tool_choice": "auto",
+          "tools": [
+            {
+              "function": {
+                "description": "Find a flight for an exact route and date.",
+                "name": "find_flight",
+                "parameters": {
+                  "properties": {
+                    "date": {
+                      "type": "string"
+                    },
+                    "destination": {
+                      "type": "string"
+                    },
+                    "origin": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "origin",
+                    "destination",
+                    "date"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            },
+            {
+              "function": {
+                "description": "Book a flight by exact id.",
+                "name": "book_flight",
+                "parameters": {
+                  "properties": {
+                    "flight_id": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "flight_id"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "access-control-allow-origin": "",
+          "content-length": "879",
+          "content-type": "application/json; charset=utf-8",
+          "keep-alive": "timeout=5, max=100",
+          "server": "llama.cpp"
+        },
+        "body_raw": "{\"choices\":[{\"finish_reason\":\"tool_calls\",\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"\",\"tool_calls\":[{\"type\":\"function\",\"function\":{\"name\":\"find_flight\",\"arguments\":\"{\\n    \\\"date\\\": \\\"2026-10-04\\\",\\n    \\\"destination\\\": \\\"DEN\\\",\\n    \\\"origin\\\": \\\"BOS\\\"\\n  }\"},\"id\":\"X6p9U4SPaDk5SqeWoG3NrOQGR8LhfEYp\"}]}}],\"created\":1784573358,\"model\":\"Qwen/Qwen2.5-7B-Instruct-GGUF:Q3_K_M\",\"system_fingerprint\":\"b10050-b15ca938a\",\"object\":\"chat.completion\",\"usage\":{\"completion_tokens\":52,\"prompt_tokens\":276,\"total_tokens\":328,\"prompt_tokens_details\":{\"cached_tokens\":67}},\"id\":\"chatcmpl-KcNBZwniiEncHUaVwfSsrSF6X0f0Gal8\",\"timings\":{\"cache_n\":67,\"prompt_n\":209,\"prompt_ms\":259.44,\"prompt_per_token_ms\":1.2413397129186603,\"prompt_per_second\":805.5812519272279,\"predicted_n\":52,\"predicted_ms\":720.754,\"predicted_per_token_ms\":13.860653846153847,\"predicted_per_second\":72.14666862757612}}"
+      },
+      "retried": false
+    },
+    {
+      "index": 1,
+      "request": {
+        "method": "POST",
+        "url": "http://127.0.0.1:8080/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "Find a flight from BOS to DEN on 2026-10-04, then book the returned flight.",
+              "role": "user"
+            },
+            {
+              "content": "",
+              "role": "assistant",
+              "tool_calls": [
+                {
+                  "function": {
+                    "arguments": "{\n    \"date\": \"2026-10-04\",\n    \"destination\": \"DEN\",\n    \"origin\": \"BOS\"\n  }",
+                    "name": "find_flight"
+                  },
+                  "id": "X6p9U4SPaDk5SqeWoG3NrOQGR8LhfEYp",
+                  "type": "function"
+                }
+              ]
+            },
+            {
+              "content": "{\"flight_id\":\"FL-808\"}",
+              "role": "tool",
+              "tool_call_id": "X6p9U4SPaDk5SqeWoG3NrOQGR8LhfEYp"
+            }
+          ],
+          "model": "Qwen/Qwen2.5-7B-Instruct-GGUF:Q3_K_M",
+          "seed": 42,
+          "stream": false,
+          "temperature": 0.0,
+          "tool_choice": "auto",
+          "tools": [
+            {
+              "function": {
+                "description": "Find a flight for an exact route and date.",
+                "name": "find_flight",
+                "parameters": {
+                  "properties": {
+                    "date": {
+                      "type": "string"
+                    },
+                    "destination": {
+                      "type": "string"
+                    },
+                    "origin": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "origin",
+                    "destination",
+                    "date"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            },
+            {
+              "function": {
+                "description": "Book a flight by exact id.",
+                "name": "book_flight",
+                "parameters": {
+                  "properties": {
+                    "flight_id": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "flight_id"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "access-control-allow-origin": "",
+          "content-length": "931",
+          "content-type": "application/json; charset=utf-8",
+          "keep-alive": "timeout=5, max=100",
+          "server": "llama.cpp"
+        },
+        "body_raw": "{\"choices\":[{\"finish_reason\":\"tool_calls\",\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"I have found a flight for your journey. The flight ID is FL-808. Now, I will proceed to book this flight for you.\\n\\n\",\"tool_calls\":[{\"type\":\"function\",\"function\":{\"name\":\"book_flight\",\"arguments\":\"{\\\"flight_id\\\": \\\"FL-808\\\"}\"},\"id\":\"RFmOkK3qEYBZdVjWIGC039WnFSrJtvEV\"}]}}],\"created\":1784573359,\"model\":\"Qwen/Qwen2.5-7B-Instruct-GGUF:Q3_K_M\",\"system_fingerprint\":\"b10050-b15ca938a\",\"object\":\"chat.completion\",\"usage\":{\"completion_tokens\":56,\"prompt_tokens\":345,\"total_tokens\":401,\"prompt_tokens_details\":{\"cached_tokens\":278}},\"id\":\"chatcmpl-4jVVokIHtxAlGgwh7uo2gijmFLdgCutr\",\"timings\":{\"cache_n\":278,\"prompt_n\":67,\"prompt_ms\":121.397,\"prompt_per_token_ms\":1.8118955223880597,\"prompt_per_second\":551.9082020148768,\"predicted_n\":56,\"predicted_ms\":776.324,\"predicted_per_token_ms\":13.86292857142857,\"predicted_per_second\":72.13483030281172}}"
+      },
+      "retried": false
+    }
+  ]
+}

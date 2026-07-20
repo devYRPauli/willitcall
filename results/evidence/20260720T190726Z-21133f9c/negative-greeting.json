@@ -1,0 +1,64 @@
+{
+  "schema_version": 1,
+  "run_id": "20260720T190726Z-21133f9c",
+  "scenario_id": "negative-greeting",
+  "turns": [
+    {
+      "index": 0,
+      "request": {
+        "method": "POST",
+        "url": "http://127.0.0.1:8080/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "Say hello in one short sentence.",
+              "role": "user"
+            }
+          ],
+          "model": "Qwen/Qwen2.5-1.5B-Instruct-GGUF:Q8_0",
+          "seed": 42,
+          "stream": false,
+          "temperature": 0.0,
+          "tool_choice": "none",
+          "tools": [
+            {
+              "function": {
+                "description": "Get the current weather for a city.",
+                "name": "get_weather",
+                "parameters": {
+                  "properties": {
+                    "city": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "city"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "access-control-allow-origin": "",
+          "content-length": "678",
+          "content-type": "application/json; charset=utf-8",
+          "keep-alive": "timeout=5, max=100",
+          "server": "llama.cpp"
+        },
+        "body_raw": "{\"choices\":[{\"finish_reason\":\"stop\",\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"Hello! How can I assist you today?\"}}],\"created\":1784574449,\"model\":\"Qwen/Qwen2.5-1.5B-Instruct-GGUF:Q8_0\",\"system_fingerprint\":\"b10050-b15ca938a\",\"object\":\"chat.completion\",\"usage\":{\"completion_tokens\":10,\"prompt_tokens\":172,\"total_tokens\":182,\"prompt_tokens_details\":{\"cached_tokens\":75}},\"id\":\"chatcmpl-eiuSkyP0MxaCOiXSd5VyLl63EIc49DYS\",\"timings\":{\"cache_n\":75,\"prompt_n\":97,\"prompt_ms\":34.982,\"prompt_per_token_ms\":0.3606391752577319,\"prompt_per_second\":2772.8546109427707,\"predicted_n\":10,\"predicted_ms\":44.693,\"predicted_per_token_ms\":4.4693,\"predicted_per_second\":223.74868547647284}}"
+      },
+      "retried": false
+    }
+  ]
+}

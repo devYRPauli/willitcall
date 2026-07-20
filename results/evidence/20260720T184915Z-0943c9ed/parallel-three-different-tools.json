@@ -1,0 +1,108 @@
+{
+  "schema_version": 1,
+  "run_id": "20260720T184915Z-0943c9ed",
+  "scenario_id": "parallel-three-different-tools",
+  "turns": [
+    {
+      "index": 0,
+      "request": {
+        "method": "POST",
+        "url": "http://127.0.0.1:8080/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "Get weather in Rome, time in Nairobi, and convert 25 USD to EUR.",
+              "role": "user"
+            }
+          ],
+          "model": "Qwen/Qwen2.5-7B-Instruct-GGUF:Q3_K_M",
+          "seed": 42,
+          "stream": false,
+          "temperature": 0.0,
+          "tool_choice": "required",
+          "tools": [
+            {
+              "function": {
+                "description": "Get weather for a city.",
+                "name": "get_weather",
+                "parameters": {
+                  "properties": {
+                    "city": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "city"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            },
+            {
+              "function": {
+                "description": "Get local time for a city.",
+                "name": "get_time",
+                "parameters": {
+                  "properties": {
+                    "city": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "city"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            },
+            {
+              "function": {
+                "description": "Convert an exact currency amount.",
+                "name": "convert_currency",
+                "parameters": {
+                  "properties": {
+                    "amount": {
+                      "type": "number"
+                    },
+                    "from": {
+                      "type": "string"
+                    },
+                    "to": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "amount",
+                    "from",
+                    "to"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "access-control-allow-origin": "",
+          "content-length": "1105",
+          "content-type": "application/json; charset=utf-8",
+          "keep-alive": "timeout=5, max=100",
+          "server": "llama.cpp"
+        },
+        "body_raw": "{\"choices\":[{\"finish_reason\":\"tool_calls\",\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"\",\"tool_calls\":[{\"type\":\"function\",\"function\":{\"name\":\"get_weather\",\"arguments\":\"{\\\"city\\\": \\\"Rome\\\"}\"},\"id\":\"jCYc19UOSkyuan8JWss1sUZ3PjXQH3tk\"},{\"type\":\"function\",\"function\":{\"name\":\"get_time\",\"arguments\":\"{\\\"city\\\": \\\"Nairobi\\\"}\"},\"id\":\"ex0zhJRfANMnSKV9Ezj12gAqeM4MGFRJ\"},{\"type\":\"function\",\"function\":{\"name\":\"convert_currency\",\"arguments\":\"{\\\"amount\\\": 25, \\\"from\\\": \\\"USD\\\", \\\"to\\\": \\\"EUR\\\"}\"},\"id\":\"194NPsGczWn0k3fwmN81LxBQ2SHQz9as\"}]}}],\"created\":1784573377,\"model\":\"Qwen/Qwen2.5-7B-Instruct-GGUF:Q3_K_M\",\"system_fingerprint\":\"b10050-b15ca938a\",\"object\":\"chat.completion\",\"usage\":{\"completion_tokens\":75,\"prompt_tokens\":316,\"total_tokens\":391,\"prompt_tokens_details\":{\"cached_tokens\":165}},\"id\":\"chatcmpl-IlkiZHu3C7yKhWaPJ3LgPBUNq17UureW\",\"timings\":{\"cache_n\":165,\"prompt_n\":151,\"prompt_ms\":193.261,\"prompt_per_token_ms\":1.2798741721854305,\"prompt_per_second\":781.3268067535612,\"predicted_n\":75,\"predicted_ms\":1047.037,\"predicted_per_token_ms\":13.960493333333334,\"predicted_per_second\":71.63070646023016}}"
+      },
+      "retried": false
+    }
+  ]
+}

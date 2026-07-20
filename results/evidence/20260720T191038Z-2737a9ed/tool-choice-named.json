@@ -1,0 +1,87 @@
+{
+  "schema_version": 1,
+  "run_id": "20260720T191038Z-2737a9ed",
+  "scenario_id": "tool-choice-named",
+  "turns": [
+    {
+      "index": 0,
+      "request": {
+        "method": "POST",
+        "url": "http://127.0.0.1:8080/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "Search contacts for Ada Stone.",
+              "role": "user"
+            }
+          ],
+          "model": "Qwen/Qwen2.5-1.5B-Instruct-GGUF:Q3_K_M",
+          "seed": 42,
+          "stream": false,
+          "temperature": 0.0,
+          "tool_choice": {
+            "function": {
+              "name": "search_contacts"
+            },
+            "type": "function"
+          },
+          "tools": [
+            {
+              "function": {
+                "description": "Search files for an exact phrase.",
+                "name": "search_files",
+                "parameters": {
+                  "properties": {
+                    "phrase": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "phrase"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            },
+            {
+              "function": {
+                "description": "Search contacts for an exact name.",
+                "name": "search_contacts",
+                "parameters": {
+                  "properties": {
+                    "name": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "name"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "access-control-allow-origin": "",
+          "content-length": "822",
+          "content-type": "application/json; charset=utf-8",
+          "keep-alive": "timeout=5, max=100",
+          "server": "llama.cpp"
+        },
+        "body_raw": "{\"choices\":[{\"finish_reason\":\"tool_calls\",\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"\",\"tool_calls\":[{\"type\":\"function\",\"function\":{\"name\":\"search_contacts\",\"arguments\":\"{\\n\\\"name\\\": \\\"Ada Stone\\\"\\n}\"},\"id\":\"7wpWN9v8lAiVtLFNr1it6Qn1BtYCO3bw\"}]}}],\"created\":1784574649,\"model\":\"Qwen/Qwen2.5-1.5B-Instruct-GGUF:Q3_K_M\",\"system_fingerprint\":\"b10050-b15ca938a\",\"object\":\"chat.completion\",\"usage\":{\"completion_tokens\":23,\"prompt_tokens\":226,\"total_tokens\":249,\"prompt_tokens_details\":{\"cached_tokens\":67}},\"id\":\"chatcmpl-gB3vFA87kdv8AyHUcXxsyvRjBcrK9pz5\",\"timings\":{\"cache_n\":67,\"prompt_n\":159,\"prompt_ms\":46.897,\"prompt_per_token_ms\":0.29494968553459117,\"prompt_per_second\":3390.4087681514807,\"predicted_n\":23,\"predicted_ms\":102.007,\"predicted_per_token_ms\":4.435086956521739,\"predicted_per_second\":225.4747223229778}}"
+      },
+      "retried": false
+    }
+  ]
+}

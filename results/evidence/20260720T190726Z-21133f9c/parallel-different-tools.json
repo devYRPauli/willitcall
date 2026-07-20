@@ -1,0 +1,82 @@
+{
+  "schema_version": 1,
+  "run_id": "20260720T190726Z-21133f9c",
+  "scenario_id": "parallel-different-tools",
+  "turns": [
+    {
+      "index": 0,
+      "request": {
+        "method": "POST",
+        "url": "http://127.0.0.1:8080/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "Get the weather in Oslo and the local time in Cairo.",
+              "role": "user"
+            }
+          ],
+          "model": "Qwen/Qwen2.5-1.5B-Instruct-GGUF:Q8_0",
+          "seed": 42,
+          "stream": false,
+          "temperature": 0.0,
+          "tool_choice": "required",
+          "tools": [
+            {
+              "function": {
+                "description": "Get weather for a city.",
+                "name": "get_weather",
+                "parameters": {
+                  "properties": {
+                    "city": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "city"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            },
+            {
+              "function": {
+                "description": "Get local time for a city.",
+                "name": "get_time",
+                "parameters": {
+                  "properties": {
+                    "city": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "city"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "access-control-allow-origin": "",
+          "content-length": "933",
+          "content-type": "application/json; charset=utf-8",
+          "keep-alive": "timeout=5, max=100",
+          "server": "llama.cpp"
+        },
+        "body_raw": "{\"choices\":[{\"finish_reason\":\"tool_calls\",\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"\",\"tool_calls\":[{\"type\":\"function\",\"function\":{\"name\":\"get_weather\",\"arguments\":\"{\\\"city\\\": \\\"Oslo\\\"}\"},\"id\":\"yEBwMCjn6JVbPTw36F20D6OEXXGiTvME\"},{\"type\":\"function\",\"function\":{\"name\":\"get_time\",\"arguments\":\"{\\\"city\\\": \\\"Cairo\\\"}\"},\"id\":\"mFSsU90cnddGqwNjm3CnqXgYW39KVsGP\"}]}}],\"created\":1784574451,\"model\":\"Qwen/Qwen2.5-1.5B-Instruct-GGUF:Q8_0\",\"system_fingerprint\":\"b10050-b15ca938a\",\"object\":\"chat.completion\",\"usage\":{\"completion_tokens\":42,\"prompt_tokens\":231,\"total_tokens\":273,\"prompt_tokens_details\":{\"cached_tokens\":79}},\"id\":\"chatcmpl-y2qaOUy2BCYVWz7WhgTGzBbGBixbqB0Y\",\"timings\":{\"cache_n\":79,\"prompt_n\":152,\"prompt_ms\":43.167,\"prompt_per_token_ms\":0.2839934210526316,\"prompt_per_second\":3521.208330437603,\"predicted_n\":42,\"predicted_ms\":205.371,\"predicted_per_token_ms\":4.889785714285715,\"predicted_per_second\":204.50793929035743}}"
+      },
+      "retried": false
+    }
+  ]
+}

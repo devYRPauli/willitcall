@@ -1,0 +1,64 @@
+{
+  "schema_version": 1,
+  "run_id": "20260720T190843Z-70268904",
+  "scenario_id": "tool-choice-auto-call",
+  "turns": [
+    {
+      "index": 0,
+      "request": {
+        "method": "POST",
+        "url": "http://127.0.0.1:8080/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "Get the temperature in Helsinki.",
+              "role": "user"
+            }
+          ],
+          "model": "Qwen/Qwen2.5-1.5B-Instruct-GGUF:Q4_K_M",
+          "seed": 42,
+          "stream": false,
+          "temperature": 0.0,
+          "tool_choice": "auto",
+          "tools": [
+            {
+              "function": {
+                "description": "Get the temperature for a city.",
+                "name": "get_temperature",
+                "parameters": {
+                  "properties": {
+                    "city": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "city"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "access-control-allow-origin": "",
+          "content-length": "817",
+          "content-type": "application/json; charset=utf-8",
+          "keep-alive": "timeout=5, max=100",
+          "server": "llama.cpp"
+        },
+        "body_raw": "{\"choices\":[{\"finish_reason\":\"tool_calls\",\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"\",\"tool_calls\":[{\"type\":\"function\",\"function\":{\"name\":\"get_temperature\",\"arguments\":\"{\\\"city\\\": \\\"Helsinki\\\"}\"},\"id\":\"PFm53YXnj51LniK4GV7Gj0TmT5dmCDI6\"}]}}],\"created\":1784574532,\"model\":\"Qwen/Qwen2.5-1.5B-Instruct-GGUF:Q4_K_M\",\"system_fingerprint\":\"b10050-b15ca938a\",\"object\":\"chat.completion\",\"usage\":{\"completion_tokens\":21,\"prompt_tokens\":170,\"total_tokens\":191,\"prompt_tokens_details\":{\"cached_tokens\":68}},\"id\":\"chatcmpl-eOAa4RK41EsrWvRfGW5GCNWIVyVhWKKR\",\"timings\":{\"cache_n\":68,\"prompt_n\":102,\"prompt_ms\":36.431,\"prompt_per_token_ms\":0.35716666666666663,\"prompt_per_second\":2799.8133457769486,\"predicted_n\":21,\"predicted_ms\":89.111,\"predicted_per_token_ms\":4.243380952380953,\"predicted_per_second\":235.66114172212184}}"
+      },
+      "retried": false
+    }
+  ]
+}

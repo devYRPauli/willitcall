@@ -1,0 +1,72 @@
+{
+  "schema_version": 1,
+  "run_id": "20260720T190726Z-21133f9c",
+  "scenario_id": "single-date-range",
+  "turns": [
+    {
+      "index": 0,
+      "request": {
+        "method": "POST",
+        "url": "http://127.0.0.1:8080/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "Find events in Denver from 2026-08-03 through 2026-08-05.",
+              "role": "user"
+            }
+          ],
+          "model": "Qwen/Qwen2.5-1.5B-Instruct-GGUF:Q8_0",
+          "seed": 42,
+          "stream": false,
+          "temperature": 0.0,
+          "tool_choice": "auto",
+          "tools": [
+            {
+              "function": {
+                "description": "Find events in an inclusive date range.",
+                "name": "find_events",
+                "parameters": {
+                  "properties": {
+                    "city": {
+                      "type": "string"
+                    },
+                    "end_date": {
+                      "type": "string"
+                    },
+                    "start_date": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "city",
+                    "start_date",
+                    "end_date"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "access-control-allow-origin": "",
+          "content-length": "872",
+          "content-type": "application/json; charset=utf-8",
+          "keep-alive": "timeout=5, max=100",
+          "server": "llama.cpp"
+        },
+        "body_raw": "{\"choices\":[{\"finish_reason\":\"tool_calls\",\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"\",\"tool_calls\":[{\"type\":\"function\",\"function\":{\"name\":\"find_events\",\"arguments\":\"{\\\"city\\\": \\\"Denver\\\", \\\"end_date\\\": \\\"2026-08-05\\\", \\\"start_date\\\": \\\"2026-08-03\\\"}\"},\"id\":\"rcguP4bJQu8mbHrjLEF7SjGiUQIhmpAO\"}]}}],\"created\":1784574453,\"model\":\"Qwen/Qwen2.5-1.5B-Instruct-GGUF:Q8_0\",\"system_fingerprint\":\"b10050-b15ca938a\",\"object\":\"chat.completion\",\"usage\":{\"completion_tokens\":52,\"prompt_tokens\":222,\"total_tokens\":274,\"prompt_tokens_details\":{\"cached_tokens\":67}},\"id\":\"chatcmpl-gDRWD1A3IzP7M30ODHOvCdlCv3HIdXBN\",\"timings\":{\"cache_n\":67,\"prompt_n\":155,\"prompt_ms\":43.203,\"prompt_per_token_ms\":0.27872903225806456,\"prompt_per_second\":3587.7138161701732,\"predicted_n\":52,\"predicted_ms\":258.853,\"predicted_per_token_ms\":4.977942307692308,\"predicted_per_second\":200.88621727389676}}"
+      },
+      "retried": false
+    }
+  ]
+}

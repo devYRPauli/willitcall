@@ -1,0 +1,67 @@
+{
+  "schema_version": 1,
+  "run_id": "20260720T191115Z-c7b8ebe4",
+  "scenario_id": "single-optional-present",
+  "turns": [
+    {
+      "index": 0,
+      "request": {
+        "method": "POST",
+        "url": "http://127.0.0.1:8080/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "Search the catalog for brass compass and return exactly 4 results.",
+              "role": "user"
+            }
+          ],
+          "model": "/Users/bbadmin/gguf/watt-tool-8B.Q4_K_M.gguf",
+          "seed": 42,
+          "stream": false,
+          "temperature": 0.0,
+          "tool_choice": "auto",
+          "tools": [
+            {
+              "function": {
+                "description": "Search a catalog with an optional result limit.",
+                "name": "search_catalog",
+                "parameters": {
+                  "properties": {
+                    "limit": {
+                      "type": "integer"
+                    },
+                    "query": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "query"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "access-control-allow-origin": "",
+          "content-length": "947",
+          "content-type": "application/json; charset=utf-8",
+          "keep-alive": "timeout=5, max=100",
+          "server": "llama.cpp"
+        },
+        "body_raw": "{\"choices\":[{\"finish_reason\":\"stop\",\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"I cannot directly search the catalog for brass compasses as I do not have access to a specific catalog database. However, I can provide you with some general information about brass compasses and their uses. If you need more specific details or have any other questions, feel free to ask!\"}}],\"created\":1784574721,\"model\":\"/Users/bbadmin/gguf/watt-tool-8B.Q4_K_M.gguf\",\"system_fingerprint\":\"b10050-b15ca938a\",\"object\":\"chat.completion\",\"usage\":{\"completion_tokens\":58,\"prompt_tokens\":23,\"total_tokens\":81,\"prompt_tokens_details\":{\"cached_tokens\":11}},\"id\":\"chatcmpl-kWw4gsk5IR0EqfQUmjYFtrpvdjhYCMlA\",\"timings\":{\"cache_n\":11,\"prompt_n\":12,\"prompt_ms\":54.514,\"prompt_per_token_ms\":4.542833333333333,\"prompt_per_second\":220.1269398686576,\"predicted_n\":58,\"predicted_ms\":645.312,\"predicted_per_token_ms\":11.126068965517241,\"predicted_per_second\":89.8790042646038}}"
+      },
+      "retried": false
+    }
+  ]
+}

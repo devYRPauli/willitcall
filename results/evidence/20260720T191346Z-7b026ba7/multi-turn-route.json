@@ -1,0 +1,86 @@
+{
+  "schema_version": 1,
+  "run_id": "20260720T191346Z-7b026ba7",
+  "scenario_id": "multi-turn-route",
+  "turns": [
+    {
+      "index": 0,
+      "request": {
+        "method": "POST",
+        "url": "http://127.0.0.1:8080/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "Find a route to Fenway Park.",
+              "role": "user"
+            }
+          ],
+          "model": "/Users/bbadmin/.ollama/models/blobs/sha256-3c168af1dea0a414299c7d9077e100ac763370e5a98b3c53801a958a47f0a5db",
+          "seed": 42,
+          "stream": false,
+          "temperature": 0.0,
+          "tool_choice": "auto",
+          "tools": [
+            {
+              "function": {
+                "description": "Resolve a place to coordinates.",
+                "name": "geocode",
+                "parameters": {
+                  "properties": {
+                    "place": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "place"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            },
+            {
+              "function": {
+                "description": "Get a route to coordinates.",
+                "name": "get_route",
+                "parameters": {
+                  "properties": {
+                    "latitude": {
+                      "type": "number"
+                    },
+                    "longitude": {
+                      "type": "number"
+                    }
+                  },
+                  "required": [
+                    "latitude",
+                    "longitude"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "access-control-allow-origin": "",
+          "content-length": "1488",
+          "content-type": "application/json; charset=utf-8",
+          "keep-alive": "timeout=5, max=100",
+          "server": "llama.cpp"
+        },
+        "body_raw": "{\"choices\":[{\"finish_reason\":\"stop\",\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"To find a route to Fenway Park, you can use a GPS navigation service like Google Maps, Apple Maps, or Waze. Here are the general steps you can follow:\\n\\n1. Open your preferred navigation app.\\n2. Enter \\\"Fenway Park\\\" as your destination.\\n3. Select your starting point, which could be your current location or a specific address.\\n4. The app will provide you with the best route to Fenway Park, including estimated travel time and distance.\\n\\nAlternatively, if you prefer to use a traditional map, you can look up Fenway Park's address on a map and then trace a route from your starting point to the park. Fenway Park is located at 1117 Boston Avenue, Boston, MA 02215, USA. If you are driving, you can also use the address to find directions on a GPS device.\"}}],\"created\":1784574832,\"model\":\"/Users/bbadmin/.ollama/models/blobs/sha256-3c168af1dea0a414299c7d9077e100ac763370e5a98b3c53801a958a47f0a5db\",\"system_fingerprint\":\"b10050-b15ca938a\",\"object\":\"chat.completion\",\"usage\":{\"completion_tokens\":174,\"prompt_tokens\":11,\"total_tokens\":185,\"prompt_tokens_details\":{\"cached_tokens\":0}},\"id\":\"chatcmpl-VTeqUJEs18XBFB54oqXVvUzoUsx9Okyl\",\"timings\":{\"cache_n\":0,\"prompt_n\":11,\"prompt_ms\":33.076,\"prompt_per_token_ms\":3.0069090909090908,\"prompt_per_second\":332.5674204861531,\"predicted_n\":174,\"predicted_ms\":1239.856,\"predicted_per_token_ms\":7.125609195402299,\"predicted_per_second\":140.33887806325896}}"
+      },
+      "retried": false
+    }
+  ]
+}

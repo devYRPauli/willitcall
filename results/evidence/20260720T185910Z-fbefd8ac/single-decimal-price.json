@@ -1,0 +1,68 @@
+{
+  "schema_version": 1,
+  "run_id": "20260720T185910Z-fbefd8ac",
+  "scenario_id": "single-decimal-price",
+  "turns": [
+    {
+      "index": 0,
+      "request": {
+        "method": "POST",
+        "url": "http://127.0.0.1:8080/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "Set the price of SKU AX-9 to exactly 19.95.",
+              "role": "user"
+            }
+          ],
+          "model": "bartowski/Meta-Llama-3.1-8B-Instruct-GGUF:Q4_K_M",
+          "seed": 42,
+          "stream": false,
+          "temperature": 0.0,
+          "tool_choice": "auto",
+          "tools": [
+            {
+              "function": {
+                "description": "Set the price of a product.",
+                "name": "set_price",
+                "parameters": {
+                  "properties": {
+                    "price": {
+                      "type": "number"
+                    },
+                    "sku": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "sku",
+                    "price"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "access-control-allow-origin": "",
+          "content-length": "836",
+          "content-type": "application/json; charset=utf-8",
+          "keep-alive": "timeout=5, max=100",
+          "server": "llama.cpp"
+        },
+        "body_raw": "{\"choices\":[{\"finish_reason\":\"tool_calls\",\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"\",\"tool_calls\":[{\"type\":\"function\",\"function\":{\"name\":\"set_price\",\"arguments\":\"{\\\"sku\\\": \\\"AX-9\\\", \\\"price\\\": 19.95}\"},\"id\":\"KHrDTkCRKjtb4gEdst65xglAXBABgSxW\"}]}}],\"created\":1784573970,\"model\":\"bartowski/Meta-Llama-3.1-8B-Instruct-GGUF:Q4_K_M\",\"system_fingerprint\":\"b10050-b15ca938a\",\"object\":\"chat.completion\",\"usage\":{\"completion_tokens\":28,\"prompt_tokens\":206,\"total_tokens\":234,\"prompt_tokens_details\":{\"cached_tokens\":105}},\"id\":\"chatcmpl-Q2reb1nHfRpdICHV1DWYRXStQyqc9r13\",\"timings\":{\"cache_n\":105,\"prompt_n\":101,\"prompt_ms\":153.607,\"prompt_per_token_ms\":1.5208613861386138,\"prompt_per_second\":657.5221181326372,\"predicted_n\":28,\"predicted_ms\":306.167,\"predicted_per_token_ms\":10.934535714285714,\"predicted_per_second\":91.45335715475542}}"
+      },
+      "retried": false
+    }
+  ]
+}

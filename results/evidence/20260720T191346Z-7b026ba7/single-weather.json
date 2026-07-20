@@ -1,0 +1,64 @@
+{
+  "schema_version": 1,
+  "run_id": "20260720T191346Z-7b026ba7",
+  "scenario_id": "single-weather",
+  "turns": [
+    {
+      "index": 0,
+      "request": {
+        "method": "POST",
+        "url": "http://127.0.0.1:8080/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "What is the weather in Boston?",
+              "role": "user"
+            }
+          ],
+          "model": "/Users/bbadmin/.ollama/models/blobs/sha256-3c168af1dea0a414299c7d9077e100ac763370e5a98b3c53801a958a47f0a5db",
+          "seed": 42,
+          "stream": false,
+          "temperature": 0.0,
+          "tool_choice": "auto",
+          "tools": [
+            {
+              "function": {
+                "description": "Get the current weather for a city.",
+                "name": "get_weather",
+                "parameters": {
+                  "properties": {
+                    "city": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "city"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "access-control-allow-origin": "",
+          "content-length": "1408",
+          "content-type": "application/json; charset=utf-8",
+          "keep-alive": "timeout=5, max=100",
+          "server": "llama.cpp"
+        },
+        "body_raw": "{\"choices\":[{\"finish_reason\":\"stop\",\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"To answer this question, you would need to check the latest weather forecast for Boston. As of my last update in early 2023, I can't provide real-time data, but you can easily find the current weather in Boston by checking a reliable weather service like the National Weather Service, Weather.com, or using a weather app. You would typically look for the current temperature, chance of precipitation, wind speed, and any weather advisories or warnings in place. For example, you might find that Boston is experiencing a high of 68°F (20°C) with a low of 56°F (13°C), partly cloudy skies, and a 10% chance of rain. Remember to check the most recent updates for the most accurate information.\"}}],\"created\":1784574862,\"model\":\"/Users/bbadmin/.ollama/models/blobs/sha256-3c168af1dea0a414299c7d9077e100ac763370e5a98b3c53801a958a47f0a5db\",\"system_fingerprint\":\"b10050-b15ca938a\",\"object\":\"chat.completion\",\"usage\":{\"completion_tokens\":150,\"prompt_tokens\":10,\"total_tokens\":160,\"prompt_tokens_details\":{\"cached_tokens\":0}},\"id\":\"chatcmpl-sLvnDBTVORyRBcucxQOyVr6C2tx18qga\",\"timings\":{\"cache_n\":0,\"prompt_n\":10,\"prompt_ms\":33.373,\"prompt_per_token_ms\":3.3373,\"prompt_per_second\":299.6434243250532,\"predicted_n\":150,\"predicted_ms\":1067.812,\"predicted_per_token_ms\":7.118746666666666,\"predicted_per_second\":140.47416586440312}}"
+      },
+      "retried": false
+    }
+  ]
+}

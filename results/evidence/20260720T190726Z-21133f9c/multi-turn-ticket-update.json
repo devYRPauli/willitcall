@@ -1,0 +1,91 @@
+{
+  "schema_version": 1,
+  "run_id": "20260720T190726Z-21133f9c",
+  "scenario_id": "multi-turn-ticket-update",
+  "turns": [
+    {
+      "index": 0,
+      "request": {
+        "method": "POST",
+        "url": "http://127.0.0.1:8080/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "Find ticket EXT-55 and set its priority to high.",
+              "role": "user"
+            }
+          ],
+          "model": "Qwen/Qwen2.5-1.5B-Instruct-GGUF:Q8_0",
+          "seed": 42,
+          "stream": false,
+          "temperature": 0.0,
+          "tool_choice": "auto",
+          "tools": [
+            {
+              "function": {
+                "description": "Find a ticket by exact external reference.",
+                "name": "find_ticket",
+                "parameters": {
+                  "properties": {
+                    "external_ref": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "external_ref"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            },
+            {
+              "function": {
+                "description": "Set ticket priority by internal id.",
+                "name": "set_ticket_priority",
+                "parameters": {
+                  "properties": {
+                    "priority": {
+                      "enum": [
+                        "low",
+                        "normal",
+                        "high"
+                      ],
+                      "type": "string"
+                    },
+                    "ticket_id": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "ticket_id",
+                    "priority"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "access-control-allow-origin": "",
+          "content-length": "986",
+          "content-type": "application/json; charset=utf-8",
+          "keep-alive": "timeout=5, max=100",
+          "server": "llama.cpp"
+        },
+        "body_raw": "{\"choices\":[{\"finish_reason\":\"tool_calls\",\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"\",\"tool_calls\":[{\"type\":\"function\",\"function\":{\"name\":\"find_ticket\",\"arguments\":\"{\\\"external_ref\\\": \\\"EXT-55\\\"}\"},\"id\":\"cxm1uU4J8qpXvNPO8IzeNaml9WmQvnLE\"},{\"type\":\"function\",\"function\":{\"name\":\"set_ticket_priority\",\"arguments\":\"{\\\"priority\\\": \\\"high\\\", \\\"ticket_id\\\": \\\"EXT-55\\\"}\"},\"id\":\"NFvGaIqpXxpFiDtRsOdNZt3PefMCZwZh\"}]}}],\"created\":1784574448,\"model\":\"Qwen/Qwen2.5-1.5B-Instruct-GGUF:Q8_0\",\"system_fingerprint\":\"b10050-b15ca938a\",\"object\":\"chat.completion\",\"usage\":{\"completion_tokens\":55,\"prompt_tokens\":263,\"total_tokens\":318,\"prompt_tokens_details\":{\"cached_tokens\":67}},\"id\":\"chatcmpl-2MHu48YH8H93lpqYQ57IEqQ8h2GZeWa1\",\"timings\":{\"cache_n\":67,\"prompt_n\":196,\"prompt_ms\":55.214,\"prompt_per_token_ms\":0.28170408163265304,\"prompt_per_second\":3549.8243199188614,\"predicted_n\":55,\"predicted_ms\":264.723,\"predicted_per_token_ms\":4.813145454545455,\"predicted_per_second\":207.76434235030578}}"
+      },
+      "retried": false
+    }
+  ]
+}

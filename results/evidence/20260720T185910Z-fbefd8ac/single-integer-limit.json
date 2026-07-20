@@ -1,0 +1,68 @@
+{
+  "schema_version": 1,
+  "run_id": "20260720T185910Z-fbefd8ac",
+  "scenario_id": "single-integer-limit",
+  "turns": [
+    {
+      "index": 0,
+      "request": {
+        "method": "POST",
+        "url": "http://127.0.0.1:8080/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "List exactly 12 messages from the support mailbox.",
+              "role": "user"
+            }
+          ],
+          "model": "bartowski/Meta-Llama-3.1-8B-Instruct-GGUF:Q4_K_M",
+          "seed": 42,
+          "stream": false,
+          "temperature": 0.0,
+          "tool_choice": "auto",
+          "tools": [
+            {
+              "function": {
+                "description": "List a fixed number of messages.",
+                "name": "list_messages",
+                "parameters": {
+                  "properties": {
+                    "limit": {
+                      "type": "integer"
+                    },
+                    "mailbox": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "mailbox",
+                    "limit"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "access-control-allow-origin": "",
+          "content-length": "834",
+          "content-type": "application/json; charset=utf-8",
+          "keep-alive": "timeout=5, max=100",
+          "server": "llama.cpp"
+        },
+        "body_raw": "{\"choices\":[{\"finish_reason\":\"tool_calls\",\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"\",\"tool_calls\":[{\"type\":\"function\",\"function\":{\"name\":\"list_messages\",\"arguments\":\"{\\\"mailbox\\\": \\\"support\\\", \\\"limit\\\": \\\"12\\\"}\"},\"id\":\"0gGq7eq02cyLS5WUrZR2p2Y6YqprI2w6\"}]}}],\"created\":1784573971,\"model\":\"bartowski/Meta-Llama-3.1-8B-Instruct-GGUF:Q4_K_M\",\"system_fingerprint\":\"b10050-b15ca938a\",\"object\":\"chat.completion\",\"usage\":{\"completion_tokens\":24,\"prompt_tokens\":201,\"total_tokens\":225,\"prompt_tokens_details\":{\"cached_tokens\":104}},\"id\":\"chatcmpl-WnBAx4iygYetEkW98dm13HHHlprNsjsD\",\"timings\":{\"cache_n\":104,\"prompt_n\":97,\"prompt_ms\":153.58,\"prompt_per_token_ms\":1.583298969072165,\"prompt_per_second\":631.592655293658,\"predicted_n\":24,\"predicted_ms\":261.594,\"predicted_per_token_ms\":10.89975,\"predicted_per_second\":91.74522351430079}}"
+      },
+      "retried": false
+    }
+  ]
+}

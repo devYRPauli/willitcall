@@ -1,0 +1,68 @@
+{
+  "schema_version": 1,
+  "run_id": "20260720T191346Z-7b026ba7",
+  "scenario_id": "parallel-two-calculations",
+  "turns": [
+    {
+      "index": 0,
+      "request": {
+        "method": "POST",
+        "url": "http://127.0.0.1:8080/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "Use separate calls to divide 42 by 6 and divide 10 by 4.",
+              "role": "user"
+            }
+          ],
+          "model": "/Users/bbadmin/.ollama/models/blobs/sha256-3c168af1dea0a414299c7d9077e100ac763370e5a98b3c53801a958a47f0a5db",
+          "seed": 42,
+          "stream": false,
+          "temperature": 0.0,
+          "tool_choice": "required",
+          "tools": [
+            {
+              "function": {
+                "description": "Divide one number by another.",
+                "name": "divide",
+                "parameters": {
+                  "properties": {
+                    "dividend": {
+                      "type": "number"
+                    },
+                    "divisor": {
+                      "type": "number"
+                    }
+                  },
+                  "required": [
+                    "dividend",
+                    "divisor"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "access-control-allow-origin": "",
+          "content-length": "780",
+          "content-type": "application/json; charset=utf-8",
+          "keep-alive": "timeout=5, max=100",
+          "server": "llama.cpp"
+        },
+        "body_raw": "{\"choices\":[{\"finish_reason\":\"stop\",\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"To divide 42 by 6, you get 7. To divide 10 by 4, you get 2.5.\"}}],\"created\":1784574839,\"model\":\"/Users/bbadmin/.ollama/models/blobs/sha256-3c168af1dea0a414299c7d9077e100ac763370e5a98b3c53801a958a47f0a5db\",\"system_fingerprint\":\"b10050-b15ca938a\",\"object\":\"chat.completion\",\"usage\":{\"completion_tokens\":29,\"prompt_tokens\":21,\"total_tokens\":50,\"prompt_tokens_details\":{\"cached_tokens\":0}},\"id\":\"chatcmpl-4Vq0UEorEuRvSyrdJYjhTA3mKc5nN9l5\",\"timings\":{\"cache_n\":0,\"prompt_n\":21,\"prompt_ms\":33.093,\"prompt_per_token_ms\":1.575857142857143,\"prompt_per_second\":634.5752878252198,\"predicted_n\":29,\"predicted_ms\":201.01,\"predicted_per_token_ms\":6.931379310344827,\"predicted_per_second\":144.2714292821253}}"
+      },
+      "retried": false
+    }
+  ]
+}

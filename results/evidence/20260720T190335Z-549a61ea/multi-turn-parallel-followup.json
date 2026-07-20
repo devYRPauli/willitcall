@@ -1,0 +1,96 @@
+{
+  "schema_version": 1,
+  "run_id": "20260720T190335Z-549a61ea",
+  "scenario_id": "multi-turn-parallel-followup",
+  "turns": [
+    {
+      "index": 0,
+      "request": {
+        "method": "POST",
+        "url": "http://127.0.0.1:8080/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "Get temperatures for Boston and Tokyo, then compare the returned values.",
+              "role": "user"
+            }
+          ],
+          "model": "bartowski/Meta-Llama-3.1-8B-Instruct-GGUF:Q3_K_M",
+          "seed": 42,
+          "stream": false,
+          "temperature": 0.0,
+          "tool_choice": "auto",
+          "tools": [
+            {
+              "function": {
+                "description": "Get the temperature for a city.",
+                "name": "get_temperature",
+                "parameters": {
+                  "properties": {
+                    "city": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "city"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            },
+            {
+              "function": {
+                "description": "Compare two named city temperatures.",
+                "name": "compare_temperatures",
+                "parameters": {
+                  "properties": {
+                    "first_city": {
+                      "description": "The city the user mentioned first.",
+                      "type": "string"
+                    },
+                    "first_value": {
+                      "type": "number"
+                    },
+                    "second_city": {
+                      "description": "The city the user mentioned second.",
+                      "type": "string"
+                    },
+                    "second_value": {
+                      "type": "number"
+                    }
+                  },
+                  "required": [
+                    "first_city",
+                    "first_value",
+                    "second_city",
+                    "second_value"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "access-control-allow-origin": "",
+          "content-length": "974",
+          "content-type": "application/json; charset=utf-8",
+          "keep-alive": "timeout=5, max=100",
+          "server": "llama.cpp"
+        },
+        "body_raw": "{\"choices\":[{\"finish_reason\":\"tool_calls\",\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"\",\"tool_calls\":[{\"type\":\"function\",\"function\":{\"name\":\"compare_temperatures\",\"arguments\":\"{\\\"first_city\\\": \\\"Boston\\\", \\\"first_value\\\": \\\"get_temperature\\\", \\\"city\\\": \\\"Boston\\\", \\\"second_city\\\": \\\"Tokyo\\\", \\\"second_value\\\": \\\"get_temperature\\\", \\\"city\\\": \\\"Tokyo\\\"}\"},\"id\":\"gskvoKad1TPzZ8qry3IdoaJuoMFykCI6\"}]}}],\"created\":1784574222,\"model\":\"bartowski/Meta-Llama-3.1-8B-Instruct-GGUF:Q3_K_M\",\"system_fingerprint\":\"b10050-b15ca938a\",\"object\":\"chat.completion\",\"usage\":{\"completion_tokens\":58,\"prompt_tokens\":355,\"total_tokens\":413,\"prompt_tokens_details\":{\"cached_tokens\":104}},\"id\":\"chatcmpl-tK70q2IkW5gHDHbfmfxOVacNK9u2jfSZ\",\"timings\":{\"cache_n\":104,\"prompt_n\":251,\"prompt_ms\":305.279,\"prompt_per_token_ms\":1.2162509960159362,\"prompt_per_second\":822.1987100324621,\"predicted_n\":58,\"predicted_ms\":820.874,\"predicted_per_token_ms\":14.153,\"predicted_per_second\":70.65639793683317}}"
+      },
+      "retried": false
+    }
+  ]
+}

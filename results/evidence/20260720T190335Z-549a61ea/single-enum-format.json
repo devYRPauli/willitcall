@@ -1,0 +1,73 @@
+{
+  "schema_version": 1,
+  "run_id": "20260720T190335Z-549a61ea",
+  "scenario_id": "single-enum-format",
+  "turns": [
+    {
+      "index": 0,
+      "request": {
+        "method": "POST",
+        "url": "http://127.0.0.1:8080/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "Export report quarterly-7 as csv.",
+              "role": "user"
+            }
+          ],
+          "model": "bartowski/Meta-Llama-3.1-8B-Instruct-GGUF:Q3_K_M",
+          "seed": 42,
+          "stream": false,
+          "temperature": 0.0,
+          "tool_choice": "auto",
+          "tools": [
+            {
+              "function": {
+                "description": "Export a report in a supported format.",
+                "name": "export_report",
+                "parameters": {
+                  "properties": {
+                    "format": {
+                      "enum": [
+                        "csv",
+                        "json",
+                        "pdf"
+                      ],
+                      "type": "string"
+                    },
+                    "report_id": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "report_id",
+                    "format"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "access-control-allow-origin": "",
+          "content-length": "855",
+          "content-type": "application/json; charset=utf-8",
+          "keep-alive": "timeout=5, max=100",
+          "server": "llama.cpp"
+        },
+        "body_raw": "{\"choices\":[{\"finish_reason\":\"tool_calls\",\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"\",\"tool_calls\":[{\"type\":\"function\",\"function\":{\"name\":\"export_report\",\"arguments\":\"{\\\"format\\\": \\\"csv\\\", \\\"report_id\\\": \\\"quarterly-7\\\"}\"},\"id\":\"qAlzA2taqJJzsDZNiK4MHbtgIBH7ugew\"}]}}],\"created\":1784574240,\"model\":\"bartowski/Meta-Llama-3.1-8B-Instruct-GGUF:Q3_K_M\",\"system_fingerprint\":\"b10050-b15ca938a\",\"object\":\"chat.completion\",\"usage\":{\"completion_tokens\":28,\"prompt_tokens\":221,\"total_tokens\":249,\"prompt_tokens_details\":{\"cached_tokens\":104}},\"id\":\"chatcmpl-wlDgOzLDPyL1zqsBhpxFe4XHm6eWQanv\",\"timings\":{\"cache_n\":104,\"prompt_n\":117,\"prompt_ms\":161.693,\"prompt_per_token_ms\":1.381991452991453,\"prompt_per_second\":723.5934765265039,\"predicted_n\":28,\"predicted_ms\":388.862,\"predicted_per_token_ms\":13.887928571428573,\"predicted_per_second\":72.00497862995098}}"
+      },
+      "retried": false
+    }
+  ]
+}

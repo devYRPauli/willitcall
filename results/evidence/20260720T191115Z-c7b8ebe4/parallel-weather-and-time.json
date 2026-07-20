@@ -1,0 +1,82 @@
+{
+  "schema_version": 1,
+  "run_id": "20260720T191115Z-c7b8ebe4",
+  "scenario_id": "parallel-weather-and-time",
+  "turns": [
+    {
+      "index": 0,
+      "request": {
+        "method": "POST",
+        "url": "http://127.0.0.1:8080/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "Get both the weather and local time for Denver.",
+              "role": "user"
+            }
+          ],
+          "model": "/Users/bbadmin/gguf/watt-tool-8B.Q4_K_M.gguf",
+          "seed": 42,
+          "stream": false,
+          "temperature": 0.0,
+          "tool_choice": "auto",
+          "tools": [
+            {
+              "function": {
+                "description": "Get weather for a city.",
+                "name": "get_weather",
+                "parameters": {
+                  "properties": {
+                    "city": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "city"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            },
+            {
+              "function": {
+                "description": "Get local time for a city.",
+                "name": "get_time",
+                "parameters": {
+                  "properties": {
+                    "city": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "city"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "access-control-allow-origin": "",
+          "content-length": "1612",
+          "content-type": "application/json; charset=utf-8",
+          "keep-alive": "timeout=5, max=100",
+          "server": "llama.cpp"
+        },
+        "body_raw": "{\"choices\":[{\"finish_reason\":\"stop\",\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"I'm unable to provide real-time weather and local time information for Denver. However, I can suggest some reliable sources where you can find this information:\\n\\n1. **National Weather Service (NWS)**: You can visit the NWS website at [weather.gov](https://weather.gov) and enter \\\"Denver\\\" in the search bar to get the current weather conditions and forecast.\\n\\n2. **Local News Websites**: Websites like [denverpost.com](https://denverpost.com) or [9news.com](https://9news.com) often provide up-to-date weather information and local news.\\n\\n3. **Weather Apps**: You can download weather apps like Dark Sky, Weather Underground, or The Weather Channel to get real-time weather information for Denver.\\n\\n4. **Local Time**: You can check the local time for Denver by using a world clock website or app, such as WorldTimeBuddy or TimeAndDate.com.\\n\\nPlease note that these sources may have slightly different times due to daylight saving time (DST) adjustments.\"}}],\"created\":1784574709,\"model\":\"/Users/bbadmin/gguf/watt-tool-8B.Q4_K_M.gguf\",\"system_fingerprint\":\"b10050-b15ca938a\",\"object\":\"chat.completion\",\"usage\":{\"completion_tokens\":208,\"prompt_tokens\":20,\"total_tokens\":228,\"prompt_tokens_details\":{\"cached_tokens\":5}},\"id\":\"chatcmpl-oA9H7bzpfEjgj7qT0WLaVvCUXriU8Vto\",\"timings\":{\"cache_n\":5,\"prompt_n\":15,\"prompt_ms\":54.87,\"prompt_per_token_ms\":3.658,\"prompt_per_second\":273.3734281027884,\"predicted_n\":208,\"predicted_ms\":2339.975,\"predicted_per_token_ms\":11.249879807692308,\"predicted_per_second\":88.88983856665135}}"
+      },
+      "retried": false
+    }
+  ]
+}

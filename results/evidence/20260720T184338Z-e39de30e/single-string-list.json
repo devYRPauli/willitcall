@@ -1,0 +1,71 @@
+{
+  "schema_version": 1,
+  "run_id": "20260720T184338Z-e39de30e",
+  "scenario_id": "single-string-list",
+  "turns": [
+    {
+      "index": 0,
+      "request": {
+        "method": "POST",
+        "url": "http://127.0.0.1:8080/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "Create playlist road-test with tracks t-3, t-1, and t-8 in that order.",
+              "role": "user"
+            }
+          ],
+          "model": "Qwen/Qwen2.5-7B-Instruct-GGUF:Q4_K_M",
+          "seed": 42,
+          "stream": false,
+          "temperature": 0.0,
+          "tool_choice": "auto",
+          "tools": [
+            {
+              "function": {
+                "description": "Create a playlist from ordered track ids.",
+                "name": "create_playlist",
+                "parameters": {
+                  "properties": {
+                    "name": {
+                      "type": "string"
+                    },
+                    "track_ids": {
+                      "items": {
+                        "type": "string"
+                      },
+                      "type": "array"
+                    }
+                  },
+                  "required": [
+                    "name",
+                    "track_ids"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "access-control-allow-origin": "",
+          "content-length": "859",
+          "content-type": "application/json; charset=utf-8",
+          "keep-alive": "timeout=5, max=100",
+          "server": "llama.cpp"
+        },
+        "body_raw": "{\"choices\":[{\"finish_reason\":\"tool_calls\",\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"\",\"tool_calls\":[{\"type\":\"function\",\"function\":{\"name\":\"create_playlist\",\"arguments\":\"{\\\"name\\\": \\\"road-test\\\", \\\"track_ids\\\": [\\\"t-3\\\", \\\"t-1\\\", \\\"t-8\\\"]}\"},\"id\":\"tc0ilHq410rNhkU5Q2TQjcbadZ1DelJy\"}]}}],\"created\":1784573042,\"model\":\"Qwen/Qwen2.5-7B-Instruct-GGUF:Q4_K_M\",\"system_fingerprint\":\"b10050-b15ca938a\",\"object\":\"chat.completion\",\"usage\":{\"completion_tokens\":41,\"prompt_tokens\":210,\"total_tokens\":251,\"prompt_tokens_details\":{\"cached_tokens\":67}},\"id\":\"chatcmpl-SFpPeqxB97Mf8V4vmIU39AAr6qfB6H5Z\",\"timings\":{\"cache_n\":67,\"prompt_n\":143,\"prompt_ms\":182.442,\"prompt_per_token_ms\":1.275818181818182,\"prompt_per_second\":783.8107453327632,\"predicted_n\":41,\"predicted_ms\":446.724,\"predicted_per_token_ms\":10.895707317073171,\"predicted_per_second\":91.77926415415335}}"
+      },
+      "retried": false
+    }
+  ]
+}

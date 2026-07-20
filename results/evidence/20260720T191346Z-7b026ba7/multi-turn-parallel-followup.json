@@ -1,0 +1,96 @@
+{
+  "schema_version": 1,
+  "run_id": "20260720T191346Z-7b026ba7",
+  "scenario_id": "multi-turn-parallel-followup",
+  "turns": [
+    {
+      "index": 0,
+      "request": {
+        "method": "POST",
+        "url": "http://127.0.0.1:8080/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "Get temperatures for Boston and Tokyo, then compare the returned values.",
+              "role": "user"
+            }
+          ],
+          "model": "/Users/bbadmin/.ollama/models/blobs/sha256-3c168af1dea0a414299c7d9077e100ac763370e5a98b3c53801a958a47f0a5db",
+          "seed": 42,
+          "stream": false,
+          "temperature": 0.0,
+          "tool_choice": "auto",
+          "tools": [
+            {
+              "function": {
+                "description": "Get the temperature for a city.",
+                "name": "get_temperature",
+                "parameters": {
+                  "properties": {
+                    "city": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "city"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            },
+            {
+              "function": {
+                "description": "Compare two named city temperatures.",
+                "name": "compare_temperatures",
+                "parameters": {
+                  "properties": {
+                    "first_city": {
+                      "description": "The city the user mentioned first.",
+                      "type": "string"
+                    },
+                    "first_value": {
+                      "type": "number"
+                    },
+                    "second_city": {
+                      "description": "The city the user mentioned second.",
+                      "type": "string"
+                    },
+                    "second_value": {
+                      "type": "number"
+                    }
+                  },
+                  "required": [
+                    "first_city",
+                    "first_value",
+                    "second_city",
+                    "second_value"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "access-control-allow-origin": "",
+          "content-length": "1982",
+          "content-type": "application/json; charset=utf-8",
+          "keep-alive": "timeout=5, max=100",
+          "server": "llama.cpp"
+        },
+        "body_raw": "{\"choices\":[{\"finish_reason\":\"stop\",\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"To get the current temperatures for Boston and Tokyo, I would typically use a weather API like OpenWeatherMap or a similar service. However, since I can't make real-time queries, I'll provide you with a hypothetical example based on typical weather patterns for these cities as of my last update in early 2023.\\n\\nBoston, Massachusetts, USA: Boston experiences a humid continental climate with cold winters and warm summers. As of my last update, the average high in July (summer) might be around 85°F (29°C), while the average low in January (winter) could be around 22°F (-5°C).\\n\\nTokyo, Japan: Tokyo has a humid subtropical climate with hot, humid summers and mild winters. The average high in July could be around 85°F (29°C), similar to Boston, but the average low in January might be around 40°F (4°C), which is warmer than Boston's winter average.\\n\\nComparison: Both cities have similar summer temperatures, but Boston experiences colder winters compared to Tokyo. The difference in winter temperatures can be significant, with Boston being much colder than Tokyo. However, these are average values and actual temperatures can vary daily. For the most accurate and up-to-date temperatures, you would need to check a reliable weather service or API.\"}}],\"created\":1784574831,\"model\":\"/Users/bbadmin/.ollama/models/blobs/sha256-3c168af1dea0a414299c7d9077e100ac763370e5a98b3c53801a958a47f0a5db\",\"system_fingerprint\":\"b10050-b15ca938a\",\"object\":\"chat.completion\",\"usage\":{\"completion_tokens\":259,\"prompt_tokens\":16,\"total_tokens\":275,\"prompt_tokens_details\":{\"cached_tokens\":0}},\"id\":\"chatcmpl-B1Qc0vX1uJJ3LxUf33QEnWmChtiorC5P\",\"timings\":{\"cache_n\":0,\"prompt_n\":16,\"prompt_ms\":33.577,\"prompt_per_token_ms\":2.0985625,\"prompt_per_second\":476.516663192066,\"predicted_n\":259,\"predicted_ms\":1851.065,\"predicted_per_token_ms\":7.1469691119691126,\"predicted_per_second\":139.91945177505923}}"
+      },
+      "retried": false
+    }
+  ]
+}

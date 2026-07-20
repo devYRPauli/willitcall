@@ -1,0 +1,64 @@
+{
+  "schema_version": 1,
+  "run_id": "20260720T191346Z-7b026ba7",
+  "scenario_id": "tool-choice-required",
+  "turns": [
+    {
+      "index": 0,
+      "request": {
+        "method": "POST",
+        "url": "http://127.0.0.1:8080/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "Look up order ORD-204.",
+              "role": "user"
+            }
+          ],
+          "model": "/Users/bbadmin/.ollama/models/blobs/sha256-3c168af1dea0a414299c7d9077e100ac763370e5a98b3c53801a958a47f0a5db",
+          "seed": 42,
+          "stream": false,
+          "temperature": 0.0,
+          "tool_choice": "required",
+          "tools": [
+            {
+              "function": {
+                "description": "Look up an order by exact id.",
+                "name": "lookup_order",
+                "parameters": {
+                  "properties": {
+                    "order_id": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "order_id"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "access-control-allow-origin": "",
+          "content-length": "1373",
+          "content-type": "application/json; charset=utf-8",
+          "keep-alive": "timeout=5, max=100",
+          "server": "llama.cpp"
+        },
+        "body_raw": "{\"choices\":[{\"finish_reason\":\"stop\",\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"Order ORD-204 refers to a specific military order issued by the United States Department of Defense. However, without additional context, it's difficult to provide detailed information about this order as it could pertain to various operations, directives, or policies across different time periods. If you are looking for information on a particular event or operation associated with this order, please provide more details or specify the time frame or context you are interested in. If you are looking for general information about a specific order, you may need to consult official government sources or databases that track military orders and directives.\"}}],\"created\":1784574887,\"model\":\"/Users/bbadmin/.ollama/models/blobs/sha256-3c168af1dea0a414299c7d9077e100ac763370e5a98b3c53801a958a47f0a5db\",\"system_fingerprint\":\"b10050-b15ca938a\",\"object\":\"chat.completion\",\"usage\":{\"completion_tokens\":115,\"prompt_tokens\":10,\"total_tokens\":125,\"prompt_tokens_details\":{\"cached_tokens\":0}},\"id\":\"chatcmpl-1Cl2LEeUa0JfU3YhT8xzSGQp144kASao\",\"timings\":{\"cache_n\":0,\"prompt_n\":10,\"prompt_ms\":33.363,\"prompt_per_token_ms\":3.3363,\"prompt_per_second\":299.7332374186974,\"predicted_n\":115,\"predicted_ms\":816.864,\"predicted_per_token_ms\":7.103165217391305,\"predicted_per_second\":140.78230892780192}}"
+      },
+      "retried": false
+    }
+  ]
+}

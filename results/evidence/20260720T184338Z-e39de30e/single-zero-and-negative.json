@@ -1,0 +1,68 @@
+{
+  "schema_version": 1,
+  "run_id": "20260720T184338Z-e39de30e",
+  "scenario_id": "single-zero-and-negative",
+  "turns": [
+    {
+      "index": 0,
+      "request": {
+        "method": "POST",
+        "url": "http://127.0.0.1:8080/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "Set the axis range from -12.5 to 0.",
+              "role": "user"
+            }
+          ],
+          "model": "Qwen/Qwen2.5-7B-Instruct-GGUF:Q4_K_M",
+          "seed": 42,
+          "stream": false,
+          "temperature": 0.0,
+          "tool_choice": "auto",
+          "tools": [
+            {
+              "function": {
+                "description": "Set an axis range.",
+                "name": "set_axis_range",
+                "parameters": {
+                  "properties": {
+                    "maximum": {
+                      "type": "number"
+                    },
+                    "minimum": {
+                      "type": "number"
+                    }
+                  },
+                  "required": [
+                    "minimum",
+                    "maximum"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "access-control-allow-origin": "",
+          "content-length": "825",
+          "content-type": "application/json; charset=utf-8",
+          "keep-alive": "timeout=5, max=100",
+          "server": "llama.cpp"
+        },
+        "body_raw": "{\"choices\":[{\"finish_reason\":\"tool_calls\",\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"\",\"tool_calls\":[{\"type\":\"function\",\"function\":{\"name\":\"set_axis_range\",\"arguments\":\"{\\\"maximum\\\": 0, \\\"minimum\\\": -12.5}\"},\"id\":\"RtwB76HlptQa5hhdsgCXocHbziYviCjG\"}]}}],\"created\":1784573043,\"model\":\"Qwen/Qwen2.5-7B-Instruct-GGUF:Q4_K_M\",\"system_fingerprint\":\"b10050-b15ca938a\",\"object\":\"chat.completion\",\"usage\":{\"completion_tokens\":30,\"prompt_tokens\":189,\"total_tokens\":219,\"prompt_tokens_details\":{\"cached_tokens\":67}},\"id\":\"chatcmpl-Em7oE0LJrxscQ2EZ19qM9qqrd3jLkhdE\",\"timings\":{\"cache_n\":67,\"prompt_n\":122,\"prompt_ms\":145.24,\"prompt_per_token_ms\":1.1904918032786886,\"prompt_per_second\":839.9889837510327,\"predicted_n\":30,\"predicted_ms\":334.042,\"predicted_per_token_ms\":11.134733333333333,\"predicted_per_second\":89.80906592584167}}"
+      },
+      "retried": false
+    }
+  ]
+}

@@ -1,0 +1,62 @@
+{
+  "schema_version": 1,
+  "run_id": "20260720T192441Z-7f3fc9b9",
+  "scenario_id": "parallel-three-cities",
+  "turns": [
+    {
+      "index": 0,
+      "request": {
+        "method": "POST",
+        "url": "http://localhost:11434/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "Get weather for Austin, Dublin, and Seoul with three calls.",
+              "role": "user"
+            }
+          ],
+          "model": "phi4-mini:latest",
+          "seed": 42,
+          "stream": false,
+          "temperature": 0.0,
+          "tool_choice": "required",
+          "tools": [
+            {
+              "function": {
+                "description": "Get weather for a city.",
+                "name": "get_weather",
+                "parameters": {
+                  "properties": {
+                    "city": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "city"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-length": "562",
+          "content-type": "application/json",
+          "date": "Mon, 20 Jul 2026 19:25:28 GMT"
+        },
+        "body_raw": "{\"id\":\"chatcmpl-387\",\"object\":\"chat.completion\",\"created\":1784575528,\"model\":\"phi4-mini:latest\",\"system_fingerprint\":\"fp_ollama\",\"choices\":[{\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"Sure! I will make the first call to get the weather for Austin.\\n\\n[{\\\"name\\\": \\\"get_weather\\\", \\\"arguments\\\": {\\\"city\\\": \\\"Austin\\\"}}, {\\\"name\\\": \\\"get_weather\\\", \\\"arguments\\\": {\\\"city\\\": \\\"Dublin\\\"}}, {\\\"name\\\": \\\"get_weather\\\", \\\"arguments\\\": {\\\"city\\\": \\\"Seoul\\\"}}]\"},\"finish_reason\":\"stop\"}],\"usage\":{\"prompt_tokens\":71,\"completion_tokens\":70,\"total_tokens\":141}}\n"
+      },
+      "retried": false
+    }
+  ]
+}

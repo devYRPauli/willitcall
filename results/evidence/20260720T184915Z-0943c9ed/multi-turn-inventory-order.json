@@ -1,0 +1,184 @@
+{
+  "schema_version": 1,
+  "run_id": "20260720T184915Z-0943c9ed",
+  "scenario_id": "multi-turn-inventory-order",
+  "turns": [
+    {
+      "index": 0,
+      "request": {
+        "method": "POST",
+        "url": "http://127.0.0.1:8080/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "Check inventory for SKU QZ-4 and order exactly 3 if available.",
+              "role": "user"
+            }
+          ],
+          "model": "Qwen/Qwen2.5-7B-Instruct-GGUF:Q3_K_M",
+          "seed": 42,
+          "stream": false,
+          "temperature": 0.0,
+          "tool_choice": "auto",
+          "tools": [
+            {
+              "function": {
+                "description": "Check inventory for a SKU.",
+                "name": "check_inventory",
+                "parameters": {
+                  "properties": {
+                    "sku": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "sku"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            },
+            {
+              "function": {
+                "description": "Create an order for a SKU and quantity.",
+                "name": "create_order",
+                "parameters": {
+                  "properties": {
+                    "quantity": {
+                      "type": "integer"
+                    },
+                    "sku": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "sku",
+                    "quantity"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "access-control-allow-origin": "",
+          "content-length": "810",
+          "content-type": "application/json; charset=utf-8",
+          "keep-alive": "timeout=5, max=100",
+          "server": "llama.cpp"
+        },
+        "body_raw": "{\"choices\":[{\"finish_reason\":\"tool_calls\",\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"\",\"tool_calls\":[{\"type\":\"function\",\"function\":{\"name\":\"check_inventory\",\"arguments\":\"{\\\"sku\\\": \\\"QZ-4\\\"}\"},\"id\":\"sYhf79RgxXm1rqsH7bPoS8IDNFLrl9ys\"}]}}],\"created\":1784573359,\"model\":\"Qwen/Qwen2.5-7B-Instruct-GGUF:Q3_K_M\",\"system_fingerprint\":\"b10050-b15ca938a\",\"object\":\"chat.completion\",\"usage\":{\"completion_tokens\":23,\"prompt_tokens\":249,\"total_tokens\":272,\"prompt_tokens_details\":{\"cached_tokens\":67}},\"id\":\"chatcmpl-ApLxRX764Mq5i4Fyf72rD3TxYVQnyklU\",\"timings\":{\"cache_n\":67,\"prompt_n\":182,\"prompt_ms\":221.192,\"prompt_per_token_ms\":1.2153406593406595,\"prompt_per_second\":822.8145683388187,\"predicted_n\":23,\"predicted_ms\":320.246,\"predicted_per_token_ms\":13.923739130434782,\"predicted_per_second\":71.81978853756175}}"
+      },
+      "retried": false
+    },
+    {
+      "index": 1,
+      "request": {
+        "method": "POST",
+        "url": "http://127.0.0.1:8080/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "Check inventory for SKU QZ-4 and order exactly 3 if available.",
+              "role": "user"
+            },
+            {
+              "content": "",
+              "role": "assistant",
+              "tool_calls": [
+                {
+                  "function": {
+                    "arguments": "{\"sku\": \"QZ-4\"}",
+                    "name": "check_inventory"
+                  },
+                  "id": "sYhf79RgxXm1rqsH7bPoS8IDNFLrl9ys",
+                  "type": "function"
+                }
+              ]
+            },
+            {
+              "content": "{\"sku\":\"QZ-4\",\"available\":12}",
+              "role": "tool",
+              "tool_call_id": "sYhf79RgxXm1rqsH7bPoS8IDNFLrl9ys"
+            }
+          ],
+          "model": "Qwen/Qwen2.5-7B-Instruct-GGUF:Q3_K_M",
+          "seed": 42,
+          "stream": false,
+          "temperature": 0.0,
+          "tool_choice": "auto",
+          "tools": [
+            {
+              "function": {
+                "description": "Check inventory for a SKU.",
+                "name": "check_inventory",
+                "parameters": {
+                  "properties": {
+                    "sku": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "sku"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            },
+            {
+              "function": {
+                "description": "Create an order for a SKU and quantity.",
+                "name": "create_order",
+                "parameters": {
+                  "properties": {
+                    "quantity": {
+                      "type": "integer"
+                    },
+                    "sku": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "sku",
+                    "quantity"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "access-control-allow-origin": "",
+          "content-length": "1039",
+          "content-type": "application/json; charset=utf-8",
+          "keep-alive": "timeout=5, max=100",
+          "server": "llama.cpp"
+        },
+        "body_raw": "{\"choices\":[{\"finish_reason\":\"tool_calls\",\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"The inventory check for SKU QZ-4 shows that there are 12 units available. Since this is more than the 3 units you wish to order, I will proceed with creating the order.\\n\\nNow, let's create the order for 3 units of SKU QZ-4.\\n\",\"tool_calls\":[{\"type\":\"function\",\"function\":{\"name\":\"create_order\",\"arguments\":\"{\\\"quantity\\\": 3, \\\"sku\\\": \\\"QZ-4\\\"}\"},\"id\":\"X6MzWM4g0wq4unQAAmAEWH0kWtw7GzGT\"}]}}],\"created\":1784573361,\"model\":\"Qwen/Qwen2.5-7B-Instruct-GGUF:Q3_K_M\",\"system_fingerprint\":\"b10050-b15ca938a\",\"object\":\"chat.completion\",\"usage\":{\"completion_tokens\":88,\"prompt_tokens\":302,\"total_tokens\":390,\"prompt_tokens_details\":{\"cached_tokens\":271}},\"id\":\"chatcmpl-Y3kwpzLtVdtFznQ0mv6zf5pLaW08I2GH\",\"timings\":{\"cache_n\":271,\"prompt_n\":31,\"prompt_ms\":58.483,\"prompt_per_token_ms\":1.886548387096774,\"prompt_per_second\":530.0685669339808,\"predicted_n\":88,\"predicted_ms\":1220.516,\"predicted_per_token_ms\":13.8695,\"predicted_per_second\":72.10065251090522}}"
+      },
+      "retried": false
+    }
+  ]
+}

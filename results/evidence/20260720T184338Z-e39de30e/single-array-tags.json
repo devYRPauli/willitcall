@@ -1,0 +1,71 @@
+{
+  "schema_version": 1,
+  "run_id": "20260720T184338Z-e39de30e",
+  "scenario_id": "single-array-tags",
+  "turns": [
+    {
+      "index": 0,
+      "request": {
+        "method": "POST",
+        "url": "http://127.0.0.1:8080/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "Tag document doc-17 with exactly alpha, beta, and gamma in that order.",
+              "role": "user"
+            }
+          ],
+          "model": "Qwen/Qwen2.5-7B-Instruct-GGUF:Q4_K_M",
+          "seed": 42,
+          "stream": false,
+          "temperature": 0.0,
+          "tool_choice": "auto",
+          "tools": [
+            {
+              "function": {
+                "description": "Apply tags to a document.",
+                "name": "tag_document",
+                "parameters": {
+                  "properties": {
+                    "document_id": {
+                      "type": "string"
+                    },
+                    "tags": {
+                      "items": {
+                        "type": "string"
+                      },
+                      "type": "array"
+                    }
+                  },
+                  "required": [
+                    "document_id",
+                    "tags"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "access-control-allow-origin": "",
+          "content-length": "860",
+          "content-type": "application/json; charset=utf-8",
+          "keep-alive": "timeout=5, max=100",
+          "server": "llama.cpp"
+        },
+        "body_raw": "{\"choices\":[{\"finish_reason\":\"tool_calls\",\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"\",\"tool_calls\":[{\"type\":\"function\",\"function\":{\"name\":\"tag_document\",\"arguments\":\"{\\\"document_id\\\": \\\"doc-17\\\", \\\"tags\\\": [\\\"alpha\\\", \\\"beta\\\", \\\"gamma\\\"]}\"},\"id\":\"8nPvQJ75xbFlUpQIiA9LdmCbKGvmC41K\"}]}}],\"created\":1784573037,\"model\":\"Qwen/Qwen2.5-7B-Instruct-GGUF:Q4_K_M\",\"system_fingerprint\":\"b10050-b15ca938a\",\"object\":\"chat.completion\",\"usage\":{\"completion_tokens\":37,\"prompt_tokens\":204,\"total_tokens\":241,\"prompt_tokens_details\":{\"cached_tokens\":67}},\"id\":\"chatcmpl-LtzQATsT24bGt5BXkRbUtsapwxoXURp3\",\"timings\":{\"cache_n\":67,\"prompt_n\":137,\"prompt_ms\":182.348,\"prompt_per_token_ms\":1.331007299270073,\"prompt_per_second\":751.3106806765086,\"predicted_n\":37,\"predicted_ms\":403.029,\"predicted_per_token_ms\":10.892675675675676,\"predicted_per_second\":91.80480809073293}}"
+      },
+      "retried": false
+    }
+  ]
+}
