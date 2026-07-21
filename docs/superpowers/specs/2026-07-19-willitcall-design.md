@@ -138,10 +138,17 @@ the combined matrix.
    annotation (e.g. cause: server-defect + case-study link) when isolation
    proves the server at fault. Seeding protocol: any empty response is
    cross-checked on a second server before the result is committed.
-   Rationale: M3 proved Ollama 0.32.1 discards well-formed tool calls its
-   own engine emits (same weights pass 6/6 via llama.cpp, empty 10/10 via
-   Ollama) - red tells users the truth, the annotation tells model authors
-   we are not blaming their weights.
+   Rationale: an empty response is unattributable without the raw tokens.
+   M3 read one as a server defect ("Ollama discards well-formed tool calls",
+   same weights 6/6 via llama.cpp vs empty 10/10 via Ollama); recovering the
+   discarded bytes on 2026-07-21 disproved that - the model had emitted the
+   tool's description in the `name` field and Ollama's parser correctly
+   rejected it. Corrected rationale: red tells users the truth about the
+   combo, and a cause annotation is applied ONLY when isolation actually
+   proves the server at fault - which requires seeing the generated tokens,
+   not inferring from the symptom. Note that the llama.cpp arm benefits from
+   grammar-constrained decoding, so a llamacpp-vs-Ollama delta is not by
+   itself evidence of an Ollama defect.
 3. Contention preflight (to implement in M4): `run` refuses (or requires
    --force) when another known inference server is responding on common
    ports. Rationale: an overlapping server produced plausible-but-wrong

@@ -14,11 +14,26 @@ emitting no parsed call is the correct answer. That is the tell: the model
 scores full marks precisely where not calling a tool is right, and zero
 elsewhere.
 
-This is not the M3 finding. In M3, Ollama received a valid parsed call from
-its own engine and discarded it. Here nothing is discarded, because nothing
-is ever parsed: the model's output format and the servers' parsers do not
-agree. Both servers fail the same way, so this is not attributable to either
-one as a defect, and no `cause` annotation is applied.
+This is not the M3 finding. M3 was read as Ollama discarding a valid call from
+its own engine; that reading was disproved on 2026-07-21 (the model had put
+the tool's description in the `name` field, so the parser correctly rejected
+it - see the qwen2.5 case study). Here the situation is different and better
+evidenced: nothing is discarded, because the output is sitting in `content`
+where it can be inspected directly. The model's output format and the servers'
+parsers do not agree. Both servers fail the same way, so this is not
+attributable to either one as a defect, and no `cause` annotation is applied.
+
+Note the classifier below is what makes this claim safe: it counts
+`unparsed_tool_call` only when the function name is one the scenario actually
+offered and the arguments validate against that tool's schema. That check is
+exactly what the M3 claim lacked, and it is why the wrong-`name` cases here
+are excluded rather than counted as correct emissions.
+
+One open thread: llama.cpp constrains tool-call decoding with a GBNF grammar
+built from the tool definitions, applied lazily on the tool-call start token.
+That granite still fails 43/50 there suggests the grammar never triggers for
+this model's output format, which would be consistent with both arms failing
+identically. Not verified; noted for anyone picking this up.
 
 Replication: 5 runs per arm, 2 arms, 50 scenarios each. Every run in both
 arms produced an identical outcome, down to the same set of passing scenario

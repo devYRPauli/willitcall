@@ -1,8 +1,52 @@
-# Ollama 0.32.1 silently discards a valid Qwen2.5 tool call
+# Ollama 0.32.1 silently discards unparseable tool-call output
 
-Status: confirmed, reproducible, not yet filed upstream.
-Date: 2026-07-19.
+(Originally titled "silently discards a VALID Qwen2.5 tool call". That premise
+was disproved on 2026-07-21. See "Resolution" below.)
+
+Status: RESOLVED as to cause. Symptom confirmed and reproducible; filed
+upstream as `ollama/ollama#17274`, which has been corrected and retitled. The
+original "valid tool call" claim is RETRACTED.
+Date: 2026-07-19, corrected 2026-07-21.
 Scenario: `single-array-tags`.
+
+## Resolution (2026-07-21): the model emitted the wrong `name`
+
+Building v0.32.1 with upstream PR #17284 applied (it returns the buffered
+output as content when no tool call parses) recovered the bytes Ollama had
+been discarding, at `completion_tokens` 40, matching the unpatched run
+exactly:
+
+    <tool_call>
+    {"name": "Apply tags to a document", "arguments": {"document_id": "doc-17", "tags": ["alpha", "beta", "gamma"]}}
+    </tool_call>
+
+Well-formed, correct arguments, correct order. But `name` is the tool's
+DESCRIPTION (`"Apply tags to a document"`), not its name (`tag_document`). No
+registered tool matches, so Ollama's parser rejects it.
+
+**Ollama's parser was correct the whole time.** The model made the error.
+
+### Why llama.cpp scored 12/12 on the same blob
+
+Not parser leniency. llama.cpp constrains generation: it builds a GBNF grammar
+from the tool definitions and applies it lazily once the tool-call start token
+appears (`build_grammar` over `foreach_function(inputs.tools, ...)` in
+`common/chat.cpp`; `grammar_lazy` set when tools are present and `tool_choice`
+is auto). The function name is constrained to the declared tool set, so this
+failure is impossible there. Ollama generates unconstrained and parses
+afterwards.
+
+This is the real finding, and it is a sharper version of the project's premise
+than the original one: the same weights at the same quant differ across
+servers because **one runtime constrains decoding and the other does not**.
+The cell is a property of the stack. That claim now rests on a mechanism, not
+on an inference from a symptom.
+
+### What remains a genuine Ollama defect
+
+The silent discard. 40 tokens of near-correct, trivially diagnosable output
+are dropped and the caller gets `content: ""` with no error. That is what
+#17284 fixes, and it is why this took three rounds to diagnose.
 
 ## Summary
 
@@ -11,16 +55,70 @@ Running willitcall's `single-array-tags` scenario against
 tool call, no text content. The M2 session recorded this as a genuine model
 failure. That verdict was wrong.
 
-The model emits a perfectly well-formed `<tool_call>` block that matches the
-format Ollama's own chat template asked for. Ollama's tool-call parser
-discards it and returns `content: ""` with no `tool_calls`. The generated
-tokens are still billed in `eval_count`, so the response contradicts itself:
-it reports 40 tokens generated and returns zero bytes of them.
+Ollama returns `content: ""` with no `tool_calls`, while still billing the
+generated tokens in `eval_count`, so the response contradicts itself: it
+reports 40 tokens generated and returns zero bytes of them. The same GGUF
+file served by llama.cpp returns the correct tool call every time.
 
-The same GGUF file served by llama.cpp returns the correct tool call every
-time.
+That much is solid. What is NOT established is what the model emits on the
+failing path -- see the correction immediately below.
 
-This is a server defect, not a model defect and not a quantization defect.
+## How the wrong conclusion was reached (kept as a record)
+
+The section below documents the intermediate state of the investigation, when
+the model-side claim had been withdrawn but the cause was not yet known. It is
+kept because the failure mode is instructive, not because it is current. The
+answer is in "Resolution" above.
+
+## Correction (2026-07-21): what this case study over-claimed
+
+This document originally asserted that "the model emits a perfectly
+well-formed `<tool_call>` block" on the failing request, and concluded flatly
+that the defect was a server-side parser discarding *valid* output.
+
+That inference does not hold, and it was challenged on the upstream issue by
+`GuiBarradas`, who noted that Ollama's parser silently drops everything after
+a `<tool_call>` tag whenever it never completes a parse (unknown tool name,
+malformed or truncated JSON) -- which produces this exact symptom from
+*invalid* output too. Their point: the well-formed block we quoted came from
+`/api/generate` with `raw: true` and a HAND-RENDERED prompt, which says
+nothing about what the model generates through `/v1/chat/completions`, where
+Ollama renders the prompt itself.
+
+An attempt to capture the real generation failed. Ollama 0.32.1 exposes no
+logging path for it: `OLLAMA_DEBUG=1`, `OLLAMA_DEBUG_LOG_REQUESTS=1` and
+llama-server at `--log-verbosity 4` all log metadata only (`prompt_len=790`
+chars, `n_tokens=177`, 40 tokens generated). llama-server's
+`--log-prompts-dir` would capture it but is CLI-only and Ollama does not
+expose it.
+
+Reconstruction got close but not exact. The debug log confirms
+`selected=go_template`, so Ollama's own stored template
+(`ollama show qwen2.5:7b-instruct --template`) was rendered and replayed
+through `raw: true`. Both variants produced the same valid, complete,
+correctly-named block. But the token counts do not line up:
+
+| | prompt tokens | completion tokens |
+|---|---|---|
+| real `/v1` request | 177 | 40 |
+| reconstruction A | 183 | 37 |
+| reconstruction B | 167 | 37 |
+
+The real path generated 40 tokens; the reconstructions generate 37. Whatever
+the real path produced, it was not the 37 tokens shown here, so a malformed
+or truncated emission cannot be ruled out. Three tokens is about the size of
+a stray preamble or an unclosed block.
+
+**Standing conclusion:** the empty-response-with-nonzero-`eval_count` symptom
+is real, deterministic, and server-side. Whether the discarded output was
+valid or unparseable is OPEN. The willitcall-facing consequence is unchanged
+either way -- the cell is a property of the stack, and Ollama loses output
+that llama.cpp returns -- but "Ollama discards a VALID tool call" is not a
+claim this evidence supports.
+
+Methodological lesson worth keeping: a hand-rendered `raw: true` prompt is
+not a substitute for the server's own rendering. It answers a different
+question than the one being asked.
 
 ## Environment
 
@@ -59,7 +157,12 @@ The exact request bodies are in `evidence/`. The runnable A/B is
 
 The failure is deterministic, not flaky.
 
-### It is not the model
+### It is not the model (WEAKENED - see Correction above)
+
+The evidence below uses a HAND-RENDERED prompt, not Ollama's own rendering,
+so it does not establish what the model emits on the failing `/v1` path. Read
+it as "the weights can produce a correct call", not as "the weights did
+produce a correct call in the failing request".
 
 Ollama's own engine, same weights, generating from a hand-rendered prompt via
 `/api/generate` with `raw: true`, produced exactly this, `eval_count` 37:
