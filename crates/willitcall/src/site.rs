@@ -97,6 +97,9 @@ fn render_index(results: &[ResultFile], repo_base: &str) -> String {
         .collect::<BTreeSet<_>>()
         .len();
     let case_studies_url = format!("{repo_base}/tree/main/docs/case-studies");
+    let peg_native_case_study_url = format!(
+        "{repo_base}/blob/main/docs/case-studies/2026-07-21-llamacpp-500s-on-llama-3.1-tool-calls.md"
+    );
     let uniform_environment = results
         .first()
         .and_then(|result| result.result.metadata.environment.as_ref())
@@ -135,7 +138,12 @@ fn render_index(results: &[ResultFile], repo_base: &str) -> String {
       <p>A cell measures the whole stack: model x quant x server x server version. It is not a property of the model alone.</p>
       <p>Red means the combination failed as tested, not that the weights are bad. The same weights can pass on one server and fail on another; where that is proven, the cell carries a cause annotation.</p>
       <p>Every red cell links to the full request/response transcript that produced it when the result schema supplies a transcript path. Legacy schema v1 results do not record transcript paths. See the <a href="{}">case studies under docs/case-studies/</a> for controlled comparisons.</p>
-      <p>Sample size and method: {} distinct scenarios are represented in this result set. Each published cell is one run. Findings in the case studies are replicated across at least five runs per arm before a verdict is drawn, so a cell tells you what one run measured and a case study tells you what held up under repetition.</p>
+      <p>The servers do not decode the same way. llama.cpp compiles the supplied tool definitions into a GBNF grammar and constrains decoding with it, so a call naming a function that was never supplied cannot be sampled there. Ollama and MLX LM generate unconstrained text and parse the tool call out of it afterwards. This systematically favours llama.cpp, so a llama.cpp-versus-Ollama difference is a property of the combination, not evidence of a server defect or a difference between models; the comparison that isolates the model is same-server.</p>
+      <p>Sample size and method: {} distinct scenarios are represented in this result set. Each published cell is one run. Findings in the case studies are replicated across at least five runs per arm before a verdict is drawn, so a cell tells you what one run measured and a case study tells you what held up under repetition. The current case studies cover 90 runs across 18 quantization arms, and 40 runs across 8 arms for the peg-native anomaly.</p>
+      <h2>Excluded rows</h2>
+      <ul>
+        <li>Meta-Llama-3.1-8B-Instruct on llama.cpp (Q8_0, Q4_K_M, Q3_K_M) is excluded from the quantization conclusion because llama.cpp returns HTTP 500 on 7-9 of 50 scenarios per run for this model ("does not match the expected peg-native format"). These are server errors, not model failures, and are not comparable across arms. See the <a href="{}">peg-native case study</a>.</li>
+      </ul>
 {}
     </section>
 
@@ -150,6 +158,7 @@ fn render_index(results: &[ResultFile], repo_base: &str) -> String {
             <option value="all">All</option>
             <option value="ollama">Ollama</option>
             <option value="llamacpp">llama.cpp</option>
+            <option value="mlx_lm">MLX LM</option>
           </select>
         </label>
       </div>
@@ -167,6 +176,7 @@ fn render_index(results: &[ResultFile], repo_base: &str) -> String {
 "#,
         escape_html(&case_studies_url),
         scenario_count,
+        escape_html(&peg_native_case_study_url),
         environment_statement,
         results.len()
     )
@@ -501,6 +511,8 @@ fn model_label(file_name: &str, server: &str) -> String {
 fn display_server(server: &str) -> &str {
     if server == "llamacpp" {
         "llama.cpp"
+    } else if server == "mlx_lm" {
+        "MLX LM"
     } else {
         server
     }

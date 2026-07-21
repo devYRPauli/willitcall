@@ -142,6 +142,15 @@ fn site_generates_v1_and_v2_rows_ratios_links_and_badges() {
             ),
         ],
     );
+    write_result(
+        &results.join("mlx_lm-fixture-model.json"),
+        2,
+        "fixture:model",
+        None,
+        "mlx_lm",
+        None,
+        vec![scenario("single-ok", "single_call", "pass", None, None)],
+    );
 
     let mut caused = scenario(
         "parallel-bad",
@@ -215,9 +224,12 @@ fn site_generates_v1_and_v2_rows_ratios_links_and_badges() {
     let submit = fs::read_to_string(output.join("submit.html")).expect("generated submit page");
     assert!(output.join("style.css").is_file());
     assert!(output.join("site.js").is_file());
-    assert_eq!(index.matches("class=\"result-row\"").count(), 2);
+    assert_eq!(index.matches("class=\"result-row\"").count(), 3);
     assert!(index.contains("data-server=\"ollama\""));
     assert!(index.contains("data-server=\"llamacpp\""));
+    assert!(index.contains("<option value=\"mlx_lm\">MLX LM</option>"));
+    assert!(index.contains("data-server=\"mlx_lm\""));
+    assert!(index.contains("server: MLX LM"));
     assert!(index.contains("blob-model"));
     assert!(index.contains("quant: Q4_K_M"));
     assert!(index.contains("server: llama.cpp"));
@@ -235,8 +247,15 @@ fn site_generates_v1_and_v2_rows_ratios_links_and_badges() {
     assert!(index.contains("empty response"));
     assert!(index.contains("<span class=\"badge neutral unparsed\">unparsed tool call</span>"));
     assert!(index.contains("A cell measures the whole stack"));
+    assert!(index.contains("GBNF grammar"));
     assert!(index.contains("Each published cell is one run."));
     assert!(index.contains("replicated across at least five runs per arm"));
+    assert!(index.contains("90 runs across 18 quantization arms"));
+    assert!(index.contains("40 runs across 8 arms for the peg-native anomaly"));
+    assert!(index.contains("Meta-Llama-3.1-8B-Instruct"));
+    assert!(index.contains(
+        "https://github.com/devYRPauli/willitcall/blob/main/docs/case-studies/2026-07-21-llamacpp-500s-on-llama-3.1-tool-calls.md"
+    ));
     assert!(index.contains("Host hardware"));
     assert!(index.contains("Apple M4 Max, 64GB"));
     assert!(index.contains("Host OS"));
