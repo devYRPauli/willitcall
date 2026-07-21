@@ -68,6 +68,10 @@ struct RunArgs {
     out: PathBuf,
     #[arg(long, default_value_t = 60, value_parser = clap::value_parser!(u64).range(1..))]
     timeout: u64,
+    #[arg(long, default_value_t = 42)]
+    seed: u64,
+    #[arg(long, default_value_t = 0.0, allow_negative_numbers = true)]
+    temperature: f64,
     #[arg(long)]
     json: bool,
     #[arg(long)]
@@ -404,6 +408,11 @@ async fn execute_with_known_servers(
 ) -> Result<u8, ExecuteError> {
     match cli.command {
         Command::Run(args) => {
+            if args.temperature < 0.0 {
+                return Err(ExecuteError::Usage(
+                    "temperature must be non-negative".to_owned(),
+                ));
+            }
             let scenarios = match args.scenarios {
                 Some(path) => load_scenarios_from_dir(&path),
                 None => load_embedded_scenarios(),
@@ -430,10 +439,16 @@ async fn execute_with_known_servers(
                     "another inference server is responding on {endpoints}; {stop}, or re-run with --force"
                 )));
             }
-            let config = RunConfig::new(endpoint, args.model, Duration::from_secs(args.timeout))
-                .with_server(args.server.config())
-                .with_host_hardware_class(args.host_hardware_class)
-                .with_declared_quant(args.quant);
+            let config = RunConfig::new(
+                endpoint,
+                args.model,
+                Duration::from_secs(args.timeout),
+                args.seed,
+                args.temperature,
+            )
+            .with_server(args.server.config())
+            .with_host_hardware_class(args.host_hardware_class)
+            .with_declared_quant(args.quant);
             preflight(&config).await.map_err(ExecuteError::Preflight)?;
             let mut result = run_scenarios(&config, &scenarios, &args.out)
                 .await
