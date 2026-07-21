@@ -1,0 +1,70 @@
+{
+  "schema_version": 1,
+  "run_id": "20260721T160226Z-3d6b0b23",
+  "scenario_id": "streaming-boolean-argument",
+  "turns": [
+    {
+      "index": 0,
+      "request": {
+        "method": "POST",
+        "url": "http://127.0.0.1:8081/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "Enable maintenance mode for the billing service.",
+              "role": "user"
+            }
+          ],
+          "model": "mlx-community/Qwen2.5-1.5B-Instruct-4bit",
+          "seed": 42,
+          "stream": true,
+          "temperature": 0.0,
+          "tool_choice": "auto",
+          "tools": [
+            {
+              "function": {
+                "description": "Enable or disable maintenance mode.",
+                "name": "set_maintenance",
+                "parameters": {
+                  "properties": {
+                    "enabled": {
+                      "type": "boolean"
+                    },
+                    "service": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "service",
+                    "enabled"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "access-control-allow-headers": "*",
+          "access-control-allow-methods": "*",
+          "access-control-allow-origin": "*",
+          "cache-control": "no-cache",
+          "content-type": "text/event-stream",
+          "date": "Tue, 21 Jul 2026 16:02:34 GMT",
+          "server": "BaseHTTP/0.6 Python/3.14.6"
+        },
+        "body_raw": ": keepalive 0/123\n\n: keepalive 122/123\n\n: keepalive 123/123\n\ndata: {\"id\": \"chatcmpl-2c027daa-fb0f-4a0b-b084-2e59558d3dcb\", \"system_fingerprint\": \"0.31.3-0.32.0-macOS-26.5.2-arm64-arm-64bit-Mach-O-applegpu_g16s\", \"object\": \"chat.completion.chunk\", \"model\": \"mlx-community/Qwen2.5-1.5B-Instruct-4bit\", \"created\": 1784649754, \"choices\": [{\"index\": 0, \"finish_reason\": null, \"delta\": {\"role\": \"assistant\", \"tool_calls\": [{\"function\": {\"name\": \"set_maintenance\", \"arguments\": \"{\\\"enabled\\\": true, \\\"service\\\": \\\"billing\\\"}\"}, \"type\": \"function\", \"id\": \"4f9b46d5-57ba-4426-b2c0-01c264ffe387\", \"index\": 0}]}}]}\n\ndata: {\"id\": \"chatcmpl-2c027daa-fb0f-4a0b-b084-2e59558d3dcb\", \"system_fingerprint\": \"0.31.3-0.32.0-macOS-26.5.2-arm64-arm-64bit-Mach-O-applegpu_g16s\", \"object\": \"chat.completion.chunk\", \"model\": \"mlx-community/Qwen2.5-1.5B-Instruct-4bit\", \"created\": 1784649754, \"choices\": [{\"index\": 0, \"finish_reason\": \"tool_calls\", \"delta\": {\"role\": \"assistant\"}}]}\n\ndata: [DONE]\n\n"
+      },
+      "retried": false
+    }
+  ]
+}

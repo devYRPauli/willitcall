@@ -1,0 +1,66 @@
+{
+  "schema_version": 1,
+  "run_id": "20260721T160343Z-771ba56a",
+  "scenario_id": "negative-auto-knowledge",
+  "turns": [
+    {
+      "index": 0,
+      "request": {
+        "method": "POST",
+        "url": "http://127.0.0.1:8081/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "Name the largest ocean on Earth. Do not use a tool.",
+              "role": "user"
+            }
+          ],
+          "model": "mlx-community/Phi-4-mini-instruct-4bit",
+          "seed": 42,
+          "stream": false,
+          "temperature": 0.0,
+          "tool_choice": "auto",
+          "tools": [
+            {
+              "function": {
+                "description": "Look up an order by exact id.",
+                "name": "lookup_order",
+                "parameters": {
+                  "properties": {
+                    "order_id": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "order_id"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "access-control-allow-headers": "*",
+          "access-control-allow-methods": "*",
+          "access-control-allow-origin": "*",
+          "content-length": "489",
+          "content-type": "application/json",
+          "date": "Tue, 21 Jul 2026 16:03:58 GMT",
+          "server": "BaseHTTP/0.6 Python/3.14.6"
+        },
+        "body_raw": "{\"id\": \"chatcmpl-812b24d5-a2be-4fb3-8121-6b88a8eed72f\", \"system_fingerprint\": \"0.31.3-0.32.0-macOS-26.5.2-arm64-arm-64bit-Mach-O-applegpu_g16s\", \"object\": \"chat.completion\", \"model\": \"mlx-community/Phi-4-mini-instruct-4bit\", \"created\": 1784649838, \"choices\": [{\"index\": 0, \"finish_reason\": \"stop\", \"message\": {\"role\": \"assistant\", \"content\": \"The Pacific Ocean.\"}}], \"usage\": {\"prompt_tokens\": 16, \"completion_tokens\": 5, \"total_tokens\": 21, \"prompt_tokens_details\": {\"cached_tokens\": 1}}}"
+      },
+      "retried": false
+    }
+  ]
+}

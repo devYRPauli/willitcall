@@ -1,0 +1,349 @@
+{
+  "schema_version": 1,
+  "run_id": "20260721T160019Z-4145246d",
+  "scenario_id": "multi-turn-two-hop-chain",
+  "turns": [
+    {
+      "index": 0,
+      "request": {
+        "method": "POST",
+        "url": "http://127.0.0.1:8081/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "Archive the account owned by sam@example.test. Resolve each required id first.",
+              "role": "user"
+            }
+          ],
+          "model": "mlx-community/Qwen2.5-7B-Instruct-4bit",
+          "seed": 42,
+          "stream": false,
+          "temperature": 0.0,
+          "tool_choice": "auto",
+          "tools": [
+            {
+              "function": {
+                "description": "Find a user id by exact email.",
+                "name": "find_user",
+                "parameters": {
+                  "properties": {
+                    "email": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "email"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            },
+            {
+              "function": {
+                "description": "Find an account id for a user id.",
+                "name": "find_account",
+                "parameters": {
+                  "properties": {
+                    "user_id": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "user_id"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            },
+            {
+              "function": {
+                "description": "Archive an account by exact id.",
+                "name": "archive_account",
+                "parameters": {
+                  "properties": {
+                    "account_id": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "account_id"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "access-control-allow-headers": "*",
+          "access-control-allow-methods": "*",
+          "access-control-allow-origin": "*",
+          "content-length": "635",
+          "content-type": "application/json",
+          "date": "Tue, 21 Jul 2026 16:00:26 GMT",
+          "server": "BaseHTTP/0.6 Python/3.14.6"
+        },
+        "body_raw": "{\"id\": \"chatcmpl-3b0cccd0-4dae-4369-b2c3-3fb81705cf37\", \"system_fingerprint\": \"0.31.3-0.32.0-macOS-26.5.2-arm64-arm-64bit-Mach-O-applegpu_g16s\", \"object\": \"chat.completion\", \"model\": \"mlx-community/Qwen2.5-7B-Instruct-4bit\", \"created\": 1784649626, \"choices\": [{\"index\": 0, \"finish_reason\": \"tool_calls\", \"message\": {\"role\": \"assistant\", \"tool_calls\": [{\"function\": {\"name\": \"find_user\", \"arguments\": \"{\\\"email\\\": \\\"sam@example.test\\\"}\"}, \"type\": \"function\", \"id\": \"673ad071-ae28-4e5c-ad02-6b72460b7627\"}]}}], \"usage\": {\"prompt_tokens\": 296, \"completion_tokens\": 22, \"total_tokens\": 318, \"prompt_tokens_details\": {\"cached_tokens\": 63}}}"
+      },
+      "retried": false
+    },
+    {
+      "index": 1,
+      "request": {
+        "method": "POST",
+        "url": "http://127.0.0.1:8081/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "Archive the account owned by sam@example.test. Resolve each required id first.",
+              "role": "user"
+            },
+            {
+              "content": null,
+              "role": "assistant",
+              "tool_calls": [
+                {
+                  "function": {
+                    "arguments": "{\"email\": \"sam@example.test\"}",
+                    "name": "find_user"
+                  },
+                  "id": "673ad071-ae28-4e5c-ad02-6b72460b7627",
+                  "type": "function"
+                }
+              ]
+            },
+            {
+              "content": "{\"user_id\":\"user-41\"}",
+              "role": "tool",
+              "tool_call_id": "673ad071-ae28-4e5c-ad02-6b72460b7627"
+            }
+          ],
+          "model": "mlx-community/Qwen2.5-7B-Instruct-4bit",
+          "seed": 42,
+          "stream": false,
+          "temperature": 0.0,
+          "tool_choice": "auto",
+          "tools": [
+            {
+              "function": {
+                "description": "Find a user id by exact email.",
+                "name": "find_user",
+                "parameters": {
+                  "properties": {
+                    "email": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "email"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            },
+            {
+              "function": {
+                "description": "Find an account id for a user id.",
+                "name": "find_account",
+                "parameters": {
+                  "properties": {
+                    "user_id": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "user_id"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            },
+            {
+              "function": {
+                "description": "Archive an account by exact id.",
+                "name": "archive_account",
+                "parameters": {
+                  "properties": {
+                    "account_id": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "account_id"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "access-control-allow-headers": "*",
+          "access-control-allow-methods": "*",
+          "access-control-allow-origin": "*",
+          "content-length": "632",
+          "content-type": "application/json",
+          "date": "Tue, 21 Jul 2026 16:00:27 GMT",
+          "server": "BaseHTTP/0.6 Python/3.14.6"
+        },
+        "body_raw": "{\"id\": \"chatcmpl-a064fbfd-f9eb-4276-acbb-e4d43b6bcef0\", \"system_fingerprint\": \"0.31.3-0.32.0-macOS-26.5.2-arm64-arm-64bit-Mach-O-applegpu_g16s\", \"object\": \"chat.completion\", \"model\": \"mlx-community/Qwen2.5-7B-Instruct-4bit\", \"created\": 1784649627, \"choices\": [{\"index\": 0, \"finish_reason\": \"tool_calls\", \"message\": {\"role\": \"assistant\", \"tool_calls\": [{\"function\": {\"name\": \"find_account\", \"arguments\": \"{\\\"user_id\\\": \\\"user-41\\\"}\"}, \"type\": \"function\", \"id\": \"6dbeb9c9-6d1f-4322-b3e5-77570187bf3e\"}]}}], \"usage\": {\"prompt_tokens\": 344, \"completion_tokens\": 24, \"total_tokens\": 368, \"prompt_tokens_details\": {\"cached_tokens\": 318}}}"
+      },
+      "retried": false
+    },
+    {
+      "index": 2,
+      "request": {
+        "method": "POST",
+        "url": "http://127.0.0.1:8081/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "Archive the account owned by sam@example.test. Resolve each required id first.",
+              "role": "user"
+            },
+            {
+              "content": null,
+              "role": "assistant",
+              "tool_calls": [
+                {
+                  "function": {
+                    "arguments": "{\"email\": \"sam@example.test\"}",
+                    "name": "find_user"
+                  },
+                  "id": "673ad071-ae28-4e5c-ad02-6b72460b7627",
+                  "type": "function"
+                }
+              ]
+            },
+            {
+              "content": "{\"user_id\":\"user-41\"}",
+              "role": "tool",
+              "tool_call_id": "673ad071-ae28-4e5c-ad02-6b72460b7627"
+            },
+            {
+              "content": null,
+              "role": "assistant",
+              "tool_calls": [
+                {
+                  "function": {
+                    "arguments": "{\"user_id\": \"user-41\"}",
+                    "name": "find_account"
+                  },
+                  "id": "6dbeb9c9-6d1f-4322-b3e5-77570187bf3e",
+                  "type": "function"
+                }
+              ]
+            },
+            {
+              "content": "{\"account_id\":\"account-73\"}",
+              "role": "tool",
+              "tool_call_id": "6dbeb9c9-6d1f-4322-b3e5-77570187bf3e"
+            }
+          ],
+          "model": "mlx-community/Qwen2.5-7B-Instruct-4bit",
+          "seed": 42,
+          "stream": false,
+          "temperature": 0.0,
+          "tool_choice": "auto",
+          "tools": [
+            {
+              "function": {
+                "description": "Find a user id by exact email.",
+                "name": "find_user",
+                "parameters": {
+                  "properties": {
+                    "email": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "email"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            },
+            {
+              "function": {
+                "description": "Find an account id for a user id.",
+                "name": "find_account",
+                "parameters": {
+                  "properties": {
+                    "user_id": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "user_id"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            },
+            {
+              "function": {
+                "description": "Archive an account by exact id.",
+                "name": "archive_account",
+                "parameters": {
+                  "properties": {
+                    "account_id": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "account_id"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "access-control-allow-headers": "*",
+          "access-control-allow-methods": "*",
+          "access-control-allow-origin": "*",
+          "content-length": "641",
+          "content-type": "application/json",
+          "date": "Tue, 21 Jul 2026 16:00:27 GMT",
+          "server": "BaseHTTP/0.6 Python/3.14.6"
+        },
+        "body_raw": "{\"id\": \"chatcmpl-0edae9e5-b918-43cb-a64d-e0a94cfbf248\", \"system_fingerprint\": \"0.31.3-0.32.0-macOS-26.5.2-arm64-arm-64bit-Mach-O-applegpu_g16s\", \"object\": \"chat.completion\", \"model\": \"mlx-community/Qwen2.5-7B-Instruct-4bit\", \"created\": 1784649627, \"choices\": [{\"index\": 0, \"finish_reason\": \"tool_calls\", \"message\": {\"role\": \"assistant\", \"tool_calls\": [{\"function\": {\"name\": \"archive_account\", \"arguments\": \"{\\\"account_id\\\": \\\"account-73\\\"}\"}, \"type\": \"function\", \"id\": \"fcfd647a-4c65-404e-80b7-f8e0305e59bd\"}]}}], \"usage\": {\"prompt_tokens\": 394, \"completion_tokens\": 24, \"total_tokens\": 418, \"prompt_tokens_details\": {\"cached_tokens\": 368}}}"
+      },
+      "retried": false
+    }
+  ]
+}

@@ -1,0 +1,188 @@
+{
+  "schema_version": 1,
+  "run_id": "20260721T160019Z-4145246d",
+  "scenario_id": "multi-turn-route",
+  "turns": [
+    {
+      "index": 0,
+      "request": {
+        "method": "POST",
+        "url": "http://127.0.0.1:8081/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "Find a route to Fenway Park.",
+              "role": "user"
+            }
+          ],
+          "model": "mlx-community/Qwen2.5-7B-Instruct-4bit",
+          "seed": 42,
+          "stream": false,
+          "temperature": 0.0,
+          "tool_choice": "auto",
+          "tools": [
+            {
+              "function": {
+                "description": "Resolve a place to coordinates.",
+                "name": "geocode",
+                "parameters": {
+                  "properties": {
+                    "place": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "place"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            },
+            {
+              "function": {
+                "description": "Get a route to coordinates.",
+                "name": "get_route",
+                "parameters": {
+                  "properties": {
+                    "latitude": {
+                      "type": "number"
+                    },
+                    "longitude": {
+                      "type": "number"
+                    }
+                  },
+                  "required": [
+                    "latitude",
+                    "longitude"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "access-control-allow-headers": "*",
+          "access-control-allow-methods": "*",
+          "access-control-allow-origin": "*",
+          "content-length": "746",
+          "content-type": "application/json",
+          "date": "Tue, 21 Jul 2026 16:00:23 GMT",
+          "server": "BaseHTTP/0.6 Python/3.14.6"
+        },
+        "body_raw": "{\"id\": \"chatcmpl-aac54323-389e-485e-9eb2-4e779d1be0bc\", \"system_fingerprint\": \"0.31.3-0.32.0-macOS-26.5.2-arm64-arm-64bit-Mach-O-applegpu_g16s\", \"object\": \"chat.completion\", \"model\": \"mlx-community/Qwen2.5-7B-Instruct-4bit\", \"created\": 1784649623, \"choices\": [{\"index\": 0, \"finish_reason\": \"tool_calls\", \"message\": {\"role\": \"assistant\", \"content\": \"First, I need to find the coordinates of Fenway Park. Let's start by geocoding the place.\\n\", \"tool_calls\": [{\"function\": {\"name\": \"geocode\", \"arguments\": \"{\\\"place\\\": \\\"Fenway Park, Boston, MA\\\"}\"}, \"type\": \"function\", \"id\": \"72214163-45c3-4b92-965e-d929ec508714\"}]}}], \"usage\": {\"prompt_tokens\": 236, \"completion_tokens\": 50, \"total_tokens\": 286, \"prompt_tokens_details\": {\"cached_tokens\": 61}}}"
+      },
+      "retried": false
+    },
+    {
+      "index": 1,
+      "request": {
+        "method": "POST",
+        "url": "http://127.0.0.1:8081/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "Find a route to Fenway Park.",
+              "role": "user"
+            },
+            {
+              "content": "First, I need to find the coordinates of Fenway Park. Let's start by geocoding the place.\n",
+              "role": "assistant",
+              "tool_calls": [
+                {
+                  "function": {
+                    "arguments": "{\"place\": \"Fenway Park, Boston, MA\"}",
+                    "name": "geocode"
+                  },
+                  "id": "72214163-45c3-4b92-965e-d929ec508714",
+                  "type": "function"
+                }
+              ]
+            },
+            {
+              "content": "{\"latitude\":42.3467,\"longitude\":-71.0972}",
+              "role": "tool",
+              "tool_call_id": "72214163-45c3-4b92-965e-d929ec508714"
+            }
+          ],
+          "model": "mlx-community/Qwen2.5-7B-Instruct-4bit",
+          "seed": 42,
+          "stream": false,
+          "temperature": 0.0,
+          "tool_choice": "auto",
+          "tools": [
+            {
+              "function": {
+                "description": "Resolve a place to coordinates.",
+                "name": "geocode",
+                "parameters": {
+                  "properties": {
+                    "place": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "place"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            },
+            {
+              "function": {
+                "description": "Get a route to coordinates.",
+                "name": "get_route",
+                "parameters": {
+                  "properties": {
+                    "latitude": {
+                      "type": "number"
+                    },
+                    "longitude": {
+                      "type": "number"
+                    }
+                  },
+                  "required": [
+                    "latitude",
+                    "longitude"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "access-control-allow-headers": "*",
+          "access-control-allow-methods": "*",
+          "access-control-allow-origin": "*",
+          "content-length": "877",
+          "content-type": "application/json",
+          "date": "Tue, 21 Jul 2026 16:00:24 GMT",
+          "server": "BaseHTTP/0.6 Python/3.14.6"
+        },
+        "body_raw": "{\"id\": \"chatcmpl-a55c6836-b593-44cf-8103-a3e2cabc43dd\", \"system_fingerprint\": \"0.31.3-0.32.0-macOS-26.5.2-arm64-arm-64bit-Mach-O-applegpu_g16s\", \"object\": \"chat.completion\", \"model\": \"mlx-community/Qwen2.5-7B-Instruct-4bit\", \"created\": 1784649624, \"choices\": [{\"index\": 0, \"finish_reason\": \"stop\", \"message\": {\"role\": \"assistant\", \"content\": \"Fenway Park's coordinates are latitude 42.3467 and longitude -71.0972. Now, I can provide you with a route to Fenway Park. However, to give you a more personalized route, could you please share your starting location? If you don't specify, I'll use a generic starting point like the center of Boston.\\n\\nWould you like to proceed with a generic starting point, or do you want to specify your location?\"}}], \"usage\": {\"prompt_tokens\": 324, \"completion_tokens\": 99, \"total_tokens\": 423, \"prompt_tokens_details\": {\"cached_tokens\": 258}}}"
+      },
+      "retried": false
+    }
+  ]
+}

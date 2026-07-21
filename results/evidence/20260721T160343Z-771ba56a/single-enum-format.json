@@ -1,0 +1,75 @@
+{
+  "schema_version": 1,
+  "run_id": "20260721T160343Z-771ba56a",
+  "scenario_id": "single-enum-format",
+  "turns": [
+    {
+      "index": 0,
+      "request": {
+        "method": "POST",
+        "url": "http://127.0.0.1:8081/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "Export report quarterly-7 as csv.",
+              "role": "user"
+            }
+          ],
+          "model": "mlx-community/Phi-4-mini-instruct-4bit",
+          "seed": 42,
+          "stream": false,
+          "temperature": 0.0,
+          "tool_choice": "auto",
+          "tools": [
+            {
+              "function": {
+                "description": "Export a report in a supported format.",
+                "name": "export_report",
+                "parameters": {
+                  "properties": {
+                    "format": {
+                      "enum": [
+                        "csv",
+                        "json",
+                        "pdf"
+                      ],
+                      "type": "string"
+                    },
+                    "report_id": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "report_id",
+                    "format"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "access-control-allow-headers": "*",
+          "access-control-allow-methods": "*",
+          "access-control-allow-origin": "*",
+          "content-length": "2189",
+          "content-type": "application/json",
+          "date": "Tue, 21 Jul 2026 16:04:21 GMT",
+          "server": "BaseHTTP/0.6 Python/3.14.6"
+        },
+        "body_raw": "{\"id\": \"chatcmpl-7e865a43-eab4-495d-a4c9-1fb33ee2991a\", \"system_fingerprint\": \"0.31.3-0.32.0-macOS-26.5.2-arm64-arm-64bit-Mach-O-applegpu_g16s\", \"object\": \"chat.completion\", \"model\": \"mlx-community/Phi-4-mini-instruct-4bit\", \"created\": 1784649861, \"choices\": [{\"index\": 0, \"finish_reason\": \"stop\", \"message\": {\"role\": \"assistant\", \"content\": \"I'm sorry, but I can't assist with exporting files directly as I don't have the capability to manipulate files on your computer. However, I can guide you on how to manually export a report as a CSV file on a Windows or a Mac computer:\\n\\nFor Windows:\\n1. Find the file you want to export (e.g., a PowerPoint presentation).\\n2. Right-click on the file and look for an option called \\\"Save As\\\" or \\\"Save\\\".\\n3. Click on \\\"Save as type\\\" and look for a file extension called .csv (comma delimited).\\n4. Click on \\\"Save\\\". This will save the file as a .csv file on your computer.\\n\\nFor Mac:\\n1. Find the file you want to export (e.g., a PowerPoint presentation).\\n2. Right-click on the file and look for an option called \\\"Share X\\\".\\n3. Click on \\\"Copy public link\\\".\\n4. Right-click on your desktop or in a file explorer window and look for an option called \\\"Save Pic as\\\".\\n5. Click on \\\"Save picture\\\" and look for a file extension called .csv (comma delimited).\\n6. Click on \\\"Save\\\". This will save the file as a .csv file on your computer.\\n\\nKeep in mind that not all file types can be directly converted to .csv files as .csv files are generally used to store data in tabular form (i.e., rows and columns). If your file is not data-driven (like a PowerPoint presentation), you may not be able to save it as a .csv file directly. You may need to manually transfer data from one application to another (e.g., PowerPoint to Excel then save as .csv).\\n\\nFor data-driven files (like .xlsx files), you can simply open the file in Excel and then manually copy data (Ctrl + C) and paste data (Ctrl + V) into a .csv file (File > Save As > Comma delimited > .csv).\\n\\nLet me know if you need help with something else!\"}}], \"usage\": {\"prompt_tokens\": 11, \"completion_tokens\": 409, \"total_tokens\": 420, \"prompt_tokens_details\": {\"cached_tokens\": 1}}}"
+      },
+      "retried": false
+    }
+  ]
+}

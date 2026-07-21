@@ -1,0 +1,110 @@
+{
+  "schema_version": 1,
+  "run_id": "20260721T160520Z-e6bf3c09",
+  "scenario_id": "parallel-three-different-tools",
+  "turns": [
+    {
+      "index": 0,
+      "request": {
+        "method": "POST",
+        "url": "http://127.0.0.1:8081/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "Get weather in Rome, time in Nairobi, and convert 25 USD to EUR.",
+              "role": "user"
+            }
+          ],
+          "model": "mlx-community/Mistral-7B-Instruct-v0.3-4bit",
+          "seed": 42,
+          "stream": false,
+          "temperature": 0.0,
+          "tool_choice": "required",
+          "tools": [
+            {
+              "function": {
+                "description": "Get weather for a city.",
+                "name": "get_weather",
+                "parameters": {
+                  "properties": {
+                    "city": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "city"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            },
+            {
+              "function": {
+                "description": "Get local time for a city.",
+                "name": "get_time",
+                "parameters": {
+                  "properties": {
+                    "city": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "city"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            },
+            {
+              "function": {
+                "description": "Convert an exact currency amount.",
+                "name": "convert_currency",
+                "parameters": {
+                  "properties": {
+                    "amount": {
+                      "type": "number"
+                    },
+                    "from": {
+                      "type": "string"
+                    },
+                    "to": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "amount",
+                    "from",
+                    "to"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "access-control-allow-headers": "*",
+          "access-control-allow-methods": "*",
+          "access-control-allow-origin": "*",
+          "content-length": "692",
+          "content-type": "application/json",
+          "date": "Tue, 21 Jul 2026 16:05:38 GMT",
+          "server": "BaseHTTP/0.6 Python/3.14.6"
+        },
+        "body_raw": "{\"id\": \"chatcmpl-db90da87-4de3-4eda-bd0d-e0249f78ef04\", \"system_fingerprint\": \"0.31.3-0.32.0-macOS-26.5.2-arm64-arm-64bit-Mach-O-applegpu_g16s\", \"object\": \"chat.completion\", \"model\": \"mlx-community/Mistral-7B-Instruct-v0.3-4bit\", \"created\": 1784649938, \"choices\": [{\"index\": 0, \"finish_reason\": \"stop\", \"message\": {\"role\": \"assistant\", \"content\": \"[TOOL_CALLS][{'name': 'get_weather', 'arguments': {'city': 'Rome'}}, {'name': 'get_time', 'arguments': {'city': 'Nairobi'}}, {'name': 'convert_currency', 'arguments': {'amount': 25, 'from': 'USD', 'to': 'EUR'}}]\"}}], \"usage\": {\"prompt_tokens\": 222, \"completion_tokens\": 77, \"total_tokens\": 299, \"prompt_tokens_details\": {\"cached_tokens\": 116}}}"
+      },
+      "retried": false
+    }
+  ]
+}

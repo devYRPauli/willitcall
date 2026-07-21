@@ -1,0 +1,84 @@
+{
+  "schema_version": 1,
+  "run_id": "20260721T160019Z-4145246d",
+  "scenario_id": "parallel-weather-and-time",
+  "turns": [
+    {
+      "index": 0,
+      "request": {
+        "method": "POST",
+        "url": "http://127.0.0.1:8081/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "Get both the weather and local time for Denver.",
+              "role": "user"
+            }
+          ],
+          "model": "mlx-community/Qwen2.5-7B-Instruct-4bit",
+          "seed": 42,
+          "stream": false,
+          "temperature": 0.0,
+          "tool_choice": "auto",
+          "tools": [
+            {
+              "function": {
+                "description": "Get weather for a city.",
+                "name": "get_weather",
+                "parameters": {
+                  "properties": {
+                    "city": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "city"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            },
+            {
+              "function": {
+                "description": "Get local time for a city.",
+                "name": "get_time",
+                "parameters": {
+                  "properties": {
+                    "city": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "city"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "access-control-allow-headers": "*",
+          "access-control-allow-methods": "*",
+          "access-control-allow-origin": "*",
+          "content-length": "785",
+          "content-type": "application/json",
+          "date": "Tue, 21 Jul 2026 16:00:35 GMT",
+          "server": "BaseHTTP/0.6 Python/3.14.6"
+        },
+        "body_raw": "{\"id\": \"chatcmpl-b5d0303e-f717-4cc9-9445-aeb69474dc38\", \"system_fingerprint\": \"0.31.3-0.32.0-macOS-26.5.2-arm64-arm-64bit-Mach-O-applegpu_g16s\", \"object\": \"chat.completion\", \"model\": \"mlx-community/Qwen2.5-7B-Instruct-4bit\", \"created\": 1784649635, \"choices\": [{\"index\": 0, \"finish_reason\": \"tool_calls\", \"message\": {\"role\": \"assistant\", \"content\": \"\\n\", \"tool_calls\": [{\"function\": {\"name\": \"get_weather\", \"arguments\": \"{\\\"city\\\": \\\"Denver\\\"}\"}, \"type\": \"function\", \"id\": \"78448e56-de0d-4405-b496-7cf0ab07355b\"}, {\"function\": {\"name\": \"get_time\", \"arguments\": \"{\\\"city\\\": \\\"Denver\\\"}\"}, \"type\": \"function\", \"id\": \"d08bf7d6-7429-4d2e-98de-afee2fd0d4e4\"}]}}], \"usage\": {\"prompt_tokens\": 227, \"completion_tokens\": 40, \"total_tokens\": 267, \"prompt_tokens_details\": {\"cached_tokens\": 213}}}"
+      },
+      "retried": false
+    }
+  ]
+}

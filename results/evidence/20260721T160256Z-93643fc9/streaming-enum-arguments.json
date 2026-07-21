@@ -1,0 +1,76 @@
+{
+  "schema_version": 1,
+  "run_id": "20260721T160256Z-93643fc9",
+  "scenario_id": "streaming-enum-arguments",
+  "turns": [
+    {
+      "index": 0,
+      "request": {
+        "method": "POST",
+        "url": "http://127.0.0.1:8081/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "Set the log level for payments to warn.",
+              "role": "user"
+            }
+          ],
+          "model": "mlx-community/Meta-Llama-3.1-8B-Instruct-4bit",
+          "seed": 42,
+          "stream": true,
+          "temperature": 0.0,
+          "tool_choice": "auto",
+          "tools": [
+            {
+              "function": {
+                "description": "Set a supported log level.",
+                "name": "set_log_level",
+                "parameters": {
+                  "properties": {
+                    "level": {
+                      "enum": [
+                        "debug",
+                        "info",
+                        "warn",
+                        "error"
+                      ],
+                      "type": "string"
+                    },
+                    "service": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "service",
+                    "level"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "access-control-allow-headers": "*",
+          "access-control-allow-methods": "*",
+          "access-control-allow-origin": "*",
+          "cache-control": "no-cache",
+          "content-type": "text/event-stream",
+          "date": "Tue, 21 Jul 2026 16:03:18 GMT",
+          "server": "BaseHTTP/0.6 Python/3.14.6"
+        },
+        "body_raw": ": keepalive 0/125\n\n: keepalive 124/125\n\n: keepalive 125/125\n\ndata: {\"id\": \"chatcmpl-52441792-8efe-459b-b41e-86890b20a96c\", \"system_fingerprint\": \"0.31.3-0.32.0-macOS-26.5.2-arm64-arm-64bit-Mach-O-applegpu_g16s\", \"object\": \"chat.completion.chunk\", \"model\": \"mlx-community/Meta-Llama-3.1-8B-Instruct-4bit\", \"created\": 1784649798, \"choices\": [{\"index\": 0, \"finish_reason\": null, \"delta\": {\"role\": \"assistant\", \"content\": \"<|python_tag|>\"}}]}\n\ndata: {\"id\": \"chatcmpl-52441792-8efe-459b-b41e-86890b20a96c\", \"system_fingerprint\": \"0.31.3-0.32.0-macOS-26.5.2-arm64-arm-64bit-Mach-O-applegpu_g16s\", \"object\": \"chat.completion.chunk\", \"model\": \"mlx-community/Meta-Llama-3.1-8B-Instruct-4bit\", \"created\": 1784649798, \"choices\": [{\"index\": 0, \"finish_reason\": null, \"delta\": {\"role\": \"assistant\", \"content\": \"{\\\"\"}}]}\n\ndata: {\"id\": \"chatcmpl-52441792-8efe-459b-b41e-86890b20a96c\", \"system_fingerprint\": \"0.31.3-0.32.0-macOS-26.5.2-arm64-arm-64bit-Mach-O-applegpu_g16s\", \"object\": \"chat.completion.chunk\", \"model\": \"mlx-community/Meta-Llama-3.1-8B-Instruct-4bit\", \"created\": 1784649798, \"choices\": [{\"index\": 0, \"finish_reason\": null, \"delta\": {\"role\": \"assistant\", \"content\": \"name\"}}]}\n\ndata: {\"id\": \"chatcmpl-52441792-8efe-459b-b41e-86890b20a96c\", \"system_fingerprint\": \"0.31.3-0.32.0-macOS-26.5.2-arm64-arm-64bit-Mach-O-applegpu_g16s\", \"object\": \"chat.completion.chunk\", \"model\": \"mlx-community/Meta-Llama-3.1-8B-Instruct-4bit\", \"created\": 1784649798, \"choices\": [{\"index\": 0, \"finish_reason\": null, \"delta\": {\"role\": \"assistant\", \"content\": \"\\\":\"}}]}\n\ndata: {\"id\": \"chatcmpl-52441792-8efe-459b-b41e-86890b20a96c\", \"system_fingerprint\": \"0.31.3-0.32.0-macOS-26.5.2-arm64-arm-64bit-Mach-O-applegpu_g16s\", \"object\": \"chat.completion.chunk\", \"model\": \"mlx-community/Meta-Llama-3.1-8B-Instruct-4bit\", \"created\": 1784649798, \"choices\": [{\"index\": 0, \"finish_reason\": null, \"delta\": {\"role\": \"assistant\", \"content\": \" \\\"\"}}]}\n\ndata: {\"id\": \"chatcmpl-52441792-8efe-459b-b41e-86890b20a96c\", \"system_fingerprint\": \"0.31.3-0.32.0-macOS-26.5.2-arm64-arm-64bit-Mach-O-applegpu_g16s\", \"object\": \"chat.completion.chunk\", \"model\": \"mlx-community/Meta-Llama-3.1-8B-Instruct-4bit\", \"created\": 1784649798, \"choices\": [{\"index\": 0, \"finish_reason\": null, \"delta\": {\"role\": \"assistant\", \"content\": \"set\"}}]}\n\ndata: {\"id\": \"chatcmpl-52441792-8efe-459b-b41e-86890b20a96c\", \"system_fingerprint\": \"0.31.3-0.32.0-macOS-26.5.2-arm64-arm-64bit-Mach-O-applegpu_g16s\", \"object\": \"chat.completion.chunk\", \"model\": \"mlx-community/Meta-Llama-3.1-8B-Instruct-4bit\", \"created\": 1784649798, \"choices\": [{\"index\": 0, \"finish_reason\": null, \"delta\": {\"role\": \"assistant\", \"content\": \"_log\"}}]}\n\ndata: {\"id\": \"chatcmpl-52441792-8efe-459b-b41e-86890b20a96c\", \"system_fingerprint\": \"0.31.3-0.32.0-macOS-26.5.2-arm64-arm-64bit-Mach-O-applegpu_g16s\", \"object\": \"chat.completion.chunk\", \"model\": \"mlx-community/Meta-Llama-3.1-8B-Instruct-4bit\", \"created\": 1784649798, \"choices\": [{\"index\": 0, \"finish_reason\": null, \"delta\": {\"role\": \"assistant\", \"content\": \"_level\"}}]}\n\ndata: {\"id\": \"chatcmpl-52441792-8efe-459b-b41e-86890b20a96c\", \"system_fingerprint\": \"0.31.3-0.32.0-macOS-26.5.2-arm64-arm-64bit-Mach-O-applegpu_g16s\", \"object\": \"chat.completion.chunk\", \"model\": \"mlx-community/Meta-Llama-3.1-8B-Instruct-4bit\", \"created\": 1784649798, \"choices\": [{\"index\": 0, \"finish_reason\": null, \"delta\": {\"role\": \"assistant\", \"content\": \"\\\",\"}}]}\n\ndata: {\"id\": \"chatcmpl-52441792-8efe-459b-b41e-86890b20a96c\", \"system_fingerprint\": \"0.31.3-0.32.0-macOS-26.5.2-arm64-arm-64bit-Mach-O-applegpu_g16s\", \"object\": \"chat.completion.chunk\", \"model\": \"mlx-community/Meta-Llama-3.1-8B-Instruct-4bit\", \"created\": 1784649798, \"choices\": [{\"index\": 0, \"finish_reason\": null, \"delta\": {\"role\": \"assistant\", \"content\": \" \\\"\"}}]}\n\ndata: {\"id\": \"chatcmpl-52441792-8efe-459b-b41e-86890b20a96c\", \"system_fingerprint\": \"0.31.3-0.32.0-macOS-26.5.2-arm64-arm-64bit-Mach-O-applegpu_g16s\", \"object\": \"chat.completion.chunk\", \"model\": \"mlx-community/Meta-Llama-3.1-8B-Instruct-4bit\", \"created\": 1784649798, \"choices\": [{\"index\": 0, \"finish_reason\": null, \"delta\": {\"role\": \"assistant\", \"content\": \"parameters\"}}]}\n\ndata: {\"id\": \"chatcmpl-52441792-8efe-459b-b41e-86890b20a96c\", \"system_fingerprint\": \"0.31.3-0.32.0-macOS-26.5.2-arm64-arm-64bit-Mach-O-applegpu_g16s\", \"object\": \"chat.completion.chunk\", \"model\": \"mlx-community/Meta-Llama-3.1-8B-Instruct-4bit\", \"created\": 1784649798, \"choices\": [{\"index\": 0, \"finish_reason\": null, \"delta\": {\"role\": \"assistant\", \"content\": \"\\\":\"}}]}\n\ndata: {\"id\": \"chatcmpl-52441792-8efe-459b-b41e-86890b20a96c\", \"system_fingerprint\": \"0.31.3-0.32.0-macOS-26.5.2-arm64-arm-64bit-Mach-O-applegpu_g16s\", \"object\": \"chat.completion.chunk\", \"model\": \"mlx-community/Meta-Llama-3.1-8B-Instruct-4bit\", \"created\": 1784649798, \"choices\": [{\"index\": 0, \"finish_reason\": null, \"delta\": {\"role\": \"assistant\", \"content\": \" {\\\"\"}}]}\n\ndata: {\"id\": \"chatcmpl-52441792-8efe-459b-b41e-86890b20a96c\", \"system_fingerprint\": \"0.31.3-0.32.0-macOS-26.5.2-arm64-arm-64bit-Mach-O-applegpu_g16s\", \"object\": \"chat.completion.chunk\", \"model\": \"mlx-community/Meta-Llama-3.1-8B-Instruct-4bit\", \"created\": 1784649798, \"choices\": [{\"index\": 0, \"finish_reason\": null, \"delta\": {\"role\": \"assistant\", \"content\": \"service\"}}]}\n\ndata: {\"id\": \"chatcmpl-52441792-8efe-459b-b41e-86890b20a96c\", \"system_fingerprint\": \"0.31.3-0.32.0-macOS-26.5.2-arm64-arm-64bit-Mach-O-applegpu_g16s\", \"object\": \"chat.completion.chunk\", \"model\": \"mlx-community/Meta-Llama-3.1-8B-Instruct-4bit\", \"created\": 1784649798, \"choices\": [{\"index\": 0, \"finish_reason\": null, \"delta\": {\"role\": \"assistant\", \"content\": \"\\\":\"}}]}\n\ndata: {\"id\": \"chatcmpl-52441792-8efe-459b-b41e-86890b20a96c\", \"system_fingerprint\": \"0.31.3-0.32.0-macOS-26.5.2-arm64-arm-64bit-Mach-O-applegpu_g16s\", \"object\": \"chat.completion.chunk\", \"model\": \"mlx-community/Meta-Llama-3.1-8B-Instruct-4bit\", \"created\": 1784649798, \"choices\": [{\"index\": 0, \"finish_reason\": null, \"delta\": {\"role\": \"assistant\", \"content\": \" \\\"\"}}]}\n\ndata: {\"id\": \"chatcmpl-52441792-8efe-459b-b41e-86890b20a96c\", \"system_fingerprint\": \"0.31.3-0.32.0-macOS-26.5.2-arm64-arm-64bit-Mach-O-applegpu_g16s\", \"object\": \"chat.completion.chunk\", \"model\": \"mlx-community/Meta-Llama-3.1-8B-Instruct-4bit\", \"created\": 1784649798, \"choices\": [{\"index\": 0, \"finish_reason\": null, \"delta\": {\"role\": \"assistant\", \"content\": \"payments\"}}]}\n\ndata: {\"id\": \"chatcmpl-52441792-8efe-459b-b41e-86890b20a96c\", \"system_fingerprint\": \"0.31.3-0.32.0-macOS-26.5.2-arm64-arm-64bit-Mach-O-applegpu_g16s\", \"object\": \"chat.completion.chunk\", \"model\": \"mlx-community/Meta-Llama-3.1-8B-Instruct-4bit\", \"created\": 1784649798, \"choices\": [{\"index\": 0, \"finish_reason\": null, \"delta\": {\"role\": \"assistant\", \"content\": \"\\\",\"}}]}\n\ndata: {\"id\": \"chatcmpl-52441792-8efe-459b-b41e-86890b20a96c\", \"system_fingerprint\": \"0.31.3-0.32.0-macOS-26.5.2-arm64-arm-64bit-Mach-O-applegpu_g16s\", \"object\": \"chat.completion.chunk\", \"model\": \"mlx-community/Meta-Llama-3.1-8B-Instruct-4bit\", \"created\": 1784649798, \"choices\": [{\"index\": 0, \"finish_reason\": null, \"delta\": {\"role\": \"assistant\", \"content\": \" \\\"\"}}]}\n\ndata: {\"id\": \"chatcmpl-52441792-8efe-459b-b41e-86890b20a96c\", \"system_fingerprint\": \"0.31.3-0.32.0-macOS-26.5.2-arm64-arm-64bit-Mach-O-applegpu_g16s\", \"object\": \"chat.completion.chunk\", \"model\": \"mlx-community/Meta-Llama-3.1-8B-Instruct-4bit\", \"created\": 1784649798, \"choices\": [{\"index\": 0, \"finish_reason\": null, \"delta\": {\"role\": \"assistant\", \"content\": \"level\"}}]}\n\ndata: {\"id\": \"chatcmpl-52441792-8efe-459b-b41e-86890b20a96c\", \"system_fingerprint\": \"0.31.3-0.32.0-macOS-26.5.2-arm64-arm-64bit-Mach-O-applegpu_g16s\", \"object\": \"chat.completion.chunk\", \"model\": \"mlx-community/Meta-Llama-3.1-8B-Instruct-4bit\", \"created\": 1784649798, \"choices\": [{\"index\": 0, \"finish_reason\": null, \"delta\": {\"role\": \"assistant\", \"content\": \"\\\":\"}}]}\n\ndata: {\"id\": \"chatcmpl-52441792-8efe-459b-b41e-86890b20a96c\", \"system_fingerprint\": \"0.31.3-0.32.0-macOS-26.5.2-arm64-arm-64bit-Mach-O-applegpu_g16s\", \"object\": \"chat.completion.chunk\", \"model\": \"mlx-community/Meta-Llama-3.1-8B-Instruct-4bit\", \"created\": 1784649798, \"choices\": [{\"index\": 0, \"finish_reason\": null, \"delta\": {\"role\": \"assistant\", \"content\": \" \\\"\"}}]}\n\ndata: {\"id\": \"chatcmpl-52441792-8efe-459b-b41e-86890b20a96c\", \"system_fingerprint\": \"0.31.3-0.32.0-macOS-26.5.2-arm64-arm-64bit-Mach-O-applegpu_g16s\", \"object\": \"chat.completion.chunk\", \"model\": \"mlx-community/Meta-Llama-3.1-8B-Instruct-4bit\", \"created\": 1784649798, \"choices\": [{\"index\": 0, \"finish_reason\": null, \"delta\": {\"role\": \"assistant\", \"content\": \"warn\"}}]}\n\ndata: {\"id\": \"chatcmpl-52441792-8efe-459b-b41e-86890b20a96c\", \"system_fingerprint\": \"0.31.3-0.32.0-macOS-26.5.2-arm64-arm-64bit-Mach-O-applegpu_g16s\", \"object\": \"chat.completion.chunk\", \"model\": \"mlx-community/Meta-Llama-3.1-8B-Instruct-4bit\", \"created\": 1784649798, \"choices\": [{\"index\": 0, \"finish_reason\": null, \"delta\": {\"role\": \"assistant\", \"content\": \"\\\"}}\"}}]}\n\ndata: {\"id\": \"chatcmpl-52441792-8efe-459b-b41e-86890b20a96c\", \"system_fingerprint\": \"0.31.3-0.32.0-macOS-26.5.2-arm64-arm-64bit-Mach-O-applegpu_g16s\", \"object\": \"chat.completion.chunk\", \"model\": \"mlx-community/Meta-Llama-3.1-8B-Instruct-4bit\", \"created\": 1784649798, \"choices\": [{\"index\": 0, \"finish_reason\": \"stop\", \"delta\": {\"role\": \"assistant\"}}]}\n\ndata: [DONE]\n\n"
+      },
+      "retried": false
+    }
+  ]
+}

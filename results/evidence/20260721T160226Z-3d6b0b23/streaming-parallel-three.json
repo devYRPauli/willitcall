@@ -1,0 +1,66 @@
+{
+  "schema_version": 1,
+  "run_id": "20260721T160226Z-3d6b0b23",
+  "scenario_id": "streaming-parallel-three",
+  "turns": [
+    {
+      "index": 0,
+      "request": {
+        "method": "POST",
+        "url": "http://127.0.0.1:8081/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "Get local time for Accra, Kyoto, and Quito with three calls.",
+              "role": "user"
+            }
+          ],
+          "model": "mlx-community/Qwen2.5-1.5B-Instruct-4bit",
+          "seed": 42,
+          "stream": true,
+          "temperature": 0.0,
+          "tool_choice": "required",
+          "tools": [
+            {
+              "function": {
+                "description": "Get local time for a city.",
+                "name": "get_time",
+                "parameters": {
+                  "properties": {
+                    "city": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "city"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "access-control-allow-headers": "*",
+          "access-control-allow-methods": "*",
+          "access-control-allow-origin": "*",
+          "cache-control": "no-cache",
+          "content-type": "text/event-stream",
+          "date": "Tue, 21 Jul 2026 16:02:34 GMT",
+          "server": "BaseHTTP/0.6 Python/3.14.6"
+        },
+        "body_raw": ": keepalive 0/118\n\n: keepalive 117/118\n\n: keepalive 118/118\n\ndata: {\"id\": \"chatcmpl-80b65276-4e26-4e54-9a98-0365f53d4656\", \"system_fingerprint\": \"0.31.3-0.32.0-macOS-26.5.2-arm64-arm-64bit-Mach-O-applegpu_g16s\", \"object\": \"chat.completion.chunk\", \"model\": \"mlx-community/Qwen2.5-1.5B-Instruct-4bit\", \"created\": 1784649754, \"choices\": [{\"index\": 0, \"finish_reason\": null, \"delta\": {\"role\": \"assistant\", \"tool_calls\": [{\"function\": {\"name\": \"get_time\", \"arguments\": \"{\\\"city\\\": \\\"Accra\\\"}\"}, \"type\": \"function\", \"id\": \"9a874cc6-e0f4-4517-a8ab-7822738347f1\", \"index\": 0}]}}]}\n\ndata: {\"id\": \"chatcmpl-80b65276-4e26-4e54-9a98-0365f53d4656\", \"system_fingerprint\": \"0.31.3-0.32.0-macOS-26.5.2-arm64-arm-64bit-Mach-O-applegpu_g16s\", \"object\": \"chat.completion.chunk\", \"model\": \"mlx-community/Qwen2.5-1.5B-Instruct-4bit\", \"created\": 1784649754, \"choices\": [{\"index\": 0, \"finish_reason\": null, \"delta\": {\"role\": \"assistant\", \"content\": \"\\n\"}}]}\n\ndata: {\"id\": \"chatcmpl-80b65276-4e26-4e54-9a98-0365f53d4656\", \"system_fingerprint\": \"0.31.3-0.32.0-macOS-26.5.2-arm64-arm-64bit-Mach-O-applegpu_g16s\", \"object\": \"chat.completion.chunk\", \"model\": \"mlx-community/Qwen2.5-1.5B-Instruct-4bit\", \"created\": 1784649754, \"choices\": [{\"index\": 0, \"finish_reason\": null, \"delta\": {\"role\": \"assistant\", \"tool_calls\": [{\"function\": {\"name\": \"get_time\", \"arguments\": \"{\\\"city\\\": \\\"Kyoto\\\"}\"}, \"type\": \"function\", \"id\": \"335ca53a-c7b2-4c75-8443-da29449b677a\", \"index\": 1}]}}]}\n\ndata: {\"id\": \"chatcmpl-80b65276-4e26-4e54-9a98-0365f53d4656\", \"system_fingerprint\": \"0.31.3-0.32.0-macOS-26.5.2-arm64-arm-64bit-Mach-O-applegpu_g16s\", \"object\": \"chat.completion.chunk\", \"model\": \"mlx-community/Qwen2.5-1.5B-Instruct-4bit\", \"created\": 1784649754, \"choices\": [{\"index\": 0, \"finish_reason\": null, \"delta\": {\"role\": \"assistant\", \"content\": \"\\n\"}}]}\n\ndata: {\"id\": \"chatcmpl-80b65276-4e26-4e54-9a98-0365f53d4656\", \"system_fingerprint\": \"0.31.3-0.32.0-macOS-26.5.2-arm64-arm-64bit-Mach-O-applegpu_g16s\", \"object\": \"chat.completion.chunk\", \"model\": \"mlx-community/Qwen2.5-1.5B-Instruct-4bit\", \"created\": 1784649754, \"choices\": [{\"index\": 0, \"finish_reason\": null, \"delta\": {\"role\": \"assistant\", \"tool_calls\": [{\"function\": {\"name\": \"get_time\", \"arguments\": \"{\\\"city\\\": \\\"Quito\\\"}\"}, \"type\": \"function\", \"id\": \"35b36f2e-279b-4f6c-be9d-1fb39d597219\", \"index\": 2}]}}]}\n\ndata: {\"id\": \"chatcmpl-80b65276-4e26-4e54-9a98-0365f53d4656\", \"system_fingerprint\": \"0.31.3-0.32.0-macOS-26.5.2-arm64-arm-64bit-Mach-O-applegpu_g16s\", \"object\": \"chat.completion.chunk\", \"model\": \"mlx-community/Qwen2.5-1.5B-Instruct-4bit\", \"created\": 1784649754, \"choices\": [{\"index\": 0, \"finish_reason\": \"tool_calls\", \"delta\": {\"role\": \"assistant\"}}]}\n\ndata: [DONE]\n\n"
+      },
+      "retried": false
+    }
+  ]
+}

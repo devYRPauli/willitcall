@@ -1,0 +1,84 @@
+{
+  "schema_version": 1,
+  "run_id": "20260721T160226Z-3d6b0b23",
+  "scenario_id": "parallel-different-tools",
+  "turns": [
+    {
+      "index": 0,
+      "request": {
+        "method": "POST",
+        "url": "http://127.0.0.1:8081/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "Get the weather in Oslo and the local time in Cairo.",
+              "role": "user"
+            }
+          ],
+          "model": "mlx-community/Qwen2.5-1.5B-Instruct-4bit",
+          "seed": 42,
+          "stream": false,
+          "temperature": 0.0,
+          "tool_choice": "required",
+          "tools": [
+            {
+              "function": {
+                "description": "Get weather for a city.",
+                "name": "get_weather",
+                "parameters": {
+                  "properties": {
+                    "city": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "city"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            },
+            {
+              "function": {
+                "description": "Get local time for a city.",
+                "name": "get_time",
+                "parameters": {
+                  "properties": {
+                    "city": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "city"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "access-control-allow-headers": "*",
+          "access-control-allow-methods": "*",
+          "access-control-allow-origin": "*",
+          "content-length": "784",
+          "content-type": "application/json",
+          "date": "Tue, 21 Jul 2026 16:02:29 GMT",
+          "server": "BaseHTTP/0.6 Python/3.14.6"
+        },
+        "body_raw": "{\"id\": \"chatcmpl-7c143345-dc41-47b7-8d14-add5c1c876b1\", \"system_fingerprint\": \"0.31.3-0.32.0-macOS-26.5.2-arm64-arm-64bit-Mach-O-applegpu_g16s\", \"object\": \"chat.completion\", \"model\": \"mlx-community/Qwen2.5-1.5B-Instruct-4bit\", \"created\": 1784649749, \"choices\": [{\"index\": 0, \"finish_reason\": \"tool_calls\", \"message\": {\"role\": \"assistant\", \"content\": \"\\n\", \"tool_calls\": [{\"function\": {\"name\": \"get_weather\", \"arguments\": \"{\\\"city\\\": \\\"Oslo\\\"}\"}, \"type\": \"function\", \"id\": \"38a7e759-ce9a-4cda-a51a-5e3d4656b931\"}, {\"function\": {\"name\": \"get_time\", \"arguments\": \"{\\\"city\\\": \\\"Cairo\\\"}\"}, \"type\": \"function\", \"id\": \"271fb398-7297-42ee-b378-70157a55c675\"}]}}], \"usage\": {\"prompt_tokens\": 231, \"completion_tokens\": 42, \"total_tokens\": 273, \"prompt_tokens_details\": {\"cached_tokens\": 109}}}"
+      },
+      "retried": false
+    }
+  ]
+}

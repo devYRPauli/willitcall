@@ -1,0 +1,70 @@
+{
+  "schema_version": 1,
+  "run_id": "20260721T160256Z-93643fc9",
+  "scenario_id": "streaming-boolean-argument",
+  "turns": [
+    {
+      "index": 0,
+      "request": {
+        "method": "POST",
+        "url": "http://127.0.0.1:8081/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "Enable maintenance mode for the billing service.",
+              "role": "user"
+            }
+          ],
+          "model": "mlx-community/Meta-Llama-3.1-8B-Instruct-4bit",
+          "seed": 42,
+          "stream": true,
+          "temperature": 0.0,
+          "tool_choice": "auto",
+          "tools": [
+            {
+              "function": {
+                "description": "Enable or disable maintenance mode.",
+                "name": "set_maintenance",
+                "parameters": {
+                  "properties": {
+                    "enabled": {
+                      "type": "boolean"
+                    },
+                    "service": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "service",
+                    "enabled"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "access-control-allow-headers": "*",
+          "access-control-allow-methods": "*",
+          "access-control-allow-origin": "*",
+          "cache-control": "no-cache",
+          "content-type": "text/event-stream",
+          "date": "Tue, 21 Jul 2026 16:03:17 GMT",
+          "server": "BaseHTTP/0.6 Python/3.14.6"
+        },
+        "body_raw": ": keepalive 0/102\n\n: keepalive 101/102\n\n: keepalive 102/102\n\ndata: {\"id\": \"chatcmpl-0fc3b1b9-6fc4-4d7e-85f8-57ecbf67a935\", \"system_fingerprint\": \"0.31.3-0.32.0-macOS-26.5.2-arm64-arm-64bit-Mach-O-applegpu_g16s\", \"object\": \"chat.completion.chunk\", \"model\": \"mlx-community/Meta-Llama-3.1-8B-Instruct-4bit\", \"created\": 1784649797, \"choices\": [{\"index\": 0, \"finish_reason\": null, \"delta\": {\"role\": \"assistant\", \"content\": \"<|python_tag|>\"}}]}\n\ndata: {\"id\": \"chatcmpl-0fc3b1b9-6fc4-4d7e-85f8-57ecbf67a935\", \"system_fingerprint\": \"0.31.3-0.32.0-macOS-26.5.2-arm64-arm-64bit-Mach-O-applegpu_g16s\", \"object\": \"chat.completion.chunk\", \"model\": \"mlx-community/Meta-Llama-3.1-8B-Instruct-4bit\", \"created\": 1784649797, \"choices\": [{\"index\": 0, \"finish_reason\": null, \"delta\": {\"role\": \"assistant\", \"content\": \"{\\\"\"}}]}\n\ndata: {\"id\": \"chatcmpl-0fc3b1b9-6fc4-4d7e-85f8-57ecbf67a935\", \"system_fingerprint\": \"0.31.3-0.32.0-macOS-26.5.2-arm64-arm-64bit-Mach-O-applegpu_g16s\", \"object\": \"chat.completion.chunk\", \"model\": \"mlx-community/Meta-Llama-3.1-8B-Instruct-4bit\", \"created\": 1784649797, \"choices\": [{\"index\": 0, \"finish_reason\": null, \"delta\": {\"role\": \"assistant\", \"content\": \"name\"}}]}\n\ndata: {\"id\": \"chatcmpl-0fc3b1b9-6fc4-4d7e-85f8-57ecbf67a935\", \"system_fingerprint\": \"0.31.3-0.32.0-macOS-26.5.2-arm64-arm-64bit-Mach-O-applegpu_g16s\", \"object\": \"chat.completion.chunk\", \"model\": \"mlx-community/Meta-Llama-3.1-8B-Instruct-4bit\", \"created\": 1784649797, \"choices\": [{\"index\": 0, \"finish_reason\": null, \"delta\": {\"role\": \"assistant\", \"content\": \"\\\":\"}}]}\n\ndata: {\"id\": \"chatcmpl-0fc3b1b9-6fc4-4d7e-85f8-57ecbf67a935\", \"system_fingerprint\": \"0.31.3-0.32.0-macOS-26.5.2-arm64-arm-64bit-Mach-O-applegpu_g16s\", \"object\": \"chat.completion.chunk\", \"model\": \"mlx-community/Meta-Llama-3.1-8B-Instruct-4bit\", \"created\": 1784649797, \"choices\": [{\"index\": 0, \"finish_reason\": null, \"delta\": {\"role\": \"assistant\", \"content\": \" \\\"\"}}]}\n\ndata: {\"id\": \"chatcmpl-0fc3b1b9-6fc4-4d7e-85f8-57ecbf67a935\", \"system_fingerprint\": \"0.31.3-0.32.0-macOS-26.5.2-arm64-arm-64bit-Mach-O-applegpu_g16s\", \"object\": \"chat.completion.chunk\", \"model\": \"mlx-community/Meta-Llama-3.1-8B-Instruct-4bit\", \"created\": 1784649797, \"choices\": [{\"index\": 0, \"finish_reason\": null, \"delta\": {\"role\": \"assistant\", \"content\": \"set\"}}]}\n\ndata: {\"id\": \"chatcmpl-0fc3b1b9-6fc4-4d7e-85f8-57ecbf67a935\", \"system_fingerprint\": \"0.31.3-0.32.0-macOS-26.5.2-arm64-arm-64bit-Mach-O-applegpu_g16s\", \"object\": \"chat.completion.chunk\", \"model\": \"mlx-community/Meta-Llama-3.1-8B-Instruct-4bit\", \"created\": 1784649797, \"choices\": [{\"index\": 0, \"finish_reason\": null, \"delta\": {\"role\": \"assistant\", \"content\": \"_m\"}}]}\n\ndata: {\"id\": \"chatcmpl-0fc3b1b9-6fc4-4d7e-85f8-57ecbf67a935\", \"system_fingerprint\": \"0.31.3-0.32.0-macOS-26.5.2-arm64-arm-64bit-Mach-O-applegpu_g16s\", \"object\": \"chat.completion.chunk\", \"model\": \"mlx-community/Meta-Llama-3.1-8B-Instruct-4bit\", \"created\": 1784649797, \"choices\": [{\"index\": 0, \"finish_reason\": null, \"delta\": {\"role\": \"assistant\", \"content\": \"aintenance\"}}]}\n\ndata: {\"id\": \"chatcmpl-0fc3b1b9-6fc4-4d7e-85f8-57ecbf67a935\", \"system_fingerprint\": \"0.31.3-0.32.0-macOS-26.5.2-arm64-arm-64bit-Mach-O-applegpu_g16s\", \"object\": \"chat.completion.chunk\", \"model\": \"mlx-community/Meta-Llama-3.1-8B-Instruct-4bit\", \"created\": 1784649797, \"choices\": [{\"index\": 0, \"finish_reason\": null, \"delta\": {\"role\": \"assistant\", \"content\": \"\\\",\"}}]}\n\ndata: {\"id\": \"chatcmpl-0fc3b1b9-6fc4-4d7e-85f8-57ecbf67a935\", \"system_fingerprint\": \"0.31.3-0.32.0-macOS-26.5.2-arm64-arm-64bit-Mach-O-applegpu_g16s\", \"object\": \"chat.completion.chunk\", \"model\": \"mlx-community/Meta-Llama-3.1-8B-Instruct-4bit\", \"created\": 1784649797, \"choices\": [{\"index\": 0, \"finish_reason\": null, \"delta\": {\"role\": \"assistant\", \"content\": \" \\\"\"}}]}\n\ndata: {\"id\": \"chatcmpl-0fc3b1b9-6fc4-4d7e-85f8-57ecbf67a935\", \"system_fingerprint\": \"0.31.3-0.32.0-macOS-26.5.2-arm64-arm-64bit-Mach-O-applegpu_g16s\", \"object\": \"chat.completion.chunk\", \"model\": \"mlx-community/Meta-Llama-3.1-8B-Instruct-4bit\", \"created\": 1784649797, \"choices\": [{\"index\": 0, \"finish_reason\": null, \"delta\": {\"role\": \"assistant\", \"content\": \"parameters\"}}]}\n\ndata: {\"id\": \"chatcmpl-0fc3b1b9-6fc4-4d7e-85f8-57ecbf67a935\", \"system_fingerprint\": \"0.31.3-0.32.0-macOS-26.5.2-arm64-arm-64bit-Mach-O-applegpu_g16s\", \"object\": \"chat.completion.chunk\", \"model\": \"mlx-community/Meta-Llama-3.1-8B-Instruct-4bit\", \"created\": 1784649797, \"choices\": [{\"index\": 0, \"finish_reason\": null, \"delta\": {\"role\": \"assistant\", \"content\": \"\\\":\"}}]}\n\ndata: {\"id\": \"chatcmpl-0fc3b1b9-6fc4-4d7e-85f8-57ecbf67a935\", \"system_fingerprint\": \"0.31.3-0.32.0-macOS-26.5.2-arm64-arm-64bit-Mach-O-applegpu_g16s\", \"object\": \"chat.completion.chunk\", \"model\": \"mlx-community/Meta-Llama-3.1-8B-Instruct-4bit\", \"created\": 1784649797, \"choices\": [{\"index\": 0, \"finish_reason\": null, \"delta\": {\"role\": \"assistant\", \"content\": \" {\\\"\"}}]}\n\ndata: {\"id\": \"chatcmpl-0fc3b1b9-6fc4-4d7e-85f8-57ecbf67a935\", \"system_fingerprint\": \"0.31.3-0.32.0-macOS-26.5.2-arm64-arm-64bit-Mach-O-applegpu_g16s\", \"object\": \"chat.completion.chunk\", \"model\": \"mlx-community/Meta-Llama-3.1-8B-Instruct-4bit\", \"created\": 1784649797, \"choices\": [{\"index\": 0, \"finish_reason\": null, \"delta\": {\"role\": \"assistant\", \"content\": \"service\"}}]}\n\ndata: {\"id\": \"chatcmpl-0fc3b1b9-6fc4-4d7e-85f8-57ecbf67a935\", \"system_fingerprint\": \"0.31.3-0.32.0-macOS-26.5.2-arm64-arm-64bit-Mach-O-applegpu_g16s\", \"object\": \"chat.completion.chunk\", \"model\": \"mlx-community/Meta-Llama-3.1-8B-Instruct-4bit\", \"created\": 1784649797, \"choices\": [{\"index\": 0, \"finish_reason\": null, \"delta\": {\"role\": \"assistant\", \"content\": \"\\\":\"}}]}\n\ndata: {\"id\": \"chatcmpl-0fc3b1b9-6fc4-4d7e-85f8-57ecbf67a935\", \"system_fingerprint\": \"0.31.3-0.32.0-macOS-26.5.2-arm64-arm-64bit-Mach-O-applegpu_g16s\", \"object\": \"chat.completion.chunk\", \"model\": \"mlx-community/Meta-Llama-3.1-8B-Instruct-4bit\", \"created\": 1784649797, \"choices\": [{\"index\": 0, \"finish_reason\": null, \"delta\": {\"role\": \"assistant\", \"content\": \" \\\"\"}}]}\n\ndata: {\"id\": \"chatcmpl-0fc3b1b9-6fc4-4d7e-85f8-57ecbf67a935\", \"system_fingerprint\": \"0.31.3-0.32.0-macOS-26.5.2-arm64-arm-64bit-Mach-O-applegpu_g16s\", \"object\": \"chat.completion.chunk\", \"model\": \"mlx-community/Meta-Llama-3.1-8B-Instruct-4bit\", \"created\": 1784649797, \"choices\": [{\"index\": 0, \"finish_reason\": null, \"delta\": {\"role\": \"assistant\", \"content\": \"billing\"}}]}\n\ndata: {\"id\": \"chatcmpl-0fc3b1b9-6fc4-4d7e-85f8-57ecbf67a935\", \"system_fingerprint\": \"0.31.3-0.32.0-macOS-26.5.2-arm64-arm-64bit-Mach-O-applegpu_g16s\", \"object\": \"chat.completion.chunk\", \"model\": \"mlx-community/Meta-Llama-3.1-8B-Instruct-4bit\", \"created\": 1784649797, \"choices\": [{\"index\": 0, \"finish_reason\": null, \"delta\": {\"role\": \"assistant\", \"content\": \"\\\",\"}}]}\n\ndata: {\"id\": \"chatcmpl-0fc3b1b9-6fc4-4d7e-85f8-57ecbf67a935\", \"system_fingerprint\": \"0.31.3-0.32.0-macOS-26.5.2-arm64-arm-64bit-Mach-O-applegpu_g16s\", \"object\": \"chat.completion.chunk\", \"model\": \"mlx-community/Meta-Llama-3.1-8B-Instruct-4bit\", \"created\": 1784649797, \"choices\": [{\"index\": 0, \"finish_reason\": null, \"delta\": {\"role\": \"assistant\", \"content\": \" \\\"\"}}]}\n\ndata: {\"id\": \"chatcmpl-0fc3b1b9-6fc4-4d7e-85f8-57ecbf67a935\", \"system_fingerprint\": \"0.31.3-0.32.0-macOS-26.5.2-arm64-arm-64bit-Mach-O-applegpu_g16s\", \"object\": \"chat.completion.chunk\", \"model\": \"mlx-community/Meta-Llama-3.1-8B-Instruct-4bit\", \"created\": 1784649797, \"choices\": [{\"index\": 0, \"finish_reason\": null, \"delta\": {\"role\": \"assistant\", \"content\": \"enabled\"}}]}\n\ndata: {\"id\": \"chatcmpl-0fc3b1b9-6fc4-4d7e-85f8-57ecbf67a935\", \"system_fingerprint\": \"0.31.3-0.32.0-macOS-26.5.2-arm64-arm-64bit-Mach-O-applegpu_g16s\", \"object\": \"chat.completion.chunk\", \"model\": \"mlx-community/Meta-Llama-3.1-8B-Instruct-4bit\", \"created\": 1784649797, \"choices\": [{\"index\": 0, \"finish_reason\": null, \"delta\": {\"role\": \"assistant\", \"content\": \"\\\":\"}}]}\n\ndata: {\"id\": \"chatcmpl-0fc3b1b9-6fc4-4d7e-85f8-57ecbf67a935\", \"system_fingerprint\": \"0.31.3-0.32.0-macOS-26.5.2-arm64-arm-64bit-Mach-O-applegpu_g16s\", \"object\": \"chat.completion.chunk\", \"model\": \"mlx-community/Meta-Llama-3.1-8B-Instruct-4bit\", \"created\": 1784649797, \"choices\": [{\"index\": 0, \"finish_reason\": null, \"delta\": {\"role\": \"assistant\", \"content\": \" \\\"\"}}]}\n\ndata: {\"id\": \"chatcmpl-0fc3b1b9-6fc4-4d7e-85f8-57ecbf67a935\", \"system_fingerprint\": \"0.31.3-0.32.0-macOS-26.5.2-arm64-arm-64bit-Mach-O-applegpu_g16s\", \"object\": \"chat.completion.chunk\", \"model\": \"mlx-community/Meta-Llama-3.1-8B-Instruct-4bit\", \"created\": 1784649797, \"choices\": [{\"index\": 0, \"finish_reason\": null, \"delta\": {\"role\": \"assistant\", \"content\": \"True\"}}]}\n\ndata: {\"id\": \"chatcmpl-0fc3b1b9-6fc4-4d7e-85f8-57ecbf67a935\", \"system_fingerprint\": \"0.31.3-0.32.0-macOS-26.5.2-arm64-arm-64bit-Mach-O-applegpu_g16s\", \"object\": \"chat.completion.chunk\", \"model\": \"mlx-community/Meta-Llama-3.1-8B-Instruct-4bit\", \"created\": 1784649797, \"choices\": [{\"index\": 0, \"finish_reason\": null, \"delta\": {\"role\": \"assistant\", \"content\": \"\\\"}}\"}}]}\n\ndata: {\"id\": \"chatcmpl-0fc3b1b9-6fc4-4d7e-85f8-57ecbf67a935\", \"system_fingerprint\": \"0.31.3-0.32.0-macOS-26.5.2-arm64-arm-64bit-Mach-O-applegpu_g16s\", \"object\": \"chat.completion.chunk\", \"model\": \"mlx-community/Meta-Llama-3.1-8B-Instruct-4bit\", \"created\": 1784649797, \"choices\": [{\"index\": 0, \"finish_reason\": \"stop\", \"delta\": {\"role\": \"assistant\"}}]}\n\ndata: [DONE]\n\n"
+      },
+      "retried": false
+    }
+  ]
+}

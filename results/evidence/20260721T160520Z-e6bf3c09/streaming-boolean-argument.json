@@ -1,0 +1,70 @@
+{
+  "schema_version": 1,
+  "run_id": "20260721T160520Z-e6bf3c09",
+  "scenario_id": "streaming-boolean-argument",
+  "turns": [
+    {
+      "index": 0,
+      "request": {
+        "method": "POST",
+        "url": "http://127.0.0.1:8081/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "Enable maintenance mode for the billing service.",
+              "role": "user"
+            }
+          ],
+          "model": "mlx-community/Mistral-7B-Instruct-v0.3-4bit",
+          "seed": 42,
+          "stream": true,
+          "temperature": 0.0,
+          "tool_choice": "auto",
+          "tools": [
+            {
+              "function": {
+                "description": "Enable or disable maintenance mode.",
+                "name": "set_maintenance",
+                "parameters": {
+                  "properties": {
+                    "enabled": {
+                      "type": "boolean"
+                    },
+                    "service": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "service",
+                    "enabled"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "access-control-allow-headers": "*",
+          "access-control-allow-methods": "*",
+          "access-control-allow-origin": "*",
+          "cache-control": "no-cache",
+          "content-type": "text/event-stream",
+          "date": "Tue, 21 Jul 2026 16:05:52 GMT",
+          "server": "BaseHTTP/0.6 Python/3.14.6"
+        },
+        "body_raw": ": keepalive 0/75\n\n: keepalive 74/75\n\n: keepalive 75/75\n\ndata: {\"id\": \"chatcmpl-b4f2359a-8513-4c85-aac2-0b8533b47da7\", \"system_fingerprint\": \"0.31.3-0.32.0-macOS-26.5.2-arm64-arm-64bit-Mach-O-applegpu_g16s\", \"object\": \"chat.completion.chunk\", \"model\": \"mlx-community/Mistral-7B-Instruct-v0.3-4bit\", \"created\": 1784649952, \"choices\": [{\"index\": 0, \"finish_reason\": null, \"delta\": {\"role\": \"assistant\", \"content\": \"[TOOL_CALLS]\"}}]}\n\ndata: {\"id\": \"chatcmpl-b4f2359a-8513-4c85-aac2-0b8533b47da7\", \"system_fingerprint\": \"0.31.3-0.32.0-macOS-26.5.2-arm64-arm-64bit-Mach-O-applegpu_g16s\", \"object\": \"chat.completion.chunk\", \"model\": \"mlx-community/Mistral-7B-Instruct-v0.3-4bit\", \"created\": 1784649952, \"choices\": [{\"index\": 0, \"finish_reason\": null, \"delta\": {\"role\": \"assistant\", \"content\": \"[\"}}]}\n\ndata: {\"id\": \"chatcmpl-b4f2359a-8513-4c85-aac2-0b8533b47da7\", \"system_fingerprint\": \"0.31.3-0.32.0-macOS-26.5.2-arm64-arm-64bit-Mach-O-applegpu_g16s\", \"object\": \"chat.completion.chunk\", \"model\": \"mlx-community/Mistral-7B-Instruct-v0.3-4bit\", \"created\": 1784649952, \"choices\": [{\"index\": 0, \"finish_reason\": null, \"delta\": {\"role\": \"assistant\", \"content\": \"{'\"}}]}\n\ndata: {\"id\": \"chatcmpl-b4f2359a-8513-4c85-aac2-0b8533b47da7\", \"system_fingerprint\": \"0.31.3-0.32.0-macOS-26.5.2-arm64-arm-64bit-Mach-O-applegpu_g16s\", \"object\": \"chat.completion.chunk\", \"model\": \"mlx-community/Mistral-7B-Instruct-v0.3-4bit\", \"created\": 1784649952, \"choices\": [{\"index\": 0, \"finish_reason\": null, \"delta\": {\"role\": \"assistant\", \"content\": \"name\"}}]}\n\ndata: {\"id\": \"chatcmpl-b4f2359a-8513-4c85-aac2-0b8533b47da7\", \"system_fingerprint\": \"0.31.3-0.32.0-macOS-26.5.2-arm64-arm-64bit-Mach-O-applegpu_g16s\", \"object\": \"chat.completion.chunk\", \"model\": \"mlx-community/Mistral-7B-Instruct-v0.3-4bit\", \"created\": 1784649952, \"choices\": [{\"index\": 0, \"finish_reason\": null, \"delta\": {\"role\": \"assistant\", \"content\": \"':\"}}]}\n\ndata: {\"id\": \"chatcmpl-b4f2359a-8513-4c85-aac2-0b8533b47da7\", \"system_fingerprint\": \"0.31.3-0.32.0-macOS-26.5.2-arm64-arm-64bit-Mach-O-applegpu_g16s\", \"object\": \"chat.completion.chunk\", \"model\": \"mlx-community/Mistral-7B-Instruct-v0.3-4bit\", \"created\": 1784649952, \"choices\": [{\"index\": 0, \"finish_reason\": null, \"delta\": {\"role\": \"assistant\", \"content\": \" '\"}}]}\n\ndata: {\"id\": \"chatcmpl-b4f2359a-8513-4c85-aac2-0b8533b47da7\", \"system_fingerprint\": \"0.31.3-0.32.0-macOS-26.5.2-arm64-arm-64bit-Mach-O-applegpu_g16s\", \"object\": \"chat.completion.chunk\", \"model\": \"mlx-community/Mistral-7B-Instruct-v0.3-4bit\", \"created\": 1784649952, \"choices\": [{\"index\": 0, \"finish_reason\": null, \"delta\": {\"role\": \"assistant\", \"content\": \"set\"}}]}\n\ndata: {\"id\": \"chatcmpl-b4f2359a-8513-4c85-aac2-0b8533b47da7\", \"system_fingerprint\": \"0.31.3-0.32.0-macOS-26.5.2-arm64-arm-64bit-Mach-O-applegpu_g16s\", \"object\": \"chat.completion.chunk\", \"model\": \"mlx-community/Mistral-7B-Instruct-v0.3-4bit\", \"created\": 1784649952, \"choices\": [{\"index\": 0, \"finish_reason\": null, \"delta\": {\"role\": \"assistant\", \"content\": \"_\"}}]}\n\ndata: {\"id\": \"chatcmpl-b4f2359a-8513-4c85-aac2-0b8533b47da7\", \"system_fingerprint\": \"0.31.3-0.32.0-macOS-26.5.2-arm64-arm-64bit-Mach-O-applegpu_g16s\", \"object\": \"chat.completion.chunk\", \"model\": \"mlx-community/Mistral-7B-Instruct-v0.3-4bit\", \"created\": 1784649952, \"choices\": [{\"index\": 0, \"finish_reason\": null, \"delta\": {\"role\": \"assistant\", \"content\": \"main\"}}]}\n\ndata: {\"id\": \"chatcmpl-b4f2359a-8513-4c85-aac2-0b8533b47da7\", \"system_fingerprint\": \"0.31.3-0.32.0-macOS-26.5.2-arm64-arm-64bit-Mach-O-applegpu_g16s\", \"object\": \"chat.completion.chunk\", \"model\": \"mlx-community/Mistral-7B-Instruct-v0.3-4bit\", \"created\": 1784649952, \"choices\": [{\"index\": 0, \"finish_reason\": null, \"delta\": {\"role\": \"assistant\", \"content\": \"tenance\"}}]}\n\ndata: {\"id\": \"chatcmpl-b4f2359a-8513-4c85-aac2-0b8533b47da7\", \"system_fingerprint\": \"0.31.3-0.32.0-macOS-26.5.2-arm64-arm-64bit-Mach-O-applegpu_g16s\", \"object\": \"chat.completion.chunk\", \"model\": \"mlx-community/Mistral-7B-Instruct-v0.3-4bit\", \"created\": 1784649952, \"choices\": [{\"index\": 0, \"finish_reason\": null, \"delta\": {\"role\": \"assistant\", \"content\": \"',\"}}]}\n\ndata: {\"id\": \"chatcmpl-b4f2359a-8513-4c85-aac2-0b8533b47da7\", \"system_fingerprint\": \"0.31.3-0.32.0-macOS-26.5.2-arm64-arm-64bit-Mach-O-applegpu_g16s\", \"object\": \"chat.completion.chunk\", \"model\": \"mlx-community/Mistral-7B-Instruct-v0.3-4bit\", \"created\": 1784649952, \"choices\": [{\"index\": 0, \"finish_reason\": null, \"delta\": {\"role\": \"assistant\", \"content\": \" '\"}}]}\n\ndata: {\"id\": \"chatcmpl-b4f2359a-8513-4c85-aac2-0b8533b47da7\", \"system_fingerprint\": \"0.31.3-0.32.0-macOS-26.5.2-arm64-arm-64bit-Mach-O-applegpu_g16s\", \"object\": \"chat.completion.chunk\", \"model\": \"mlx-community/Mistral-7B-Instruct-v0.3-4bit\", \"created\": 1784649952, \"choices\": [{\"index\": 0, \"finish_reason\": null, \"delta\": {\"role\": \"assistant\", \"content\": \"arguments\"}}]}\n\ndata: {\"id\": \"chatcmpl-b4f2359a-8513-4c85-aac2-0b8533b47da7\", \"system_fingerprint\": \"0.31.3-0.32.0-macOS-26.5.2-arm64-arm-64bit-Mach-O-applegpu_g16s\", \"object\": \"chat.completion.chunk\", \"model\": \"mlx-community/Mistral-7B-Instruct-v0.3-4bit\", \"created\": 1784649952, \"choices\": [{\"index\": 0, \"finish_reason\": null, \"delta\": {\"role\": \"assistant\", \"content\": \"':\"}}]}\n\ndata: {\"id\": \"chatcmpl-b4f2359a-8513-4c85-aac2-0b8533b47da7\", \"system_fingerprint\": \"0.31.3-0.32.0-macOS-26.5.2-arm64-arm-64bit-Mach-O-applegpu_g16s\", \"object\": \"chat.completion.chunk\", \"model\": \"mlx-community/Mistral-7B-Instruct-v0.3-4bit\", \"created\": 1784649952, \"choices\": [{\"index\": 0, \"finish_reason\": null, \"delta\": {\"role\": \"assistant\", \"content\": \" {'\"}}]}\n\ndata: {\"id\": \"chatcmpl-b4f2359a-8513-4c85-aac2-0b8533b47da7\", \"system_fingerprint\": \"0.31.3-0.32.0-macOS-26.5.2-arm64-arm-64bit-Mach-O-applegpu_g16s\", \"object\": \"chat.completion.chunk\", \"model\": \"mlx-community/Mistral-7B-Instruct-v0.3-4bit\", \"created\": 1784649952, \"choices\": [{\"index\": 0, \"finish_reason\": null, \"delta\": {\"role\": \"assistant\", \"content\": \"service\"}}]}\n\ndata: {\"id\": \"chatcmpl-b4f2359a-8513-4c85-aac2-0b8533b47da7\", \"system_fingerprint\": \"0.31.3-0.32.0-macOS-26.5.2-arm64-arm-64bit-Mach-O-applegpu_g16s\", \"object\": \"chat.completion.chunk\", \"model\": \"mlx-community/Mistral-7B-Instruct-v0.3-4bit\", \"created\": 1784649952, \"choices\": [{\"index\": 0, \"finish_reason\": null, \"delta\": {\"role\": \"assistant\", \"content\": \"':\"}}]}\n\ndata: {\"id\": \"chatcmpl-b4f2359a-8513-4c85-aac2-0b8533b47da7\", \"system_fingerprint\": \"0.31.3-0.32.0-macOS-26.5.2-arm64-arm-64bit-Mach-O-applegpu_g16s\", \"object\": \"chat.completion.chunk\", \"model\": \"mlx-community/Mistral-7B-Instruct-v0.3-4bit\", \"created\": 1784649952, \"choices\": [{\"index\": 0, \"finish_reason\": null, \"delta\": {\"role\": \"assistant\", \"content\": \" '\"}}]}\n\ndata: {\"id\": \"chatcmpl-b4f2359a-8513-4c85-aac2-0b8533b47da7\", \"system_fingerprint\": \"0.31.3-0.32.0-macOS-26.5.2-arm64-arm-64bit-Mach-O-applegpu_g16s\", \"object\": \"chat.completion.chunk\", \"model\": \"mlx-community/Mistral-7B-Instruct-v0.3-4bit\", \"created\": 1784649952, \"choices\": [{\"index\": 0, \"finish_reason\": null, \"delta\": {\"role\": \"assistant\", \"content\": \"b\"}}]}\n\ndata: {\"id\": \"chatcmpl-b4f2359a-8513-4c85-aac2-0b8533b47da7\", \"system_fingerprint\": \"0.31.3-0.32.0-macOS-26.5.2-arm64-arm-64bit-Mach-O-applegpu_g16s\", \"object\": \"chat.completion.chunk\", \"model\": \"mlx-community/Mistral-7B-Instruct-v0.3-4bit\", \"created\": 1784649952, \"choices\": [{\"index\": 0, \"finish_reason\": null, \"delta\": {\"role\": \"assistant\", \"content\": \"illing\"}}]}\n\ndata: {\"id\": \"chatcmpl-b4f2359a-8513-4c85-aac2-0b8533b47da7\", \"system_fingerprint\": \"0.31.3-0.32.0-macOS-26.5.2-arm64-arm-64bit-Mach-O-applegpu_g16s\", \"object\": \"chat.completion.chunk\", \"model\": \"mlx-community/Mistral-7B-Instruct-v0.3-4bit\", \"created\": 1784649952, \"choices\": [{\"index\": 0, \"finish_reason\": null, \"delta\": {\"role\": \"assistant\", \"content\": \"',\"}}]}\n\ndata: {\"id\": \"chatcmpl-b4f2359a-8513-4c85-aac2-0b8533b47da7\", \"system_fingerprint\": \"0.31.3-0.32.0-macOS-26.5.2-arm64-arm-64bit-Mach-O-applegpu_g16s\", \"object\": \"chat.completion.chunk\", \"model\": \"mlx-community/Mistral-7B-Instruct-v0.3-4bit\", \"created\": 1784649952, \"choices\": [{\"index\": 0, \"finish_reason\": null, \"delta\": {\"role\": \"assistant\", \"content\": \" '\"}}]}\n\ndata: {\"id\": \"chatcmpl-b4f2359a-8513-4c85-aac2-0b8533b47da7\", \"system_fingerprint\": \"0.31.3-0.32.0-macOS-26.5.2-arm64-arm-64bit-Mach-O-applegpu_g16s\", \"object\": \"chat.completion.chunk\", \"model\": \"mlx-community/Mistral-7B-Instruct-v0.3-4bit\", \"created\": 1784649952, \"choices\": [{\"index\": 0, \"finish_reason\": null, \"delta\": {\"role\": \"assistant\", \"content\": \"enabled\"}}]}\n\ndata: {\"id\": \"chatcmpl-b4f2359a-8513-4c85-aac2-0b8533b47da7\", \"system_fingerprint\": \"0.31.3-0.32.0-macOS-26.5.2-arm64-arm-64bit-Mach-O-applegpu_g16s\", \"object\": \"chat.completion.chunk\", \"model\": \"mlx-community/Mistral-7B-Instruct-v0.3-4bit\", \"created\": 1784649952, \"choices\": [{\"index\": 0, \"finish_reason\": null, \"delta\": {\"role\": \"assistant\", \"content\": \"':\"}}]}\n\ndata: {\"id\": \"chatcmpl-b4f2359a-8513-4c85-aac2-0b8533b47da7\", \"system_fingerprint\": \"0.31.3-0.32.0-macOS-26.5.2-arm64-arm-64bit-Mach-O-applegpu_g16s\", \"object\": \"chat.completion.chunk\", \"model\": \"mlx-community/Mistral-7B-Instruct-v0.3-4bit\", \"created\": 1784649952, \"choices\": [{\"index\": 0, \"finish_reason\": null, \"delta\": {\"role\": \"assistant\", \"content\": \" true\"}}]}\n\ndata: {\"id\": \"chatcmpl-b4f2359a-8513-4c85-aac2-0b8533b47da7\", \"system_fingerprint\": \"0.31.3-0.32.0-macOS-26.5.2-arm64-arm-64bit-Mach-O-applegpu_g16s\", \"object\": \"chat.completion.chunk\", \"model\": \"mlx-community/Mistral-7B-Instruct-v0.3-4bit\", \"created\": 1784649952, \"choices\": [{\"index\": 0, \"finish_reason\": null, \"delta\": {\"role\": \"assistant\", \"content\": \"}}\"}}]}\n\ndata: {\"id\": \"chatcmpl-b4f2359a-8513-4c85-aac2-0b8533b47da7\", \"system_fingerprint\": \"0.31.3-0.32.0-macOS-26.5.2-arm64-arm-64bit-Mach-O-applegpu_g16s\", \"object\": \"chat.completion.chunk\", \"model\": \"mlx-community/Mistral-7B-Instruct-v0.3-4bit\", \"created\": 1784649952, \"choices\": [{\"index\": 0, \"finish_reason\": null, \"delta\": {\"role\": \"assistant\", \"content\": \"]\"}}]}\n\ndata: {\"id\": \"chatcmpl-b4f2359a-8513-4c85-aac2-0b8533b47da7\", \"system_fingerprint\": \"0.31.3-0.32.0-macOS-26.5.2-arm64-arm-64bit-Mach-O-applegpu_g16s\", \"object\": \"chat.completion.chunk\", \"model\": \"mlx-community/Mistral-7B-Instruct-v0.3-4bit\", \"created\": 1784649952, \"choices\": [{\"index\": 0, \"finish_reason\": \"stop\", \"delta\": {\"role\": \"assistant\"}}]}\n\ndata: [DONE]\n\n"
+      },
+      "retried": false
+    }
+  ]
+}

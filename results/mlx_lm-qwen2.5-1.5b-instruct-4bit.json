@@ -1,0 +1,487 @@
+{
+  "schema_version": 2,
+  "metadata": {
+    "run_id": "20260721T160226Z-3d6b0b23",
+    "timestamp": "2026-07-21T16:02:26Z",
+    "willitcall_version": "0.1.0",
+    "endpoint": "http://127.0.0.1:8081/v1",
+    "model_id": "mlx-community/Qwen2.5-1.5B-Instruct-4bit",
+    "declared_quant": "4bit",
+    "server": {
+      "preset_name": "mlx_lm",
+      "reported_version": null,
+      "quirk_flags": [
+        "unconstrained_post_hoc_parse"
+      ]
+    },
+    "environment": {
+      "host_hardware_class": "Apple M4 Max, 64GB",
+      "host_os": "macOS 26.5.2"
+    },
+    "sampling": {
+      "temperature": 0.0,
+      "top_p": 1.0,
+      "seed": 42,
+      "max_tokens": 1024
+    }
+  },
+  "scenarios": [
+    {
+      "id": "multi-turn-calendar-followup",
+      "category": "multi_turn",
+      "status": "fail",
+      "failure_reason": "turn 1: unexpected extra tool call: 'create_event'",
+      "evidence_hash": "sha256:96615b7dcd3100b0b755eee927c20d5e4b59ce7af0c07c2c834709f5d6e0dfe1",
+      "evidence_path": "evidence/20260721T160226Z-3d6b0b23/multi-turn-calendar-followup.json",
+      "retried": false
+    },
+    {
+      "id": "multi-turn-flight-booking",
+      "category": "multi_turn",
+      "status": "fail",
+      "failure_reason": "turn 1: unexpected extra tool call: 'book_flight'",
+      "evidence_hash": "sha256:ce5e21c265c78da1ed9f91f2e7e41776840f67408ce1be086a453bc2e2229308",
+      "evidence_path": "evidence/20260721T160226Z-3d6b0b23/multi-turn-flight-booking.json",
+      "retried": false
+    },
+    {
+      "id": "multi-turn-inventory-order",
+      "category": "multi_turn",
+      "status": "fail",
+      "failure_reason": "turn 1: unexpected extra tool call: 'create_order'",
+      "evidence_hash": "sha256:af6fe986c7d317ca7c4915f859d862e22345ef565d964cf1c4fe25be1d2e98ae",
+      "evidence_path": "evidence/20260721T160226Z-3d6b0b23/multi-turn-inventory-order.json",
+      "retried": false
+    },
+    {
+      "id": "multi-turn-parallel-followup",
+      "category": "multi_turn",
+      "status": "fail",
+      "failure_reason": "turn 1: unexpected extra tool call: 'compare_temperatures'",
+      "evidence_hash": "sha256:914fd762e4db333a3013e41019040251e3be63fa17f949bd900857b0b4f199da",
+      "evidence_path": "evidence/20260721T160226Z-3d6b0b23/multi-turn-parallel-followup.json",
+      "retried": false
+    },
+    {
+      "id": "multi-turn-route",
+      "category": "multi_turn",
+      "status": "fail",
+      "failure_reason": "turn 1: wrong tool call: expected 'geocode', got 'get_route'",
+      "evidence_hash": "sha256:d33a818c14f377e23baaa74ab9436beaa2c38ec09c4270ea38e635f1d9150786",
+      "evidence_path": "evidence/20260721T160226Z-3d6b0b23/multi-turn-route.json",
+      "retried": false
+    },
+    {
+      "id": "multi-turn-ticket-update",
+      "category": "multi_turn",
+      "status": "fail",
+      "failure_reason": "turn 1: unexpected extra tool call: 'set_ticket_priority'",
+      "evidence_hash": "sha256:6b4c4e1d0e6fe806c808622389edeba8704eb4b5ac920623a282972e9a371819",
+      "evidence_path": "evidence/20260721T160226Z-3d6b0b23/multi-turn-ticket-update.json",
+      "retried": false
+    },
+    {
+      "id": "multi-turn-two-hop-chain",
+      "category": "multi_turn",
+      "status": "fail",
+      "failure_reason": "turn 1: unexpected extra tool call: 'find_account'",
+      "evidence_hash": "sha256:7e4af51a8382eaa7c2c03c20ed68288c62aa1a412d84eeea00d8fe6d0d9e54d5",
+      "evidence_path": "evidence/20260721T160226Z-3d6b0b23/multi-turn-two-hop-chain.json",
+      "retried": false
+    },
+    {
+      "id": "negative-auto-arithmetic",
+      "category": "negative_trap",
+      "status": "pass",
+      "failure_reason": null,
+      "evidence_hash": "sha256:9bcd892716f9427160defdf7ee32de46c3d98e3594d08f11cd52f453f0132e07",
+      "evidence_path": "evidence/20260721T160226Z-3d6b0b23/negative-auto-arithmetic.json",
+      "retried": false
+    },
+    {
+      "id": "negative-auto-knowledge",
+      "category": "negative_trap",
+      "status": "pass",
+      "failure_reason": null,
+      "evidence_hash": "sha256:f130ca01ce9b9d5b67bd28e351df341fb858987e3a3700fb2a1ab6a67028ee14",
+      "evidence_path": "evidence/20260721T160226Z-3d6b0b23/negative-auto-knowledge.json",
+      "retried": false
+    },
+    {
+      "id": "negative-greeting",
+      "category": "negative_trap",
+      "status": "pass",
+      "failure_reason": null,
+      "evidence_hash": "sha256:b940aac00432181d417b0182f7f502d34723d83cd2609643af61e09cd1915cce",
+      "evidence_path": "evidence/20260721T160226Z-3d6b0b23/negative-greeting.json",
+      "retried": false
+    },
+    {
+      "id": "negative-invalid-schema",
+      "category": "negative_trap",
+      "status": "pass",
+      "failure_reason": null,
+      "evidence_hash": "sha256:78791db5de0bd59879d8566c93bdf3665b4806437e0f76818fd04f3fcc550b5e",
+      "evidence_path": "evidence/20260721T160226Z-3d6b0b23/negative-invalid-schema.json",
+      "retried": false
+    },
+    {
+      "id": "negative-long-argument",
+      "category": "negative_trap",
+      "status": "fail",
+      "failure_reason": "wrong value for 'token': expected abcdefghijklmnopqrstuvwxyz0123456789-ABCDEFGHIJKLMNOPQRSTUVWXYZ-abcdefghijklmnopqrstuvwxyz0123456789-ABCDEFGHIJKLMNOPQRSTUVWXYZ-abcdefghijklmnopqrstuvwxyz0123456789-ABCDEFGHIJKLMNOPQRSTUVWXYZ-abcdefghijklmnopqrstuvwxyz0123456789-ABCDEFGHIJKLMNOPQRSTUVWXYZ, got abcdefghijklmnopqrstuvwxyz0123456789-ABCDEFGHIJKLMNOPQRSTUVWXYZ-abcdefghijklmnopqrstuvwxyz0123456789-ABCDEFGHIJKLMNOPQRSTUVWXYZ-abcdefghijklmnopqrstuvwxyz0123456789-ABCDEFGHIJKLMNOPQRSTUVWXYZ-abcdefghijklmnopqrstuvwxyz0123456789-ABCDEFGHIJKLMNOPQRSTUVWXYZ-abcdefghijklmnopqrstuvwxyz0123456789-ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+      "evidence_hash": "sha256:5a1f4786543a6a03f59cdac4b28656a1b1a2dcc2c2002d0359137fe0f48d9763",
+      "evidence_path": "evidence/20260721T160226Z-3d6b0b23/negative-long-argument.json",
+      "retried": false
+    },
+    {
+      "id": "negative-plain-text",
+      "category": "negative_trap",
+      "status": "pass",
+      "failure_reason": null,
+      "evidence_hash": "sha256:c57b1f25bf1ea6137b6abba73f6cb42e70907d0212e8d9b05111959a8e9231fd",
+      "evidence_path": "evidence/20260721T160226Z-3d6b0b23/negative-plain-text.json",
+      "retried": false
+    },
+    {
+      "id": "negative-unicode-argument",
+      "category": "negative_trap",
+      "status": "pass",
+      "failure_reason": null,
+      "evidence_hash": "sha256:e8eb639d7cce5a5e9f6d34dd577353a9da02c4f7a38fbb15be6b5f83f86416de",
+      "evidence_path": "evidence/20260721T160226Z-3d6b0b23/negative-unicode-argument.json",
+      "retried": false
+    },
+    {
+      "id": "parallel-city-time",
+      "category": "parallel_calls",
+      "status": "pass",
+      "failure_reason": null,
+      "evidence_hash": "sha256:637d7b5878f636735dc3dc43bec5b49067868483bcd9b3dde47597ebd67f7831",
+      "evidence_path": "evidence/20260721T160226Z-3d6b0b23/parallel-city-time.json",
+      "retried": false
+    },
+    {
+      "id": "parallel-different-tools",
+      "category": "parallel_calls",
+      "status": "pass",
+      "failure_reason": null,
+      "evidence_hash": "sha256:61ebe4797b70d84998243517232189c64325e8f6720a8f29c1b3644e62ebf614",
+      "evidence_path": "evidence/20260721T160226Z-3d6b0b23/parallel-different-tools.json",
+      "retried": false
+    },
+    {
+      "id": "parallel-three-cities",
+      "category": "parallel_calls",
+      "status": "pass",
+      "failure_reason": null,
+      "evidence_hash": "sha256:cab6d938edbd76da2e9363909b6983c0913cae9ea216a6c6a621080370b419a7",
+      "evidence_path": "evidence/20260721T160226Z-3d6b0b23/parallel-three-cities.json",
+      "retried": false
+    },
+    {
+      "id": "parallel-three-different-tools",
+      "category": "parallel_calls",
+      "status": "pass",
+      "failure_reason": null,
+      "evidence_hash": "sha256:00b08aca08588ef8f8e9af35a5b809b8f552b938432e1a322298f5e6963ba21f",
+      "evidence_path": "evidence/20260721T160226Z-3d6b0b23/parallel-three-different-tools.json",
+      "retried": false
+    },
+    {
+      "id": "parallel-two-calculations",
+      "category": "parallel_calls",
+      "status": "pass",
+      "failure_reason": null,
+      "evidence_hash": "sha256:ef3e1e457747cdd1a9413f96e3c8572c8b4f7e445c6250eb5740c78ad3cd4590",
+      "evidence_path": "evidence/20260721T160226Z-3d6b0b23/parallel-two-calculations.json",
+      "retried": false
+    },
+    {
+      "id": "parallel-two-multiple-args",
+      "category": "parallel_calls",
+      "status": "pass",
+      "failure_reason": null,
+      "evidence_hash": "sha256:15651f27e6e3a0e35e622eda6388a5ca9020ab8ef18cfd7d25a9b02dc9ca04bd",
+      "evidence_path": "evidence/20260721T160226Z-3d6b0b23/parallel-two-multiple-args.json",
+      "retried": false
+    },
+    {
+      "id": "parallel-two-searches",
+      "category": "parallel_calls",
+      "status": "pass",
+      "failure_reason": null,
+      "evidence_hash": "sha256:b09f1dccfda7aeee680fc1fb77842033db4f50cf13c28abcde232684b06cdea9",
+      "evidence_path": "evidence/20260721T160226Z-3d6b0b23/parallel-two-searches.json",
+      "retried": false
+    },
+    {
+      "id": "parallel-weather-and-time",
+      "category": "parallel_calls",
+      "status": "pass",
+      "failure_reason": null,
+      "evidence_hash": "sha256:776b52e9822f7b9dd3fd4d660aca4974b2f25b9564674842127b9167e0f908dd",
+      "evidence_path": "evidence/20260721T160226Z-3d6b0b23/parallel-weather-and-time.json",
+      "retried": false
+    },
+    {
+      "id": "single-array-tags",
+      "category": "single_call",
+      "status": "pass",
+      "failure_reason": null,
+      "evidence_hash": "sha256:380c9d683fb2dd7ffff12a68f0cfc266312a3b71f38e8db24d4301303059ab73",
+      "evidence_path": "evidence/20260721T160226Z-3d6b0b23/single-array-tags.json",
+      "retried": false
+    },
+    {
+      "id": "single-boolean-flag",
+      "category": "single_call",
+      "status": "pass",
+      "failure_reason": null,
+      "evidence_hash": "sha256:79b74737cd5928388160c76ea9b0e559078dfa1cfaf374aeec2f658e50fa86a7",
+      "evidence_path": "evidence/20260721T160226Z-3d6b0b23/single-boolean-flag.json",
+      "retried": false
+    },
+    {
+      "id": "single-date-range",
+      "category": "single_call",
+      "status": "pass",
+      "failure_reason": null,
+      "evidence_hash": "sha256:ccebecd42d2ad7f97091e82e9c39aa50a27e6e3cec68ea34e3e26693804d8ecd",
+      "evidence_path": "evidence/20260721T160226Z-3d6b0b23/single-date-range.json",
+      "retried": false
+    },
+    {
+      "id": "single-decimal-price",
+      "category": "single_call",
+      "status": "pass",
+      "failure_reason": null,
+      "evidence_hash": "sha256:0e22ec4850db4d543472193d0e21dd9e83fc6632515093b27c07169d65a3cdc2",
+      "evidence_path": "evidence/20260721T160226Z-3d6b0b23/single-decimal-price.json",
+      "retried": false
+    },
+    {
+      "id": "single-empty-arguments",
+      "category": "single_call",
+      "status": "pass",
+      "failure_reason": null,
+      "evidence_hash": "sha256:c962a4f8b25b3cf5b1337a96cf518ae74a1d9dd540c741c4e93ff206b4e24837",
+      "evidence_path": "evidence/20260721T160226Z-3d6b0b23/single-empty-arguments.json",
+      "retried": false
+    },
+    {
+      "id": "single-enum-format",
+      "category": "single_call",
+      "status": "pass",
+      "failure_reason": null,
+      "evidence_hash": "sha256:ab698b1c975d7f2aa016a1a3cc3a61bac5715ce96cc1fe9868b6987abd63f27c",
+      "evidence_path": "evidence/20260721T160226Z-3d6b0b23/single-enum-format.json",
+      "retried": false
+    },
+    {
+      "id": "single-integer-limit",
+      "category": "single_call",
+      "status": "pass",
+      "failure_reason": null,
+      "evidence_hash": "sha256:9e6aa3f707e98c6e7acb9d2d480e93c3f839a699434a6f63291d308d717e40cb",
+      "evidence_path": "evidence/20260721T160226Z-3d6b0b23/single-integer-limit.json",
+      "retried": false
+    },
+    {
+      "id": "single-nested-options",
+      "category": "single_call",
+      "status": "fail",
+      "failure_reason": "schema violation: missing required field 'prompt'",
+      "evidence_hash": "sha256:4f1a9c5fceb1e0fddd3d25412df4f8ee439dc2794809e678b5f3d9d2eeceecac",
+      "evidence_path": "evidence/20260721T160226Z-3d6b0b23/single-nested-options.json",
+      "retried": false
+    },
+    {
+      "id": "single-optional-omitted",
+      "category": "single_call",
+      "status": "pass",
+      "failure_reason": null,
+      "evidence_hash": "sha256:f010c69653b103f57cef01be95e4cb7039e84df83fe16f0a5efb2dbfd9aefe46",
+      "evidence_path": "evidence/20260721T160226Z-3d6b0b23/single-optional-omitted.json",
+      "retried": false
+    },
+    {
+      "id": "single-optional-present",
+      "category": "single_call",
+      "status": "pass",
+      "failure_reason": null,
+      "evidence_hash": "sha256:c7805e29c394236733926e21d1d07a6b4ea9de4b55eb2a4b00cd7fea540633b0",
+      "evidence_path": "evidence/20260721T160226Z-3d6b0b23/single-optional-present.json",
+      "retried": false
+    },
+    {
+      "id": "single-string-list",
+      "category": "single_call",
+      "status": "pass",
+      "failure_reason": null,
+      "evidence_hash": "sha256:8a5663502397f946477d7d8f1e2d3187468dd3e80b3209b08089bae71d47d336",
+      "evidence_path": "evidence/20260721T160226Z-3d6b0b23/single-string-list.json",
+      "retried": false
+    },
+    {
+      "id": "single-weather",
+      "category": "single_call",
+      "status": "pass",
+      "failure_reason": null,
+      "evidence_hash": "sha256:f21668fcce2f7531109d902e4c069fa2c0262ee3066d853783919e9a1fab3abd",
+      "evidence_path": "evidence/20260721T160226Z-3d6b0b23/single-weather.json",
+      "retried": false
+    },
+    {
+      "id": "single-zero-and-negative",
+      "category": "single_call",
+      "status": "pass",
+      "failure_reason": null,
+      "evidence_hash": "sha256:8b1daf34b2c3e6df3634007347cd1029b52f44fb75309485571ec0eaea28fa0f",
+      "evidence_path": "evidence/20260721T160226Z-3d6b0b23/single-zero-and-negative.json",
+      "retried": false
+    },
+    {
+      "id": "streaming-array-arguments",
+      "category": "streaming",
+      "status": "pass",
+      "failure_reason": null,
+      "evidence_hash": "sha256:47842ecdf31c8ee44ebe71578effedf504d03b9afd5c72f20532579348dcc816",
+      "evidence_path": "evidence/20260721T160226Z-3d6b0b23/streaming-array-arguments.json",
+      "retried": false
+    },
+    {
+      "id": "streaming-boolean-argument",
+      "category": "streaming",
+      "status": "pass",
+      "failure_reason": null,
+      "evidence_hash": "sha256:4226464b992504e426130177125b19aaa281a90979d18a1ce857fef3808dbffe",
+      "evidence_path": "evidence/20260721T160226Z-3d6b0b23/streaming-boolean-argument.json",
+      "retried": false
+    },
+    {
+      "id": "streaming-empty-arguments",
+      "category": "streaming",
+      "status": "pass",
+      "failure_reason": null,
+      "evidence_hash": "sha256:77038546a14742c56d493170984e4b6b8dd1ea58316f853a544fbbc65289510e",
+      "evidence_path": "evidence/20260721T160226Z-3d6b0b23/streaming-empty-arguments.json",
+      "retried": false
+    },
+    {
+      "id": "streaming-enum-arguments",
+      "category": "streaming",
+      "status": "pass",
+      "failure_reason": null,
+      "evidence_hash": "sha256:9109e475a1235a094eb97f3a26c65095f7a62bf2350837d6a3e2b0e4ed346479",
+      "evidence_path": "evidence/20260721T160226Z-3d6b0b23/streaming-enum-arguments.json",
+      "retried": false
+    },
+    {
+      "id": "streaming-nested-arguments",
+      "category": "streaming",
+      "status": "pass",
+      "failure_reason": null,
+      "evidence_hash": "sha256:3e77ba3448fd694051bc0325e469a4c4f96b5a7854669ed49d1275ee8f44c0cf",
+      "evidence_path": "evidence/20260721T160226Z-3d6b0b23/streaming-nested-arguments.json",
+      "retried": false
+    },
+    {
+      "id": "streaming-parallel-three",
+      "category": "streaming",
+      "status": "pass",
+      "failure_reason": null,
+      "evidence_hash": "sha256:2025e56b1213e487b5b48bfe9bbbde78fece7e07868ba1cd9ec30baccd4e2d3e",
+      "evidence_path": "evidence/20260721T160226Z-3d6b0b23/streaming-parallel-three.json",
+      "retried": false
+    },
+    {
+      "id": "streaming-parallel-two",
+      "category": "streaming",
+      "status": "pass",
+      "failure_reason": null,
+      "evidence_hash": "sha256:55ac94f5081b98bb488cf90e326b2eb7cd575c4e315d57cb600fcfd72ea8405c",
+      "evidence_path": "evidence/20260721T160226Z-3d6b0b23/streaming-parallel-two.json",
+      "retried": false
+    },
+    {
+      "id": "streaming-weather",
+      "category": "streaming",
+      "status": "pass",
+      "failure_reason": null,
+      "evidence_hash": "sha256:fd2d61476069feb1ce9b52e757ff37978ead6591ee272748db7e24458bca837f",
+      "evidence_path": "evidence/20260721T160226Z-3d6b0b23/streaming-weather.json",
+      "retried": false
+    },
+    {
+      "id": "tool-choice-auto-call",
+      "category": "tool_choice_modes",
+      "status": "pass",
+      "failure_reason": null,
+      "evidence_hash": "sha256:328481ff952a86502d6eac3dd2e5c5eecacdac22e3d345331ca0c7576e229c45",
+      "evidence_path": "evidence/20260721T160226Z-3d6b0b23/tool-choice-auto-call.json",
+      "retried": false
+    },
+    {
+      "id": "tool-choice-auto-no-call",
+      "category": "tool_choice_modes",
+      "status": "pass",
+      "failure_reason": null,
+      "evidence_hash": "sha256:6670a59f14fbe8e83ff4cc337784765295d5f2d4dabdd07c1755245a08c8997b",
+      "evidence_path": "evidence/20260721T160226Z-3d6b0b23/tool-choice-auto-no-call.json",
+      "retried": false
+    },
+    {
+      "id": "tool-choice-named",
+      "category": "tool_choice_modes",
+      "status": "pass",
+      "failure_reason": null,
+      "evidence_hash": "sha256:89b4b444cf6f9586ac680be8180f4243191a710848c9cf3e5beeeff74eaeaf6e",
+      "evidence_path": "evidence/20260721T160226Z-3d6b0b23/tool-choice-named.json",
+      "retried": false
+    },
+    {
+      "id": "tool-choice-named-empty",
+      "category": "tool_choice_modes",
+      "status": "pass",
+      "failure_reason": null,
+      "evidence_hash": "sha256:88b3c8f81e074d20ae5d7a936de20ca820eb1a7b14119f898c6dd1f28484e74b",
+      "evidence_path": "evidence/20260721T160226Z-3d6b0b23/tool-choice-named-empty.json",
+      "retried": false
+    },
+    {
+      "id": "tool-choice-none",
+      "category": "tool_choice_modes",
+      "status": "pass",
+      "failure_reason": null,
+      "evidence_hash": "sha256:a230999200d2b0085e689414ade924147b9b687998e0ea37ab31683056726a91",
+      "evidence_path": "evidence/20260721T160226Z-3d6b0b23/tool-choice-none.json",
+      "retried": false
+    },
+    {
+      "id": "tool-choice-required",
+      "category": "tool_choice_modes",
+      "status": "pass",
+      "failure_reason": null,
+      "evidence_hash": "sha256:482d4b60f3dd3a01c10a5235a42251dd5789878ed4ab7d68f702750d06db4842",
+      "evidence_path": "evidence/20260721T160226Z-3d6b0b23/tool-choice-required.json",
+      "retried": false
+    },
+    {
+      "id": "tool-choice-required-empty",
+      "category": "tool_choice_modes",
+      "status": "pass",
+      "failure_reason": null,
+      "evidence_hash": "sha256:651d39e49d03b5f0047e5b2257f56a1e0612f868f49f8a605aeaeb35fc8e56fd",
+      "evidence_path": "evidence/20260721T160226Z-3d6b0b23/tool-choice-required-empty.json",
+      "retried": false
+    }
+  ],
+  "totals": {
+    "total": 50,
+    "passed": 41,
+    "failed": 9,
+    "errors": 0,
+    "skipped": 0
+  }
+}

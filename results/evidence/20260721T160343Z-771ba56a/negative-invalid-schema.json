@@ -1,0 +1,70 @@
+{
+  "schema_version": 1,
+  "run_id": "20260721T160343Z-771ba56a",
+  "scenario_id": "negative-invalid-schema",
+  "turns": [
+    {
+      "index": 0,
+      "request": {
+        "method": "POST",
+        "url": "http://127.0.0.1:8081/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "Set the temperature unit to kelvin. If the schema cannot express it, explain that in plain text without calling a tool.",
+              "role": "user"
+            }
+          ],
+          "model": "mlx-community/Phi-4-mini-instruct-4bit",
+          "seed": 42,
+          "stream": false,
+          "temperature": 0.0,
+          "tool_choice": "auto",
+          "tools": [
+            {
+              "function": {
+                "description": "Set one supported temperature unit.",
+                "name": "set_temperature_unit",
+                "parameters": {
+                  "properties": {
+                    "unit": {
+                      "enum": [
+                        "celsius",
+                        "fahrenheit"
+                      ],
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "unit"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "access-control-allow-headers": "*",
+          "access-control-allow-methods": "*",
+          "access-control-allow-origin": "*",
+          "content-length": "1957",
+          "content-type": "application/json",
+          "date": "Tue, 21 Jul 2026 16:03:58 GMT",
+          "server": "BaseHTTP/0.6 Python/3.14.6"
+        },
+        "body_raw": "{\"id\": \"chatcmpl-ea9aa38d-5c72-4f85-ad27-12aa2d92b2f8\", \"system_fingerprint\": \"0.31.3-0.32.0-macOS-26.5.2-arm64-arm-64bit-Mach-O-applegpu_g16s\", \"object\": \"chat.completion\", \"model\": \"mlx-community/Phi-4-mini-instruct-4bit\", \"created\": 1784649838, \"choices\": [{\"index\": 0, \"finish_reason\": \"stop\", \"message\": {\"role\": \"assistant\", \"content\": \"The schema I provided does not include a field for setting the temperature unit to Kelvin directly. If I were to design a schema or data structure to represent temperature data, I would typically include a field that allows specifying the unit, such as Kelvin (K), Celsius (\\u00b0C), or Fahrenheit (\\u00b0F). However, since I cannot modify an existing schema directly, I can only suggest how one might represent this information in a hypothetical schema.\\n\\nFor instance, a simple schema to represent temperature data might look something like this:\\n\\n```json\\n{\\n  \\\"temperature\\\": 25,\\n  \\\"unit\\\": \\\"Celsius\\\"\\n}\\n```\\n\\nIn this hypothetical schema, `temperature` is an object that contains the numerical value of the temperature, and `unit` is a field that specifies the unit of measurement as a string (e.g., \\\"Celsius\\\", \\\"Kelvin\\\", \\\"Fahrenheit\\\"). If I needed to represent a temperature of 25 K (kelvin), I would simply set the `unit` field to \\\"Kelvin\\\" like so:\\n\\n```json\\n{\\n  \\\"temperature\\\": 25,\\n  \\\"unit\\\": \\\"Kelvin\\\"\\n}\\n```\\n\\nThis schema allows for flexibility in specifying different units while keeping the data consistent and clear. If I cannot modify an existing schema to include a Kelvin setting, I would explain that the schema does not currently support setting the temperature unit to Kelvin directly, and I would either use a different schema that does include such a field or manually specify the unit as a separate field when adding data to the schema.\"}}], \"usage\": {\"prompt_tokens\": 28, \"completion_tokens\": 311, \"total_tokens\": 339, \"prompt_tokens_details\": {\"cached_tokens\": 1}}}"
+      },
+      "retried": false
+    }
+  ]
+}

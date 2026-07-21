@@ -1,0 +1,58 @@
+{
+  "schema_version": 1,
+  "run_id": "20260721T160343Z-771ba56a",
+  "scenario_id": "tool-choice-required-empty",
+  "turns": [
+    {
+      "index": 0,
+      "request": {
+        "method": "POST",
+        "url": "http://127.0.0.1:8081/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "Get the current sequence number.",
+              "role": "user"
+            }
+          ],
+          "model": "mlx-community/Phi-4-mini-instruct-4bit",
+          "seed": 42,
+          "stream": false,
+          "temperature": 0.0,
+          "tool_choice": "required",
+          "tools": [
+            {
+              "function": {
+                "description": "Get the current sequence number.",
+                "name": "current_sequence",
+                "parameters": {
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "access-control-allow-headers": "*",
+          "access-control-allow-methods": "*",
+          "access-control-allow-origin": "*",
+          "content-length": "2981",
+          "content-type": "application/json",
+          "date": "Tue, 21 Jul 2026 16:04:56 GMT",
+          "server": "BaseHTTP/0.6 Python/3.14.6"
+        },
+        "body_raw": "{\"id\": \"chatcmpl-b13498c0-b36b-4d9b-9df5-22a5bf6e7390\", \"system_fingerprint\": \"0.31.3-0.32.0-macOS-26.5.2-arm64-arm-64bit-Mach-O-applegpu_g16s\", \"object\": \"chat.completion\", \"model\": \"mlx-community/Phi-4-mini-instruct-4bit\", \"created\": 1784649896, \"choices\": [{\"index\": 0, \"finish_reason\": \"stop\", \"message\": {\"role\": \"assistant\", \"content\": \"To get the current sequence number, you can use different approaches depending on the data source you are working with (e.g., a database, a message queue, a file, etc.). Below are a couple of generic examples:\\n\\n### Example 1: Sequence Number in a File\\n\\nIf you want to read a sequence number from a file (assuming each line contains a number and you want the last number read):\\n\\n```python\\n# Read sequence numbers from a file and print the last one\\nwith open('sequence_numbers.txt', 'r') as file:\\n    numbers = file.readlines()\\n    # Assuming numbers are integers and delimited by spaces or newlines\\n    numbers = [int(num.strip()) for num in numbers if num.strip().isdigit()]\\n    current_sequence_number = numbers[-1]\\n    print(f\\\"The current sequence number is: {current_sequence_number}\\\")\\n```\\n\\nThis script assumes you have a file named `sequence_numbers.txt` containing numbers, one per line.\\n\\n### Example 2: Sequence Number in a Database (PostgreSQL)\\n\\nIf you are working with a PostgreSQL database and want to fetch the last sequence number of an auto-increment column (let's say a table called `my_table` and an id column):\\n\\n```python\\nimport psycopg2\\n\\n# Connect to your database\\nconn = psycopg2.connect(\\\"dbname='your_db' user='your_user' password='your_password' host='your_host' port='your_port'\\\")\\ncur = conn.cursor()\\n\\n# Assuming 'my_table' has an 'id' column which is an auto-increment field\\ncur.execute(\\\"SELECT last_value FROM pg_sequence WHERE name = 'your_sequence_name';\\\")\\nlast_value = cur.fetchone()[0]\\n\\n# Close connection\\ncur.close()\\nconn.close()\\n\\nprint(f\\\"The current sequence number is: {last_value}\\\")\\n```\\n\\nThis script assumes you are familiar with connecting to a PostgreSQL database and that you have a sequence generator named `your_sequence_name` associated with an `id` column in a table named `my_table`.\\n\\n### General Advice\\n\\n- Adjust the script to match your specific data source (file path, database connection parameters, etc.).\\n- Make sure to close database connections or clean up resources as needed to avoid leaks.\\n- This is a simplified example to demonstrate the concept. In real applications, consider error handling, closing connections, and managing database sessions more carefully (e.g., using context managers in Python).\\n\\nFor specific data sources or more complex scenarios (like handling different data types, delimited files, or distributed systems), please provide more context so I can give a more precise solution.\"}}], \"usage\": {\"prompt_tokens\": 9, \"completion_tokens\": 529, \"total_tokens\": 538, \"prompt_tokens_details\": {\"cached_tokens\": 4}}}"
+      },
+      "retried": false
+    }
+  ]
+}

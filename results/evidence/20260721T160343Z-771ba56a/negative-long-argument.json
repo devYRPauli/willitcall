@@ -1,0 +1,71 @@
+{
+  "schema_version": 1,
+  "run_id": "20260721T160343Z-771ba56a",
+  "scenario_id": "negative-long-argument",
+  "turns": [
+    {
+      "index": 0,
+      "request": {
+        "method": "POST",
+        "url": "http://127.0.0.1:8081/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "Store this exact token: abcdefghijklmnopqrstuvwxyz0123456789-ABCDEFGHIJKLMNOPQRSTUVWXYZ-abcdefghijklmnopqrstuvwxyz0123456789-ABCDEFGHIJKLMNOPQRSTUVWXYZ-abcdefghijklmnopqrstuvwxyz0123456789-ABCDEFGHIJKLMNOPQRSTUVWXYZ-abcdefghijklmnopqrstuvwxyz0123456789-ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+              "role": "user"
+            }
+          ],
+          "model": "mlx-community/Phi-4-mini-instruct-4bit",
+          "seed": 42,
+          "stream": false,
+          "temperature": 0.0,
+          "tool_choice": {
+            "function": {
+              "name": "store_token"
+            },
+            "type": "function"
+          },
+          "tools": [
+            {
+              "function": {
+                "description": "Store one exact token.",
+                "name": "store_token",
+                "parameters": {
+                  "properties": {
+                    "token": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "token"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "access-control-allow-headers": "*",
+          "access-control-allow-methods": "*",
+          "access-control-allow-origin": "*",
+          "content-length": "1619",
+          "content-type": "application/json",
+          "date": "Tue, 21 Jul 2026 16:04:00 GMT",
+          "server": "BaseHTTP/0.6 Python/3.14.6"
+        },
+        "body_raw": "{\"id\": \"chatcmpl-f69a0dcb-5a7f-4eb6-8f0d-daa946a37810\", \"system_fingerprint\": \"0.31.3-0.32.0-macOS-26.5.2-arm64-arm-64bit-Mach-O-applegpu_g16s\", \"object\": \"chat.completion\", \"model\": \"mlx-community/Phi-4-mini-instruct-4bit\", \"created\": 1784649840, \"choices\": [{\"index\": 0, \"finish_reason\": \"stop\", \"message\": {\"role\": \"assistant\", \"content\": \"The token you've provided is a long sequence of characters that includes lowercase and uppercase letters as well as numbers, divided into blocks by dashes. This token seems to alternate between lowercase and uppercase letters in a specific pattern, with numbers and dashes included as well.\\n\\nTo store this token, you would typically just save it as a string in a file, a variable, or a database entry depending on the needs of your application. Here's a simple way to store it in a file named `token.txt`:\\n\\n```python\\n# Assuming this is Python\\ntoken = \\\"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-ABCDEFGHIJKLMNOPQRSTUVWXYZ\\\"\\n\\nwith open(\\\"token.txt\\\", \\\"w\\\") as file:\\n    file.write(token)\\n```\\n\\nThis script writes the token to a file named `token.txt` in the current directory. You can adapt this approach to different programming languages as needed, always focusing on securely handling and storing sensitive information as per your application's requirements.\"}}], \"usage\": {\"prompt_tokens\": 43, \"completion_tokens\": 202, \"total_tokens\": 245, \"prompt_tokens_details\": {\"cached_tokens\": 1}}}"
+      },
+      "retried": false
+    }
+  ]
+}

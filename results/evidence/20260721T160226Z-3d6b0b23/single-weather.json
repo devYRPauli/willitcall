@@ -1,0 +1,66 @@
+{
+  "schema_version": 1,
+  "run_id": "20260721T160226Z-3d6b0b23",
+  "scenario_id": "single-weather",
+  "turns": [
+    {
+      "index": 0,
+      "request": {
+        "method": "POST",
+        "url": "http://127.0.0.1:8081/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "What is the weather in Boston?",
+              "role": "user"
+            }
+          ],
+          "model": "mlx-community/Qwen2.5-1.5B-Instruct-4bit",
+          "seed": 42,
+          "stream": false,
+          "temperature": 0.0,
+          "tool_choice": "auto",
+          "tools": [
+            {
+              "function": {
+                "description": "Get the current weather for a city.",
+                "name": "get_weather",
+                "parameters": {
+                  "properties": {
+                    "city": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "city"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "access-control-allow-headers": "*",
+          "access-control-allow-methods": "*",
+          "access-control-allow-origin": "*",
+          "content-length": "628",
+          "content-type": "application/json",
+          "date": "Tue, 21 Jul 2026 16:02:33 GMT",
+          "server": "BaseHTTP/0.6 Python/3.14.6"
+        },
+        "body_raw": "{\"id\": \"chatcmpl-c3ad883d-a8b4-4e09-ba7c-3c83c7705e47\", \"system_fingerprint\": \"0.31.3-0.32.0-macOS-26.5.2-arm64-arm-64bit-Mach-O-applegpu_g16s\", \"object\": \"chat.completion\", \"model\": \"mlx-community/Qwen2.5-1.5B-Instruct-4bit\", \"created\": 1784649753, \"choices\": [{\"index\": 0, \"finish_reason\": \"tool_calls\", \"message\": {\"role\": \"assistant\", \"tool_calls\": [{\"function\": {\"name\": \"get_weather\", \"arguments\": \"{\\\"city\\\": \\\"Boston\\\"}\"}, \"type\": \"function\", \"id\": \"1a85adb3-b03a-4380-8784-5571530d09a0\"}]}}], \"usage\": {\"prompt_tokens\": 172, \"completion_tokens\": 20, \"total_tokens\": 192, \"prompt_tokens_details\": {\"cached_tokens\": 64}}}"
+      },
+      "retried": false
+    }
+  ]
+}

@@ -1,0 +1,73 @@
+{
+  "schema_version": 1,
+  "run_id": "20260721T160343Z-771ba56a",
+  "scenario_id": "tool-choice-named-empty",
+  "turns": [
+    {
+      "index": 0,
+      "request": {
+        "method": "POST",
+        "url": "http://127.0.0.1:8081/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "Get the current deployment region.",
+              "role": "user"
+            }
+          ],
+          "model": "mlx-community/Phi-4-mini-instruct-4bit",
+          "seed": 42,
+          "stream": false,
+          "temperature": 0.0,
+          "tool_choice": {
+            "function": {
+              "name": "current_region"
+            },
+            "type": "function"
+          },
+          "tools": [
+            {
+              "function": {
+                "description": "Get the current deployment region.",
+                "name": "current_region",
+                "parameters": {
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            },
+            {
+              "function": {
+                "description": "Get the current deployment zone.",
+                "name": "current_zone",
+                "parameters": {
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "access-control-allow-headers": "*",
+          "access-control-allow-methods": "*",
+          "access-control-allow-origin": "*",
+          "content-length": "1899",
+          "content-type": "application/json",
+          "date": "Tue, 21 Jul 2026 16:04:54 GMT",
+          "server": "BaseHTTP/0.6 Python/3.14.6"
+        },
+        "body_raw": "{\"id\": \"chatcmpl-f354b6dd-2e41-4c31-a1b0-7ee1f32e632e\", \"system_fingerprint\": \"0.31.3-0.32.0-macOS-26.5.2-arm64-arm-64bit-Mach-O-applegpu_g16s\", \"object\": \"chat.completion\", \"model\": \"mlx-community/Phi-4-mini-instruct-4bit\", \"created\": 1784649894, \"choices\": [{\"index\": 0, \"finish_reason\": \"stop\", \"message\": {\"role\": \"assistant\", \"content\": \"To get the current deployment region, you can use different approaches depending on the cloud provider or infrastructure you are working with (e.g., AWS, Google Cloud, Microsoft Azure, etc.). Below are examples for a couple of common cloud providers:\\n\\n### AWS (Amazon Web Services)\\nTo find the region of an instance group or a specific instance, you can use the AWS Command Line Interface (CLI):\\n\\n```sh\\naws ec2 describe-instances --query \\\"Reservations[*].Instances[*].Placement.AvailabilityZone\\\" --output text\\n```\\n\\nThis will return a list of availability zones where instances are currently deployed.\\n\\n### Google Cloud\\nTo find regions and zones of Google Cloud resources, you can use the `gcloud` tool:\\n\\n```sh\\ngcloud compute regions list\\n```\\n\\nThis will return a list of regions available in Google Cloud.\\n\\n### Microsoft Azure\\nTo find regions of Azure resources, you can use the Azure CLI:\\n\\n```sh\\naz account list-locations --output table\\n```\\n\\nThis will return a list of Azure regions available to your account.\\n\\nKeep in mind that you need appropriate permissions and authentication setup to execute these commands successfully. If you are looking for a specific service region, you may need more detailed queries depending on the service (e.g., compute, storage, databases).\\n\\nFor a more specific solution, please provide information on the cloud provider or infrastructure you are working with.\"}}], \"usage\": {\"prompt_tokens\": 9, \"completion_tokens\": 282, \"total_tokens\": 291, \"prompt_tokens_details\": {\"cached_tokens\": 3}}}"
+      },
+      "retried": false
+    }
+  ]
+}

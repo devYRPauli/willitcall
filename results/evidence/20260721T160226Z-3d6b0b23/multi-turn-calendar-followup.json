@@ -1,0 +1,92 @@
+{
+  "schema_version": 1,
+  "run_id": "20260721T160226Z-3d6b0b23",
+  "scenario_id": "multi-turn-calendar-followup",
+  "turns": [
+    {
+      "index": 0,
+      "request": {
+        "method": "POST",
+        "url": "http://127.0.0.1:8081/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "Check my calendar on 2026-08-11, then create event Review at the available time.",
+              "role": "user"
+            }
+          ],
+          "model": "mlx-community/Qwen2.5-1.5B-Instruct-4bit",
+          "seed": 42,
+          "stream": false,
+          "temperature": 0.0,
+          "tool_choice": "auto",
+          "tools": [
+            {
+              "function": {
+                "description": "Get calendar availability for a date.",
+                "name": "get_calendar",
+                "parameters": {
+                  "properties": {
+                    "date": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "date"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            },
+            {
+              "function": {
+                "description": "Create an event at an exact date and time.",
+                "name": "create_event",
+                "parameters": {
+                  "properties": {
+                    "date": {
+                      "type": "string"
+                    },
+                    "time": {
+                      "type": "string"
+                    },
+                    "title": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "title",
+                    "date",
+                    "time"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "access-control-allow-headers": "*",
+          "access-control-allow-methods": "*",
+          "access-control-allow-origin": "*",
+          "content-length": "842",
+          "content-type": "application/json",
+          "date": "Tue, 21 Jul 2026 16:02:26 GMT",
+          "server": "BaseHTTP/0.6 Python/3.14.6"
+        },
+        "body_raw": "{\"id\": \"chatcmpl-9137bcb8-8baa-4abf-abc9-8168ba700053\", \"system_fingerprint\": \"0.31.3-0.32.0-macOS-26.5.2-arm64-arm-64bit-Mach-O-applegpu_g16s\", \"object\": \"chat.completion\", \"model\": \"mlx-community/Qwen2.5-1.5B-Instruct-4bit\", \"created\": 1784649746, \"choices\": [{\"index\": 0, \"finish_reason\": \"tool_calls\", \"message\": {\"role\": \"assistant\", \"content\": \"\\n\", \"tool_calls\": [{\"function\": {\"name\": \"get_calendar\", \"arguments\": \"{\\\"date\\\": \\\"2026-08-11\\\"}\"}, \"type\": \"function\", \"id\": \"7a634ac5-acce-4b27-9666-f406b60faae9\"}, {\"function\": {\"name\": \"create_event\", \"arguments\": \"{\\\"date\\\": \\\"2026-08-11\\\", \\\"time\\\": \\\"14:00\\\", \\\"title\\\": \\\"Review\\\"}\"}, \"type\": \"function\", \"id\": \"2a2ffa49-0c3b-4506-b57b-7588eac1bb92\"}]}}], \"usage\": {\"prompt_tokens\": 272, \"completion_tokens\": 74, \"total_tokens\": 346, \"prompt_tokens_details\": {\"cached_tokens\": 0}}}"
+      },
+      "retried": false
+    }
+  ]
+}

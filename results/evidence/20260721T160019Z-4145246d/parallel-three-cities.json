@@ -1,0 +1,66 @@
+{
+  "schema_version": 1,
+  "run_id": "20260721T160019Z-4145246d",
+  "scenario_id": "parallel-three-cities",
+  "turns": [
+    {
+      "index": 0,
+      "request": {
+        "method": "POST",
+        "url": "http://127.0.0.1:8081/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "Get weather for Austin, Dublin, and Seoul with three calls.",
+              "role": "user"
+            }
+          ],
+          "model": "mlx-community/Qwen2.5-7B-Instruct-4bit",
+          "seed": 42,
+          "stream": false,
+          "temperature": 0.0,
+          "tool_choice": "required",
+          "tools": [
+            {
+              "function": {
+                "description": "Get weather for a city.",
+                "name": "get_weather",
+                "parameters": {
+                  "properties": {
+                    "city": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "city"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "access-control-allow-headers": "*",
+          "access-control-allow-methods": "*",
+          "access-control-allow-origin": "*",
+          "content-length": "933",
+          "content-type": "application/json",
+          "date": "Tue, 21 Jul 2026 16:00:31 GMT",
+          "server": "BaseHTTP/0.6 Python/3.14.6"
+        },
+        "body_raw": "{\"id\": \"chatcmpl-770f36dd-15d2-45df-b197-c939bb453762\", \"system_fingerprint\": \"0.31.3-0.32.0-macOS-26.5.2-arm64-arm-64bit-Mach-O-applegpu_g16s\", \"object\": \"chat.completion\", \"model\": \"mlx-community/Qwen2.5-7B-Instruct-4bit\", \"created\": 1784649631, \"choices\": [{\"index\": 0, \"finish_reason\": \"tool_calls\", \"message\": {\"role\": \"assistant\", \"content\": \"\\n\\n\", \"tool_calls\": [{\"function\": {\"name\": \"get_weather\", \"arguments\": \"{\\\"city\\\": \\\"Austin\\\"}\"}, \"type\": \"function\", \"id\": \"ddd53cc3-1a72-4782-8e60-0e88cd60b294\"}, {\"function\": {\"name\": \"get_weather\", \"arguments\": \"{\\\"city\\\": \\\"Dublin\\\"}\"}, \"type\": \"function\", \"id\": \"fe7e4d50-f593-460f-91aa-88600e25cbc7\"}, {\"function\": {\"name\": \"get_weather\", \"arguments\": \"{\\\"city\\\": \\\"Seoul\\\"}\"}, \"type\": \"function\", \"id\": \"618a9813-24ce-4d33-ae7b-841dfbe289d2\"}]}}], \"usage\": {\"prompt_tokens\": 174, \"completion_tokens\": 62, \"total_tokens\": 236, \"prompt_tokens_details\": {\"cached_tokens\": 156}}}"
+      },
+      "retried": false
+    }
+  ]
+}

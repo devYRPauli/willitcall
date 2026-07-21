@@ -1,0 +1,110 @@
+{
+  "schema_version": 1,
+  "run_id": "20260721T160343Z-771ba56a",
+  "scenario_id": "parallel-three-different-tools",
+  "turns": [
+    {
+      "index": 0,
+      "request": {
+        "method": "POST",
+        "url": "http://127.0.0.1:8081/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "Get weather in Rome, time in Nairobi, and convert 25 USD to EUR.",
+              "role": "user"
+            }
+          ],
+          "model": "mlx-community/Phi-4-mini-instruct-4bit",
+          "seed": 42,
+          "stream": false,
+          "temperature": 0.0,
+          "tool_choice": "required",
+          "tools": [
+            {
+              "function": {
+                "description": "Get weather for a city.",
+                "name": "get_weather",
+                "parameters": {
+                  "properties": {
+                    "city": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "city"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            },
+            {
+              "function": {
+                "description": "Get local time for a city.",
+                "name": "get_time",
+                "parameters": {
+                  "properties": {
+                    "city": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "city"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            },
+            {
+              "function": {
+                "description": "Convert an exact currency amount.",
+                "name": "convert_currency",
+                "parameters": {
+                  "properties": {
+                    "amount": {
+                      "type": "number"
+                    },
+                    "from": {
+                      "type": "string"
+                    },
+                    "to": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "amount",
+                    "from",
+                    "to"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "access-control-allow-headers": "*",
+          "access-control-allow-methods": "*",
+          "access-control-allow-origin": "*",
+          "content-length": "1730",
+          "content-type": "application/json",
+          "date": "Tue, 21 Jul 2026 16:04:07 GMT",
+          "server": "BaseHTTP/0.6 Python/3.14.6"
+        },
+        "body_raw": "{\"id\": \"chatcmpl-b1809486-9916-432b-8ef1-859fda63d040\", \"system_fingerprint\": \"0.31.3-0.32.0-macOS-26.5.2-arm64-arm-64bit-Mach-O-applegpu_g16s\", \"object\": \"chat.completion\", \"model\": \"mlx-community/Phi-4-mini-instruct-4bit\", \"created\": 1784649847, \"choices\": [{\"index\": 0, \"finish_reason\": \"stop\", \"message\": {\"role\": \"assistant\", \"content\": \"To fulfill your request, I will first check the current weather in Rome, then look at the current time in Nairobi, and finally, I will convert 25 USD to EUR based on the current exchange rates.\\n\\n1. Current weather in Rome:\\n   As I cannot access real-time data, I will provide a hypothetical current weather condition in Rome:\\n   It is sunny with a high of 23\\u00b0C (73\\u00b0F) and a low of 15\\u00b0C (59\\u00b0F). There is a slight breeze coming from the east.\\n\\n2. Current time in Nairobi:\\n   As I cannot access real-time data, I will provide a hypothetical current time in Nairobi:\\n   It is currently 1:00 PM (Afternoon).\\n\\n3. Converting USD to EUR:\\n   As of my last update, I will use an approximate current exchange rate to convert USD to EUR:\\n   Assuming an approximate exchange rate of 1 USD = 0.93 EUR (note that actual exchange rates fluctuate constantly due to market conditions).\\n\\n   To convert $25 USD to EUR:\\n   $25 * 0.93 EUR/USD = \\u20ac23.25\\n\\nKeep in mind that these values are approximate and actual values may differ slightly depending on the current market conditions and exact time of data retrieval. For real-time data and precise calculations, one should use an updated financial data service or currency converter tool.\"}}], \"usage\": {\"prompt_tokens\": 20, \"completion_tokens\": 276, \"total_tokens\": 296, \"prompt_tokens_details\": {\"cached_tokens\": 3}}}"
+      },
+      "retried": false
+    }
+  ]
+}
