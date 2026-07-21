@@ -9,7 +9,8 @@ scenarios against any OpenAI-compatible endpoint and emits a machine-readable
 result file, so "does this model actually do parallel tool calls on llama.cpp"
 becomes a fact you can look up instead of an afternoon you lose.
 
-Status: the CLI and corpus work. The public matrix site is not up yet.
+Status: the CLI and corpus work. The public matrix is live at
+https://devyrpauli.github.io/willitcall/.
 
 ## Quickstart
 
