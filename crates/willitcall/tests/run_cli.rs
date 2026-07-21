@@ -643,10 +643,9 @@ async fn happy_run_passes_all_scenarios_and_writes_a_valid_result() {
 async fn json_mode_is_clean_json_and_records_the_selected_preset() {
     let server = MockServer::start_scripted(
         "fixture-model",
-        vec![ScriptedResponse::Json(completion(
-            json!([]),
-            json!("ready"),
-        ))],
+        (0..4)
+            .map(|_| ScriptedResponse::Json(completion(json!([]), json!("ready"))))
+            .collect(),
     )
     .await;
     let directory = tempfile::tempdir().expect("temp directory");
@@ -716,7 +715,10 @@ content = "Reply ready."
         result.metadata.server.reported_version.as_deref(),
         Some("mock-1.0")
     );
-    assert!(result.metadata.server.quirk_flags.is_empty());
+    assert_eq!(
+        result.metadata.server.quirk_flags,
+        ["unconstrained_post_hoc_parse"]
+    );
     let environment = result
         .metadata
         .environment
@@ -729,6 +731,42 @@ content = "Reply ready."
         output.stdout,
         "stdout and --out should contain the same result document"
     );
+
+    for (preset, expected_quirks) in [
+        ("llamacpp", vec!["grammar_constrained_decoding"]),
+        ("mlx-lm", vec!["unconstrained_post_hoc_parse"]),
+        ("custom", Vec::new()),
+    ] {
+        let output = run_binary(vec![
+            "run".to_owned(),
+            "--server".to_owned(),
+            preset.to_owned(),
+            "--endpoint".to_owned(),
+            server.endpoint(),
+            "--model".to_owned(),
+            "fixture-model".to_owned(),
+            "--host-hardware-class".to_owned(),
+            "Fixture workstation, 32GB".to_owned(),
+            "--force".to_owned(),
+            "--scenarios".to_owned(),
+            scenario_path.display().to_string(),
+            "--out".to_owned(),
+            output_path.display().to_string(),
+            "--json".to_owned(),
+        ])
+        .await;
+
+        assert_eq!(output.status.code(), Some(0));
+        assert!(
+            output.stderr.is_empty(),
+            "{}",
+            String::from_utf8_lossy(&output.stderr)
+        );
+        let result: RunResult =
+            serde_json::from_slice(&output.stdout).expect("stdout is only JSON");
+        assert_eq!(result.metadata.server.preset_name, preset);
+        assert_eq!(result.metadata.server.quirk_flags, expected_quirks);
+    }
 }
 
 #[tokio::test(flavor = "multi_thread", worker_threads = 2)]

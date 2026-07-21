@@ -32,6 +32,7 @@ const EXIT_CODE_HELP: &str = "Exit codes:\n  0  all scenarios passed\n  1  at le
 const KNOWN_INFERENCE_SERVERS: &[(u16, &str)] = &[
     (11434, "Ollama"),
     (8080, "llama.cpp"),
+    (8081, "MLX LM"),
     (1234, "LM Studio"),
     (8000, "vLLM"),
 ];
@@ -83,6 +84,7 @@ struct RunArgs {
 enum ServerPreset {
     Llamacpp,
     Ollama,
+    MlxLm,
     Lmstudio,
     Vllm,
     Custom,
@@ -93,6 +95,7 @@ impl ServerPreset {
         match self {
             Self::Llamacpp => "llamacpp",
             Self::Ollama => "ollama",
+            Self::MlxLm => "mlx_lm",
             Self::Lmstudio => "lmstudio",
             Self::Vllm => "vllm",
             Self::Custom => "custom",
@@ -103,6 +106,7 @@ impl ServerPreset {
         match self {
             Self::Llamacpp => Some("http://127.0.0.1:8080/v1"),
             Self::Ollama => Some("http://127.0.0.1:11434/v1"),
+            Self::MlxLm => Some("http://127.0.0.1:8081/v1"),
             Self::Lmstudio => Some("http://127.0.0.1:1234/v1"),
             Self::Vllm => Some("http://127.0.0.1:8000/v1"),
             Self::Custom => None,
@@ -123,14 +127,21 @@ impl ServerPreset {
                 path: "/version",
                 field: "version",
             }),
-            Self::Lmstudio | Self::Custom => None,
+            Self::MlxLm | Self::Lmstudio | Self::Custom => None,
         }
     }
 
     fn config(self) -> ServerConfig {
         ServerConfig {
             preset_name: self.name().to_owned(),
-            quirk_flags: Vec::new(),
+            // llama.cpp builds GBNF from tools; Ollama and mlx-lm generate unconstrained
+            // text and parse afterward. In mlx-lm 0.31.3 tools only reach the chat
+            // template; there is no grammar/logit mask, and parse failures are swallowed.
+            quirk_flags: match self {
+                Self::Llamacpp => vec!["grammar_constrained_decoding".to_owned()],
+                Self::Ollama | Self::MlxLm => vec!["unconstrained_post_hoc_parse".to_owned()],
+                Self::Lmstudio | Self::Vllm | Self::Custom => Vec::new(),
+            },
             version_probe: self.version_probe(),
         }
     }
@@ -848,6 +859,7 @@ mod tests {
 
     #[test]
     fn server_presets_select_defaults_and_endpoint_overrides_them() {
+        assert_eq!(ServerPreset::MlxLm.name(), "mlx_lm");
         assert_eq!(
             resolve_endpoint(ServerPreset::Llamacpp, None).expect("llamacpp endpoint"),
             "http://127.0.0.1:8080/v1"
@@ -863,6 +875,10 @@ mod tests {
         assert_eq!(
             resolve_endpoint(ServerPreset::Vllm, None).expect("vllm endpoint"),
             "http://127.0.0.1:8000/v1"
+        );
+        assert_eq!(
+            resolve_endpoint(ServerPreset::MlxLm, None).expect("mlx_lm endpoint"),
+            "http://127.0.0.1:8081/v1"
         );
         assert!(resolve_endpoint(ServerPreset::Custom, None).is_err());
         assert_eq!(
