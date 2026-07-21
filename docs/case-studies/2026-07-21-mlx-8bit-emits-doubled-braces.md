@@ -49,6 +49,15 @@ output is wrong.
   name enclosed in double quotes: line 1 column 2 (char 1))` 295 times across
   the 8bit runs, and 0 times across the 4bit runs. Column 2, character 1 is
   exactly where the second `{` sits.
+- The server logs for the replication arms are committed at
+  `evidence/mlxlm-server-qwen2.5-7b-8bit.log` (the 295 parse failures) and
+  `evidence/mlxlm-server-qwen2.5-7b-4bit.log` (the zero-failure control).
+  The only edit to the raw logs is a path redaction (`/Users/<user>` ->
+  `/Users/REDACTED`) in one boilerplate warning line per file.
+- `evidence/recover-mlx-raw-output.py` re-derives the raw generation that
+  mlx-lm swallows: it applies the same chat template with the same tools and
+  generates greedily with no parsing. Switching `REPO` to the 4bit conversion
+  gives the control.
 - The 7 scenarios the 8bit arm passes are the negative traps, where emitting no
   parsed call is the correct answer. That signature - full marks precisely where
   not calling a tool is right - is the same one that identified the granite
