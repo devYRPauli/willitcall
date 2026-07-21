@@ -222,6 +222,51 @@ the combined matrix.
      (the environment field makes it visible), but owner-seeded rows stay
      single-host.
 
+## Amendments (2026-07-21, post-M5, decided by owner)
+
+7. What "replicate five times" actually buys (owner, 2026-07-21). Amendment 4
+   requires >=5 runs per arm before a case-study verdict, to prevent the n=1
+   claims that M2 and M5 both had to retract. M6 discovered that the bar, as
+   implemented, was weaker than it read: the runner hardcoded `seed: 42` and
+   `temperature: 0.0`, so decoding was greedy and every repeat run of one
+   configuration was byte-identical.
+   - Evidence: all nine quant arms re-measured at n=5 (M6 arm A) produced a
+     zero-variance score AND the identical set of failing scenario ids on
+     every run - 45 runs, 9 distinct outcomes. Repetition under greedy
+     decoding re-measures the harness, not the model.
+   - Varying the seed alone would not have fixed it. At temperature 0 sampling
+     is argmax and the seed is inert.
+   - DECIDED: `--seed` and `--temperature` are now CLI flags, defaulting to 42
+     and 0.0 so the published matrix stays exactly reproducible. A case-study
+     verdict that asserts a DIFFERENCE between arms must additionally report a
+     seed-varied arm at non-zero temperature; five greedy runs may be cited
+     only as evidence of reproducibility.
+   - The distinction to state in prose: greedy n=5 answers "is this
+     measurement stable?", seed-varied n=5 answers "is this difference real?".
+     The two are not interchangeable and the earlier wording conflated them.
+
+8. Decode-constraint disclosure (owner, 2026-07-21, REQUIRED for launch).
+   The servers do not decode the same way, and until M6 the site did not say
+   so. llama.cpp compiles the supplied tool definitions into a GBNF grammar
+   and constrains sampling with it, so a call naming a function that was never
+   supplied is not improbable there but unrepresentable. Ollama and mlx-lm
+   generate unconstrained text and parse a tool call out of it afterwards.
+   - Verified for mlx-lm 0.31.3 by source inspection: `tools` reaches the Jinja
+     chat template and nothing else, the package contains no grammar, logit
+     mask or guided-decoding machinery, and parse failures are swallowed with
+     a warning. mlx-lm therefore sits on the unconstrained side with Ollama.
+   - Why it is required: this asymmetry favours llama.cpp systematically, in
+     every row, independent of model. Publishing a llamacpp-versus-ollama
+     delta without it invites exactly the misreading this project already made
+     once and retracted - attributing a stack property to a server defect.
+   - DECIDED: every result records the side it sits on in
+     `server.quirk_flags` (`grammar_constrained_decoding` /
+     `unconstrained_post_hoc_parse`), and the README and site methodology
+     state it in prose. Presets whose decode path has not been verified carry
+     no flag; absence means unverified, not unconstrained.
+   - Corollary: the comparison that isolates the MODEL is same-server. A
+     cross-server delta is a statement about the combination.
+
 ## Naming / availability (verified 2026-07-19)
 
 - GitHub: no existing "willitcall" repos. npm 404, PyPI 404, crates.io "does

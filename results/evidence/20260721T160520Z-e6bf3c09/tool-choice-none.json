@@ -1,0 +1,66 @@
+{
+  "schema_version": 1,
+  "run_id": "20260721T160520Z-e6bf3c09",
+  "scenario_id": "tool-choice-none",
+  "turns": [
+    {
+      "index": 0,
+      "request": {
+        "method": "POST",
+        "url": "http://127.0.0.1:8081/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "Reply with the exact text: no tools",
+              "role": "user"
+            }
+          ],
+          "model": "mlx-community/Mistral-7B-Instruct-v0.3-4bit",
+          "seed": 42,
+          "stream": false,
+          "temperature": 0.0,
+          "tool_choice": "none",
+          "tools": [
+            {
+              "function": {
+                "description": "Get weather for a city.",
+                "name": "get_weather",
+                "parameters": {
+                  "properties": {
+                    "city": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "city"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "access-control-allow-headers": "*",
+          "access-control-allow-methods": "*",
+          "access-control-allow-origin": "*",
+          "content-length": "1847",
+          "content-type": "application/json",
+          "date": "Tue, 21 Jul 2026 16:06:08 GMT",
+          "server": "BaseHTTP/0.6 Python/3.14.6"
+        },
+        "body_raw": "{\"id\": \"chatcmpl-1fc2d91b-580a-40a8-ab4d-465c74dc33b0\", \"system_fingerprint\": \"0.31.3-0.32.0-macOS-26.5.2-arm64-arm-64bit-Mach-O-applegpu_g16s\", \"object\": \"chat.completion\", \"model\": \"mlx-community/Mistral-7B-Instruct-v0.3-4bit\", \"created\": 1784649968, \"choices\": [{\"index\": 0, \"finish_reason\": \"stop\", \"message\": {\"role\": \"assistant\", \"content\": \"To get the weather for a city, you would typically use a tool or an API that provides weather data. However, as a text-based AI, I don't have the ability to directly access such tools. I can help you understand how to use such a tool if you provide one, or guide you on how to write a simple script to fetch weather data if you have the necessary tools and knowledge.\\n\\nFor example, if you have a Python environment with requests library, you could use the OpenWeatherMap API to get the weather data. Here's a simple example:\\n\\n```python\\nimport requests\\n\\ndef get_weather(city):\\n    api_key = \\\"your_api_key\\\"\\n    base_url = \\\"http://api.openweathermap.org/data/2.5/weather?\\\"\\n    complete_url = base_url + \\\"appid=\\\" + api_key + \\\"&q=\\\" + city\\n    response = requests.get(complete_url)\\n    data = response.json()\\n\\n    if data[\\\"cod\\\"] != \\\"404\\\":\\n        main = data[\\\"main\\\"]\\n        weather = data[\\\"weather\\\"]\\n        temp = main[\\\"temp\\\"]\\n        description = weather[0][\\\"description\\\"]\\n        print(\\\"Temperature (in kelvin) = \\\" + str(temp))\\n        print(\\\"Weather description = \\\" + str(description))\\n    else:\\n        print(\\\"City not found.\\\")\\n\\nget_weather(\\\"London\\\")\\n```\\n\\nReplace `\\\"your_api_key\\\"` with your actual API key from OpenWeatherMap. This script will print the temperature and weather description for the given city.\"}}], \"usage\": {\"prompt_tokens\": 72, \"completion_tokens\": 368, \"total_tokens\": 440, \"prompt_tokens_details\": {\"cached_tokens\": 59}}}"
+      },
+      "retried": false
+    }
+  ]
+}

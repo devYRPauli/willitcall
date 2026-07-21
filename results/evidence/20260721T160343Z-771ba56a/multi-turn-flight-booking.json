@@ -1,0 +1,92 @@
+{
+  "schema_version": 1,
+  "run_id": "20260721T160343Z-771ba56a",
+  "scenario_id": "multi-turn-flight-booking",
+  "turns": [
+    {
+      "index": 0,
+      "request": {
+        "method": "POST",
+        "url": "http://127.0.0.1:8081/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "Find a flight from BOS to DEN on 2026-10-04, then book the returned flight.",
+              "role": "user"
+            }
+          ],
+          "model": "mlx-community/Phi-4-mini-instruct-4bit",
+          "seed": 42,
+          "stream": false,
+          "temperature": 0.0,
+          "tool_choice": "auto",
+          "tools": [
+            {
+              "function": {
+                "description": "Find a flight for an exact route and date.",
+                "name": "find_flight",
+                "parameters": {
+                  "properties": {
+                    "date": {
+                      "type": "string"
+                    },
+                    "destination": {
+                      "type": "string"
+                    },
+                    "origin": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "origin",
+                    "destination",
+                    "date"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            },
+            {
+              "function": {
+                "description": "Book a flight by exact id.",
+                "name": "book_flight",
+                "parameters": {
+                  "properties": {
+                    "flight_id": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "flight_id"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "access-control-allow-headers": "*",
+          "access-control-allow-methods": "*",
+          "access-control-allow-origin": "*",
+          "content-length": "1601",
+          "content-type": "application/json",
+          "date": "Tue, 21 Jul 2026 16:03:46 GMT",
+          "server": "BaseHTTP/0.6 Python/3.14.6"
+        },
+        "body_raw": "{\"id\": \"chatcmpl-cfde975e-4417-484c-9522-85558f898673\", \"system_fingerprint\": \"0.31.3-0.32.0-macOS-26.5.2-arm64-arm-64bit-Mach-O-applegpu_g16s\", \"object\": \"chat.completion\", \"model\": \"mlx-community/Phi-4-mini-instruct-4bit\", \"created\": 1784649826, \"choices\": [{\"index\": 0, \"finish_reason\": \"stop\", \"message\": {\"role\": \"assistant\", \"content\": \"I'm sorry, but I can't assist with real-time flight bookings or access current flight information directly through this platform. However, I can guide you on how to find and book a flight from Boston (BOS) to Denver (DEN) on October 4, 2026.\\n\\n1. Visit a flight booking website such as Skyscanner, Kayak, or Google Flights.\\n2. Enter your departure city (BOS) and destination city (DEN) along with the desired travel date (October 4, 2026).\\n3. Review the flight options and compare prices.\\n4. Select a flight and click on 'Buy now' or 'Book now' to secure your ticket.\\n5. Follow the prompts to provide personal and payment information to complete the booking process.\\n\\nFor returning flight information, repeat the process on the desired return date (or check back later as flight information may change).\\n\\nFor specific airline recommendations or deals, you may want to sign up for airline newsletters, check airline websites, or subscribe to travel deal alerts on services like Scott's Cheap Flights or MileGrab. These services often provide information on last-minute deals and discounted fares directly from airlines.\"}}], \"usage\": {\"prompt_tokens\": 25, \"completion_tokens\": 235, \"total_tokens\": 260, \"prompt_tokens_details\": {\"cached_tokens\": 1}}}"
+      },
+      "retried": false
+    }
+  ]
+}

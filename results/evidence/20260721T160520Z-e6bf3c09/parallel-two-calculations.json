@@ -1,0 +1,70 @@
+{
+  "schema_version": 1,
+  "run_id": "20260721T160520Z-e6bf3c09",
+  "scenario_id": "parallel-two-calculations",
+  "turns": [
+    {
+      "index": 0,
+      "request": {
+        "method": "POST",
+        "url": "http://127.0.0.1:8081/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "Use separate calls to divide 42 by 6 and divide 10 by 4.",
+              "role": "user"
+            }
+          ],
+          "model": "mlx-community/Mistral-7B-Instruct-v0.3-4bit",
+          "seed": 42,
+          "stream": false,
+          "temperature": 0.0,
+          "tool_choice": "required",
+          "tools": [
+            {
+              "function": {
+                "description": "Divide one number by another.",
+                "name": "divide",
+                "parameters": {
+                  "properties": {
+                    "dividend": {
+                      "type": "number"
+                    },
+                    "divisor": {
+                      "type": "number"
+                    }
+                  },
+                  "required": [
+                    "dividend",
+                    "divisor"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "access-control-allow-headers": "*",
+          "access-control-allow-methods": "*",
+          "access-control-allow-origin": "*",
+          "content-length": "743",
+          "content-type": "application/json",
+          "date": "Tue, 21 Jul 2026 16:05:39 GMT",
+          "server": "BaseHTTP/0.6 Python/3.14.6"
+        },
+        "body_raw": "{\"id\": \"chatcmpl-421eba41-a008-4466-9d91-307deec711ae\", \"system_fingerprint\": \"0.31.3-0.32.0-macOS-26.5.2-arm64-arm-64bit-Mach-O-applegpu_g16s\", \"object\": \"chat.completion\", \"model\": \"mlx-community/Mistral-7B-Instruct-v0.3-4bit\", \"created\": 1784649939, \"choices\": [{\"index\": 0, \"finish_reason\": \"stop\", \"message\": {\"role\": \"assistant\", \"content\": \"[TOOL_CALLS][{'name': 'divide', 'arguments': {'dividend': 42, 'divisor': 6}}]\\n[{'name': 'divide', 'arguments': {'dividend': 10, 'divisor': 4}}]\\n\\nThis will return two separate results. The first call will divide 42 by 6, and the second call will divide 10 by 4.\"}}], \"usage\": {\"prompt_tokens\": 103, \"completion_tokens\": 95, \"total_tokens\": 198, \"prompt_tokens_details\": {\"cached_tokens\": 10}}}"
+      },
+      "retried": false
+    }
+  ]
+}

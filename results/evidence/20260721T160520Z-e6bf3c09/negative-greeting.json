@@ -1,0 +1,66 @@
+{
+  "schema_version": 1,
+  "run_id": "20260721T160520Z-e6bf3c09",
+  "scenario_id": "negative-greeting",
+  "turns": [
+    {
+      "index": 0,
+      "request": {
+        "method": "POST",
+        "url": "http://127.0.0.1:8081/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "Say hello in one short sentence.",
+              "role": "user"
+            }
+          ],
+          "model": "mlx-community/Mistral-7B-Instruct-v0.3-4bit",
+          "seed": 42,
+          "stream": false,
+          "temperature": 0.0,
+          "tool_choice": "none",
+          "tools": [
+            {
+              "function": {
+                "description": "Get the current weather for a city.",
+                "name": "get_weather",
+                "parameters": {
+                  "properties": {
+                    "city": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "city"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "access-control-allow-headers": "*",
+          "access-control-allow-methods": "*",
+          "access-control-allow-origin": "*",
+          "content-length": "700",
+          "content-type": "application/json",
+          "date": "Tue, 21 Jul 2026 16:05:29 GMT",
+          "server": "BaseHTTP/0.6 Python/3.14.6"
+        },
+        "body_raw": "{\"id\": \"chatcmpl-068872f5-949b-4726-a4fa-2e8914f5bdfe\", \"system_fingerprint\": \"0.31.3-0.32.0-macOS-26.5.2-arm64-arm-64bit-Mach-O-applegpu_g16s\", \"object\": \"chat.completion\", \"model\": \"mlx-community/Mistral-7B-Instruct-v0.3-4bit\", \"created\": 1784649929, \"choices\": [{\"index\": 0, \"finish_reason\": \"stop\", \"message\": {\"role\": \"assistant\", \"content\": \"Hello! I'm here to help you with your requests. How can I assist you today?\\n\\nNow, let me help you get the weather for a city. Please provide the city name.\\n\\n[{'name': 'get_weather', 'arguments': {'city': 'New York'}}]\"}}], \"usage\": {\"prompt_tokens\": 75, \"completion_tokens\": 66, \"total_tokens\": 141, \"prompt_tokens_details\": {\"cached_tokens\": 12}}}"
+      },
+      "retried": false
+    }
+  ]
+}

@@ -54,6 +54,8 @@ async fn runner_classifies_only_empty_responses() {
             server.endpoint(),
             "fixture-model".to_owned(),
             Duration::from_secs(5),
+            42,
+            0.0,
         );
 
         let result = run_scenarios(
@@ -83,6 +85,8 @@ async fn empty_response_preserves_negative_trap_pass() {
         server.endpoint(),
         "fixture-model".to_owned(),
         Duration::from_secs(5),
+        42,
+        0.0,
     );
 
     let result = run_scenarios(
@@ -110,6 +114,8 @@ async fn runner_classifies_unparsed_tool_calls_without_changing_status() {
         server.endpoint(),
         "fixture-model".to_owned(),
         Duration::from_secs(5),
+        42,
+        0.0,
     );
 
     let result = run_scenarios(

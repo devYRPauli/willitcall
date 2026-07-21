@@ -79,6 +79,8 @@ async fn written_transcript_redacts_sensitive_request_headers() {
         server.endpoint(),
         "fixture-model".to_owned(),
         Duration::from_secs(5),
+        42,
+        0.0,
     );
     config.request_headers.insert(
         AUTHORIZATION,
@@ -124,6 +126,8 @@ async fn written_transcript_preserves_sse_body_bytes_exactly() {
         server.endpoint(),
         "fixture-model".to_owned(),
         Duration::from_secs(5),
+        42,
+        0.0,
     );
 
     let result = run_scenarios(
@@ -167,6 +171,8 @@ async fn fresh_result_paths_exist_and_hash_transcript_bytes() {
         server.endpoint(),
         "fixture-model".to_owned(),
         Duration::from_secs(5),
+        42,
+        0.0,
     );
 
     let result = run_scenarios(
@@ -208,6 +214,8 @@ async fn written_transcript_matches_checked_in_schema() {
         server.endpoint(),
         "fixture-model".to_owned(),
         Duration::from_secs(5),
+        42,
+        0.0,
     );
 
     let result = run_scenarios(

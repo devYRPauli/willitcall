@@ -1,0 +1,84 @@
+{
+  "schema_version": 1,
+  "run_id": "20260721T160520Z-e6bf3c09",
+  "scenario_id": "parallel-weather-and-time",
+  "turns": [
+    {
+      "index": 0,
+      "request": {
+        "method": "POST",
+        "url": "http://127.0.0.1:8081/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "Get both the weather and local time for Denver.",
+              "role": "user"
+            }
+          ],
+          "model": "mlx-community/Mistral-7B-Instruct-v0.3-4bit",
+          "seed": 42,
+          "stream": false,
+          "temperature": 0.0,
+          "tool_choice": "auto",
+          "tools": [
+            {
+              "function": {
+                "description": "Get weather for a city.",
+                "name": "get_weather",
+                "parameters": {
+                  "properties": {
+                    "city": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "city"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            },
+            {
+              "function": {
+                "description": "Get local time for a city.",
+                "name": "get_time",
+                "parameters": {
+                  "properties": {
+                    "city": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "city"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "access-control-allow-headers": "*",
+          "access-control-allow-methods": "*",
+          "access-control-allow-origin": "*",
+          "content-length": "1330",
+          "content-type": "application/json",
+          "date": "Tue, 21 Jul 2026 16:05:41 GMT",
+          "server": "BaseHTTP/0.6 Python/3.14.6"
+        },
+        "body_raw": "{\"id\": \"chatcmpl-5abd90aa-3d87-4a89-8e40-921ff919804f\", \"system_fingerprint\": \"0.31.3-0.32.0-macOS-26.5.2-arm64-arm-64bit-Mach-O-applegpu_g16s\", \"object\": \"chat.completion\", \"model\": \"mlx-community/Mistral-7B-Instruct-v0.3-4bit\", \"created\": 1784649941, \"choices\": [{\"index\": 0, \"finish_reason\": \"stop\", \"message\": {\"role\": \"assistant\", \"content\": \"[TOOL_CALLS][{'name': 'get_weather', 'arguments': {'city': 'Denver'}}, {'name': 'get_time', 'arguments': {'city': 'Denver'}}]$$If the functions are implemented, this command will return the weather and local time for Denver. If not, you will need to implement these functions first. Here's an example of how you might implement the 'get_weather' function:\\n\\n```\\ndef get_weather(city):\\n    # Fetch the weather data for the given city\\n    # Parse the weather data to extract relevant information\\n    # Return the weather information as a formatted string\\n    pass\\n```\\n\\nAnd here's an example of how you might implement the 'get_time' function:\\n\\n```\\ndef get_time(city):\\n    # Fetch the current local time for the given city\\n    # Format the time as a string in a user-friendly format\\n    # Return the formatted time string\\n    pass\\n```\"}}], \"usage\": {\"prompt_tokens\": 131, \"completion_tokens\": 223, \"total_tokens\": 354, \"prompt_tokens_details\": {\"cached_tokens\": 121}}}"
+      },
+      "retried": false
+    }
+  ]
+}

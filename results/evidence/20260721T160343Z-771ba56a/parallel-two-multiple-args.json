@@ -1,0 +1,96 @@
+{
+  "schema_version": 1,
+  "run_id": "20260721T160343Z-771ba56a",
+  "scenario_id": "parallel-two-multiple-args",
+  "turns": [
+    {
+      "index": 0,
+      "request": {
+        "method": "POST",
+        "url": "http://127.0.0.1:8081/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "Book room Cedar on 2026-09-02 at hour 14 and reserve a car in Boise on 2026-09-03.",
+              "role": "user"
+            }
+          ],
+          "model": "mlx-community/Phi-4-mini-instruct-4bit",
+          "seed": 42,
+          "stream": false,
+          "temperature": 0.0,
+          "tool_choice": "required",
+          "tools": [
+            {
+              "function": {
+                "description": "Book a room for an exact date and hour.",
+                "name": "book_room",
+                "parameters": {
+                  "properties": {
+                    "date": {
+                      "type": "string"
+                    },
+                    "hour": {
+                      "type": "integer"
+                    },
+                    "room": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "room",
+                    "date",
+                    "hour"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            },
+            {
+              "function": {
+                "description": "Reserve a car in a city for an exact date.",
+                "name": "reserve_car",
+                "parameters": {
+                  "properties": {
+                    "city": {
+                      "type": "string"
+                    },
+                    "date": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "city",
+                    "date"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "access-control-allow-headers": "*",
+          "access-control-allow-methods": "*",
+          "access-control-allow-origin": "*",
+          "content-length": "1599",
+          "content-type": "application/json",
+          "date": "Tue, 21 Jul 2026 16:04:10 GMT",
+          "server": "BaseHTTP/0.6 Python/3.14.6"
+        },
+        "body_raw": "{\"id\": \"chatcmpl-fab187a3-e026-489d-a221-5b5f896c55bb\", \"system_fingerprint\": \"0.31.3-0.32.0-macOS-26.5.2-arm64-arm-64bit-Mach-O-applegpu_g16s\", \"object\": \"chat.completion\", \"model\": \"mlx-community/Phi-4-mini-instruct-4bit\", \"created\": 1784649850, \"choices\": [{\"index\": 0, \"finish_reason\": \"stop\", \"message\": {\"role\": \"assistant\", \"content\": \"I'm sorry, but I can't assist with that request. As an AI, I don't have the capability to directly book services or reserve items on external platforms. However, I can guide you on how to make these reservations yourself:\\n\\n1. Book Room Cedar:\\n   - Visit the Room Cedar website or contact them directly to inquire about room availability on September 2, 2026, at 14:00 (2 PM).\\n   - Confirm the room type and amenities you need, and provide your personal and payment details as requested on their platform.\\n\\n2. Reserve a Car in Boise:\\n   - Visit a car rental website such as Enterprise, Hertz, or a local equivalent in Boise, or contact a car rental service in Boise directly to reserve a car for September 3, 2026.\\n   - Choose the type of car you need, and provide your pick-up and drop-off times as requested on their platform.\\n\\nKeep in mind that I cannot access real-time data or make bookings on external services, so you'll need to complete these actions on the respective platforms yourself. If you need help with specific services or platforms, I can provide more detailed instructions on how to navigate them.\"}}], \"usage\": {\"prompt_tokens\": 33, \"completion_tokens\": 237, \"total_tokens\": 270, \"prompt_tokens_details\": {\"cached_tokens\": 1}}}"
+      },
+      "retried": false
+    }
+  ]
+}

@@ -44,15 +44,21 @@ pub struct ServerVersionProbe {
 }
 
 impl RunConfig {
-    pub fn new(endpoint: String, model: String, timeout: Duration) -> Self {
+    pub fn new(
+        endpoint: String,
+        model: String,
+        timeout: Duration,
+        seed: u64,
+        temperature: f64,
+    ) -> Self {
         Self {
             endpoint,
             model,
             timeout,
             sampling: SamplingParams {
-                temperature: Some(0.0),
+                temperature: Some(temperature),
                 top_p: Some(1.0),
-                seed: Some(42),
+                seed: Some(seed),
                 max_tokens: Some(1024),
             },
             server: ServerConfig {
@@ -643,6 +649,8 @@ mod tests {
             "http://127.0.0.1:8080/v1".to_owned(),
             "fixture-model".to_owned(),
             std::time::Duration::from_secs(60),
+            42,
+            0.0,
         )
         .with_host_hardware_class(Some("Fixture workstation, 32GB".to_owned()));
 
@@ -659,6 +667,8 @@ mod tests {
             "http://127.0.0.1:8080/v1".to_owned(),
             "fixture-model".to_owned(),
             std::time::Duration::from_secs(60),
+            42,
+            0.0,
         );
         assert_eq!(config.declared_quant, None);
 

@@ -1,0 +1,69 @@
+{
+  "schema_version": 1,
+  "run_id": "20260721T160343Z-771ba56a",
+  "scenario_id": "single-optional-present",
+  "turns": [
+    {
+      "index": 0,
+      "request": {
+        "method": "POST",
+        "url": "http://127.0.0.1:8081/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "Search the catalog for brass compass and return exactly 4 results.",
+              "role": "user"
+            }
+          ],
+          "model": "mlx-community/Phi-4-mini-instruct-4bit",
+          "seed": 42,
+          "stream": false,
+          "temperature": 0.0,
+          "tool_choice": "auto",
+          "tools": [
+            {
+              "function": {
+                "description": "Search a catalog with an optional result limit.",
+                "name": "search_catalog",
+                "parameters": {
+                  "properties": {
+                    "limit": {
+                      "type": "integer"
+                    },
+                    "query": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "query"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "access-control-allow-headers": "*",
+          "access-control-allow-methods": "*",
+          "access-control-allow-origin": "*",
+          "content-length": "1723",
+          "content-type": "application/json",
+          "date": "Tue, 21 Jul 2026 16:04:26 GMT",
+          "server": "BaseHTTP/0.6 Python/3.14.6"
+        },
+        "body_raw": "{\"id\": \"chatcmpl-d7535945-e985-4be6-8ce9-52cc962ecd65\", \"system_fingerprint\": \"0.31.3-0.32.0-macOS-26.5.2-arm64-arm-64bit-Mach-O-applegpu_g16s\", \"object\": \"chat.completion\", \"model\": \"mlx-community/Phi-4-mini-instruct-4bit\", \"created\": 1784649866, \"choices\": [{\"index\": 0, \"finish_reason\": \"stop\", \"message\": {\"role\": \"assistant\", \"content\": \"I'm sorry, but I don't have the capability to directly search an external catalog or database to fetch real-time data such as brass compass listings. However, I can guide you on how to find brass compasses online:\\n\\n1. Use online retailers like Bowers and Kingsley, Laco or Repro Cartography, or specialized brass compass retailers.\\n2. Visit hobbyist forums or communities such as Reddit's r/NorCalMagnetism or dedicated brass compass crafting sites.\\n3. Check out eBay or similar platforms where collectors and hobbyists often sell and buy brass compasses.\\n4. Visit dedicated brass compass crafting sites or communities where you can find listings for brass compasses.\\n\\nTo find exactly 4 results, you would typically use the 'search' or 'find' function on these platforms, specifying 'brass compass' as your query and setting a limit on the number of results displayed to 4. If you are looking for brass compasses on a specific catalog or database, you would need access to that catalog or database, and I would guide you on how to navigate it based on its user interface or data structure. If you provide more context or a specific catalog reference, I could give more detailed instructions on how to find brass compasses within that catalog.\"}}], \"usage\": {\"prompt_tokens\": 16, \"completion_tokens\": 257, \"total_tokens\": 273, \"prompt_tokens_details\": {\"cached_tokens\": 7}}}"
+      },
+      "retried": false
+    }
+  ]
+}

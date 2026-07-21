@@ -1,0 +1,66 @@
+{
+  "schema_version": 1,
+  "run_id": "20260721T160343Z-771ba56a",
+  "scenario_id": "parallel-three-cities",
+  "turns": [
+    {
+      "index": 0,
+      "request": {
+        "method": "POST",
+        "url": "http://127.0.0.1:8081/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "Get weather for Austin, Dublin, and Seoul with three calls.",
+              "role": "user"
+            }
+          ],
+          "model": "mlx-community/Phi-4-mini-instruct-4bit",
+          "seed": 42,
+          "stream": false,
+          "temperature": 0.0,
+          "tool_choice": "required",
+          "tools": [
+            {
+              "function": {
+                "description": "Get weather for a city.",
+                "name": "get_weather",
+                "parameters": {
+                  "properties": {
+                    "city": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "city"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "access-control-allow-headers": "*",
+          "access-control-allow-methods": "*",
+          "access-control-allow-origin": "*",
+          "content-length": "2208",
+          "content-type": "application/json",
+          "date": "Tue, 21 Jul 2026 16:04:05 GMT",
+          "server": "BaseHTTP/0.6 Python/3.14.6"
+        },
+        "body_raw": "{\"id\": \"chatcmpl-4651a075-8e45-4186-9cd7-fa8792ef9061\", \"system_fingerprint\": \"0.31.3-0.32.0-macOS-26.5.2-arm64-arm-64bit-Mach-O-applegpu_g16s\", \"object\": \"chat.completion\", \"model\": \"mlx-community/Phi-4-mini-instruct-4bit\", \"created\": 1784649845, \"choices\": [{\"index\": 0, \"finish_reason\": \"stop\", \"message\": {\"role\": \"assistant\", \"content\": \"To get weather information, I would typically use an API like the OpenWeatherMap API, sending requests to retrieve data for Austin, Dublin, and Seoul. However, I cannot directly execute such calls but I can guide you on how to do it manually.\\n\\nTo manually fetch weather data, you would need to:\\n\\n1. Sign up on an API provider like OpenWeatherMap (https://openweathermap.org/) and get an API key.\\n2. Use an HTTP client or a tool like `curl` to send requests to the API endpoint provided by the service.\\n3. Follow the API documentation to construct the requests correctly, including setting the appropriate query parameters such as the city names and your API key.\\n\\nHere is a hypothetical example of how you could construct the requests:\\n\\nFor Austin:\\n```bash\\ncurl \\\"http://api.openweathermap.org/data/2.5/weather?q=Austin&appid=your_api_key_here\\\"\\n```\\n\\nFor Dublin:\\n```bash\\ncurl \\\"http://api.openweathermap.org/data/2.5/weather?q=Dublin&appid=your_api_key_here\\\"\\n```\\n\\nFor Seoul:\\n```bash\\ncurl \\\"http://api.openweathermap.org/data/2.5/weather?q=Seoul&appid=your_api_key_here\\\"\\n```\\n\\nKeep in mind that you need to replace `your_api_key_here` with an actual API key provided by the service you decide to use (e.g., OpenWeatherMap).\\n\\nThe response will be a JSON data structure containing weather information such as temperature, humidity, wind speed, and more depending on the data requested.\\n\\nFor actual data retrieval, you would need to execute these calls on a system that has an internet connection and an HTTP request capability. If you want real-time data, you will need to execute these calls programmatically in an application or script that has internet access and the capability to execute HTTP requests.\"}}], \"usage\": {\"prompt_tokens\": 16, \"completion_tokens\": 376, \"total_tokens\": 392, \"prompt_tokens_details\": {\"cached_tokens\": 2}}}"
+      },
+      "retried": false
+    }
+  ]
+}

@@ -1,0 +1,92 @@
+{
+  "schema_version": 1,
+  "run_id": "20260721T160226Z-3d6b0b23",
+  "scenario_id": "multi-turn-flight-booking",
+  "turns": [
+    {
+      "index": 0,
+      "request": {
+        "method": "POST",
+        "url": "http://127.0.0.1:8081/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "Find a flight from BOS to DEN on 2026-10-04, then book the returned flight.",
+              "role": "user"
+            }
+          ],
+          "model": "mlx-community/Qwen2.5-1.5B-Instruct-4bit",
+          "seed": 42,
+          "stream": false,
+          "temperature": 0.0,
+          "tool_choice": "auto",
+          "tools": [
+            {
+              "function": {
+                "description": "Find a flight for an exact route and date.",
+                "name": "find_flight",
+                "parameters": {
+                  "properties": {
+                    "date": {
+                      "type": "string"
+                    },
+                    "destination": {
+                      "type": "string"
+                    },
+                    "origin": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "origin",
+                    "destination",
+                    "date"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            },
+            {
+              "function": {
+                "description": "Book a flight by exact id.",
+                "name": "book_flight",
+                "parameters": {
+                  "properties": {
+                    "flight_id": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "flight_id"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "access-control-allow-headers": "*",
+          "access-control-allow-methods": "*",
+          "access-control-allow-origin": "*",
+          "content-length": "845",
+          "content-type": "application/json",
+          "date": "Tue, 21 Jul 2026 16:02:26 GMT",
+          "server": "BaseHTTP/0.6 Python/3.14.6"
+        },
+        "body_raw": "{\"id\": \"chatcmpl-ce842cbe-3599-476b-b974-5c69548c3ee3\", \"system_fingerprint\": \"0.31.3-0.32.0-macOS-26.5.2-arm64-arm-64bit-Mach-O-applegpu_g16s\", \"object\": \"chat.completion\", \"model\": \"mlx-community/Qwen2.5-1.5B-Instruct-4bit\", \"created\": 1784649746, \"choices\": [{\"index\": 0, \"finish_reason\": \"tool_calls\", \"message\": {\"role\": \"assistant\", \"content\": \"\\n\", \"tool_calls\": [{\"function\": {\"name\": \"find_flight\", \"arguments\": \"{\\\"date\\\": \\\"2026-10-04\\\", \\\"destination\\\": \\\"DEN\\\", \\\"origin\\\": \\\"BOS\\\"}\"}, \"type\": \"function\", \"id\": \"3de4f0d1-c408-4215-8f9b-994aceea65ae\"}, {\"function\": {\"name\": \"book_flight\", \"arguments\": \"{\\\"flight_id\\\": \\\"123456\\\"}\"}, \"type\": \"function\", \"id\": \"1bd748c3-7fcc-4e8d-8e96-b86825bbe1a1\"}]}}], \"usage\": {\"prompt_tokens\": 276, \"completion_tokens\": 68, \"total_tokens\": 344, \"prompt_tokens_details\": {\"cached_tokens\": 61}}}"
+      },
+      "retried": false
+    }
+  ]
+}

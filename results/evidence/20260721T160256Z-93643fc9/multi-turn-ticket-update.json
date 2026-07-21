@@ -1,0 +1,93 @@
+{
+  "schema_version": 1,
+  "run_id": "20260721T160256Z-93643fc9",
+  "scenario_id": "multi-turn-ticket-update",
+  "turns": [
+    {
+      "index": 0,
+      "request": {
+        "method": "POST",
+        "url": "http://127.0.0.1:8081/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "Find ticket EXT-55 and set its priority to high.",
+              "role": "user"
+            }
+          ],
+          "model": "mlx-community/Meta-Llama-3.1-8B-Instruct-4bit",
+          "seed": 42,
+          "stream": false,
+          "temperature": 0.0,
+          "tool_choice": "auto",
+          "tools": [
+            {
+              "function": {
+                "description": "Find a ticket by exact external reference.",
+                "name": "find_ticket",
+                "parameters": {
+                  "properties": {
+                    "external_ref": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "external_ref"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            },
+            {
+              "function": {
+                "description": "Set ticket priority by internal id.",
+                "name": "set_ticket_priority",
+                "parameters": {
+                  "properties": {
+                    "priority": {
+                      "enum": [
+                        "low",
+                        "normal",
+                        "high"
+                      ],
+                      "type": "string"
+                    },
+                    "ticket_id": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "ticket_id",
+                    "priority"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "access-control-allow-headers": "*",
+          "access-control-allow-methods": "*",
+          "access-control-allow-origin": "*",
+          "content-length": "677",
+          "content-type": "application/json",
+          "date": "Tue, 21 Jul 2026 16:03:01 GMT",
+          "server": "BaseHTTP/0.6 Python/3.14.6"
+        },
+        "body_raw": "{\"id\": \"chatcmpl-dc4b5c27-2ac9-41ae-8a34-e872b7352b45\", \"system_fingerprint\": \"0.31.3-0.32.0-macOS-26.5.2-arm64-arm-64bit-Mach-O-applegpu_g16s\", \"object\": \"chat.completion\", \"model\": \"mlx-community/Meta-Llama-3.1-8B-Instruct-4bit\", \"created\": 1784649781, \"choices\": [{\"index\": 0, \"finish_reason\": \"stop\", \"message\": {\"role\": \"assistant\", \"content\": \"<|python_tag|>{\\\"name\\\": \\\"find_ticket\\\", \\\"parameters\\\": {\\\"external_ref\\\": \\\"EXT-55\\\"}}; {\\\"name\\\": \\\"set_ticket_priority\\\", \\\"parameters\\\": {\\\"ticket_id\\\": \\\"EXT-55\\\", \\\"priority\\\": \\\"high\\\"}}\"}}], \"usage\": {\"prompt_tokens\": 310, \"completion_tokens\": 48, \"total_tokens\": 358, \"prompt_tokens_details\": {\"cached_tokens\": 99}}}"
+      },
+      "retried": false
+    }
+  ]
+}

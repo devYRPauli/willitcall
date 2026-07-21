@@ -1,0 +1,66 @@
+{
+  "schema_version": 1,
+  "run_id": "20260721T160256Z-93643fc9",
+  "scenario_id": "parallel-city-time",
+  "turns": [
+    {
+      "index": 0,
+      "request": {
+        "method": "POST",
+        "url": "http://127.0.0.1:8081/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "What time is it in Boston and Tokyo?",
+              "role": "user"
+            }
+          ],
+          "model": "mlx-community/Meta-Llama-3.1-8B-Instruct-4bit",
+          "seed": 42,
+          "stream": false,
+          "temperature": 0.0,
+          "tool_choice": "required",
+          "tools": [
+            {
+              "function": {
+                "description": "Get the local time for a city.",
+                "name": "get_time",
+                "parameters": {
+                  "properties": {
+                    "city": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "city"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "access-control-allow-headers": "*",
+          "access-control-allow-methods": "*",
+          "access-control-allow-origin": "*",
+          "content-length": "625",
+          "content-type": "application/json",
+          "date": "Tue, 21 Jul 2026 16:03:05 GMT",
+          "server": "BaseHTTP/0.6 Python/3.14.6"
+        },
+        "body_raw": "{\"id\": \"chatcmpl-e3581fc7-a3ac-46c7-b95c-fd352390b3f8\", \"system_fingerprint\": \"0.31.3-0.32.0-macOS-26.5.2-arm64-arm-64bit-Mach-O-applegpu_g16s\", \"object\": \"chat.completion\", \"model\": \"mlx-community/Meta-Llama-3.1-8B-Instruct-4bit\", \"created\": 1784649785, \"choices\": [{\"index\": 0, \"finish_reason\": \"stop\", \"message\": {\"role\": \"assistant\", \"content\": \"<|python_tag|>{\\\"name\\\": \\\"get_time\\\", \\\"parameters\\\": {\\\"city\\\": \\\"Boston\\\"}}; {\\\"name\\\": \\\"get_time\\\", \\\"parameters\\\": {\\\"city\\\": \\\"Tokyo\\\"}}\"}}], \"usage\": {\"prompt_tokens\": 183, \"completion_tokens\": 36, \"total_tokens\": 219, \"prompt_tokens_details\": {\"cached_tokens\": 99}}}"
+      },
+      "retried": false
+    }
+  ]
+}

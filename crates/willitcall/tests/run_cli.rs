@@ -606,6 +606,8 @@ async fn happy_run_passes_all_scenarios_and_writes_a_valid_result() {
     );
     assert_eq!(result.schema_version, 2);
     assert_eq!(result.metadata.declared_quant, None);
+    assert_eq!(result.metadata.sampling.seed, Some(42));
+    assert_eq!(result.metadata.sampling.temperature, Some(0.0));
     assert_eq!(result.totals.passed, 5);
     assert_eq!(result.totals.failed, 0);
     assert!(result
@@ -643,10 +645,9 @@ async fn happy_run_passes_all_scenarios_and_writes_a_valid_result() {
 async fn json_mode_is_clean_json_and_records_the_selected_preset() {
     let server = MockServer::start_scripted(
         "fixture-model",
-        vec![ScriptedResponse::Json(completion(
-            json!([]),
-            json!("ready"),
-        ))],
+        (0..4)
+            .map(|_| ScriptedResponse::Json(completion(json!([]), json!("ready"))))
+            .collect(),
     )
     .await;
     let directory = tempfile::tempdir().expect("temp directory");
@@ -691,6 +692,10 @@ content = "Reply ready."
         "Fixture workstation, 32GB".to_owned(),
         "--quant".to_owned(),
         "Q4_K_M-imatrix".to_owned(),
+        "--seed".to_owned(),
+        "8675309".to_owned(),
+        "--temperature".to_owned(),
+        "0.75".to_owned(),
         "--force".to_owned(),
         "--scenarios".to_owned(),
         scenario_path.display().to_string(),
@@ -712,11 +717,16 @@ content = "Reply ready."
         result.metadata.declared_quant.as_deref(),
         Some("Q4_K_M-imatrix")
     );
+    assert_eq!(result.metadata.sampling.seed, Some(8675309));
+    assert_eq!(result.metadata.sampling.temperature, Some(0.75));
     assert_eq!(
         result.metadata.server.reported_version.as_deref(),
         Some("mock-1.0")
     );
-    assert!(result.metadata.server.quirk_flags.is_empty());
+    assert_eq!(
+        result.metadata.server.quirk_flags,
+        ["unconstrained_post_hoc_parse"]
+    );
     let environment = result
         .metadata
         .environment
@@ -729,6 +739,44 @@ content = "Reply ready."
         output.stdout,
         "stdout and --out should contain the same result document"
     );
+
+    // The CLI value and the recorded preset name differ for mlx-lm: the flag follows
+    // clap's kebab-case derive, the result field records the package's own spelling.
+    for (preset, recorded_name, expected_quirks) in [
+        ("llamacpp", "llamacpp", vec!["grammar_constrained_decoding"]),
+        ("mlx-lm", "mlx_lm", vec!["unconstrained_post_hoc_parse"]),
+        ("custom", "custom", Vec::new()),
+    ] {
+        let output = run_binary(vec![
+            "run".to_owned(),
+            "--server".to_owned(),
+            preset.to_owned(),
+            "--endpoint".to_owned(),
+            server.endpoint(),
+            "--model".to_owned(),
+            "fixture-model".to_owned(),
+            "--host-hardware-class".to_owned(),
+            "Fixture workstation, 32GB".to_owned(),
+            "--force".to_owned(),
+            "--scenarios".to_owned(),
+            scenario_path.display().to_string(),
+            "--out".to_owned(),
+            output_path.display().to_string(),
+            "--json".to_owned(),
+        ])
+        .await;
+
+        assert_eq!(output.status.code(), Some(0));
+        assert!(
+            output.stderr.is_empty(),
+            "{}",
+            String::from_utf8_lossy(&output.stderr)
+        );
+        let result: RunResult =
+            serde_json::from_slice(&output.stdout).expect("stdout is only JSON");
+        assert_eq!(result.metadata.server.preset_name, recorded_name);
+        assert_eq!(result.metadata.server.quirk_flags, expected_quirks);
+    }
 }
 
 #[tokio::test(flavor = "multi_thread", worker_threads = 2)]
@@ -1057,6 +1105,27 @@ content = "Say hello."
     .expect("valid transcript JSON");
     assert_eq!(transcript["schema_version"], 1);
     assert_eq!(transcript["scenario_id"], "ordering-negative");
+}
+
+#[tokio::test(flavor = "multi_thread", worker_threads = 2)]
+async fn negative_temperature_exits_two() {
+    let output = run_binary(vec![
+        "run".to_owned(),
+        "--endpoint".to_owned(),
+        "http://127.0.0.1:1/v1".to_owned(),
+        "--model".to_owned(),
+        "fixture-model".to_owned(),
+        "--temperature".to_owned(),
+        "-0.1".to_owned(),
+    ])
+    .await;
+
+    assert_eq!(output.status.code(), Some(2));
+    assert!(
+        String::from_utf8_lossy(&output.stderr).contains("temperature must be non-negative"),
+        "{}",
+        String::from_utf8_lossy(&output.stderr)
+    );
 }
 
 #[tokio::test(flavor = "multi_thread", worker_threads = 2)]

@@ -50,9 +50,27 @@ Check a result file against the published schema:
 cargo run -p willitcall -- validate willitcall-result.json
 ```
 
-`--server` selects a preset (`llamacpp`, `ollama`, `lmstudio`, `vllm`,
-`custom`). The preset only supplies request defaults; the preset name is
+`--server` selects a preset (`llamacpp`, `ollama`, `mlx-lm`, `lmstudio`,
+`vllm`, `custom`). The preset only supplies request defaults; the preset name is
 recorded in the result file so results stay comparable.
+
+The `mlx-lm` preset defaults to port 8081, not mlx-lm's own default of 8080,
+because 8080 is this project's llama.cpp convention and two servers on one port
+is exactly the contention the preflight exists to catch.
+
+Two things to know before reading or adding an mlx-lm row:
+
+- **MLX rows are converted weights.** MLX does not consume GGUF, so an MLX row
+  for a model is not the same bits as the llama.cpp row for that model. The
+  trick used elsewhere in this project of serving one blob through two servers
+  to hold the weights constant does not work across this boundary. An MLX-vs-
+  GGUF difference includes the conversion.
+- **`/v1/models` on mlx-lm lists the whole local cache, not the loaded model.**
+  llama.cpp reports the model it is serving; mlx-lm enumerates everything in the
+  HuggingFace cache, and it will load whichever model your request names. Do not
+  discover the model id from that endpoint - pass the repo id you intend to
+  measure. Getting this wrong files a row under the wrong model name, which is
+  worse than having no row.
 
 ## What the scenarios test
 
@@ -78,6 +96,41 @@ published and a published reason has to be defensible.
 Read a red cell carefully: a red in `parallel` means the model did not emit
 several tool calls in one response, which is the capability that column
 measures. It does not mean the model is broken.
+
+## A cell is a property of the whole stack
+
+**The servers do not decode the same way, so a green on one server and a red on
+another is not by itself evidence about the model.**
+
+llama.cpp compiles the tool definitions you send into a GBNF grammar and
+constrains decoding with it. A tool call that names a function you did not
+supply, or whose arguments do not fit the schema, is not merely unlikely there:
+it cannot be sampled. Ollama and mlx-lm generate unconstrained text and parse a
+tool call out of it afterwards, so the model can emit a wrong function name or a
+malformed call, and the server finds out only after the fact.
+
+That difference is systematic and it favours llama.cpp in every row, on every
+model. So:
+
+- A llama.cpp-versus-Ollama delta is a property of the stack. Read it as "this
+  combination works", not as "Ollama is defective" or "this model is worse than
+  that one".
+- The comparison that isolates the model is same-server, not cross-server.
+- A red under an unconstrained server can mean the model emitted something
+  nearly right that the parser then rejected. The `unparsed_tool_call` failure
+  class exists to mark exactly that case, and the transcript shows the bytes.
+
+Each result records which side of this line its server sits on, in
+`server.quirk_flags`: `grammar_constrained_decoding` for llama.cpp,
+`unconstrained_post_hoc_parse` for Ollama and mlx-lm. LM Studio and vLLM are
+unflagged because their decode path has not been verified here; absence of a
+flag means unverified, not unconstrained.
+
+This was established the hard way. An earlier version of this project published
+a claim that Ollama discarded valid tool calls. Recovering the discarded bytes
+showed the model had emitted the tool's *description* where its name belonged,
+and Ollama's parser was right to reject it. The claim was retracted. The real
+finding is the mechanism above.
 
 ## The scenario-authoring rule
 

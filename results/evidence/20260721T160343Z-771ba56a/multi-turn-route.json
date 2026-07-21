@@ -1,0 +1,88 @@
+{
+  "schema_version": 1,
+  "run_id": "20260721T160343Z-771ba56a",
+  "scenario_id": "multi-turn-route",
+  "turns": [
+    {
+      "index": 0,
+      "request": {
+        "method": "POST",
+        "url": "http://127.0.0.1:8081/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "Find a route to Fenway Park.",
+              "role": "user"
+            }
+          ],
+          "model": "mlx-community/Phi-4-mini-instruct-4bit",
+          "seed": 42,
+          "stream": false,
+          "temperature": 0.0,
+          "tool_choice": "auto",
+          "tools": [
+            {
+              "function": {
+                "description": "Resolve a place to coordinates.",
+                "name": "geocode",
+                "parameters": {
+                  "properties": {
+                    "place": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "place"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            },
+            {
+              "function": {
+                "description": "Get a route to coordinates.",
+                "name": "get_route",
+                "parameters": {
+                  "properties": {
+                    "latitude": {
+                      "type": "number"
+                    },
+                    "longitude": {
+                      "type": "number"
+                    }
+                  },
+                  "required": [
+                    "latitude",
+                    "longitude"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "access-control-allow-headers": "*",
+          "access-control-allow-methods": "*",
+          "access-control-allow-origin": "*",
+          "content-length": "1359",
+          "content-type": "application/json",
+          "date": "Tue, 21 Jul 2026 16:03:53 GMT",
+          "server": "BaseHTTP/0.6 Python/3.14.6"
+        },
+        "body_raw": "{\"id\": \"chatcmpl-f4dd2cf1-a36c-4301-8fab-bfcb6bec33eb\", \"system_fingerprint\": \"0.31.3-0.32.0-macOS-26.5.2-arm64-arm-64bit-Mach-O-applegpu_g16s\", \"object\": \"chat.completion\", \"model\": \"mlx-community/Phi-4-mini-instruct-4bit\", \"created\": 1784649833, \"choices\": [{\"index\": 0, \"finish_reason\": \"stop\", \"message\": {\"role\": \"assistant\", \"content\": \"To reach Fenway Park from most locations in Boston, you can take public transportation or drive. Here are a couple of options:\\n\\n1. Take a subway:\\n- Take the Red Line heading east from South Station (South Station) or North Station (North Station) toward East Boston, then transfer to the Green Line heading east toward East Boston. Walk one block east on Main Street to reach Fenway Park.\\n\\n2. Drive:\\n- Follow I-95 South toward South Station, then take exit 5B toward South Station Main Street. Follow Main Street east toward East Boston, then take exit 5C toward East Boston Main Street. Follow Main Street east toward East Boston Main Street until you reach Fenway Park.\\n\\nFor updated transit information, check the MTA (Massachusetts Bay Transportation Authority) website or Google Maps for real-time arrival information on subway lines heading toward East Boston Main Street.\"}}], \"usage\": {\"prompt_tokens\": 11, \"completion_tokens\": 180, \"total_tokens\": 191, \"prompt_tokens_details\": {\"cached_tokens\": 3}}}"
+      },
+      "retried": false
+    }
+  ]
+}

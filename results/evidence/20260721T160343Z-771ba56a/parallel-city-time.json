@@ -1,0 +1,66 @@
+{
+  "schema_version": 1,
+  "run_id": "20260721T160343Z-771ba56a",
+  "scenario_id": "parallel-city-time",
+  "turns": [
+    {
+      "index": 0,
+      "request": {
+        "method": "POST",
+        "url": "http://127.0.0.1:8081/v1/chat/completions",
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "max_tokens": 1024,
+          "messages": [
+            {
+              "content": "What time is it in Boston and Tokyo?",
+              "role": "user"
+            }
+          ],
+          "model": "mlx-community/Phi-4-mini-instruct-4bit",
+          "seed": 42,
+          "stream": false,
+          "temperature": 0.0,
+          "tool_choice": "required",
+          "tools": [
+            {
+              "function": {
+                "description": "Get the local time for a city.",
+                "name": "get_time",
+                "parameters": {
+                  "properties": {
+                    "city": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "city"
+                  ],
+                  "type": "object"
+                }
+              },
+              "type": "function"
+            }
+          ],
+          "top_p": 1.0
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "access-control-allow-headers": "*",
+          "access-control-allow-methods": "*",
+          "access-control-allow-origin": "*",
+          "content-length": "1711",
+          "content-type": "application/json",
+          "date": "Tue, 21 Jul 2026 16:04:02 GMT",
+          "server": "BaseHTTP/0.6 Python/3.14.6"
+        },
+        "body_raw": "{\"id\": \"chatcmpl-d3d230fa-ddc1-42fb-9031-4a03cc87de53\", \"system_fingerprint\": \"0.31.3-0.32.0-macOS-26.5.2-arm64-arm-64bit-Mach-O-applegpu_g16s\", \"object\": \"chat.completion\", \"model\": \"mlx-community/Phi-4-mini-instruct-4bit\", \"created\": 1784649842, \"choices\": [{\"index\": 0, \"finish_reason\": \"stop\", \"message\": {\"role\": \"assistant\", \"content\": \"To provide an accurate answer, I would need to check the current time in Boston and Tokyo as I cannot access real-time data after my last update in early 2023. However, I can guide you on how to find this information:\\n\\n1. Current Time in Boston:\\n   - Find a clock or a device connected to the internet to check the current time in New York City (Eastern Time Zone), as Boston is on Eastern Standard Time (EST) or Eastern Daylight Time (EDT) depending on daylight saving time.\\n\\n2. Current Time in Tokyo:\\n   - Find a clock or a device connected to the internet to check the current time in Tokyo, Japan, which is on Japan Standard Time (JST).\\n\\nTo find simultaneous or different times, you can look on an online world clock or a time zone converter to compare the times in Boston and Tokyo directly.\\n\\nFor instance, as of early 2023 data:\\n- If it is 12:00 PM (noon) in New York City (EST), it is approximately 7:00 PM (19:00) on a weekday or 8:00 PM (20:00) on a Saturday or Sunday in Tokyo (JST).\\n\\nKeep in mind that actual simultaneous times will depend on daylight saving changes and any possible shifts in time zones due to political or seasonal circumstances. Always check a reliable source for the most current information.\"}}], \"usage\": {\"prompt_tokens\": 12, \"completion_tokens\": 283, \"total_tokens\": 295, \"prompt_tokens_details\": {\"cached_tokens\": 2}}}"
+      },
+      "retried": false
+    }
+  ]
+}
