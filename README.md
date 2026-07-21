@@ -58,6 +58,20 @@ The `mlx-lm` preset defaults to port 8081, not mlx-lm's own default of 8080,
 because 8080 is this project's llama.cpp convention and two servers on one port
 is exactly the contention the preflight exists to catch.
 
+Two things to know before reading or adding an mlx-lm row:
+
+- **MLX rows are converted weights.** MLX does not consume GGUF, so an MLX row
+  for a model is not the same bits as the llama.cpp row for that model. The
+  trick used elsewhere in this project of serving one blob through two servers
+  to hold the weights constant does not work across this boundary. An MLX-vs-
+  GGUF difference includes the conversion.
+- **`/v1/models` on mlx-lm lists the whole local cache, not the loaded model.**
+  llama.cpp reports the model it is serving; mlx-lm enumerates everything in the
+  HuggingFace cache, and it will load whichever model your request names. Do not
+  discover the model id from that endpoint - pass the repo id you intend to
+  measure. Getting this wrong files a row under the wrong model name, which is
+  worse than having no row.
+
 ## What the scenarios test
 
 The corpus is 50 scenarios in six categories. Every scenario is plain TOML data
