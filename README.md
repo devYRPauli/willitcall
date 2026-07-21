@@ -12,6 +12,11 @@ becomes a fact you can look up instead of an afternoon you lose.
 Status: the CLI and corpus work. The public matrix is live at
 https://devyrpauli.github.io/willitcall/.
 
+The full analysis of what these measurements found - the decoding mechanism
+behind cross-server deltas, the quantization verdict, and the failure taxonomy
+- is at
+https://yashrajpandey.com/writing/same-weights-opposite-results/.
+
 ## Quickstart
 
 You need Rust (stable) and a running OpenAI-compatible server.
