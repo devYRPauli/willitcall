@@ -2,6 +2,7 @@ use std::collections::HashSet;
 use std::fs;
 
 use wic_core::client::ToolCall;
+use wic_core::corpus::corpus_identity;
 use wic_core::score::score_calls;
 use wic_core::{load_embedded_scenarios, Scenario, ScenarioCategory};
 
@@ -63,6 +64,38 @@ fn every_embedded_scenario_has_a_substantive_rationale() {
             scenario.id
         );
     }
+}
+
+#[test]
+fn corpus_identity_is_order_stable_and_content_sensitive() {
+    let scenarios = load_embedded_scenarios().expect("embedded scenarios should load");
+    let identity = corpus_identity(&scenarios);
+
+    let mut reordered = scenarios.clone();
+    reordered.reverse();
+    assert_eq!(identity, corpus_identity(&reordered));
+
+    let mut prompt_changed = scenarios.clone();
+    prompt_changed[0].turns[0].messages[0]
+        .content
+        .push_str(" Identity probe.");
+    assert_ne!(identity, corpus_identity(&prompt_changed));
+
+    let mut schema_changed = scenarios.clone();
+    schema_changed[0].tools[0]
+        .parameters
+        .as_object_mut()
+        .expect("tool parameters should be an object")
+        .insert("identity_probe".to_owned(), serde_json::Value::Bool(true));
+    assert_ne!(identity, corpus_identity(&schema_changed));
+
+    let mut expected_argument_changed = scenarios.clone();
+    expected_argument_changed[0].turns[0].expected_calls[0]
+        .arguments
+        .as_object_mut()
+        .expect("expected arguments should be an object")
+        .insert("identity_probe".to_owned(), serde_json::Value::Bool(true));
+    assert_ne!(identity, corpus_identity(&expected_argument_changed));
 }
 
 fn assert_filename_matches_id(scenario: &Scenario) {
