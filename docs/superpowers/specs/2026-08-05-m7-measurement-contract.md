@@ -60,7 +60,7 @@ the distinction survives greyscale and colour blindness.
 
 ### T0.2 Absolute local paths are published
 
-Three result files carry `/Users/bbadmin/...` in `metadata.model_id`
+Three result files carry an absolute path from the producing machine in `metadata.model_id`
 (`llamacpp-granite3.1-dense-8b`, `llamacpp-phi4-mini`,
 `llamacpp-watt-tool-8b-q4_k_m`). The same strings appear in **300 evidence
 transcripts across 6 run directories**.
