@@ -7,6 +7,7 @@ use include_dir::{include_dir, Dir};
 use serde::{Deserialize, Serialize};
 
 pub mod client;
+pub mod corpus;
 pub mod result;
 pub mod runner;
 pub mod score;
