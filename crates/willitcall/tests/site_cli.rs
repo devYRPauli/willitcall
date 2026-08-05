@@ -372,3 +372,68 @@ fn site_ignores_archive_directory() {
     assert_eq!(index.matches("class=\"result-row\"").count(), 1);
     assert!(!index.contains("invalid.json"));
 }
+
+#[test]
+fn all_error_category_is_not_measurable() {
+    let directory = tempfile::tempdir().expect("temp directory");
+    let results = directory.path().join("results");
+    let output = directory.path().join("site");
+    fs::create_dir(&results).expect("results directory");
+
+    write_result(
+        &results.join("ollama-gemma3-4b.json"),
+        2,
+        "gemma3:4b",
+        None,
+        "ollama",
+        None,
+        (0..13)
+            .map(|index| {
+                scenario(
+                    &format!("all-error-{index}"),
+                    "single_call",
+                    "error",
+                    Some("server returned HTTP 400"),
+                    None,
+                )
+            })
+            .collect(),
+    );
+    write_result(
+        &results.join("llamacpp-granite3.1-dense.json"),
+        2,
+        "granite3.1-dense",
+        None,
+        "llamacpp",
+        None,
+        (0..13)
+            .map(|index| {
+                scenario(
+                    &format!("all-fail-{index}"),
+                    "single_call",
+                    "fail",
+                    Some("wrong tool call"),
+                    None,
+                )
+            })
+            .collect(),
+    );
+
+    let generated = run_site(&results, &output, None);
+    assert_eq!(
+        generated.status.code(),
+        Some(0),
+        "{}",
+        String::from_utf8_lossy(&generated.stderr)
+    );
+
+    let index = fs::read_to_string(output.join("index.html")).expect("generated index");
+    assert!(index.contains(
+        "class=\"score not-measurable\" aria-label=\"single_call: 0 passed, 0 failed, 13 errors, 0 skipped\""
+    ));
+    assert!(index.contains(
+        "class=\"score none-pass\" aria-label=\"single_call: 0 passed, 13 failed, 0 errors, 0 skipped\""
+    ));
+    assert!(index.contains("<span class=\"measurement-state\">not measurable</span>"));
+    assert!(index.contains("<i class=\"swatch not-measurable\"></i>not measurable"));
+}

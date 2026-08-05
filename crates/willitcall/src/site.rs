@@ -166,6 +166,7 @@ fn render_index(results: &[ResultFile], repo_base: &str) -> String {
         <span><i class="swatch all-pass"></i>all pass</span>
         <span><i class="swatch partial"></i>partial</span>
         <span><i class="swatch none-pass"></i>none pass</span>
+        <span><i class="swatch not-measurable"></i>not measurable</span>
       </div>
       <p id="filter-status" class="filter-status" aria-live="polite">Showing {} result files.</p>
       <div class="table-scroll">
@@ -356,8 +357,23 @@ fn render_category_cell(
         .iter()
         .filter(|scenario| scenario.status == Status::Pass)
         .count();
+    let failed = scenarios
+        .iter()
+        .filter(|scenario| scenario.status == Status::Fail)
+        .count();
+    let errors = scenarios
+        .iter()
+        .filter(|scenario| scenario.status == Status::Error)
+        .count();
+    let skipped = scenarios
+        .iter()
+        .filter(|scenario| scenario.status == Status::Skipped)
+        .count();
+    let not_measurable = errors > 0 && passed + failed == 0;
     let class = if total == 0 {
         "untested"
+    } else if not_measurable {
+        "not-measurable"
     } else if passed == total {
         "all-pass"
     } else if passed == 0 {
@@ -373,7 +389,7 @@ fn render_category_cell(
         .and_then(|scenario| scenario.evidence_path.as_deref());
     write!(
         html,
-        "              <td class=\"score {class}\" aria-label=\"{}: {passed} passed out of {total}\">",
+        "              <td class=\"score {class}\" aria-label=\"{}: {passed} passed, {failed} failed, {errors} errors, {skipped} skipped\">",
         category
     )
     .expect("write HTML");
@@ -389,6 +405,9 @@ fn render_category_cell(
         if total > 0 && passed < total && result_file.result.schema_version == 1 {
             html.push_str("<span class=\"legacy-evidence\">schema v1: no transcript path</span>");
         }
+    }
+    if not_measurable {
+        html.push_str("<span class=\"measurement-state\">not measurable</span>");
     }
     html.push_str("</td>\n");
 }
@@ -696,6 +715,16 @@ select {
 .swatch.partial, .score.partial { color: var(--partial-ink); background: var(--partial-bg); }
 .swatch.none-pass, .score.none-pass { color: var(--none-ink); background: var(--none-bg); }
 .score.untested { color: var(--neutral-ink); background: var(--neutral-bg); }
+/* Not measurable is neutral, never red: the combination produced no measurement,
+   which is not the same claim as failing. The hatch keeps it distinct from the
+   other states without relying on colour. */
+.swatch.not-measurable, .score.not-measurable {
+  color: var(--neutral-ink);
+  background: repeating-linear-gradient(
+    45deg, var(--neutral-bg), var(--neutral-bg) 3px,
+    rgb(23 33 43 / 12%) 3px, rgb(23 33 43 / 12%) 6px);
+}
+.measurement-state { display: block; margin-top: 0.35rem; font-size: 0.68rem; line-height: 1.25; }
 
 .filter-status { margin: 0.7rem 0 1rem; color: var(--muted); font-size: 0.86rem; }
 .table-scroll { overflow-x: auto; border: 1px solid var(--line); }
