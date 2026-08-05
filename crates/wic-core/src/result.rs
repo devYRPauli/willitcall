@@ -12,11 +12,163 @@ pub const RESULT_SCHEMA_VERSION: u32 = 2;
 
 #[derive(Clone, Debug, Deserialize, Serialize)]
 #[serde(deny_unknown_fields)]
-pub struct RunResult {
+pub struct RunResultV1V2 {
     pub schema_version: u32,
     pub metadata: RunMetadata,
     pub scenarios: Vec<ScenarioOutcome>,
     pub totals: Totals,
+}
+
+pub type RunResult = RunResultV1V2;
+
+#[derive(Clone, Debug, Deserialize, Serialize)]
+#[serde(deny_unknown_fields)]
+pub struct RunResultV3 {
+    pub schema_version: u32,
+    pub metadata: RunMetadataV3,
+    pub scenarios: Vec<ScenarioOutcomeV3>,
+    pub totals: Totals,
+}
+
+#[derive(Clone, Debug, Deserialize, Serialize)]
+#[serde(deny_unknown_fields)]
+pub struct RunMetadataV3 {
+    pub run_id: String,
+    pub timestamp: String,
+    pub willitcall_version: String,
+    pub endpoint: String,
+    pub model: ModelMetadata,
+    pub corpus: CorpusMetadata,
+    pub server: ServerMetadataV3,
+    pub environment: EnvironmentMetadataV3,
+    pub sampling: SamplingParams,
+    pub replication: ReplicationMetadata,
+    pub arm_fingerprint: String,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub preflight_override: Option<PreflightOverride>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub preflight_ignored_ports: Option<Vec<u16>>,
+}
+
+#[derive(Clone, Debug, Deserialize, Serialize)]
+#[serde(deny_unknown_fields)]
+pub struct ModelMetadata {
+    pub display_name: String,
+    pub family_id: Option<String>,
+    pub canonical_id: Option<String>,
+    pub parameter_count_b: Option<f64>,
+    pub endpoint_id: String,
+    pub identity_status: IdentityStatus,
+    pub artifact: ArtifactMetadata,
+}
+
+#[derive(Clone, Copy, Debug, Deserialize, Eq, PartialEq, Serialize)]
+#[serde(rename_all = "snake_case")]
+pub enum IdentityStatus {
+    Verified,
+    Declared,
+    Unresolved,
+}
+
+#[derive(Clone, Debug, Deserialize, Serialize)]
+#[serde(deny_unknown_fields)]
+pub struct ArtifactMetadata {
+    pub source_kind: ArtifactSourceKind,
+    pub source_id: Option<String>,
+    pub revision: Option<String>,
+    pub sha256: Option<String>,
+    pub format: ArtifactFormat,
+    pub quantization: Option<QuantizationMetadata>,
+}
+
+#[derive(Clone, Copy, Debug, Deserialize, Eq, PartialEq, Serialize)]
+#[serde(rename_all = "snake_case")]
+pub enum ArtifactSourceKind {
+    Huggingface,
+    Ollama,
+    LocalFile,
+    Other,
+}
+
+#[derive(Clone, Copy, Debug, Deserialize, Eq, PartialEq, Serialize)]
+#[serde(rename_all = "snake_case")]
+pub enum ArtifactFormat {
+    Gguf,
+    Mlx,
+    Safetensors,
+    OllamaBlob,
+    Unknown,
+}
+
+#[derive(Clone, Debug, Deserialize, Serialize)]
+#[serde(deny_unknown_fields)]
+pub struct QuantizationMetadata {
+    pub label: String,
+    pub scheme: Option<String>,
+    pub bits: Option<u8>,
+}
+
+#[derive(Clone, Debug, Deserialize, Serialize)]
+#[serde(deny_unknown_fields)]
+pub struct CorpusMetadata {
+    pub id: String,
+    pub revision: String,
+    pub sha256: String,
+    pub scenario_count: u32,
+    pub scoring_version: String,
+}
+
+#[derive(Clone, Debug, Deserialize, Serialize)]
+#[serde(deny_unknown_fields)]
+pub struct ServerMetadataV3 {
+    pub preset_name: String,
+    pub reported_version: Option<String>,
+    pub quirk_flags: Vec<String>,
+    pub decode_mode: DecodeMode,
+    pub chat_template: Option<ChatTemplateMetadata>,
+    pub launch_config_sha256: Option<String>,
+}
+
+#[derive(Clone, Copy, Debug, Deserialize, Eq, PartialEq, Serialize)]
+#[serde(rename_all = "snake_case")]
+pub enum DecodeMode {
+    GrammarConstrained,
+    UnconstrainedPostHoc,
+    Unknown,
+}
+
+#[derive(Clone, Debug, Deserialize, Serialize)]
+#[serde(deny_unknown_fields)]
+pub struct ChatTemplateMetadata {
+    pub id: Option<String>,
+    pub sha256: Option<String>,
+}
+
+#[derive(Clone, Debug, Deserialize, Serialize)]
+#[serde(deny_unknown_fields)]
+pub struct EnvironmentMetadataV3 {
+    pub display_label: String,
+    pub os_name: Option<String>,
+    pub os_version: Option<String>,
+    pub architecture: Option<String>,
+    pub accelerator: Option<String>,
+    pub memory_bytes: Option<u64>,
+}
+
+#[derive(Clone, Debug, Deserialize, Serialize)]
+#[serde(deny_unknown_fields)]
+pub struct ReplicationMetadata {
+    pub study_id: String,
+    pub arm_id: String,
+    pub run_index: u32,
+    pub mode: ReplicationMode,
+}
+
+#[derive(Clone, Copy, Debug, Deserialize, Eq, PartialEq, Serialize)]
+#[serde(rename_all = "snake_case")]
+pub enum ReplicationMode {
+    GreedyReproducibility,
+    SeedVariedVariance,
 }
 
 #[derive(Clone, Debug, Deserialize, Serialize)]
@@ -85,6 +237,232 @@ pub struct ScenarioOutcome {
     #[serde(default)]
     pub evidence_path: Option<String>,
     pub retried: bool,
+}
+
+#[derive(Clone, Debug, Deserialize, Serialize)]
+#[serde(deny_unknown_fields)]
+pub struct ScenarioOutcomeV3 {
+    pub id: String,
+    pub category: ScenarioCategory,
+    pub status: Status,
+    pub failure_reason: Option<String>,
+    pub failure: Option<ScenarioFailure>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub failure_class: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub cause: Option<Cause>,
+    pub evidence_hash: Option<String>,
+    pub evidence_path: Option<String>,
+    pub retried: bool,
+}
+
+#[derive(Clone, Debug, Deserialize, Serialize)]
+#[serde(deny_unknown_fields)]
+pub struct ScenarioFailure {
+    pub stage: String,
+    pub code: String,
+    pub http_status: Option<u16>,
+    pub failed_turn_index: Option<u32>,
+}
+
+#[derive(Clone, Debug)]
+pub struct Measurement {
+    pub schema_version: u32,
+    pub metadata: MeasurementMetadata,
+    pub scenarios: Vec<MeasurementScenarioOutcome>,
+    pub totals: Totals,
+}
+
+#[derive(Clone, Debug)]
+pub struct MeasurementMetadata {
+    pub run_id: String,
+    pub timestamp: String,
+    pub willitcall_version: String,
+    pub endpoint: String,
+    pub model: ModelMetadata,
+    pub corpus: Option<CorpusMetadata>,
+    pub server: MeasurementServerMetadata,
+    pub environment: Option<EnvironmentMetadataV3>,
+    pub sampling: SamplingParams,
+    pub replication: Option<ReplicationMetadata>,
+    pub arm_fingerprint: Option<String>,
+    pub preflight_override: Option<PreflightOverride>,
+    pub preflight_ignored_ports: Option<Vec<u16>>,
+}
+
+#[derive(Clone, Debug)]
+pub struct MeasurementServerMetadata {
+    pub preset_name: String,
+    pub reported_version: Option<String>,
+    pub quirk_flags: Vec<String>,
+    pub decode_mode: DecodeMode,
+    pub chat_template: Option<ChatTemplateMetadata>,
+    pub launch_config_sha256: Option<String>,
+}
+
+#[derive(Clone, Debug)]
+pub struct MeasurementScenarioOutcome {
+    pub id: String,
+    pub category: ScenarioCategory,
+    pub status: Status,
+    pub failure_reason: Option<String>,
+    pub failure: Option<ScenarioFailure>,
+    pub failure_class: Option<String>,
+    pub cause: Option<Cause>,
+    pub evidence_hash: Option<String>,
+    pub evidence_path: Option<String>,
+    pub retried: bool,
+}
+
+impl Measurement {
+    pub fn cross_model_key(&self) -> Option<&str> {
+        if self.metadata.model.identity_status == IdentityStatus::Unresolved {
+            None
+        } else {
+            self.metadata.model.canonical_id.as_deref()
+        }
+    }
+}
+
+impl From<RunResultV1V2> for Measurement {
+    fn from(result: RunResultV1V2) -> Self {
+        let metadata = result.metadata;
+        let quantization = metadata.declared_quant.map(|label| QuantizationMetadata {
+            label,
+            scheme: None,
+            bits: None,
+        });
+        let environment = metadata
+            .environment
+            .map(|environment| EnvironmentMetadataV3 {
+                display_label: format!(
+                    "{}; {}",
+                    environment.host_hardware_class, environment.host_os
+                ),
+                os_name: None,
+                os_version: None,
+                architecture: None,
+                accelerator: None,
+                memory_bytes: None,
+            });
+        Self {
+            schema_version: result.schema_version,
+            metadata: MeasurementMetadata {
+                run_id: metadata.run_id,
+                timestamp: metadata.timestamp,
+                willitcall_version: metadata.willitcall_version,
+                endpoint: metadata.endpoint,
+                model: ModelMetadata {
+                    display_name: metadata.model_id.clone(),
+                    family_id: None,
+                    canonical_id: None,
+                    parameter_count_b: None,
+                    endpoint_id: metadata.model_id,
+                    identity_status: IdentityStatus::Unresolved,
+                    artifact: ArtifactMetadata {
+                        source_kind: ArtifactSourceKind::Other,
+                        source_id: None,
+                        revision: None,
+                        sha256: None,
+                        format: ArtifactFormat::Unknown,
+                        quantization,
+                    },
+                },
+                corpus: None,
+                server: MeasurementServerMetadata {
+                    preset_name: metadata.server.preset_name,
+                    reported_version: metadata.server.reported_version,
+                    quirk_flags: metadata.server.quirk_flags,
+                    decode_mode: DecodeMode::Unknown,
+                    chat_template: None,
+                    launch_config_sha256: None,
+                },
+                environment,
+                sampling: metadata.sampling,
+                replication: None,
+                arm_fingerprint: None,
+                preflight_override: metadata.preflight_override,
+                preflight_ignored_ports: metadata.preflight_ignored_ports,
+            },
+            scenarios: result
+                .scenarios
+                .into_iter()
+                .map(MeasurementScenarioOutcome::from)
+                .collect(),
+            totals: result.totals,
+        }
+    }
+}
+
+impl From<RunResultV3> for Measurement {
+    fn from(result: RunResultV3) -> Self {
+        let metadata = result.metadata;
+        Self {
+            schema_version: result.schema_version,
+            metadata: MeasurementMetadata {
+                run_id: metadata.run_id,
+                timestamp: metadata.timestamp,
+                willitcall_version: metadata.willitcall_version,
+                endpoint: metadata.endpoint,
+                model: metadata.model,
+                corpus: Some(metadata.corpus),
+                server: MeasurementServerMetadata {
+                    preset_name: metadata.server.preset_name,
+                    reported_version: metadata.server.reported_version,
+                    quirk_flags: metadata.server.quirk_flags,
+                    decode_mode: metadata.server.decode_mode,
+                    chat_template: metadata.server.chat_template,
+                    launch_config_sha256: metadata.server.launch_config_sha256,
+                },
+                environment: Some(metadata.environment),
+                sampling: metadata.sampling,
+                replication: Some(metadata.replication),
+                arm_fingerprint: Some(metadata.arm_fingerprint),
+                preflight_override: metadata.preflight_override,
+                preflight_ignored_ports: metadata.preflight_ignored_ports,
+            },
+            scenarios: result
+                .scenarios
+                .into_iter()
+                .map(MeasurementScenarioOutcome::from)
+                .collect(),
+            totals: result.totals,
+        }
+    }
+}
+
+impl From<ScenarioOutcome> for MeasurementScenarioOutcome {
+    fn from(outcome: ScenarioOutcome) -> Self {
+        Self {
+            id: outcome.id,
+            category: outcome.category,
+            status: outcome.status,
+            failure_reason: outcome.failure_reason,
+            failure: None,
+            failure_class: outcome.failure_class,
+            cause: outcome.cause,
+            evidence_hash: outcome.evidence_hash,
+            evidence_path: outcome.evidence_path,
+            retried: outcome.retried,
+        }
+    }
+}
+
+impl From<ScenarioOutcomeV3> for MeasurementScenarioOutcome {
+    fn from(outcome: ScenarioOutcomeV3) -> Self {
+        Self {
+            id: outcome.id,
+            category: outcome.category,
+            status: outcome.status,
+            failure_reason: outcome.failure_reason,
+            failure: outcome.failure,
+            failure_class: outcome.failure_class,
+            cause: outcome.cause,
+            evidence_hash: outcome.evidence_hash,
+            evidence_path: outcome.evidence_path,
+            retried: outcome.retried,
+        }
+    }
 }
 
 #[derive(Clone, Debug, Deserialize, Serialize)]
@@ -192,38 +570,87 @@ pub fn exit_code_for_totals(totals: &Totals) -> u8 {
 }
 
 pub fn parse_and_validate_result(bytes: &[u8]) -> Result<RunResult, String> {
-    let result: RunResult = serde_json::from_slice(bytes)
+    let (document, schema_version) = inspect_result_document(bytes)?;
+    if !matches!(schema_version, 1 | RESULT_SCHEMA_VERSION) {
+        return Err(format!(
+            "unsupported schema_version {schema_version}; expected 1 or {RESULT_SCHEMA_VERSION}"
+        ));
+    }
+    let result: RunResultV1V2 = serde_json::from_value(document.clone())
         .map_err(|error| format!("invalid result document: {error}"))?;
     validate_result(&result)?;
-    if result.schema_version == 2 {
-        let document: Value = serde_json::from_slice(bytes)
-            .map_err(|error| format!("invalid result document: {error}"))?;
-        let metadata = document
-            .get("metadata")
-            .and_then(Value::as_object)
-            .ok_or_else(|| "invalid result document: metadata must be an object".to_owned())?;
-        if !metadata.contains_key("run_id") {
-            return Err(
-                "invalid result document: metadata.run_id is required for schema_version 2"
-                    .to_owned(),
-            );
-        }
-        let scenarios = document
-            .get("scenarios")
-            .and_then(Value::as_array)
-            .ok_or_else(|| "invalid result document: scenarios must be an array".to_owned())?;
-        if scenarios.iter().any(|scenario| {
-            !scenario
-                .as_object()
-                .is_some_and(|scenario| scenario.contains_key("evidence_path"))
-        }) {
-            return Err(
-                "invalid result document: scenario evidence_path is required for schema_version 2"
-                    .to_owned(),
-            );
-        }
+    if schema_version == 2 {
+        validate_v2_required_properties(&document)?;
     }
     Ok(result)
+}
+
+pub fn parse_and_validate_measurement(bytes: &[u8]) -> Result<Measurement, String> {
+    let (document, schema_version) = inspect_result_document(bytes)?;
+    let measurement = match schema_version {
+        1 | 2 => {
+            let result: RunResultV1V2 = serde_json::from_value(document.clone())
+                .map_err(|error| format!("invalid result document: {error}"))?;
+            validate_result(&result)?;
+            if schema_version == 2 {
+                validate_v2_required_properties(&document)?;
+            }
+            Measurement::from(result)
+        }
+        3 => {
+            let result: RunResultV3 = serde_json::from_value(document)
+                .map_err(|error| format!("invalid result document: {error}"))?;
+            let measurement = Measurement::from(result);
+            validate_measurement(&measurement)?;
+            measurement
+        }
+        _ => {
+            return Err(format!(
+                "unsupported schema_version {schema_version}; expected 1, 2, or 3"
+            ));
+        }
+    };
+    Ok(measurement)
+}
+
+fn inspect_result_document(bytes: &[u8]) -> Result<(Value, u32), String> {
+    let document: Value = serde_json::from_slice(bytes)
+        .map_err(|error| format!("invalid result document: {error}"))?;
+    let schema_version = document
+        .get("schema_version")
+        .and_then(Value::as_u64)
+        .and_then(|version| u32::try_from(version).ok())
+        .ok_or_else(|| {
+            "invalid result document: schema_version must be an unsigned 32-bit integer".to_owned()
+        })?;
+    Ok((document, schema_version))
+}
+
+fn validate_v2_required_properties(document: &Value) -> Result<(), String> {
+    let metadata = document
+        .get("metadata")
+        .and_then(Value::as_object)
+        .ok_or_else(|| "invalid result document: metadata must be an object".to_owned())?;
+    if !metadata.contains_key("run_id") {
+        return Err(
+            "invalid result document: metadata.run_id is required for schema_version 2".to_owned(),
+        );
+    }
+    let scenarios = document
+        .get("scenarios")
+        .and_then(Value::as_array)
+        .ok_or_else(|| "invalid result document: scenarios must be an array".to_owned())?;
+    if scenarios.iter().any(|scenario| {
+        !scenario
+            .as_object()
+            .is_some_and(|scenario| scenario.contains_key("evidence_path"))
+    }) {
+        return Err(
+            "invalid result document: scenario evidence_path is required for schema_version 2"
+                .to_owned(),
+        );
+    }
+    Ok(())
 }
 
 pub fn validate_result(result: &RunResult) -> Result<(), String> {
@@ -233,24 +660,50 @@ pub fn validate_result(result: &RunResult) -> Result<(), String> {
             result.schema_version, RESULT_SCHEMA_VERSION
         ));
     }
-    if result.totals.total != result.scenarios.len() as u32 {
+    validate_totals(
+        &result.totals,
+        result.scenarios.iter().map(|outcome| outcome.status),
+        result.scenarios.len(),
+    )
+}
+
+pub fn validate_measurement(measurement: &Measurement) -> Result<(), String> {
+    if !matches!(measurement.schema_version, 1..=3) {
+        return Err(format!(
+            "unsupported schema_version {}; expected 1, 2, or 3",
+            measurement.schema_version
+        ));
+    }
+    validate_totals(
+        &measurement.totals,
+        measurement.scenarios.iter().map(|outcome| outcome.status),
+        measurement.scenarios.len(),
+    )
+}
+
+fn validate_totals(
+    totals: &Totals,
+    statuses: impl Iterator<Item = Status>,
+    scenario_count: usize,
+) -> Result<(), String> {
+    if totals.total != scenario_count as u32 {
         return Err(format!(
             "totals.total is {} but scenarios contains {} outcome{}",
-            result.totals.total,
-            result.scenarios.len(),
-            if result.scenarios.len() == 1 { "" } else { "s" }
+            totals.total,
+            scenario_count,
+            if scenario_count == 1 { "" } else { "s" }
         ));
     }
 
     let mut actual = Totals {
-        total: result.scenarios.len() as u32,
+        total: scenario_count as u32,
         passed: 0,
         failed: 0,
         errors: 0,
         skipped: 0,
     };
-    for outcome in &result.scenarios {
-        match outcome.status {
+    for status in statuses {
+        match status {
             Status::Pass => actual.passed += 1,
             Status::Fail => actual.failed += 1,
             Status::Error => actual.errors += 1,
@@ -258,10 +711,10 @@ pub fn validate_result(result: &RunResult) -> Result<(), String> {
         }
     }
     for (name, declared, counted) in [
-        ("passed", result.totals.passed, actual.passed),
-        ("failed", result.totals.failed, actual.failed),
-        ("errors", result.totals.errors, actual.errors),
-        ("skipped", result.totals.skipped, actual.skipped),
+        ("passed", totals.passed, actual.passed),
+        ("failed", totals.failed, actual.failed),
+        ("errors", totals.errors, actual.errors),
+        ("skipped", totals.skipped, actual.skipped),
     ] {
         if declared != counted {
             return Err(format!(
@@ -602,6 +1055,177 @@ mod tests {
             .expect("existing v2 result without environment should remain valid");
 
         assert!(result.metadata.environment.is_none());
+    }
+
+    #[test]
+    fn parses_v1_v2_v3_into_measurement() {
+        let mut v1 = serde_json::to_value(sample_result()).expect("serialize v1 fixture");
+        v1["schema_version"] = serde_json::json!(1);
+        v1["metadata"]
+            .as_object_mut()
+            .expect("v1 metadata")
+            .remove("run_id");
+        v1["scenarios"][0]
+            .as_object_mut()
+            .expect("v1 scenario")
+            .remove("evidence_path");
+        let v1 = super::parse_and_validate_measurement(
+            &serde_json::to_vec(&v1).expect("encode v1 fixture"),
+        )
+        .expect("parse v1 measurement");
+        assert_eq!(v1.schema_version, 1);
+        assert_eq!(v1.metadata.model.display_name, "local-model");
+        assert_eq!(
+            v1.metadata.model.identity_status,
+            super::IdentityStatus::Unresolved
+        );
+        assert_eq!(v1.cross_model_key(), None);
+
+        let v2_document = serde_json::to_value(sample_result()).expect("serialize v2 fixture");
+        let v2 = super::parse_and_validate_measurement(
+            &serde_json::to_vec(&v2_document).expect("encode v2 fixture"),
+        )
+        .expect("parse v2 measurement");
+        assert_eq!(v2.schema_version, 2);
+        assert_eq!(v2.metadata.model.endpoint_id, "local-model");
+        assert_eq!(v2.cross_model_key(), None);
+
+        let v3_document = serde_json::json!({
+            "schema_version": 3,
+            "metadata": {
+                "run_id": "019c8a4a-05b0-7c22-9f44-2df806328a22",
+                "timestamp": "2026-08-05T12:00:00Z",
+                "willitcall_version": "0.1.0",
+                "endpoint": "http://127.0.0.1:8080/v1",
+                "model": {
+                    "display_name": "Qwen 2.5 7B Instruct",
+                    "family_id": "qwen2.5",
+                    "canonical_id": "Qwen/Qwen2.5-7B-Instruct",
+                    "parameter_count_b": 7.62,
+                    "endpoint_id": "qwen2.5-7b-instruct-q4_k_m.gguf",
+                    "identity_status": "verified",
+                    "artifact": {
+                        "source_kind": "huggingface",
+                        "source_id": "bartowski/Qwen2.5-7B-Instruct-GGUF",
+                        "revision": "0123456789abcdef",
+                        "sha256": "sha256:0123456789abcdef",
+                        "format": "gguf",
+                        "quantization": {
+                            "label": "Q4_K_M",
+                            "scheme": "k-quant",
+                            "bits": 4
+                        }
+                    }
+                },
+                "corpus": {
+                    "id": "willitcall-core",
+                    "revision": "v1",
+                    "sha256": "sha256:corpus",
+                    "scenario_count": 1,
+                    "scoring_version": "v1"
+                },
+                "server": {
+                    "preset_name": "llamacpp",
+                    "reported_version": "b6000",
+                    "quirk_flags": ["grammar_constrained_decoding"],
+                    "decode_mode": "grammar_constrained",
+                    "chat_template": {
+                        "id": "qwen2.5",
+                        "sha256": "sha256:template"
+                    },
+                    "launch_config_sha256": "sha256:launch"
+                },
+                "environment": {
+                    "display_label": "Apple M4 Max, 64GB; macOS 15.5",
+                    "os_name": "macOS",
+                    "os_version": "15.5",
+                    "architecture": "aarch64",
+                    "accelerator": "Apple M4 Max",
+                    "memory_bytes": 68719476736_u64
+                },
+                "sampling": {
+                    "temperature": 0.0,
+                    "top_p": 1.0,
+                    "seed": 42,
+                    "max_tokens": 1024
+                },
+                "replication": {
+                    "study_id": "m7-baseline",
+                    "arm_id": "qwen2.5-7b-llamacpp",
+                    "run_index": 0,
+                    "mode": "greedy_reproducibility"
+                },
+                "arm_fingerprint": "v1:arm"
+            },
+            "scenarios": [{
+                "id": "single-weather",
+                "category": "single_call",
+                "status": "error",
+                "failure_reason": "turn 1: server returned HTTP 400",
+                "failure": {
+                    "stage": "request",
+                    "code": "http_error",
+                    "http_status": 400,
+                    "failed_turn_index": 1
+                },
+                "evidence_hash": "sha256:abc123",
+                "evidence_path": "evidence/run/single-weather.json",
+                "retried": false
+            }],
+            "totals": {
+                "total": 1,
+                "passed": 0,
+                "failed": 0,
+                "errors": 1,
+                "skipped": 0
+            }
+        });
+        let schema: serde_json::Value =
+            serde_json::from_str(include_str!("../../../schemas/result-v3.schema.json"))
+                .expect("parse v3 schema");
+        jsonschema::validator_for(&schema)
+            .expect("compile v3 schema")
+            .validate(&v3_document)
+            .expect("v3 fixture should satisfy schema");
+
+        let v3 = super::parse_and_validate_measurement(
+            &serde_json::to_vec(&v3_document).expect("encode v3 fixture"),
+        )
+        .expect("parse v3 measurement");
+        assert_eq!(v3.schema_version, 3);
+        assert_eq!(v3.cross_model_key(), Some("Qwen/Qwen2.5-7B-Instruct"));
+        assert_eq!(
+            v3.scenarios[0]
+                .failure
+                .as_ref()
+                .expect("structured failure")
+                .http_status,
+            Some(400)
+        );
+
+        let mut unresolved = v3_document.clone();
+        unresolved["metadata"]["model"]["identity_status"] = serde_json::json!("unresolved");
+        let unresolved = super::parse_and_validate_measurement(
+            &serde_json::to_vec(&unresolved).expect("encode unresolved fixture"),
+        )
+        .expect("parse unresolved measurement");
+        assert_eq!(unresolved.cross_model_key(), None);
+
+        let mut missing_canonical_id = v3_document.clone();
+        missing_canonical_id["metadata"]["model"]["canonical_id"] = serde_json::Value::Null;
+        let missing_canonical_id = super::parse_and_validate_measurement(
+            &serde_json::to_vec(&missing_canonical_id).expect("encode declared fixture"),
+        )
+        .expect("parse declared measurement");
+        assert_eq!(missing_canonical_id.cross_model_key(), None);
+
+        let mut v3_field_in_v2 = v2_document;
+        v3_field_in_v2["metadata"]["model"] = v3_document["metadata"]["model"].clone();
+        let error = super::parse_and_validate_measurement(
+            &serde_json::to_vec(&v3_field_in_v2).expect("encode invalid v2 fixture"),
+        )
+        .expect_err("v3-only field in v2 must fail");
+        assert!(error.contains("unknown field `model`"), "{error}");
     }
 
     #[test]
