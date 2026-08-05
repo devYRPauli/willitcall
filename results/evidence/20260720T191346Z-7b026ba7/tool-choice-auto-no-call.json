@@ -19,7 +19,7 @@
               "role": "user"
             }
           ],
-          "model": "/Users/bbadmin/.ollama/models/blobs/sha256-3c168af1dea0a414299c7d9077e100ac763370e5a98b3c53801a958a47f0a5db",
+          "model": "sha256-3c168af1dea0a414299c7d9077e100ac763370e5a98b3c53801a958a47f0a5db",
           "seed": 42,
           "stream": false,
           "temperature": 0.0,
@@ -56,7 +56,7 @@
           "keep-alive": "timeout=5, max=100",
           "server": "llama.cpp"
         },
-        "body_raw": "{\"choices\":[{\"finish_reason\":\"stop\",\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"ready\"}}],\"created\":1784574884,\"model\":\"/Users/bbadmin/.ollama/models/blobs/sha256-3c168af1dea0a414299c7d9077e100ac763370e5a98b3c53801a958a47f0a5db\",\"system_fingerprint\":\"b10050-b15ca938a\",\"object\":\"chat.completion\",\"usage\":{\"completion_tokens\":2,\"prompt_tokens\":10,\"total_tokens\":12,\"prompt_tokens_details\":{\"cached_tokens\":0}},\"id\":\"chatcmpl-UaoqpS6GmLP5fxqmc7jGkpJGw9138PkM\",\"timings\":{\"cache_n\":0,\"prompt_n\":10,\"prompt_ms\":33.368,\"prompt_per_token_ms\":3.3368,\"prompt_per_second\":299.68832414289136,\"predicted_n\":2,\"predicted_ms\":7.821,\"predicted_per_token_ms\":3.9105,\"predicted_per_second\":255.7217747091165}}"
+        "body_raw": "{\"choices\":[{\"finish_reason\":\"stop\",\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"ready\"}}],\"created\":1784574884,\"model\":\"sha256-3c168af1dea0a414299c7d9077e100ac763370e5a98b3c53801a958a47f0a5db\",\"system_fingerprint\":\"b10050-b15ca938a\",\"object\":\"chat.completion\",\"usage\":{\"completion_tokens\":2,\"prompt_tokens\":10,\"total_tokens\":12,\"prompt_tokens_details\":{\"cached_tokens\":0}},\"id\":\"chatcmpl-UaoqpS6GmLP5fxqmc7jGkpJGw9138PkM\",\"timings\":{\"cache_n\":0,\"prompt_n\":10,\"prompt_ms\":33.368,\"prompt_per_token_ms\":3.3368,\"prompt_per_second\":299.68832414289136,\"predicted_n\":2,\"predicted_ms\":7.821,\"predicted_per_token_ms\":3.9105,\"predicted_per_second\":255.7217747091165}}"
       },
       "retried": false
     }

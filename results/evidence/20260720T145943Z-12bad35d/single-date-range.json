@@ -19,7 +19,7 @@
               "role": "user"
             }
           ],
-          "model": "/Users/bbadmin/.ollama/models/blobs/sha256-44d19d212d76a6f3fc442e8411fdb44ea6b67ceccfb00be4b4345c9a4cf813e8",
+          "model": "sha256-44d19d212d76a6f3fc442e8411fdb44ea6b67ceccfb00be4b4345c9a4cf813e8",
           "seed": 42,
           "stream": false,
           "temperature": 0.0,
@@ -64,7 +64,7 @@
           "keep-alive": "timeout=5, max=100",
           "server": "llama.cpp"
         },
-        "body_raw": "{\"choices\":[{\"finish_reason\":\"stop\",\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"<tool_call>[{\\\"arguments\\\": {\\\"city\\\": \\\"Denver\\\", \\\"start_date\\\": \\\"2026-08-03\\\", \\\"end_date\\\": \\\"2026-08-05\\\"}, \\\"name\\\": \\\"find_events\\\"}]\"}}],\"created\":1784559605,\"model\":\"/Users/bbadmin/.ollama/models/blobs/sha256-44d19d212d76a6f3fc442e8411fdb44ea6b67ceccfb00be4b4345c9a4cf813e8\",\"system_fingerprint\":\"b10050-b15ca938a\",\"object\":\"chat.completion\",\"usage\":{\"completion_tokens\":58,\"prompt_tokens\":286,\"total_tokens\":344,\"prompt_tokens_details\":{\"cached_tokens\":133}},\"id\":\"chatcmpl-XaGw0kMEEzBtJNo3ATqKCTGMx4WMCynP\",\"timings\":{\"cache_n\":133,\"prompt_n\":153,\"prompt_ms\":213.946,\"prompt_per_token_ms\":1.3983398692810458,\"prompt_per_second\":715.1337253325605,\"predicted_n\":58,\"predicted_ms\":723.76,\"predicted_per_token_ms\":12.478620689655171,\"predicted_per_second\":80.13706200950591}}"
+        "body_raw": "{\"choices\":[{\"finish_reason\":\"stop\",\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"<tool_call>[{\\\"arguments\\\": {\\\"city\\\": \\\"Denver\\\", \\\"start_date\\\": \\\"2026-08-03\\\", \\\"end_date\\\": \\\"2026-08-05\\\"}, \\\"name\\\": \\\"find_events\\\"}]\"}}],\"created\":1784559605,\"model\":\"sha256-44d19d212d76a6f3fc442e8411fdb44ea6b67ceccfb00be4b4345c9a4cf813e8\",\"system_fingerprint\":\"b10050-b15ca938a\",\"object\":\"chat.completion\",\"usage\":{\"completion_tokens\":58,\"prompt_tokens\":286,\"total_tokens\":344,\"prompt_tokens_details\":{\"cached_tokens\":133}},\"id\":\"chatcmpl-XaGw0kMEEzBtJNo3ATqKCTGMx4WMCynP\",\"timings\":{\"cache_n\":133,\"prompt_n\":153,\"prompt_ms\":213.946,\"prompt_per_token_ms\":1.3983398692810458,\"prompt_per_second\":715.1337253325605,\"predicted_n\":58,\"predicted_ms\":723.76,\"predicted_per_token_ms\":12.478620689655171,\"predicted_per_second\":80.13706200950591}}"
       },
       "retried": false
     }
