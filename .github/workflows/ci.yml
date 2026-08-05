@@ -25,6 +25,22 @@ jobs:
       - name: Test
         run: cargo test --workspace
 
+  site:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+      # pages.yml only builds on push, so without this a change that breaks site
+      # generation lands on main and is discovered after deploy.
+      - name: Generate site
+        run: cargo run -q -p willitcall -- site --results results/ --out site/
+      - name: Check expected pages exist
+        run: |
+          for page in index.html submit.html style.css site.js; do
+            test -s "site/$page" || { echo "site/$page missing or empty"; exit 1; }
+          done
+
   results:
     runs-on: ubuntu-latest
     steps:
