@@ -276,7 +276,7 @@ fn render_result_rows(
         "            </tr>\n            <tr class=\"detail-row\">\n              <td colspan=\"7\">\n                <details id=\"{details_id}\">\n                  <summary>View {} scenarios and row metadata</summary>\n                  <dl class=\"metadata\">\n                    <div><dt>Result file</dt><dd><code>{}</code></dd></div>\n                    <div><dt>Model id</dt><dd><code>{}</code></dd></div>\n                    <div><dt>Declared quant</dt><dd>{}</dd></div>\n                    <div><dt>Server</dt><dd>{} {}</dd></div>\n                    <div><dt>Schema</dt><dd>v{}</dd></div>\n                    <div><dt>Run time</dt><dd>{}</dd></div>\n{}                  </dl>\n                  <ol class=\"scenario-list\">\n",
         result.scenarios.len(),
         escape_html(&result_file.file_name),
-        escape_html(&result.metadata.model_id),
+        escape_html(display_model_id(&result.metadata.model_id)),
         escape_html(quant),
         escape_html(server_display),
         escape_html(
@@ -525,6 +525,17 @@ fn model_label(file_name: &str, server: &str) -> String {
     stem.strip_prefix(&format!("{server}-"))
         .unwrap_or(stem)
         .to_owned()
+}
+
+fn display_model_id(model_id: &str) -> &str {
+    let path = Path::new(model_id);
+    if path.is_absolute() {
+        path.file_name()
+            .and_then(|component| component.to_str())
+            .unwrap_or("local model")
+    } else {
+        model_id
+    }
 }
 
 fn display_server(server: &str) -> &str {

@@ -233,7 +233,8 @@ fn site_generates_v1_and_v2_rows_ratios_links_and_badges() {
     assert!(index.contains("blob-model"));
     assert!(index.contains("quant: Q4_K_M"));
     assert!(index.contains("server: llama.cpp"));
-    assert!(index.contains("/models/blobs/sha256-deadbeef"));
+    assert!(index.contains("sha256-deadbeef"));
+    assert!(!index.contains("/models/blobs/sha256-deadbeef"));
     assert!(index.contains(">1/2<"));
     assert!(index.contains(">0/1<"));
     assert!(index.contains(">1/2<"));
@@ -269,6 +270,62 @@ fn site_generates_v1_and_v2_rows_ratios_links_and_badges() {
     assert!(submit.contains("preflight clean (no contention override)"));
     assert!(submit.contains("empty responses cross-checked on a second server"));
     assert!(submit.contains("CONTRIBUTING.md"));
+}
+
+#[test]
+fn site_never_renders_absolute_model_paths() {
+    let directory = tempfile::tempdir().expect("temp directory");
+    let results = directory.path().join("results");
+    let output = directory.path().join("site");
+    fs::create_dir(&results).expect("results directory");
+    write_result(
+        &results.join("ollama-local-blob.json"),
+        2,
+        "/Users/someone/.ollama/models/blobs/sha256-deadbeef",
+        None,
+        "ollama",
+        None,
+        vec![scenario("local-blob", "single_call", "pass", None, None)],
+    );
+    write_result(
+        &results.join("llamacpp-local-file.json"),
+        2,
+        "/Users/someone/models/custom-model.gguf",
+        None,
+        "llamacpp",
+        None,
+        vec![scenario("local-file", "single_call", "pass", None, None)],
+    );
+    for (name, model_id) in [
+        ("ollama-qwen3.json", "qwen3:8b"),
+        ("llamacpp-qwen.json", "Qwen/Qwen2.5-7B-Instruct-GGUF:Q4_K_M"),
+        ("mlx_lm-community.json", "mlx-community/Qwen3-8B-4bit"),
+    ] {
+        write_result(
+            &results.join(name),
+            2,
+            model_id,
+            None,
+            name.split_once('-').expect("server-prefixed name").0,
+            None,
+            vec![scenario("pass-through", "single_call", "pass", None, None)],
+        );
+    }
+
+    let generated = run_site(&results, &output, None);
+    assert_eq!(
+        generated.status.code(),
+        Some(0),
+        "{}",
+        String::from_utf8_lossy(&generated.stderr)
+    );
+    let index = fs::read_to_string(output.join("index.html")).expect("generated index");
+    assert!(!index.contains("/Users/"));
+    assert!(index.contains("sha256-deadbeef"));
+    assert!(index.contains("custom-model.gguf"));
+    assert!(index.contains("qwen3:8b"));
+    assert!(index.contains("Qwen/Qwen2.5-7B-Instruct-GGUF:Q4_K_M"));
+    assert!(index.contains("mlx-community/Qwen3-8B-4bit"));
 }
 
 #[test]
