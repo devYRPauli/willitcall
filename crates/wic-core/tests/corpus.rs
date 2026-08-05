@@ -2,7 +2,7 @@ use std::collections::HashSet;
 use std::fs;
 
 use wic_core::client::ToolCall;
-use wic_core::corpus::corpus_identity;
+use wic_core::corpus::{corpus_identity, load_frozen_v1_catalog};
 use wic_core::score::score_calls;
 use wic_core::{load_embedded_scenarios, Scenario, ScenarioCategory};
 
@@ -96,6 +96,20 @@ fn corpus_identity_is_order_stable_and_content_sensitive() {
         .expect("expected arguments should be an object")
         .insert("identity_probe".to_owned(), serde_json::Value::Bool(true));
     assert_ne!(identity, corpus_identity(&expected_argument_changed));
+}
+
+#[test]
+fn frozen_v1_catalog_matches_current_embedded_corpus() {
+    let live = load_embedded_scenarios().expect("embedded scenarios should load");
+    let catalog = load_frozen_v1_catalog().expect("frozen v1 catalog should load and verify");
+    let live_hash = corpus_identity(&live);
+
+    assert_eq!(catalog.id, "wic-50");
+    assert_eq!(catalog.revision, "v1");
+    assert_eq!(catalog.scenario_count, 50);
+    assert_eq!(catalog.scenarios.len(), 50);
+    assert_eq!(catalog.sha256, live_hash);
+    assert_eq!(corpus_identity(&catalog.scenarios), live_hash);
 }
 
 fn assert_filename_matches_id(scenario: &Scenario) {
