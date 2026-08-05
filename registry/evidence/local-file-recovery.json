@@ -1,0 +1,36 @@
+{
+  "records": [
+    {
+      "subject": "llamacpp-granite3.1-dense-8b.json",
+      "model_id": "sha256-44d19d212d76a6f3fc442e8411fdb44ea6b67ceccfb00be4b4345c9a4cf813e8",
+      "status": "recovered",
+      "source": "ssh macstudio: blob existence check and saved-manifest reference search for sha256:44d19d212d76a6f3fc442e8411fdb44ea6b67ceccfb00be4b4345c9a4cf813e8; saved manifest granite3.1-dense:8b; 2026-07-20-granite-emits-tool-calls-no-server-parses.md",
+      "captured_at": "2026-08-05T18:01:51Z",
+      "sha256": "44d19d212d76a6f3fc442e8411fdb44ea6b67ceccfb00be4b4345c9a4cf813e8",
+      "corroborated_ollama_model": "granite3.1-dense:8b",
+      "corroborating_manifest_digest": "sha256:34d3be74ec547c3e1969a9ea125e1869f052f7cfd3d0bbbb5aa5e42ec033108c"
+    },
+    {
+      "subject": "llamacpp-phi4-mini.json",
+      "model_id": "sha256-3c168af1dea0a414299c7d9077e100ac763370e5a98b3c53801a958a47f0a5db",
+      "status": "recovered",
+      "source": "ssh macstudio: blob existence check and saved-manifest reference search for sha256:3c168af1dea0a414299c7d9077e100ac763370e5a98b3c53801a958a47f0a5db; saved manifest phi4-mini:latest",
+      "captured_at": "2026-08-05T18:01:51Z",
+      "sha256": "3c168af1dea0a414299c7d9077e100ac763370e5a98b3c53801a958a47f0a5db",
+      "corroborated_ollama_model": "phi4-mini:latest",
+      "corroborating_manifest_digest": "sha256:78fad5d182a7c33065e153a5f8ba210754207ba9d91973f57dffa7f487363753"
+    },
+    {
+      "subject": "llamacpp-watt-tool-8b-q4_k_m.json",
+      "model_id": "watt-tool-8B.Q4_K_M.gguf",
+      "status": "recovered",
+      "source": "ssh macstudio: shasum -a 256 watt-tool-8B.Q4_K_M.gguf; GET https://huggingface.co/api/models/mradermacher/watt-tool-8B-GGUF; GET https://huggingface.co/api/models/mradermacher/watt-tool-8B-GGUF/tree/0e8a7402ad3f90bd2d65c8ff04f6b6cb7ee3df7a?recursive=true&expand=true",
+      "captured_at": "2026-08-05T18:01:51Z",
+      "sha256": "33706b165cd6777e29fdcd777ba1e09bd3b2006b428014e1bad17df3902ec1e7",
+      "upstream_artifact_repository": "mradermacher/watt-tool-8B-GGUF",
+      "upstream_artifact_revision": "0e8a7402ad3f90bd2d65c8ff04f6b6cb7ee3df7a",
+      "upstream_canonical_checkpoint": "watt-ai/watt-tool-8B",
+      "corroboration": "The recovered local SHA-256 equals the pinned Hugging Face LFS oid for watt-tool-8B.Q4_K_M.gguf."
+    }
+  ]
+}
