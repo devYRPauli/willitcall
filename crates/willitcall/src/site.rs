@@ -8,6 +8,9 @@ use wic_core::result::{
 };
 use wic_core::ScenarioCategory;
 
+#[allow(dead_code)] // Additive primitives; later T2.2/T2.3 briefs wire them into the page.
+mod svg;
+
 const CATEGORIES: [ScenarioCategory; 6] = [
     ScenarioCategory::SingleCall,
     ScenarioCategory::ParallelCalls,
@@ -608,6 +611,23 @@ filter.addEventListener("change", () => {
 
 const STYLE: &str = r#":root {
   color-scheme: light;
+  /* Instrument-document foundation. These remain unused until the new figures land. */
+  --design-paper: #fcfbf9;
+  --design-ink: #1c1c1c;
+  --design-grey-1: #4f4e4b;
+  --design-grey-2: #8c8a85;
+  --design-grey-3: #d5d2cc;
+  --design-pass: #00513a; /* Okabe-Ito green #009e73, darkened toward L30. */
+  --design-fail: #d55e00;
+  --design-link-accent: #0f6d6d; /* Underlined links only. */
+  --type-prose: 16px;
+  --type-table: 13px;
+  --type-raster-label: 11px;
+  --type-heading-1: 20px;
+  --type-heading-2: 17px;
+  --type-heading-weight: 600;
+  --measure-prose: 46rem;
+  --measure-figure: 76rem;
   --ink: #17212b;
   --muted: #52606d;
   --line: #c9d2da;
@@ -785,6 +805,19 @@ code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
 .checklist li { margin-bottom: 0.65rem; }
 
 footer { padding: 1.5rem 0 3rem; color: var(--muted); border-top: 1px solid var(--line); font-size: 0.86rem; }
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --design-paper: #131417;
+    --design-ink: #e8e6e1;
+    --design-grey-1: #c8c5bf;
+    --design-grey-2: #8d8c89;
+    --design-grey-3: #4b4c50;
+    --design-pass: #39b990;
+    --design-fail: #f1843d;
+    --design-link-accent: #69b9b9;
+  }
+}
 
 @media (max-width: 44rem) {
   .site-header, .matrix-heading { align-items: flex-start; flex-direction: column; gap: 1rem; }
