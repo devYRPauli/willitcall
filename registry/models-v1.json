@@ -1,0 +1,1424 @@
+{
+  "schema_version": 1,
+  "entries": [
+    {
+      "selectors": [
+        "bartowski/Meta-Llama-3.1-8B-Instruct-GGUF:Q3_K_M"
+      ],
+      "display_name": {
+        "value": "meta-llama/Meta-Llama-3.1-8B-Instruct",
+        "provenance_ref": "registry/evidence/huggingface-recovery.json#/records/6"
+      },
+      "family_id": null,
+      "canonical_id": {
+        "value": "meta-llama/Meta-Llama-3.1-8B-Instruct",
+        "provenance_ref": "registry/evidence/huggingface-recovery.json#/records/6",
+        "corroboration": "corroborated"
+      },
+      "parameter_count_b": null,
+      "identity_status": "declared",
+      "artifact": {
+        "source_kind": {
+          "value": "huggingface",
+          "provenance_ref": "registry/evidence/huggingface-recovery.json#/records/6"
+        },
+        "source_id": {
+          "value": "bartowski/Meta-Llama-3.1-8B-Instruct-GGUF",
+          "provenance_ref": "registry/evidence/huggingface-recovery.json#/records/6"
+        },
+        "revision": {
+          "value": "bf5b95e96dac0462e2a09145ec66cae9a3f12067",
+          "provenance_ref": "registry/evidence/huggingface-recovery.json#/records/6",
+          "revision_scope": "repository_head_at_capture"
+        },
+        "sha256": null,
+        "format": {
+          "value": "gguf",
+          "provenance_ref": "registry/evidence/huggingface-recovery.json#/records/6"
+        },
+        "quantization": {
+          "value": {
+            "label": "Q3_K_M",
+            "scheme": null,
+            "bits": null
+          },
+          "provenance_ref": "registry/evidence/huggingface-recovery.json#/records/6"
+        }
+      }
+    },
+    {
+      "selectors": [
+        "bartowski/Meta-Llama-3.1-8B-Instruct-GGUF:Q4_K_M"
+      ],
+      "display_name": {
+        "value": "meta-llama/Meta-Llama-3.1-8B-Instruct",
+        "provenance_ref": "registry/evidence/huggingface-recovery.json#/records/7"
+      },
+      "family_id": null,
+      "canonical_id": {
+        "value": "meta-llama/Meta-Llama-3.1-8B-Instruct",
+        "provenance_ref": "registry/evidence/huggingface-recovery.json#/records/7",
+        "corroboration": "corroborated"
+      },
+      "parameter_count_b": null,
+      "identity_status": "declared",
+      "artifact": {
+        "source_kind": {
+          "value": "huggingface",
+          "provenance_ref": "registry/evidence/huggingface-recovery.json#/records/7"
+        },
+        "source_id": {
+          "value": "bartowski/Meta-Llama-3.1-8B-Instruct-GGUF",
+          "provenance_ref": "registry/evidence/huggingface-recovery.json#/records/7"
+        },
+        "revision": {
+          "value": "bf5b95e96dac0462e2a09145ec66cae9a3f12067",
+          "provenance_ref": "registry/evidence/huggingface-recovery.json#/records/7",
+          "revision_scope": "repository_head_at_capture"
+        },
+        "sha256": null,
+        "format": {
+          "value": "gguf",
+          "provenance_ref": "registry/evidence/huggingface-recovery.json#/records/7"
+        },
+        "quantization": {
+          "value": {
+            "label": "Q4_K_M",
+            "scheme": null,
+            "bits": null
+          },
+          "provenance_ref": "registry/evidence/huggingface-recovery.json#/records/7"
+        }
+      }
+    },
+    {
+      "selectors": [
+        "bartowski/Meta-Llama-3.1-8B-Instruct-GGUF:Q8_0"
+      ],
+      "display_name": {
+        "value": "meta-llama/Meta-Llama-3.1-8B-Instruct",
+        "provenance_ref": "registry/evidence/huggingface-recovery.json#/records/8"
+      },
+      "family_id": null,
+      "canonical_id": {
+        "value": "meta-llama/Meta-Llama-3.1-8B-Instruct",
+        "provenance_ref": "registry/evidence/huggingface-recovery.json#/records/8",
+        "corroboration": "corroborated"
+      },
+      "parameter_count_b": null,
+      "identity_status": "declared",
+      "artifact": {
+        "source_kind": {
+          "value": "huggingface",
+          "provenance_ref": "registry/evidence/huggingface-recovery.json#/records/8"
+        },
+        "source_id": {
+          "value": "bartowski/Meta-Llama-3.1-8B-Instruct-GGUF",
+          "provenance_ref": "registry/evidence/huggingface-recovery.json#/records/8"
+        },
+        "revision": {
+          "value": "bf5b95e96dac0462e2a09145ec66cae9a3f12067",
+          "provenance_ref": "registry/evidence/huggingface-recovery.json#/records/8",
+          "revision_scope": "repository_head_at_capture"
+        },
+        "sha256": null,
+        "format": {
+          "value": "gguf",
+          "provenance_ref": "registry/evidence/huggingface-recovery.json#/records/8"
+        },
+        "quantization": {
+          "value": {
+            "label": "Q8_0",
+            "scheme": null,
+            "bits": null
+          },
+          "provenance_ref": "registry/evidence/huggingface-recovery.json#/records/8"
+        }
+      }
+    },
+    {
+      "selectors": [
+        "gemma3:12b"
+      ],
+      "display_name": {
+        "value": "gemma3:12b",
+        "provenance_ref": "registry/evidence/ollama-recovery.json#/records/12"
+      },
+      "family_id": null,
+      "canonical_id": null,
+      "parameter_count_b": null,
+      "identity_status": "unresolved",
+      "artifact": {
+        "source_kind": {
+          "value": "ollama",
+          "provenance_ref": "registry/evidence/ollama-recovery.json#/records/12"
+        },
+        "source_id": {
+          "value": "gemma3:12b",
+          "provenance_ref": "registry/evidence/ollama-recovery.json#/records/12"
+        },
+        "revision": {
+          "value": "sha256:f4031aab637d1ffa37b42570452ae0e4fad0314754d17ded67322e4b95836f8a",
+          "provenance_ref": "registry/evidence/ollama-recovery.json#/records/12",
+          "revision_scope": "measured_artifact"
+        },
+        "sha256": {
+          "value": "sha256:e8ad13eff07a78d89926e9e8b882317d082ef5bf9768ad7b50fcdbbcd63748de",
+          "provenance_ref": "registry/evidence/ollama-recovery.json#/records/12"
+        },
+        "format": {
+          "value": "ollama_blob",
+          "provenance_ref": "registry/evidence/ollama-recovery.json#/records/12"
+        },
+        "quantization": {
+          "value": {
+            "label": "Q4_K_M",
+            "scheme": null,
+            "bits": null
+          },
+          "provenance_ref": "registry/evidence/ollama-recovery.json#/records/12"
+        }
+      }
+    },
+    {
+      "selectors": [
+        "gemma3:4b"
+      ],
+      "display_name": {
+        "value": "gemma3:4b",
+        "provenance_ref": "registry/evidence/ollama-recovery.json#/records/11"
+      },
+      "family_id": null,
+      "canonical_id": null,
+      "parameter_count_b": null,
+      "identity_status": "unresolved",
+      "artifact": {
+        "source_kind": {
+          "value": "ollama",
+          "provenance_ref": "registry/evidence/ollama-recovery.json#/records/11"
+        },
+        "source_id": {
+          "value": "gemma3:4b",
+          "provenance_ref": "registry/evidence/ollama-recovery.json#/records/11"
+        },
+        "revision": {
+          "value": "sha256:a2af6cc3eb7fa8be8504abaf9b04e88f17a119ec3f04a3addf55f92841195f5a",
+          "provenance_ref": "registry/evidence/ollama-recovery.json#/records/11",
+          "revision_scope": "measured_artifact"
+        },
+        "sha256": {
+          "value": "sha256:aeda25e63ebd698fab8638ffb778e68bed908b960d39d0becc650fa981609d25",
+          "provenance_ref": "registry/evidence/ollama-recovery.json#/records/11"
+        },
+        "format": {
+          "value": "ollama_blob",
+          "provenance_ref": "registry/evidence/ollama-recovery.json#/records/11"
+        },
+        "quantization": {
+          "value": {
+            "label": "Q4_K_M",
+            "scheme": null,
+            "bits": null
+          },
+          "provenance_ref": "registry/evidence/ollama-recovery.json#/records/11"
+        }
+      }
+    },
+    {
+      "selectors": [
+        "granite3.1-dense:8b"
+      ],
+      "display_name": {
+        "value": "granite3.1-dense:8b",
+        "provenance_ref": "registry/evidence/ollama-recovery.json#/records/13"
+      },
+      "family_id": null,
+      "canonical_id": null,
+      "parameter_count_b": null,
+      "identity_status": "unresolved",
+      "artifact": {
+        "source_kind": {
+          "value": "ollama",
+          "provenance_ref": "registry/evidence/ollama-recovery.json#/records/13"
+        },
+        "source_id": {
+          "value": "granite3.1-dense:8b",
+          "provenance_ref": "registry/evidence/ollama-recovery.json#/records/13"
+        },
+        "revision": {
+          "value": "sha256:34d3be74ec547c3e1969a9ea125e1869f052f7cfd3d0bbbb5aa5e42ec033108c",
+          "provenance_ref": "registry/evidence/ollama-recovery.json#/records/13",
+          "revision_scope": "measured_artifact"
+        },
+        "sha256": {
+          "value": "sha256:44d19d212d76a6f3fc442e8411fdb44ea6b67ceccfb00be4b4345c9a4cf813e8",
+          "provenance_ref": "registry/evidence/ollama-recovery.json#/records/13"
+        },
+        "format": {
+          "value": "ollama_blob",
+          "provenance_ref": "registry/evidence/ollama-recovery.json#/records/13"
+        },
+        "quantization": {
+          "value": {
+            "label": "Q4_K_M",
+            "scheme": null,
+            "bits": null
+          },
+          "provenance_ref": "registry/evidence/ollama-recovery.json#/records/13"
+        }
+      }
+    },
+    {
+      "selectors": [
+        "hermes3:8b"
+      ],
+      "display_name": {
+        "value": "hermes3:8b",
+        "provenance_ref": "registry/evidence/ollama-recovery.json#/records/6"
+      },
+      "family_id": null,
+      "canonical_id": null,
+      "parameter_count_b": null,
+      "identity_status": "unresolved",
+      "artifact": {
+        "source_kind": {
+          "value": "ollama",
+          "provenance_ref": "registry/evidence/ollama-recovery.json#/records/6"
+        },
+        "source_id": {
+          "value": "hermes3:8b",
+          "provenance_ref": "registry/evidence/ollama-recovery.json#/records/6"
+        },
+        "revision": {
+          "value": "sha256:4f6b83f30b62bc3d0cf9be09266db222805ee815c8fd7d8b38f863f655be78b7",
+          "provenance_ref": "registry/evidence/ollama-recovery.json#/records/6",
+          "revision_scope": "measured_artifact"
+        },
+        "sha256": {
+          "value": "sha256:c8985d236593f7a17da2a3da49588aa951a9b1e57ce97753364fbf59e63af84a",
+          "provenance_ref": "registry/evidence/ollama-recovery.json#/records/6"
+        },
+        "format": {
+          "value": "ollama_blob",
+          "provenance_ref": "registry/evidence/ollama-recovery.json#/records/6"
+        },
+        "quantization": {
+          "value": {
+            "label": "Q4_0",
+            "scheme": null,
+            "bits": null
+          },
+          "provenance_ref": "registry/evidence/ollama-recovery.json#/records/6"
+        }
+      }
+    },
+    {
+      "selectors": [
+        "llama3-groq-tool-use:8b"
+      ],
+      "display_name": {
+        "value": "llama3-groq-tool-use:8b",
+        "provenance_ref": "registry/evidence/ollama-recovery.json#/records/7"
+      },
+      "family_id": null,
+      "canonical_id": null,
+      "parameter_count_b": null,
+      "identity_status": "unresolved",
+      "artifact": {
+        "source_kind": {
+          "value": "ollama",
+          "provenance_ref": "registry/evidence/ollama-recovery.json#/records/7"
+        },
+        "source_id": {
+          "value": "llama3-groq-tool-use:8b",
+          "provenance_ref": "registry/evidence/ollama-recovery.json#/records/7"
+        },
+        "revision": {
+          "value": "sha256:36211dad2b153f09fe2b0c5f3e4e82ee83d27db68e3a00006cd934dfdc5057a4",
+          "provenance_ref": "registry/evidence/ollama-recovery.json#/records/7",
+          "revision_scope": "measured_artifact"
+        },
+        "sha256": {
+          "value": "sha256:23e78d0ea1ab895bcbe63a12422a731cfd2b1a8bd124a1c91790b2b9c3fc9d14",
+          "provenance_ref": "registry/evidence/ollama-recovery.json#/records/7"
+        },
+        "format": {
+          "value": "ollama_blob",
+          "provenance_ref": "registry/evidence/ollama-recovery.json#/records/7"
+        },
+        "quantization": {
+          "value": {
+            "label": "Q4_0",
+            "scheme": null,
+            "bits": null
+          },
+          "provenance_ref": "registry/evidence/ollama-recovery.json#/records/7"
+        }
+      }
+    },
+    {
+      "selectors": [
+        "llama3.1:8b"
+      ],
+      "display_name": {
+        "value": "llama3.1:8b",
+        "provenance_ref": "registry/evidence/ollama-recovery.json#/records/8"
+      },
+      "family_id": null,
+      "canonical_id": null,
+      "parameter_count_b": null,
+      "identity_status": "unresolved",
+      "artifact": {
+        "source_kind": {
+          "value": "ollama",
+          "provenance_ref": "registry/evidence/ollama-recovery.json#/records/8"
+        },
+        "source_id": {
+          "value": "llama3.1:8b",
+          "provenance_ref": "registry/evidence/ollama-recovery.json#/records/8"
+        },
+        "revision": {
+          "value": "sha256:46e0c10c039e019119339687c3c1757cc81b9da49709a3b3924863ba87ca666e",
+          "provenance_ref": "registry/evidence/ollama-recovery.json#/records/8",
+          "revision_scope": "measured_artifact"
+        },
+        "sha256": {
+          "value": "sha256:667b0c1932bc6ffc593ed1d03f895bf2dc8dc6df21db3042284a6f4416b06a29",
+          "provenance_ref": "registry/evidence/ollama-recovery.json#/records/8"
+        },
+        "format": {
+          "value": "ollama_blob",
+          "provenance_ref": "registry/evidence/ollama-recovery.json#/records/8"
+        },
+        "quantization": {
+          "value": {
+            "label": "Q4_K_M",
+            "scheme": null,
+            "bits": null
+          },
+          "provenance_ref": "registry/evidence/ollama-recovery.json#/records/8"
+        }
+      }
+    },
+    {
+      "selectors": [
+        "mistral:7b"
+      ],
+      "display_name": {
+        "value": "mistral:7b",
+        "provenance_ref": "registry/evidence/ollama-recovery.json#/records/9"
+      },
+      "family_id": null,
+      "canonical_id": null,
+      "parameter_count_b": null,
+      "identity_status": "unresolved",
+      "artifact": {
+        "source_kind": {
+          "value": "ollama",
+          "provenance_ref": "registry/evidence/ollama-recovery.json#/records/9"
+        },
+        "source_id": {
+          "value": "mistral:7b",
+          "provenance_ref": "registry/evidence/ollama-recovery.json#/records/9"
+        },
+        "revision": {
+          "value": "sha256:6577803aa9a036369e481d648a2baebb381ebc6e897f2bb9a766a2aa7bfbc1cf",
+          "provenance_ref": "registry/evidence/ollama-recovery.json#/records/9",
+          "revision_scope": "measured_artifact"
+        },
+        "sha256": {
+          "value": "sha256:f5074b1221da0f5a2910d33b642efa5b9eb58cfdddca1c79e16d7ad28aa2b31f",
+          "provenance_ref": "registry/evidence/ollama-recovery.json#/records/9"
+        },
+        "format": {
+          "value": "ollama_blob",
+          "provenance_ref": "registry/evidence/ollama-recovery.json#/records/9"
+        },
+        "quantization": {
+          "value": {
+            "label": "Q4_K_M",
+            "scheme": null,
+            "bits": null
+          },
+          "provenance_ref": "registry/evidence/ollama-recovery.json#/records/9"
+        }
+      }
+    },
+    {
+      "selectors": [
+        "mlx-community/Meta-Llama-3.1-8B-Instruct-4bit"
+      ],
+      "display_name": {
+        "value": "meta-llama/Meta-Llama-3.1-8B-Instruct",
+        "provenance_ref": "registry/evidence/huggingface-recovery.json#/records/9"
+      },
+      "family_id": null,
+      "canonical_id": {
+        "value": "meta-llama/Meta-Llama-3.1-8B-Instruct",
+        "provenance_ref": "registry/evidence/huggingface-recovery.json#/records/9",
+        "corroboration": "corroborated"
+      },
+      "parameter_count_b": null,
+      "identity_status": "declared",
+      "artifact": {
+        "source_kind": {
+          "value": "huggingface",
+          "provenance_ref": "registry/evidence/huggingface-recovery.json#/records/9"
+        },
+        "source_id": {
+          "value": "mlx-community/Meta-Llama-3.1-8B-Instruct-4bit",
+          "provenance_ref": "registry/evidence/huggingface-recovery.json#/records/9"
+        },
+        "revision": {
+          "value": "241a666dad6cb93c8ff213d39a7f34a36bf26db4",
+          "provenance_ref": "registry/evidence/huggingface-recovery.json#/records/9",
+          "revision_scope": "repository_head_at_capture"
+        },
+        "sha256": null,
+        "format": {
+          "value": "mlx",
+          "provenance_ref": "registry/evidence/huggingface-recovery.json#/records/9"
+        },
+        "quantization": {
+          "value": {
+            "label": "4bit",
+            "scheme": null,
+            "bits": null
+          },
+          "provenance_ref": "registry/evidence/huggingface-recovery.json#/records/9"
+        }
+      }
+    },
+    {
+      "selectors": [
+        "mlx-community/Mistral-7B-Instruct-v0.3-4bit"
+      ],
+      "display_name": {
+        "value": "mistralai/Mistral-7B-Instruct-v0.3",
+        "provenance_ref": "registry/evidence/huggingface-recovery.json#/records/10"
+      },
+      "family_id": null,
+      "canonical_id": {
+        "value": "mistralai/Mistral-7B-Instruct-v0.3",
+        "provenance_ref": "registry/evidence/huggingface-recovery.json#/records/10",
+        "corroboration": "corroborated"
+      },
+      "parameter_count_b": null,
+      "identity_status": "declared",
+      "artifact": {
+        "source_kind": {
+          "value": "huggingface",
+          "provenance_ref": "registry/evidence/huggingface-recovery.json#/records/10"
+        },
+        "source_id": {
+          "value": "mlx-community/Mistral-7B-Instruct-v0.3-4bit",
+          "provenance_ref": "registry/evidence/huggingface-recovery.json#/records/10"
+        },
+        "revision": {
+          "value": "a4b8f870474b0eb527f466a03fbc187830d271f5",
+          "provenance_ref": "registry/evidence/huggingface-recovery.json#/records/10",
+          "revision_scope": "repository_head_at_capture"
+        },
+        "sha256": null,
+        "format": {
+          "value": "mlx",
+          "provenance_ref": "registry/evidence/huggingface-recovery.json#/records/10"
+        },
+        "quantization": {
+          "value": {
+            "label": "4bit",
+            "scheme": null,
+            "bits": null
+          },
+          "provenance_ref": "registry/evidence/huggingface-recovery.json#/records/10"
+        }
+      }
+    },
+    {
+      "selectors": [
+        "mlx-community/Phi-4-mini-instruct-4bit"
+      ],
+      "display_name": {
+        "value": "microsoft/Phi-4-mini-instruct",
+        "provenance_ref": "registry/evidence/huggingface-recovery.json#/records/11"
+      },
+      "family_id": null,
+      "canonical_id": {
+        "value": "microsoft/Phi-4-mini-instruct",
+        "provenance_ref": "registry/evidence/huggingface-recovery.json#/records/11",
+        "corroboration": "corroborated"
+      },
+      "parameter_count_b": null,
+      "identity_status": "declared",
+      "artifact": {
+        "source_kind": {
+          "value": "huggingface",
+          "provenance_ref": "registry/evidence/huggingface-recovery.json#/records/11"
+        },
+        "source_id": {
+          "value": "mlx-community/Phi-4-mini-instruct-4bit",
+          "provenance_ref": "registry/evidence/huggingface-recovery.json#/records/11"
+        },
+        "revision": {
+          "value": "ac1c269cb4222a4e136a3d09edad301056c1f36a",
+          "provenance_ref": "registry/evidence/huggingface-recovery.json#/records/11",
+          "revision_scope": "repository_head_at_capture"
+        },
+        "sha256": null,
+        "format": {
+          "value": "mlx",
+          "provenance_ref": "registry/evidence/huggingface-recovery.json#/records/11"
+        },
+        "quantization": {
+          "value": {
+            "label": "4bit",
+            "scheme": null,
+            "bits": null
+          },
+          "provenance_ref": "registry/evidence/huggingface-recovery.json#/records/11"
+        }
+      }
+    },
+    {
+      "selectors": [
+        "mlx-community/Qwen2.5-1.5B-Instruct-4bit"
+      ],
+      "display_name": {
+        "value": "Qwen/Qwen2.5-1.5B-Instruct",
+        "provenance_ref": "registry/evidence/huggingface-recovery.json#/records/12"
+      },
+      "family_id": null,
+      "canonical_id": {
+        "value": "Qwen/Qwen2.5-1.5B-Instruct",
+        "provenance_ref": "registry/evidence/huggingface-recovery.json#/records/12",
+        "corroboration": "corroborated"
+      },
+      "parameter_count_b": null,
+      "identity_status": "declared",
+      "artifact": {
+        "source_kind": {
+          "value": "huggingface",
+          "provenance_ref": "registry/evidence/huggingface-recovery.json#/records/12"
+        },
+        "source_id": {
+          "value": "mlx-community/Qwen2.5-1.5B-Instruct-4bit",
+          "provenance_ref": "registry/evidence/huggingface-recovery.json#/records/12"
+        },
+        "revision": {
+          "value": "8b403126fc14f14cfc99bb4cfa72ecbc129ea677",
+          "provenance_ref": "registry/evidence/huggingface-recovery.json#/records/12",
+          "revision_scope": "repository_head_at_capture"
+        },
+        "sha256": null,
+        "format": {
+          "value": "mlx",
+          "provenance_ref": "registry/evidence/huggingface-recovery.json#/records/12"
+        },
+        "quantization": {
+          "value": {
+            "label": "4bit",
+            "scheme": null,
+            "bits": null
+          },
+          "provenance_ref": "registry/evidence/huggingface-recovery.json#/records/12"
+        }
+      }
+    },
+    {
+      "selectors": [
+        "mlx-community/Qwen2.5-7B-Instruct-4bit"
+      ],
+      "display_name": {
+        "value": "Qwen/Qwen2.5-7B-Instruct",
+        "provenance_ref": "registry/evidence/huggingface-recovery.json#/records/13"
+      },
+      "family_id": null,
+      "canonical_id": {
+        "value": "Qwen/Qwen2.5-7B-Instruct",
+        "provenance_ref": "registry/evidence/huggingface-recovery.json#/records/13",
+        "corroboration": "corroborated"
+      },
+      "parameter_count_b": null,
+      "identity_status": "declared",
+      "artifact": {
+        "source_kind": {
+          "value": "huggingface",
+          "provenance_ref": "registry/evidence/huggingface-recovery.json#/records/13"
+        },
+        "source_id": {
+          "value": "mlx-community/Qwen2.5-7B-Instruct-4bit",
+          "provenance_ref": "registry/evidence/huggingface-recovery.json#/records/13"
+        },
+        "revision": {
+          "value": "c26a38f6a37d0a51b4e9a1eb3026530fa35d9fed",
+          "provenance_ref": "registry/evidence/huggingface-recovery.json#/records/13",
+          "revision_scope": "repository_head_at_capture"
+        },
+        "sha256": null,
+        "format": {
+          "value": "mlx",
+          "provenance_ref": "registry/evidence/huggingface-recovery.json#/records/13"
+        },
+        "quantization": {
+          "value": {
+            "label": "4bit",
+            "scheme": null,
+            "bits": null
+          },
+          "provenance_ref": "registry/evidence/huggingface-recovery.json#/records/13"
+        }
+      }
+    },
+    {
+      "selectors": [
+        "mlx-community/Qwen2.5-7B-Instruct-8bit"
+      ],
+      "display_name": {
+        "value": "Qwen/Qwen2.5-7B-Instruct",
+        "provenance_ref": "registry/evidence/huggingface-recovery.json#/records/14"
+      },
+      "family_id": null,
+      "canonical_id": {
+        "value": "Qwen/Qwen2.5-7B-Instruct",
+        "provenance_ref": "registry/evidence/huggingface-recovery.json#/records/14",
+        "corroboration": "corroborated"
+      },
+      "parameter_count_b": null,
+      "identity_status": "declared",
+      "artifact": {
+        "source_kind": {
+          "value": "huggingface",
+          "provenance_ref": "registry/evidence/huggingface-recovery.json#/records/14"
+        },
+        "source_id": {
+          "value": "mlx-community/Qwen2.5-7B-Instruct-8bit",
+          "provenance_ref": "registry/evidence/huggingface-recovery.json#/records/14"
+        },
+        "revision": {
+          "value": "df11cb390bd674c24a9ddedf19f05bc09f6e0148",
+          "provenance_ref": "registry/evidence/huggingface-recovery.json#/records/14",
+          "revision_scope": "repository_head_at_capture"
+        },
+        "sha256": null,
+        "format": {
+          "value": "mlx",
+          "provenance_ref": "registry/evidence/huggingface-recovery.json#/records/14"
+        },
+        "quantization": {
+          "value": {
+            "label": "8bit",
+            "scheme": null,
+            "bits": null
+          },
+          "provenance_ref": "registry/evidence/huggingface-recovery.json#/records/14"
+        }
+      }
+    },
+    {
+      "selectors": [
+        "phi4-mini:latest"
+      ],
+      "display_name": {
+        "value": "phi4-mini:latest",
+        "provenance_ref": "registry/evidence/ollama-recovery.json#/records/10"
+      },
+      "family_id": null,
+      "canonical_id": null,
+      "parameter_count_b": null,
+      "identity_status": "unresolved",
+      "artifact": {
+        "source_kind": {
+          "value": "ollama",
+          "provenance_ref": "registry/evidence/ollama-recovery.json#/records/10"
+        },
+        "source_id": {
+          "value": "phi4-mini:latest",
+          "provenance_ref": "registry/evidence/ollama-recovery.json#/records/10"
+        },
+        "revision": {
+          "value": "sha256:78fad5d182a7c33065e153a5f8ba210754207ba9d91973f57dffa7f487363753",
+          "provenance_ref": "registry/evidence/ollama-recovery.json#/records/10",
+          "revision_scope": "measured_artifact"
+        },
+        "sha256": {
+          "value": "sha256:3c168af1dea0a414299c7d9077e100ac763370e5a98b3c53801a958a47f0a5db",
+          "provenance_ref": "registry/evidence/ollama-recovery.json#/records/10"
+        },
+        "format": {
+          "value": "ollama_blob",
+          "provenance_ref": "registry/evidence/ollama-recovery.json#/records/10"
+        },
+        "quantization": {
+          "value": {
+            "label": "Q4_K_M",
+            "scheme": null,
+            "bits": null
+          },
+          "provenance_ref": "registry/evidence/ollama-recovery.json#/records/10"
+        }
+      }
+    },
+    {
+      "selectors": [
+        "Qwen/Qwen2.5-1.5B-Instruct-GGUF:Q3_K_M"
+      ],
+      "display_name": {
+        "value": "Qwen/Qwen2.5-1.5B-Instruct",
+        "provenance_ref": "registry/evidence/huggingface-recovery.json#/records/0"
+      },
+      "family_id": null,
+      "canonical_id": {
+        "value": "Qwen/Qwen2.5-1.5B-Instruct",
+        "provenance_ref": "registry/evidence/huggingface-recovery.json#/records/0",
+        "corroboration": "corroborated"
+      },
+      "parameter_count_b": null,
+      "identity_status": "declared",
+      "artifact": {
+        "source_kind": {
+          "value": "huggingface",
+          "provenance_ref": "registry/evidence/huggingface-recovery.json#/records/0"
+        },
+        "source_id": {
+          "value": "Qwen/Qwen2.5-1.5B-Instruct-GGUF",
+          "provenance_ref": "registry/evidence/huggingface-recovery.json#/records/0"
+        },
+        "revision": {
+          "value": "91cad51170dc346986eccefdc2dd33a9da36ead9",
+          "provenance_ref": "registry/evidence/huggingface-recovery.json#/records/0",
+          "revision_scope": "repository_head_at_capture"
+        },
+        "sha256": null,
+        "format": {
+          "value": "gguf",
+          "provenance_ref": "registry/evidence/huggingface-recovery.json#/records/0"
+        },
+        "quantization": {
+          "value": {
+            "label": "Q3_K_M",
+            "scheme": null,
+            "bits": null
+          },
+          "provenance_ref": "registry/evidence/huggingface-recovery.json#/records/0"
+        }
+      }
+    },
+    {
+      "selectors": [
+        "Qwen/Qwen2.5-1.5B-Instruct-GGUF:Q4_K_M"
+      ],
+      "display_name": {
+        "value": "Qwen/Qwen2.5-1.5B-Instruct",
+        "provenance_ref": "registry/evidence/huggingface-recovery.json#/records/1"
+      },
+      "family_id": null,
+      "canonical_id": {
+        "value": "Qwen/Qwen2.5-1.5B-Instruct",
+        "provenance_ref": "registry/evidence/huggingface-recovery.json#/records/1",
+        "corroboration": "corroborated"
+      },
+      "parameter_count_b": null,
+      "identity_status": "declared",
+      "artifact": {
+        "source_kind": {
+          "value": "huggingface",
+          "provenance_ref": "registry/evidence/huggingface-recovery.json#/records/1"
+        },
+        "source_id": {
+          "value": "Qwen/Qwen2.5-1.5B-Instruct-GGUF",
+          "provenance_ref": "registry/evidence/huggingface-recovery.json#/records/1"
+        },
+        "revision": {
+          "value": "91cad51170dc346986eccefdc2dd33a9da36ead9",
+          "provenance_ref": "registry/evidence/huggingface-recovery.json#/records/1",
+          "revision_scope": "repository_head_at_capture"
+        },
+        "sha256": null,
+        "format": {
+          "value": "gguf",
+          "provenance_ref": "registry/evidence/huggingface-recovery.json#/records/1"
+        },
+        "quantization": {
+          "value": {
+            "label": "Q4_K_M",
+            "scheme": null,
+            "bits": null
+          },
+          "provenance_ref": "registry/evidence/huggingface-recovery.json#/records/1"
+        }
+      }
+    },
+    {
+      "selectors": [
+        "Qwen/Qwen2.5-1.5B-Instruct-GGUF:Q8_0"
+      ],
+      "display_name": {
+        "value": "Qwen/Qwen2.5-1.5B-Instruct",
+        "provenance_ref": "registry/evidence/huggingface-recovery.json#/records/2"
+      },
+      "family_id": null,
+      "canonical_id": {
+        "value": "Qwen/Qwen2.5-1.5B-Instruct",
+        "provenance_ref": "registry/evidence/huggingface-recovery.json#/records/2",
+        "corroboration": "corroborated"
+      },
+      "parameter_count_b": null,
+      "identity_status": "declared",
+      "artifact": {
+        "source_kind": {
+          "value": "huggingface",
+          "provenance_ref": "registry/evidence/huggingface-recovery.json#/records/2"
+        },
+        "source_id": {
+          "value": "Qwen/Qwen2.5-1.5B-Instruct-GGUF",
+          "provenance_ref": "registry/evidence/huggingface-recovery.json#/records/2"
+        },
+        "revision": {
+          "value": "91cad51170dc346986eccefdc2dd33a9da36ead9",
+          "provenance_ref": "registry/evidence/huggingface-recovery.json#/records/2",
+          "revision_scope": "repository_head_at_capture"
+        },
+        "sha256": null,
+        "format": {
+          "value": "gguf",
+          "provenance_ref": "registry/evidence/huggingface-recovery.json#/records/2"
+        },
+        "quantization": {
+          "value": {
+            "label": "Q8_0",
+            "scheme": null,
+            "bits": null
+          },
+          "provenance_ref": "registry/evidence/huggingface-recovery.json#/records/2"
+        }
+      }
+    },
+    {
+      "selectors": [
+        "Qwen/Qwen2.5-7B-Instruct-GGUF:Q3_K_M"
+      ],
+      "display_name": {
+        "value": "Qwen/Qwen2.5-7B-Instruct",
+        "provenance_ref": "registry/evidence/huggingface-recovery.json#/records/3"
+      },
+      "family_id": null,
+      "canonical_id": {
+        "value": "Qwen/Qwen2.5-7B-Instruct",
+        "provenance_ref": "registry/evidence/huggingface-recovery.json#/records/3",
+        "corroboration": "corroborated"
+      },
+      "parameter_count_b": null,
+      "identity_status": "declared",
+      "artifact": {
+        "source_kind": {
+          "value": "huggingface",
+          "provenance_ref": "registry/evidence/huggingface-recovery.json#/records/3"
+        },
+        "source_id": {
+          "value": "Qwen/Qwen2.5-7B-Instruct-GGUF",
+          "provenance_ref": "registry/evidence/huggingface-recovery.json#/records/3"
+        },
+        "revision": {
+          "value": "bb5d59e06d9551d752d08b292a50eb208b07ab1f",
+          "provenance_ref": "registry/evidence/huggingface-recovery.json#/records/3",
+          "revision_scope": "repository_head_at_capture"
+        },
+        "sha256": null,
+        "format": {
+          "value": "gguf",
+          "provenance_ref": "registry/evidence/huggingface-recovery.json#/records/3"
+        },
+        "quantization": {
+          "value": {
+            "label": "Q3_K_M",
+            "scheme": null,
+            "bits": null
+          },
+          "provenance_ref": "registry/evidence/huggingface-recovery.json#/records/3"
+        }
+      }
+    },
+    {
+      "selectors": [
+        "Qwen/Qwen2.5-7B-Instruct-GGUF:Q4_K_M"
+      ],
+      "display_name": {
+        "value": "Qwen/Qwen2.5-7B-Instruct",
+        "provenance_ref": "registry/evidence/huggingface-recovery.json#/records/4"
+      },
+      "family_id": null,
+      "canonical_id": {
+        "value": "Qwen/Qwen2.5-7B-Instruct",
+        "provenance_ref": "registry/evidence/huggingface-recovery.json#/records/4",
+        "corroboration": "corroborated"
+      },
+      "parameter_count_b": null,
+      "identity_status": "declared",
+      "artifact": {
+        "source_kind": {
+          "value": "huggingface",
+          "provenance_ref": "registry/evidence/huggingface-recovery.json#/records/4"
+        },
+        "source_id": {
+          "value": "Qwen/Qwen2.5-7B-Instruct-GGUF",
+          "provenance_ref": "registry/evidence/huggingface-recovery.json#/records/4"
+        },
+        "revision": {
+          "value": "bb5d59e06d9551d752d08b292a50eb208b07ab1f",
+          "provenance_ref": "registry/evidence/huggingface-recovery.json#/records/4",
+          "revision_scope": "repository_head_at_capture"
+        },
+        "sha256": null,
+        "format": {
+          "value": "gguf",
+          "provenance_ref": "registry/evidence/huggingface-recovery.json#/records/4"
+        },
+        "quantization": {
+          "value": {
+            "label": "Q4_K_M",
+            "scheme": null,
+            "bits": null
+          },
+          "provenance_ref": "registry/evidence/huggingface-recovery.json#/records/4"
+        }
+      }
+    },
+    {
+      "selectors": [
+        "Qwen/Qwen2.5-7B-Instruct-GGUF:Q8_0"
+      ],
+      "display_name": {
+        "value": "Qwen/Qwen2.5-7B-Instruct",
+        "provenance_ref": "registry/evidence/huggingface-recovery.json#/records/5"
+      },
+      "family_id": null,
+      "canonical_id": {
+        "value": "Qwen/Qwen2.5-7B-Instruct",
+        "provenance_ref": "registry/evidence/huggingface-recovery.json#/records/5",
+        "corroboration": "corroborated"
+      },
+      "parameter_count_b": null,
+      "identity_status": "declared",
+      "artifact": {
+        "source_kind": {
+          "value": "huggingface",
+          "provenance_ref": "registry/evidence/huggingface-recovery.json#/records/5"
+        },
+        "source_id": {
+          "value": "Qwen/Qwen2.5-7B-Instruct-GGUF",
+          "provenance_ref": "registry/evidence/huggingface-recovery.json#/records/5"
+        },
+        "revision": {
+          "value": "bb5d59e06d9551d752d08b292a50eb208b07ab1f",
+          "provenance_ref": "registry/evidence/huggingface-recovery.json#/records/5",
+          "revision_scope": "repository_head_at_capture"
+        },
+        "sha256": null,
+        "format": {
+          "value": "gguf",
+          "provenance_ref": "registry/evidence/huggingface-recovery.json#/records/5"
+        },
+        "quantization": {
+          "value": {
+            "label": "Q8_0",
+            "scheme": null,
+            "bits": null
+          },
+          "provenance_ref": "registry/evidence/huggingface-recovery.json#/records/5"
+        }
+      }
+    },
+    {
+      "selectors": [
+        "qwen2.5:7b-instruct"
+      ],
+      "display_name": {
+        "value": "qwen2.5:7b-instruct",
+        "provenance_ref": "registry/evidence/ollama-recovery.json#/records/5"
+      },
+      "family_id": null,
+      "canonical_id": null,
+      "parameter_count_b": null,
+      "identity_status": "unresolved",
+      "artifact": {
+        "source_kind": {
+          "value": "ollama",
+          "provenance_ref": "registry/evidence/ollama-recovery.json#/records/5"
+        },
+        "source_id": {
+          "value": "qwen2.5:7b-instruct",
+          "provenance_ref": "registry/evidence/ollama-recovery.json#/records/5"
+        },
+        "revision": {
+          "value": "sha256:845dbda0ea48ed749caafd9e6037047aa19acfcfd82e704d7ca97d631a0b697e",
+          "provenance_ref": "registry/evidence/ollama-recovery.json#/records/5",
+          "revision_scope": "measured_artifact"
+        },
+        "sha256": {
+          "value": "sha256:2bada8a7450677000f678be90653b85d364de7db25eb5ea54136ada5f3933730",
+          "provenance_ref": "registry/evidence/ollama-recovery.json#/records/5"
+        },
+        "format": {
+          "value": "ollama_blob",
+          "provenance_ref": "registry/evidence/ollama-recovery.json#/records/5"
+        },
+        "quantization": {
+          "value": {
+            "label": "Q4_K_M",
+            "scheme": null,
+            "bits": null
+          },
+          "provenance_ref": "registry/evidence/ollama-recovery.json#/records/5"
+        }
+      }
+    },
+    {
+      "selectors": [
+        "qwen3:0.6b"
+      ],
+      "display_name": {
+        "value": "qwen3:0.6b",
+        "provenance_ref": "registry/evidence/ollama-recovery.json#/records/0"
+      },
+      "family_id": null,
+      "canonical_id": null,
+      "parameter_count_b": null,
+      "identity_status": "unresolved",
+      "artifact": {
+        "source_kind": {
+          "value": "ollama",
+          "provenance_ref": "registry/evidence/ollama-recovery.json#/records/0"
+        },
+        "source_id": {
+          "value": "qwen3:0.6b",
+          "provenance_ref": "registry/evidence/ollama-recovery.json#/records/0"
+        },
+        "revision": {
+          "value": "sha256:7df6b6e09427a769808717c0a93cadc4ae99ed4eb8bf5ca557c90846becea435",
+          "provenance_ref": "registry/evidence/ollama-recovery.json#/records/0",
+          "revision_scope": "measured_artifact"
+        },
+        "sha256": {
+          "value": "sha256:7f4030143c1c477224c5434f8272c662a8b042079a0a584f0a27a1684fe2e1fa",
+          "provenance_ref": "registry/evidence/ollama-recovery.json#/records/0"
+        },
+        "format": {
+          "value": "ollama_blob",
+          "provenance_ref": "registry/evidence/ollama-recovery.json#/records/0"
+        },
+        "quantization": {
+          "value": {
+            "label": "Q4_K_M",
+            "scheme": null,
+            "bits": null
+          },
+          "provenance_ref": "registry/evidence/ollama-recovery.json#/records/0"
+        }
+      }
+    },
+    {
+      "selectors": [
+        "qwen3:1.7b"
+      ],
+      "display_name": {
+        "value": "qwen3:1.7b",
+        "provenance_ref": "registry/evidence/ollama-recovery.json#/records/1"
+      },
+      "family_id": null,
+      "canonical_id": null,
+      "parameter_count_b": null,
+      "identity_status": "unresolved",
+      "artifact": {
+        "source_kind": {
+          "value": "ollama",
+          "provenance_ref": "registry/evidence/ollama-recovery.json#/records/1"
+        },
+        "source_id": {
+          "value": "qwen3:1.7b",
+          "provenance_ref": "registry/evidence/ollama-recovery.json#/records/1"
+        },
+        "revision": {
+          "value": "sha256:8f68893c685c3ddff2aa3fffce2aa60a30bb2da65ca488b61fff134a4d1730e7",
+          "provenance_ref": "registry/evidence/ollama-recovery.json#/records/1",
+          "revision_scope": "measured_artifact"
+        },
+        "sha256": {
+          "value": "sha256:3d0b790534fe4b79525fc3692950408dca41171676ed7e21db57af5c65ef6ab6",
+          "provenance_ref": "registry/evidence/ollama-recovery.json#/records/1"
+        },
+        "format": {
+          "value": "ollama_blob",
+          "provenance_ref": "registry/evidence/ollama-recovery.json#/records/1"
+        },
+        "quantization": {
+          "value": {
+            "label": "Q4_K_M",
+            "scheme": null,
+            "bits": null
+          },
+          "provenance_ref": "registry/evidence/ollama-recovery.json#/records/1"
+        }
+      }
+    },
+    {
+      "selectors": [
+        "qwen3:14b"
+      ],
+      "display_name": {
+        "value": "qwen3:14b",
+        "provenance_ref": "registry/evidence/ollama-recovery.json#/records/4"
+      },
+      "family_id": null,
+      "canonical_id": null,
+      "parameter_count_b": null,
+      "identity_status": "unresolved",
+      "artifact": {
+        "source_kind": {
+          "value": "ollama",
+          "provenance_ref": "registry/evidence/ollama-recovery.json#/records/4"
+        },
+        "source_id": {
+          "value": "qwen3:14b",
+          "provenance_ref": "registry/evidence/ollama-recovery.json#/records/4"
+        },
+        "revision": {
+          "value": "sha256:bdbd181c33f2ed1b31c972991882db3cf4d192569092138a7d29e973cd9debe8",
+          "provenance_ref": "registry/evidence/ollama-recovery.json#/records/4",
+          "revision_scope": "measured_artifact"
+        },
+        "sha256": {
+          "value": "sha256:a8cc1361f3145dc01f6d77c6c82c9116b9ffe3c97b34716fe20418455876c40e",
+          "provenance_ref": "registry/evidence/ollama-recovery.json#/records/4"
+        },
+        "format": {
+          "value": "ollama_blob",
+          "provenance_ref": "registry/evidence/ollama-recovery.json#/records/4"
+        },
+        "quantization": {
+          "value": {
+            "label": "Q4_K_M",
+            "scheme": null,
+            "bits": null
+          },
+          "provenance_ref": "registry/evidence/ollama-recovery.json#/records/4"
+        }
+      }
+    },
+    {
+      "selectors": [
+        "qwen3:4b"
+      ],
+      "display_name": {
+        "value": "qwen3:4b",
+        "provenance_ref": "registry/evidence/ollama-recovery.json#/records/2"
+      },
+      "family_id": null,
+      "canonical_id": null,
+      "parameter_count_b": null,
+      "identity_status": "unresolved",
+      "artifact": {
+        "source_kind": {
+          "value": "ollama",
+          "provenance_ref": "registry/evidence/ollama-recovery.json#/records/2"
+        },
+        "source_id": {
+          "value": "qwen3:4b",
+          "provenance_ref": "registry/evidence/ollama-recovery.json#/records/2"
+        },
+        "revision": {
+          "value": "sha256:359d7dd4bcdab3d86b87d73ac27966f4dbb9f5efdfcc75d34a8764a09474fae7",
+          "provenance_ref": "registry/evidence/ollama-recovery.json#/records/2",
+          "revision_scope": "measured_artifact"
+        },
+        "sha256": {
+          "value": "sha256:3e4cb14174460404e7a233e531675303b2fbf7749c02f91864fe311ab6344e4f",
+          "provenance_ref": "registry/evidence/ollama-recovery.json#/records/2"
+        },
+        "format": {
+          "value": "ollama_blob",
+          "provenance_ref": "registry/evidence/ollama-recovery.json#/records/2"
+        },
+        "quantization": {
+          "value": {
+            "label": "Q4_K_M",
+            "scheme": null,
+            "bits": null
+          },
+          "provenance_ref": "registry/evidence/ollama-recovery.json#/records/2"
+        }
+      }
+    },
+    {
+      "selectors": [
+        "qwen3:8b"
+      ],
+      "display_name": {
+        "value": "qwen3:8b",
+        "provenance_ref": "registry/evidence/ollama-recovery.json#/records/3"
+      },
+      "family_id": null,
+      "canonical_id": null,
+      "parameter_count_b": null,
+      "identity_status": "unresolved",
+      "artifact": {
+        "source_kind": {
+          "value": "ollama",
+          "provenance_ref": "registry/evidence/ollama-recovery.json#/records/3"
+        },
+        "source_id": {
+          "value": "qwen3:8b",
+          "provenance_ref": "registry/evidence/ollama-recovery.json#/records/3"
+        },
+        "revision": {
+          "value": "sha256:500a1f067a9f782620b40bee6f7b0c89e17ae61f686b92c24933e4ca4b2b8b41",
+          "provenance_ref": "registry/evidence/ollama-recovery.json#/records/3",
+          "revision_scope": "measured_artifact"
+        },
+        "sha256": {
+          "value": "sha256:a3de86cd1c132c822487ededd47a324c50491393e6565cd14bafa40d0b8e686f",
+          "provenance_ref": "registry/evidence/ollama-recovery.json#/records/3"
+        },
+        "format": {
+          "value": "ollama_blob",
+          "provenance_ref": "registry/evidence/ollama-recovery.json#/records/3"
+        },
+        "quantization": {
+          "value": {
+            "label": "Q4_K_M",
+            "scheme": null,
+            "bits": null
+          },
+          "provenance_ref": "registry/evidence/ollama-recovery.json#/records/3"
+        }
+      }
+    },
+    {
+      "selectors": [
+        "sha256-3c168af1dea0a414299c7d9077e100ac763370e5a98b3c53801a958a47f0a5db"
+      ],
+      "display_name": {
+        "value": "phi4-mini:latest",
+        "provenance_ref": "registry/evidence/local-file-recovery.json#/records/1"
+      },
+      "family_id": null,
+      "canonical_id": null,
+      "parameter_count_b": null,
+      "identity_status": "unresolved",
+      "artifact": {
+        "source_kind": {
+          "value": "local_file",
+          "provenance_ref": "registry/evidence/local-file-recovery.json#/records/1"
+        },
+        "source_id": {
+          "value": "sha256-3c168af1dea0a414299c7d9077e100ac763370e5a98b3c53801a958a47f0a5db",
+          "provenance_ref": "registry/evidence/local-file-recovery.json#/records/1"
+        },
+        "revision": null,
+        "sha256": {
+          "value": "sha256:3c168af1dea0a414299c7d9077e100ac763370e5a98b3c53801a958a47f0a5db",
+          "provenance_ref": "registry/evidence/local-file-recovery.json#/records/1"
+        },
+        "format": {
+          "value": "ollama_blob",
+          "provenance_ref": "registry/evidence/ollama-recovery.json#/records/10"
+        },
+        "quantization": {
+          "value": {
+            "label": "Q4_K_M",
+            "scheme": null,
+            "bits": null
+          },
+          "provenance_ref": "registry/evidence/ollama-recovery.json#/records/10"
+        }
+      }
+    },
+    {
+      "selectors": [
+        "sha256-44d19d212d76a6f3fc442e8411fdb44ea6b67ceccfb00be4b4345c9a4cf813e8"
+      ],
+      "display_name": {
+        "value": "granite3.1-dense:8b",
+        "provenance_ref": "registry/evidence/local-file-recovery.json#/records/0"
+      },
+      "family_id": null,
+      "canonical_id": null,
+      "parameter_count_b": null,
+      "identity_status": "unresolved",
+      "artifact": {
+        "source_kind": {
+          "value": "local_file",
+          "provenance_ref": "registry/evidence/local-file-recovery.json#/records/0"
+        },
+        "source_id": {
+          "value": "sha256-44d19d212d76a6f3fc442e8411fdb44ea6b67ceccfb00be4b4345c9a4cf813e8",
+          "provenance_ref": "registry/evidence/local-file-recovery.json#/records/0"
+        },
+        "revision": null,
+        "sha256": {
+          "value": "sha256:44d19d212d76a6f3fc442e8411fdb44ea6b67ceccfb00be4b4345c9a4cf813e8",
+          "provenance_ref": "registry/evidence/local-file-recovery.json#/records/0"
+        },
+        "format": {
+          "value": "ollama_blob",
+          "provenance_ref": "registry/evidence/ollama-recovery.json#/records/13"
+        },
+        "quantization": {
+          "value": {
+            "label": "Q4_K_M",
+            "scheme": null,
+            "bits": null
+          },
+          "provenance_ref": "registry/evidence/ollama-recovery.json#/records/13"
+        }
+      }
+    },
+    {
+      "selectors": [
+        "watt-tool-8B.Q4_K_M.gguf"
+      ],
+      "display_name": {
+        "value": "watt-ai/watt-tool-8B",
+        "provenance_ref": "registry/evidence/local-file-recovery.json#/records/2"
+      },
+      "family_id": null,
+      "canonical_id": {
+        "value": "watt-ai/watt-tool-8B",
+        "provenance_ref": "registry/evidence/local-file-recovery.json#/records/2",
+        "corroboration": "corroborated"
+      },
+      "parameter_count_b": null,
+      "identity_status": "verified",
+      "artifact": {
+        "source_kind": {
+          "value": "local_file",
+          "provenance_ref": "registry/evidence/local-file-recovery.json#/records/2"
+        },
+        "source_id": {
+          "value": "watt-tool-8B.Q4_K_M.gguf",
+          "provenance_ref": "registry/evidence/local-file-recovery.json#/records/2"
+        },
+        "revision": {
+          "value": "0e8a7402ad3f90bd2d65c8ff04f6b6cb7ee3df7a",
+          "provenance_ref": "registry/evidence/local-file-recovery.json#/records/2",
+          "revision_scope": "measured_artifact"
+        },
+        "sha256": {
+          "value": "sha256:33706b165cd6777e29fdcd777ba1e09bd3b2006b428014e1bad17df3902ec1e7",
+          "provenance_ref": "registry/evidence/local-file-recovery.json#/records/2"
+        },
+        "format": {
+          "value": "gguf",
+          "provenance_ref": "registry/evidence/local-file-recovery.json#/records/2"
+        },
+        "quantization": {
+          "value": {
+            "label": "Q4_K_M",
+            "scheme": null,
+            "bits": null
+          },
+          "provenance_ref": "registry/evidence/local-file-recovery.json#/records/2"
+        }
+      }
+    }
+  ]
+}
