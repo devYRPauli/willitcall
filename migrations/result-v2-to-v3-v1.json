@@ -1,0 +1,167 @@
+{
+  "schema_version": 1,
+  "source_schema_version": 2,
+  "target_schema_version": 3,
+  "entries": [
+    {
+      "result_path": "results/llamacpp-granite3.1-dense-8b.json",
+      "registry_selector": "sha256-44d19d212d76a6f3fc442e8411fdb44ea6b67ceccfb00be4b4345c9a4cf813e8",
+      "provenance_ref": "registry/evidence/local-file-recovery.json#/records/0"
+    },
+    {
+      "result_path": "results/llamacpp-meta-llama-3.1-8b-instruct-q3_k_m.json",
+      "registry_selector": "bartowski/Meta-Llama-3.1-8B-Instruct-GGUF:Q3_K_M",
+      "provenance_ref": "registry/evidence/huggingface-recovery.json#/records/6"
+    },
+    {
+      "result_path": "results/llamacpp-meta-llama-3.1-8b-instruct-q4_k_m.json",
+      "registry_selector": "bartowski/Meta-Llama-3.1-8B-Instruct-GGUF:Q4_K_M",
+      "provenance_ref": "registry/evidence/huggingface-recovery.json#/records/7"
+    },
+    {
+      "result_path": "results/llamacpp-meta-llama-3.1-8b-instruct-q8_0.json",
+      "registry_selector": "bartowski/Meta-Llama-3.1-8B-Instruct-GGUF:Q8_0",
+      "provenance_ref": "registry/evidence/huggingface-recovery.json#/records/8"
+    },
+    {
+      "result_path": "results/llamacpp-phi4-mini.json",
+      "registry_selector": "sha256-3c168af1dea0a414299c7d9077e100ac763370e5a98b3c53801a958a47f0a5db",
+      "provenance_ref": "registry/evidence/local-file-recovery.json#/records/1"
+    },
+    {
+      "result_path": "results/llamacpp-qwen2.5-1.5b-instruct-q3_k_m.json",
+      "registry_selector": "Qwen/Qwen2.5-1.5B-Instruct-GGUF:Q3_K_M",
+      "provenance_ref": "registry/evidence/huggingface-recovery.json#/records/0"
+    },
+    {
+      "result_path": "results/llamacpp-qwen2.5-1.5b-instruct-q4_k_m.json",
+      "registry_selector": "Qwen/Qwen2.5-1.5B-Instruct-GGUF:Q4_K_M",
+      "provenance_ref": "registry/evidence/huggingface-recovery.json#/records/1"
+    },
+    {
+      "result_path": "results/llamacpp-qwen2.5-1.5b-instruct-q8_0.json",
+      "registry_selector": "Qwen/Qwen2.5-1.5B-Instruct-GGUF:Q8_0",
+      "provenance_ref": "registry/evidence/huggingface-recovery.json#/records/2"
+    },
+    {
+      "result_path": "results/llamacpp-qwen2.5-7b-instruct-q3_k_m.json",
+      "registry_selector": "Qwen/Qwen2.5-7B-Instruct-GGUF:Q3_K_M",
+      "provenance_ref": "registry/evidence/huggingface-recovery.json#/records/3"
+    },
+    {
+      "result_path": "results/llamacpp-qwen2.5-7b-instruct-q4_k_m.json",
+      "registry_selector": "Qwen/Qwen2.5-7B-Instruct-GGUF:Q4_K_M",
+      "provenance_ref": "registry/evidence/huggingface-recovery.json#/records/4"
+    },
+    {
+      "result_path": "results/llamacpp-qwen2.5-7b-instruct-q8_0.json",
+      "registry_selector": "Qwen/Qwen2.5-7B-Instruct-GGUF:Q8_0",
+      "provenance_ref": "registry/evidence/huggingface-recovery.json#/records/5"
+    },
+    {
+      "result_path": "results/llamacpp-watt-tool-8b-q4_k_m.json",
+      "registry_selector": "watt-tool-8B.Q4_K_M.gguf",
+      "provenance_ref": "registry/evidence/local-file-recovery.json#/records/2"
+    },
+    {
+      "result_path": "results/mlx_lm-meta-llama-3.1-8b-instruct-4bit.json",
+      "registry_selector": "mlx-community/Meta-Llama-3.1-8B-Instruct-4bit",
+      "provenance_ref": "registry/evidence/huggingface-recovery.json#/records/9"
+    },
+    {
+      "result_path": "results/mlx_lm-mistral-7b-instruct-v0.3-4bit.json",
+      "registry_selector": "mlx-community/Mistral-7B-Instruct-v0.3-4bit",
+      "provenance_ref": "registry/evidence/huggingface-recovery.json#/records/10"
+    },
+    {
+      "result_path": "results/mlx_lm-phi4-mini-4bit.json",
+      "registry_selector": "mlx-community/Phi-4-mini-instruct-4bit",
+      "provenance_ref": "registry/evidence/huggingface-recovery.json#/records/11"
+    },
+    {
+      "result_path": "results/mlx_lm-qwen2.5-1.5b-instruct-4bit.json",
+      "registry_selector": "mlx-community/Qwen2.5-1.5B-Instruct-4bit",
+      "provenance_ref": "registry/evidence/huggingface-recovery.json#/records/12"
+    },
+    {
+      "result_path": "results/mlx_lm-qwen2.5-7b-instruct-4bit.json",
+      "registry_selector": "mlx-community/Qwen2.5-7B-Instruct-4bit",
+      "provenance_ref": "registry/evidence/huggingface-recovery.json#/records/13"
+    },
+    {
+      "result_path": "results/mlx_lm-qwen2.5-7b-instruct-8bit.json",
+      "registry_selector": "mlx-community/Qwen2.5-7B-Instruct-8bit",
+      "provenance_ref": "registry/evidence/huggingface-recovery.json#/records/14"
+    },
+    {
+      "result_path": "results/ollama-gemma3-12b.json",
+      "registry_selector": "gemma3:12b",
+      "provenance_ref": "registry/evidence/ollama-recovery.json#/records/12"
+    },
+    {
+      "result_path": "results/ollama-gemma3-4b.json",
+      "registry_selector": "gemma3:4b",
+      "provenance_ref": "registry/evidence/ollama-recovery.json#/records/11"
+    },
+    {
+      "result_path": "results/ollama-granite3.1-dense-8b.json",
+      "registry_selector": "granite3.1-dense:8b",
+      "provenance_ref": "registry/evidence/ollama-recovery.json#/records/13"
+    },
+    {
+      "result_path": "results/ollama-hermes3-8b.json",
+      "registry_selector": "hermes3:8b",
+      "provenance_ref": "registry/evidence/ollama-recovery.json#/records/6"
+    },
+    {
+      "result_path": "results/ollama-llama3-groq-tool-use-8b.json",
+      "registry_selector": "llama3-groq-tool-use:8b",
+      "provenance_ref": "registry/evidence/ollama-recovery.json#/records/7"
+    },
+    {
+      "result_path": "results/ollama-llama3.1-8b.json",
+      "registry_selector": "llama3.1:8b",
+      "provenance_ref": "registry/evidence/ollama-recovery.json#/records/8"
+    },
+    {
+      "result_path": "results/ollama-mistral-7b.json",
+      "registry_selector": "mistral:7b",
+      "provenance_ref": "registry/evidence/ollama-recovery.json#/records/9"
+    },
+    {
+      "result_path": "results/ollama-phi4-mini.json",
+      "registry_selector": "phi4-mini:latest",
+      "provenance_ref": "registry/evidence/ollama-recovery.json#/records/10"
+    },
+    {
+      "result_path": "results/ollama-qwen2.5-7b-instruct.json",
+      "registry_selector": "qwen2.5:7b-instruct",
+      "provenance_ref": "registry/evidence/ollama-recovery.json#/records/5"
+    },
+    {
+      "result_path": "results/ollama-qwen3-0.6b.json",
+      "registry_selector": "qwen3:0.6b",
+      "provenance_ref": "registry/evidence/ollama-recovery.json#/records/0"
+    },
+    {
+      "result_path": "results/ollama-qwen3-1.7b.json",
+      "registry_selector": "qwen3:1.7b",
+      "provenance_ref": "registry/evidence/ollama-recovery.json#/records/1"
+    },
+    {
+      "result_path": "results/ollama-qwen3-14b.json",
+      "registry_selector": "qwen3:14b",
+      "provenance_ref": "registry/evidence/ollama-recovery.json#/records/4"
+    },
+    {
+      "result_path": "results/ollama-qwen3-4b.json",
+      "registry_selector": "qwen3:4b",
+      "provenance_ref": "registry/evidence/ollama-recovery.json#/records/2"
+    },
+    {
+      "result_path": "results/ollama-qwen3-8b.json",
+      "registry_selector": "qwen3:8b",
+      "provenance_ref": "registry/evidence/ollama-recovery.json#/records/3"
+    }
+  ]
+}
