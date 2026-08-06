@@ -1,0 +1,235 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Measured tool-calling support by model, quant, server, and server version.">
+  <title>willitcall support matrix</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="site-header">
+    <a class="wordmark" href="index.html">willitcall</a>
+    <nav aria-label="Primary navigation">
+      <a aria-current="page" href="index.html">Matrix</a>
+      <a href="submit.html">Submit a result</a>
+    </nav>
+  </header>
+  <main>
+    <section class="methods" aria-labelledby="page-title">
+      <p class="eyebrow">Measured compatibility</p>
+      <h1 id="page-title">Tool-calling support matrix</h1>
+      <p>A cell measures the whole stack: model x quant x server x server version. It is not a property of the model alone.</p>
+      <p>Red means the combination failed as tested, not that the weights are bad. The same weights can pass on one server and fail on another; where that is proven, the cell carries a cause annotation.</p>
+      <p>Every red cell links to the full request/response transcript that produced it when the result schema supplies a transcript path. Legacy schema v1 results do not record transcript paths. See the <a href="https://example.invalid/willitcall/tree/main/docs/case-studies">case studies under docs/case-studies/</a> for controlled comparisons.</p>
+      <p>The servers do not decode the same way. llama.cpp compiles the supplied tool definitions into a GBNF grammar and constrains decoding with it, so a call naming a function that was never supplied cannot be sampled there. Ollama and MLX LM generate unconstrained text and parse the tool call out of it afterwards. This systematically favours llama.cpp, so a llama.cpp-versus-Ollama difference is a property of the combination, not evidence of a server defect or a difference between models; the comparison that isolates the model is same-server.</p>
+      <p>Sample size and method: 9 distinct scenarios are represented in this result set. Each published cell is one run. Findings in the case studies are replicated across at least five runs per arm before a verdict is drawn, so a cell tells you what one run measured and a case study tells you what held up under repetition. The current case studies cover 90 runs across 18 quantization arms, and 40 runs across 8 arms for the peg-native anomaly.</p>
+      <h2>Excluded rows</h2>
+      <ul>
+        <li>Meta-Llama-3.1-8B-Instruct on llama.cpp (Q8_0, Q4_K_M, Q3_K_M) is excluded from the quantization conclusion because llama.cpp returns HTTP 500 on 7-9 of 50 scenarios per run for this model ("does not match the expected peg-native format"). These are server errors, not model failures, and are not comparable across arms. See the <a href="https://example.invalid/willitcall/blob/main/docs/case-studies/2026-07-21-llamacpp-500s-on-llama-3.1-tool-calls.md">peg-native case study</a>.</li>
+      </ul>
+
+    </section>
+
+    <section class="matrix" aria-labelledby="matrix-title">
+      <div class="matrix-heading">
+        <div>
+          <p class="eyebrow">Current results</p>
+          <h2 id="matrix-title">Scenario groups</h2>
+        </div>
+        <label for="server-filter">Server
+          <select id="server-filter">
+            <option value="all">All</option>
+            <option value="ollama">Ollama</option>
+            <option value="llamacpp">llama.cpp</option>
+            <option value="mlx_lm">MLX LM</option>
+          </select>
+        </label>
+      </div>
+      <div class="legend" aria-label="Cell status legend">
+        <span><i class="swatch all-pass"></i>all pass</span>
+        <span><i class="swatch partial"></i>partial</span>
+        <span><i class="swatch none-pass"></i>none pass</span>
+        <span><i class="swatch not-measurable"></i>not measurable</span>
+      </div>
+      <p id="filter-status" class="filter-status" aria-live="polite">Showing 4 result files.</p>
+      <div class="table-scroll">
+        <table>
+          <thead>
+            <tr>
+              <th scope="col">Model / quant / server</th>
+              <th scope="col"><code>single_call</code></th>
+              <th scope="col"><code>parallel_calls</code></th>
+              <th scope="col"><code>streaming</code></th>
+              <th scope="col"><code>tool_choice_modes</code></th>
+              <th scope="col"><code>multi_turn</code></th>
+              <th scope="col"><code>negative_trap</code></th>
+            </tr>
+          </thead>
+          <tbody class="result-group" data-server="ollama" data-identity-status="unresolved">
+            <tr class="result-row">
+              <th scope="row">
+                <strong>legacy-unresolved.gguf</strong>
+                <span>canonical id: not established</span>
+                <span>quant: not declared</span>
+                <span>server: ollama</span>
+                <span>identity status: unresolved (provenance could not be established; excluded from cross-model comparison)</span>
+              </th>
+              <td class="score all-pass" aria-label="single_call: 1 passed, 0 failed, 0 errors, 0 skipped"><span class="ratio">1/1</span></td>
+              <td class="score none-pass" aria-label="parallel_calls: 0 passed, 1 failed, 0 errors, 0 skipped"><span class="ratio">0/1</span><span class="legacy-evidence">schema v1: no transcript path</span></td>
+              <td class="score untested" aria-label="streaming: 0 passed, 0 failed, 0 errors, 0 skipped"><span class="ratio">0/0</span></td>
+              <td class="score none-pass" aria-label="tool_choice_modes: 0 passed, 0 failed, 0 errors, 1 skipped"><span class="ratio">0/1</span><span class="legacy-evidence">schema v1: no transcript path</span></td>
+              <td class="score untested" aria-label="multi_turn: 0 passed, 0 failed, 0 errors, 0 skipped"><span class="ratio">0/0</span></td>
+              <td class="score untested" aria-label="negative_trap: 0 passed, 0 failed, 0 errors, 0 skipped"><span class="ratio">0/0</span></td>
+            </tr>
+            <tr class="detail-row">
+              <td colspan="7">
+                <details id="result-details-0">
+                  <summary>View 3 scenarios and row metadata</summary>
+                  <dl class="metadata">
+                    <div><dt>Result file</dt><dd><code>01-v1-unresolved.json</code></dd></div>
+                    <div><dt>Endpoint id</dt><dd><code>legacy-unresolved.gguf</code></dd></div>
+                    <div><dt>Identity status</dt><dd>unresolved</dd></div>
+                    <div><dt>Artifact quant</dt><dd>not declared</dd></div>
+                    <div><dt>Server</dt><dd>ollama version not reported</dd></div>
+                    <div><dt>Schema</dt><dd>v1</dd></div>
+                    <div><dt>Run time</dt><dd>2000-01-01T00:00:00Z</dd></div>
+                    <div><dt>Host hardware</dt><dd>not recorded</dd></div>
+                    <div><dt>Host OS</dt><dd>not recorded</dd></div>
+                  </dl>
+                  <ol class="scenario-list">
+                    <li class="scenario status-pass"><code>v1-pass</code> <span class="status-label">pass</span></li>
+                    <li class="scenario status-fail"><code>v1-fail</code> <span class="status-label">fail</span> <span class="failure-reason">legacy wrong &amp; call</span> <span class="badge neutral">legacy evidence hash only</span></li>
+                    <li class="scenario status-skipped"><code>v1-skipped</code> <span class="status-label">skipped</span> <span class="failure-reason">fixture intentionally skipped</span></li>
+                  </ol>
+                </details>
+              </td>
+            </tr>
+          </tbody>
+          <tbody class="result-group" data-server="mlx_lm" data-identity-status="unresolved">
+            <tr class="result-row">
+              <th scope="row">
+                <strong>v2-unresolved:model</strong>
+                <span>canonical id: not established</span>
+                <span>quant: Q5_K_M</span>
+                <span>server: MLX LM</span>
+                <span>identity status: unresolved (provenance could not be established; excluded from cross-model comparison)</span>
+              </th>
+              <td class="score untested" aria-label="single_call: 0 passed, 0 failed, 0 errors, 0 skipped"><span class="ratio">0/0</span></td>
+              <td class="score untested" aria-label="parallel_calls: 0 passed, 0 failed, 0 errors, 0 skipped"><span class="ratio">0/0</span></td>
+              <td class="score not-measurable" aria-label="streaming: 0 passed, 0 failed, 1 errors, 0 skipped"><span class="ratio">0/1</span><span class="measurement-state">not measurable</span></td>
+              <td class="score untested" aria-label="tool_choice_modes: 0 passed, 0 failed, 0 errors, 0 skipped"><span class="ratio">0/0</span></td>
+              <td class="score partial" aria-label="multi_turn: 1 passed, 1 failed, 0 errors, 0 skipped"><a class="ratio" href="https://example.invalid/willitcall/blob/main/results/evidence/site-contract/v2-fail.json" title="Open a failing transcript">1/2</a></td>
+              <td class="score none-pass" aria-label="negative_trap: 0 passed, 1 failed, 0 errors, 0 skipped"><span class="ratio">0/1</span></td>
+            </tr>
+            <tr class="detail-row">
+              <td colspan="7">
+                <details id="result-details-1">
+                  <summary>View 4 scenarios and row metadata</summary>
+                  <dl class="metadata">
+                    <div><dt>Result file</dt><dd><code>02-v2-unresolved.json</code></dd></div>
+                    <div><dt>Endpoint id</dt><dd><code>v2-unresolved:model</code></dd></div>
+                    <div><dt>Identity status</dt><dd>unresolved</dd></div>
+                    <div><dt>Artifact quant</dt><dd>Q5_K_M</dd></div>
+                    <div><dt>Server</dt><dd>MLX LM fixture-v2</dd></div>
+                    <div><dt>Schema</dt><dd>v2</dd></div>
+                    <div><dt>Run time</dt><dd>2000-01-02T00:00:00Z</dd></div>
+                    <div><dt>Host hardware</dt><dd>Fixture workstation</dd></div>
+                    <div><dt>Host OS</dt><dd>Fixture OS v2</dd></div>
+                  </dl>
+                  <ol class="scenario-list">
+                    <li class="scenario status-pass"><code>v2-pass</code> <span class="status-label">pass</span></li>
+                    <li class="scenario status-fail"><code>v2-fail-with-cause</code> <span class="status-label">fail</span> <span class="failure-reason">assistant returned no content &lt;fixture&gt;</span> <a class="transcript" href="https://example.invalid/willitcall/blob/main/results/evidence/site-contract/v2-fail.json">transcript</a> <a class="badge cause" href="https://example.invalid/willitcall/blob/main/docs/site-contract-cause.md" title="fixture cause &amp; note">server defect</a> <span class="badge neutral">empty response</span></li>
+                    <li class="scenario status-error"><code>v2-error</code> <span class="status-label">error</span> <span class="failure-reason">fixture server error</span></li>
+                    <li class="scenario status-fail"><code>v2-unparsed</code> <span class="status-label">fail</span> <span class="failure-reason">fixture tool call was not parsed</span> <span class="badge cause" title="cause unknown">cause unknown</span> <span class="badge neutral unparsed">unparsed tool call</span></li>
+                  </ol>
+                </details>
+              </td>
+            </tr>
+          </tbody>
+          <tbody class="result-group" data-server="llamacpp" data-identity-status="declared" data-cross-model-key="Fixture/Declared">
+            <tr class="result-row">
+              <th scope="row">
+                <strong>declared-fixture.gguf</strong>
+                <span>canonical id: Fixture/Declared</span>
+                <span>quant: Q4_K_M</span>
+                <span>server: llama.cpp</span>
+                <span>identity status: declared</span>
+              </th>
+              <td class="score untested" aria-label="single_call: 0 passed, 0 failed, 0 errors, 0 skipped"><span class="ratio">0/0</span></td>
+              <td class="score untested" aria-label="parallel_calls: 0 passed, 0 failed, 0 errors, 0 skipped"><span class="ratio">0/0</span></td>
+              <td class="score untested" aria-label="streaming: 0 passed, 0 failed, 0 errors, 0 skipped"><span class="ratio">0/0</span></td>
+              <td class="score all-pass" aria-label="tool_choice_modes: 1 passed, 0 failed, 0 errors, 0 skipped"><span class="ratio">1/1</span></td>
+              <td class="score untested" aria-label="multi_turn: 0 passed, 0 failed, 0 errors, 0 skipped"><span class="ratio">0/0</span></td>
+              <td class="score untested" aria-label="negative_trap: 0 passed, 0 failed, 0 errors, 0 skipped"><span class="ratio">0/0</span></td>
+            </tr>
+            <tr class="detail-row">
+              <td colspan="7">
+                <details id="result-details-2">
+                  <summary>View 1 scenarios and row metadata</summary>
+                  <dl class="metadata">
+                    <div><dt>Result file</dt><dd><code>03-v3-declared.json</code></dd></div>
+                    <div><dt>Endpoint id</dt><dd><code>declared-fixture.gguf</code></dd></div>
+                    <div><dt>Identity status</dt><dd>declared</dd></div>
+                    <div><dt>Artifact quant</dt><dd>Q4_K_M</dd></div>
+                    <div><dt>Server</dt><dd>llama.cpp fixture-v3-declared</dd></div>
+                    <div><dt>Schema</dt><dd>v3</dd></div>
+                    <div><dt>Run time</dt><dd>2000-01-03T00:00:00Z</dd></div>
+                    <div><dt>Host hardware</dt><dd>Declared fixture host</dd></div>
+                    <div><dt>Host OS</dt><dd>Fixture OS v3</dd></div>
+                  </dl>
+                  <ol class="scenario-list">
+                    <li class="scenario status-pass"><code>v3-declared-pass</code> <span class="status-label">pass</span></li>
+                  </ol>
+                </details>
+              </td>
+            </tr>
+          </tbody>
+          <tbody class="result-group" data-server="ollama" data-identity-status="verified" data-cross-model-key="Fixture/Verified">
+            <tr class="result-row">
+              <th scope="row">
+                <strong>Verified &amp; Fixture</strong>
+                <span>canonical id: Fixture/Verified</span>
+                <span>quant: not declared</span>
+                <span>server: ollama</span>
+                <span>identity status: verified</span>
+              </th>
+              <td class="score untested" aria-label="single_call: 0 passed, 0 failed, 0 errors, 0 skipped"><span class="ratio">0/0</span></td>
+              <td class="score untested" aria-label="parallel_calls: 0 passed, 0 failed, 0 errors, 0 skipped"><span class="ratio">0/0</span></td>
+              <td class="score untested" aria-label="streaming: 0 passed, 0 failed, 0 errors, 0 skipped"><span class="ratio">0/0</span></td>
+              <td class="score untested" aria-label="tool_choice_modes: 0 passed, 0 failed, 0 errors, 0 skipped"><span class="ratio">0/0</span></td>
+              <td class="score untested" aria-label="multi_turn: 0 passed, 0 failed, 0 errors, 0 skipped"><span class="ratio">0/0</span></td>
+              <td class="score all-pass" aria-label="negative_trap: 1 passed, 0 failed, 0 errors, 0 skipped"><span class="ratio">1/1</span></td>
+            </tr>
+            <tr class="detail-row">
+              <td colspan="7">
+                <details id="result-details-3">
+                  <summary>View 1 scenarios and row metadata</summary>
+                  <dl class="metadata">
+                    <div><dt>Result file</dt><dd><code>04-v3-verified.json</code></dd></div>
+                    <div><dt>Endpoint id</dt><dd><code>verified-fixture:latest</code></dd></div>
+                    <div><dt>Identity status</dt><dd>verified</dd></div>
+                    <div><dt>Artifact quant</dt><dd>not declared</dd></div>
+                    <div><dt>Server</dt><dd>ollama fixture-v3-verified</dd></div>
+                    <div><dt>Schema</dt><dd>v3</dd></div>
+                    <div><dt>Run time</dt><dd>2000-01-04T00:00:00Z</dd></div>
+                    <div><dt>Host hardware</dt><dd>Verified fixture host</dd></div>
+                    <div><dt>Host OS</dt><dd>Fixture OS v3</dd></div>
+                  </dl>
+                  <ol class="scenario-list">
+                    <li class="scenario status-pass"><code>v3-verified-pass</code> <span class="status-label">pass</span></li>
+                  </ol>
+                </details>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+  <footer>
+    <p>Read ratios as passed scenarios / total scenarios in the category.</p>
+  </footer>
+  <script src="site.js"></script>
+</body>
+</html>

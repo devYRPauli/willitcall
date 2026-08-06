@@ -1,0 +1,54 @@
+{
+  "schema_version": 1,
+  "metadata": {
+    "timestamp": "2000-01-01T00:00:00Z",
+    "willitcall_version": "site-contract-fixture",
+    "endpoint": "https://fixture.invalid/v1",
+    "model_id": "/fixtures/models/legacy-unresolved.gguf",
+    "declared_quant": null,
+    "server": {
+      "preset_name": "ollama",
+      "reported_version": null,
+      "quirk_flags": []
+    },
+    "sampling": {
+      "temperature": 0.0,
+      "top_p": 1.0,
+      "seed": 1,
+      "max_tokens": 64
+    }
+  },
+  "scenarios": [
+    {
+      "id": "v1-pass",
+      "category": "single_call",
+      "status": "pass",
+      "failure_reason": null,
+      "evidence_hash": null,
+      "retried": false
+    },
+    {
+      "id": "v1-fail",
+      "category": "parallel_calls",
+      "status": "fail",
+      "failure_reason": "legacy wrong & call",
+      "evidence_hash": "sha256:legacy-fixture",
+      "retried": false
+    },
+    {
+      "id": "v1-skipped",
+      "category": "tool_choice_modes",
+      "status": "skipped",
+      "failure_reason": "fixture intentionally skipped",
+      "evidence_hash": null,
+      "retried": false
+    }
+  ],
+  "totals": {
+    "total": 3,
+    "passed": 1,
+    "failed": 1,
+    "errors": 0,
+    "skipped": 1
+  }
+}

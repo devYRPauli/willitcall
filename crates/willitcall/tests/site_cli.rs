@@ -4,6 +4,9 @@ use std::process::Command;
 
 use serde_json::{json, Value};
 
+// Briefs 8 and 9 intentionally change the renderer and will update this golden.
+const SITE_CONTRACT_GOLDEN: &[u8] = include_bytes!("golden/site-contract-index.html");
+
 fn scenario(
     id: &str,
     category: &str,
@@ -115,6 +118,29 @@ fn run_site(results: &Path, output: &Path, repo_base: Option<&str>) -> std::proc
         command.arg("--repo-base").arg(repo_base);
     }
     command.output().expect("run site generator")
+}
+
+#[test]
+fn site_contract_golden_matches_post_migration_renderer() {
+    let directory = tempfile::tempdir().expect("temp directory");
+    let results =
+        Path::new(env!("CARGO_MANIFEST_DIR")).join("tests/fixtures/site-contract-results");
+    let output = directory.path().join("site");
+
+    let generated = run_site(
+        &results,
+        &output,
+        Some("https://example.invalid/willitcall"),
+    );
+    assert_eq!(
+        generated.status.code(),
+        Some(0),
+        "{}",
+        String::from_utf8_lossy(&generated.stderr)
+    );
+
+    let index = fs::read(output.join("index.html")).expect("generated index");
+    assert_eq!(index, SITE_CONTRACT_GOLDEN);
 }
 
 #[test]
