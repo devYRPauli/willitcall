@@ -21,7 +21,7 @@
     <section class="register-intro" aria-labelledby="page-title">
       <p class="eyebrow">Measurement register</p>
       <h1 id="page-title">Tool-calling support matrix</h1>
-      <p class="framing">Each row is one observed model, artifact, server, and decode stack, not a model ranking or a verdict.</p>
+      <p class="framing">Each row records one tested stack. The stack includes the model and its artifact. It also includes the server and decode mode. The matrix does not rank models or state verdicts.</p>
     </section>    <section class="matrix" aria-labelledby="matrix-title">
       <div class="matrix-heading">
         <div>
@@ -33,7 +33,7 @@
         </label>
       </div>
       <div class="reading-key" aria-label="How to read the matrix">
-        <p class="reading-caption"><strong>How to read:</strong> ratios are passed scenarios / scenarios in the category.</p>
+        <p class="reading-caption"><strong>How to read:</strong> Each ratio shows passed scenarios / all scenarios in that category.</p>
         <div class="mark-key" aria-label="Scenario outcome marks">
           <span><i class="state-key state-pass"></i>pass</span>
           <span><i class="state-key state-fail"></i>model / response failure</span>
@@ -91,7 +91,7 @@
           <tbody class="model-group result-group single-row" data-model-key="legacy-unresolved.gguf" data-model-search="legacy-unresolved.gguf">
             <tr class="result-row" data-server="ollama" data-identity-status="unresolved" data-decode-mode="unconstrained_post_hoc" data-decode-source="preset_mapping">
               <th scope="row">
-                <strong>legacy-unresolved.gguf</strong>
+                <strong>legacy-unresolved.gguf (unverified artifact)</strong>
                 <div class="row-meta"><span>not declared / ollama</span><span class="decode-badge unconstrained_post_hoc" title="Decode mode: unconstrained post-hoc; decode provenance: documented preset mapping.">post-hoc (mapping)</span><span class="identity-status unresolved" title="Identity status: unresolved. Provenance could not be established; excluded from cross-model comparison.">id: unresolved</span><a class="detail-link" href="appendix.html#stack-detail-0">detail</a></div>
               </th>
               <td class="score all-pass low-replication" data-label="Single call" aria-label="single_call: 1 passed, 0 failed, 0 errors, 0 skipped; n=1; no verdict"><span class="ratio">1/1</span></td>
@@ -105,7 +105,7 @@
           <tbody class="model-group result-group single-row" data-model-key="v2-unresolved:model" data-model-search="v2-unresolved:model">
             <tr class="result-row" data-server="mlx_lm" data-identity-status="unresolved" data-decode-mode="unconstrained_post_hoc" data-decode-source="preset_mapping">
               <th scope="row">
-                <strong>v2-unresolved:model</strong>
+                <strong>v2-unresolved:model (unverified artifact)</strong>
                 <div class="row-meta"><span>Q5_K_M / MLX LM</span><span class="decode-badge unconstrained_post_hoc" title="Decode mode: unconstrained post-hoc; decode provenance: documented preset mapping.">post-hoc (mapping)</span><span class="identity-status unresolved" title="Identity status: unresolved. Provenance could not be established; excluded from cross-model comparison.">id: unresolved</span><a class="detail-link" href="appendix.html#stack-detail-1">detail</a></div>
               </th>
               <td class="score untested low-replication" data-label="Single call" aria-label="single_call: 0 passed, 0 failed, 0 errors, 0 skipped; n=1; no verdict"><span class="ratio">0/0</span></td>
@@ -126,8 +126,8 @@
 <figure class="svg-figure" data-figure-number="4">
   <figcaption>
     <strong>Figure 4. Observed pass-count strip plot</strong>
-    <span>Distribution of published one-run stack observations. Pass counts are plotted only when every scenario has a pass or fail verdict; rows with errors or skips are listed in the separate panel.</span>
-    <span class="does-not-show"><strong>What this does not show:</strong> A model score distribution, rankings, uncertainty, or repeated-run variability.</span>
+    <span>Each dot shows one published stack observation from a single run. We plot a pass count only when every scenario has a pass or fail verdict. A separate panel lists rows with errors or skips.</span>
+    <span class="does-not-show"><strong>What this does not show:</strong> This figure does not show a model score distribution or rank models. It does not measure uncertainty or variation across repeated runs.</span>
     <span class="figure-links"><a class="figure-method-link" href="index.html#method-limitations">Method and limitations</a> - Data: <a href="results.json">JSON</a>, <a href="results.csv">CSV</a></span>
   </figcaption>
   <div class="figure-scroll">
@@ -173,19 +173,19 @@
     <section class="methods" id="method-limitations" aria-labelledby="method-title">
       <p class="eyebrow">Calibration notes</p>
       <h2 id="method-title">Method and limitations</h2>
-      <p>A cell measures the whole stack: model x quant x server x server version. It is not a property of the model alone.</p>
-      <p>A failed observation means the combination failed as tested, not that the weights are bad. The same weights can pass on one server and fail on another; where that is proven, the cell carries a cause annotation.</p>
-      <p>Failing observations link to the full request/response transcript when the result schema supplies a transcript path. Legacy schema v1 results do not record transcript paths. See the <a href="https://example.invalid/willitcall/tree/main/docs/case-studies">case studies under docs/case-studies/</a> for controlled comparisons.</p>
-      <p>The servers do not decode the same way. llama.cpp compiles supplied tool definitions into a GBNF grammar and constrains decoding with it. Ollama and MLX LM generate unconstrained text and parse the tool call afterwards. A cross-band difference is therefore a property of the full stack; same-server adjacency is the valid model comparison. Each row labels whether its mode was recorded by the run or resolved from the <a href="https://example.invalid/willitcall/blob/main/registry/decode-modes-v1.json">cited preset mapping</a>; an unmapped preset remains unknown.</p>
-      <p>Sample size and method: 9 distinct scenarios are represented. Each published cell is one run. Its hatch withholds a verdict rather than hiding the observation.</p>
-      <p>Findings in the case studies are replicated across at least five runs per arm before a verdict is drawn. The current case studies cover 90 runs across 18 quantization arms, and 40 runs across 8 arms for the peg-native anomaly.</p>
+      <p>Each cell measures one full stack. The stack combines a model, quant, server, and server version. A cell does not describe the model alone.</p>
+      <p>A failed observation applies only to the tested combination. It does not mean the weights are bad. The same weights can pass on one server and fail on another. When the evidence proves that difference, the cell includes a cause annotation.</p>
+      <p>When the result includes a transcript path, a failing observation links to the full request and response transcript. Legacy schema v1 results do not record transcript paths. Read the <a href="https://example.invalid/willitcall/tree/main/docs/case-studies">case studies in docs/case-studies/</a> for controlled comparisons.</p>
+      <p>The servers use different decode methods. llama.cpp compiles the supplied tool definitions into a GBNF grammar. It uses that grammar to constrain decoding. Ollama and MLX LM generate unconstrained text. They parse the tool call after decoding. Cross-band differences therefore reflect the full stack. Compare adjacent models only when they use the same server. Each row states whether the run recorded its decode mode or the site read the mode from the <a href="https://example.invalid/willitcall/blob/main/registry/decode-modes-v1.json">cited preset mapping</a>. An unmapped preset has an unknown mode.</p>
+      <p>The site includes 9 distinct scenarios. Each published cell represents one run. Hatching marks that the cell has no verdict.</p>
+      <p>The case studies draw a verdict only after at least five runs per arm. The current case studies cover 90 runs across 18 quantization arms, and 40 runs across 8 arms for the peg-native anomaly.</p>
       <h3>Excluded rows</h3>
-      <p>Meta-Llama-3.1-8B-Instruct on llama.cpp (Q8_0, Q4_K_M, Q3_K_M) is excluded from the quantization conclusion because llama.cpp returns HTTP 500 on 7-9 of 50 scenarios per run for this model ("does not match the expected peg-native format"). These are server errors, not model failures, and are not comparable across arms. See the <a href="https://example.invalid/willitcall/blob/main/docs/case-studies/2026-07-21-llamacpp-500s-on-llama-3.1-tool-calls.md">peg-native case study</a>.</p>
+      <p>The quantization conclusion excludes Meta-Llama-3.1-8B-Instruct on llama.cpp (Q8_0, Q4_K_M, Q3_K_M). For this model, llama.cpp returns HTTP 500 on 7-9 of 50 scenarios per run ("does not match the expected peg-native format"). These results are server errors. They are not model failures and cannot be compared across arms. Read the <a href="https://example.invalid/willitcall/blob/main/docs/case-studies/2026-07-21-llamacpp-500s-on-llama-3.1-tool-calls.md">peg-native case study</a>.</p>
 
     </section>
 
   </main>
-  <footer class="colophon"><p>Build hash <code>cd9434fa53fbe658</code> - corpus revision <code>site-contract fixture-v1</code> - data date <time datetime="2000-01-04">2000-01-04</time></p></footer>
+  <footer class="colophon"><p>Build hash <code>3e9b9a5806493d81</code> - corpus revision <code>site-contract fixture-v1</code> - data date <time datetime="2000-01-04">2000-01-04</time></p></footer>
   <script src="site.js"></script>
 </body>
 </html>
