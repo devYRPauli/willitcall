@@ -241,10 +241,18 @@ fn render_result_rows(
     let result = &result_file.result;
     let server = &result.metadata.server.preset_name;
     let server_display = display_server(server);
-    let model = if result.schema_version == 3 {
-        result.metadata.model.display_name.clone()
+    let model = &result.metadata.model;
+    let model_display = display_model_id(&model.display_name);
+    let identity_status = display_identity_status(model.identity_status);
+    let canonical_id = result.cross_model_key().unwrap_or("not established");
+    let cross_model_attribute = result
+        .cross_model_key()
+        .map(|key| format!(" data-cross-model-key=\"{}\"", escape_html(key)))
+        .unwrap_or_default();
+    let identity_note = if model.identity_status == IdentityStatus::Unresolved {
+        " (provenance could not be established; excluded from cross-model comparison)"
     } else {
-        model_label(&result_file.file_name, server)
+        ""
     };
     let quant = result
         .metadata
@@ -270,11 +278,16 @@ fn render_result_rows(
     };
     write!(
         html,
-        "          <tbody class=\"result-group\" data-server=\"{}\">\n            <tr class=\"result-row\">\n              <th scope=\"row\">\n                <strong>{}</strong>\n                <span>quant: {}</span>\n                <span>server: {}</span>\n              </th>\n",
+        "          <tbody class=\"result-group\" data-server=\"{}\" data-identity-status=\"{}\"{}>\n            <tr class=\"result-row\">\n              <th scope=\"row\">\n                <strong>{}</strong>\n                <span>canonical id: {}</span>\n                <span>quant: {}</span>\n                <span>server: {}</span>\n                <span>identity status: {}{}</span>\n              </th>\n",
         escape_html(server),
-        escape_html(&model),
+        identity_status,
+        cross_model_attribute,
+        escape_html(model_display),
+        escape_html(canonical_id),
         escape_html(quant),
-        escape_html(server_display)
+        escape_html(server_display),
+        identity_status,
+        identity_note
     )
     .expect("write HTML");
 
@@ -284,11 +297,11 @@ fn render_result_rows(
 
     write!(
         html,
-        "            </tr>\n            <tr class=\"detail-row\">\n              <td colspan=\"7\">\n                <details id=\"{details_id}\">\n                  <summary>View {} scenarios and row metadata</summary>\n                  <dl class=\"metadata\">\n                    <div><dt>Result file</dt><dd><code>{}</code></dd></div>\n                    <div><dt>Model id</dt><dd><code>{}</code></dd></div>\n                    <div><dt>Identity</dt><dd>{}</dd></div>\n                    <div><dt>Declared quant</dt><dd>{}</dd></div>\n                    <div><dt>Server</dt><dd>{} {}</dd></div>\n                    <div><dt>Schema</dt><dd>v{}</dd></div>\n                    <div><dt>Run time</dt><dd>{}</dd></div>\n{}                  </dl>\n                  <ol class=\"scenario-list\">\n",
+        "            </tr>\n            <tr class=\"detail-row\">\n              <td colspan=\"7\">\n                <details id=\"{details_id}\">\n                  <summary>View {} scenarios and row metadata</summary>\n                  <dl class=\"metadata\">\n                    <div><dt>Result file</dt><dd><code>{}</code></dd></div>\n                    <div><dt>Endpoint id</dt><dd><code>{}</code></dd></div>\n                    <div><dt>Identity status</dt><dd>{}</dd></div>\n                    <div><dt>Artifact quant</dt><dd>{}</dd></div>\n                    <div><dt>Server</dt><dd>{} {}</dd></div>\n                    <div><dt>Schema</dt><dd>v{}</dd></div>\n                    <div><dt>Run time</dt><dd>{}</dd></div>\n{}                  </dl>\n                  <ol class=\"scenario-list\">\n",
         result.scenarios.len(),
         escape_html(&result_file.file_name),
         escape_html(display_model_id(&result.metadata.model.endpoint_id)),
-        display_identity_status(result.metadata.model.identity_status),
+        identity_status,
         escape_html(quant),
         escape_html(server_display),
         escape_html(
@@ -553,13 +566,6 @@ cargo run -p willitcall -- validate "$OUT"</code></pre>
 "#,
         escape_html(&contributing_url)
     )
-}
-
-fn model_label(file_name: &str, server: &str) -> String {
-    let stem = file_name.strip_suffix(".json").unwrap_or(file_name);
-    stem.strip_prefix(&format!("{server}-"))
-        .unwrap_or(stem)
-        .to_owned()
 }
 
 fn display_model_id(model_id: &str) -> &str {

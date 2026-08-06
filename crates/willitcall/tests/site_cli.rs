@@ -329,6 +329,59 @@ fn site_never_renders_absolute_model_paths() {
 }
 
 #[test]
+fn site_uses_registry_identity_and_excludes_unresolved_rows_from_grouping() {
+    let directory = tempfile::tempdir().expect("temp directory");
+    let results = directory.path().join("results");
+    let output = directory.path().join("site");
+    fs::create_dir(&results).expect("results directory");
+    let repo = Path::new(env!("CARGO_MANIFEST_DIR")).join("../..");
+
+    let declared =
+        fs::read(repo.join("results/ollama-qwen3-14b.json")).expect("read declared v3 fixture");
+    fs::write(results.join("filename-derived-label.json"), declared)
+        .expect("write declared fixture");
+
+    let mut unresolved: Value = serde_json::from_slice(
+        &fs::read(repo.join("results/ollama-gemma3-4b.json")).expect("read unresolved v3 fixture"),
+    )
+    .expect("parse unresolved v3 fixture");
+    unresolved["metadata"]["model"]["canonical_id"] = json!("Must/NotGroup");
+    fs::write(
+        results.join("invented-filename-identity.json"),
+        serde_json::to_vec_pretty(&unresolved).expect("encode unresolved fixture"),
+    )
+    .expect("write unresolved fixture");
+
+    let generated = run_site(&results, &output, None);
+    assert_eq!(
+        generated.status.code(),
+        Some(0),
+        "{}",
+        String::from_utf8_lossy(&generated.stderr)
+    );
+
+    let index = fs::read_to_string(output.join("index.html")).expect("generated index");
+    assert!(index.contains("<strong>qwen3:14b</strong>"));
+    assert!(!index.contains("<strong>filename-derived-label</strong>"));
+    assert!(index.contains("canonical id: Qwen/Qwen3-14B"));
+    assert!(index.contains("quant: Q4_K_M"));
+    assert!(index.contains("identity status: declared"));
+    assert!(index.contains("data-cross-model-key=\"Qwen/Qwen3-14B\""));
+
+    let unresolved_group = index
+        .lines()
+        .find(|line| line.contains("data-identity-status=\"unresolved\""))
+        .expect("unresolved result group");
+    assert!(!unresolved_group.contains("data-cross-model-key"));
+    assert!(index.contains("<strong>gemma3:4b</strong>"));
+    assert!(!index.contains("<strong>invented-filename-identity</strong>"));
+    assert!(index.contains("canonical id: not established"));
+    assert!(index.contains(
+        "identity status: unresolved (provenance could not be established; excluded from cross-model comparison)"
+    ));
+}
+
+#[test]
 fn site_uses_the_configured_repo_base_for_evidence_links() {
     let directory = tempfile::tempdir().expect("temp directory");
     let results = directory.path().join("results");
