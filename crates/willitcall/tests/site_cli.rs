@@ -226,7 +226,12 @@ fn analysis_views_render_the_published_observation_contract() {
     assert!(!index.contains("class=\"detail-row\""));
     assert_eq!(index.matches("class=\"detail-link\"").count(), 32);
     assert_eq!(outcomes.matches("class=\"mini-raster-panel\"").count(), 6);
-    assert_eq!(index.matches("class=\"replication-note\"").count(), 32 * 6);
+    assert_eq!(index.matches("class=\"replication-note\"").count(), 0);
+    assert_eq!(index.matches("n=1, no verdict").count(), 1);
+    assert_eq!(index.matches("class=\"model-heading\"").count(), 5);
+    assert_eq!(index.matches("result-group multi-row").count(), 5);
+    assert_eq!(index.matches("result-group single-row").count(), 13);
+    assert_eq!(index.matches("class=\"row-meta\"").count(), 32);
     assert!(index.contains("id=\"model-search\" type=\"search\""));
     assert!(index.contains("data-decode-mode=\"grammar_constrained\""));
     assert!(index.contains("data-decode-mode=\"unconstrained_post_hoc\""));
@@ -240,6 +245,7 @@ fn analysis_views_render_the_published_observation_contract() {
     assert_eq!(index.matches("data-decode-source=\"unknown\"").count(), 0);
     assert_eq!(index.matches("class=\"decode-band").count(), 0);
     assert_eq!(index.matches("class=\"decode-badge").count(), 32);
+    assert_eq!(index.matches("decode provenance:").count(), 32);
     for (id, label) in [
         ("single_call", "Single call"),
         ("tool_choice_modes", "Tool choice"),
@@ -417,10 +423,9 @@ fn site_generates_v1_and_v2_rows_ratios_links_and_plain_annotations() {
     assert!(index.contains("data-server=\"mlx_lm\""));
     assert!(index.contains("data-decode-mode=\"grammar_constrained\""));
     assert!(index.contains("data-decode-mode=\"unconstrained_post_hoc\""));
-    assert!(index.contains("server: MLX LM"));
+    assert!(index.contains(" / MLX LM</span>"));
     assert!(appendix.contains("blob-model"));
-    assert!(index.contains("quant: Q4_K_M"));
-    assert!(index.contains("server: llama.cpp"));
+    assert!(index.contains(">Q4_K_M / llama.cpp</span>"));
     assert!(appendix.contains("sha256-deadbeef"));
     assert!(!appendix.contains("/models/blobs/sha256-deadbeef"));
     assert!(index.contains(">1/2<"));
@@ -567,8 +572,8 @@ fn site_uses_registry_identity_and_excludes_unresolved_rows_from_grouping() {
     assert!(index.contains("<strong>qwen3:14b</strong>"));
     assert!(!index.contains("<strong>filename-derived-label</strong>"));
     assert!(appendix.contains("<dt>Canonical id</dt><dd><code>Qwen/Qwen3-14B</code>"));
-    assert!(index.contains("quant: Q4_K_M"));
-    assert!(index.contains("identity status: declared"));
+    assert!(index.contains(">Q4_K_M / ollama</span>"));
+    assert!(index.contains("title=\"Identity status: declared.\">id: declared</span>"));
     assert!(index.contains("data-cross-model-key=\"Qwen/Qwen3-14B\""));
 
     let unresolved_group = index
@@ -580,7 +585,7 @@ fn site_uses_registry_identity_and_excludes_unresolved_rows_from_grouping() {
     assert!(!index.contains("<strong>invented-filename-identity</strong>"));
     assert!(appendix.contains("<dt>Canonical id</dt><dd><code>not established</code>"));
     assert!(index.contains(
-        "identity status: unresolved (provenance could not be established; excluded from cross-model comparison)"
+        "title=\"Identity status: unresolved. Provenance could not be established; excluded from cross-model comparison.\">id: unresolved</span>"
     ));
 }
 
@@ -745,11 +750,11 @@ fn all_error_category_is_not_measurable() {
     let index = fs::read_to_string(output.join("index.html")).expect("generated index");
     assert!(index.contains("class=\"score not-measurable low-replication\""));
     assert!(index.contains(
-        "aria-label=\"single_call: 0 passed, 0 failed, 13 errors, 0 skipped; n=1, no verdict\""
+        "aria-label=\"single_call: 0 passed, 0 failed, 13 errors, 0 skipped; n=1; no verdict\""
     ));
     assert!(index.contains("class=\"score none-pass low-replication\""));
     assert!(index.contains(
-        "aria-label=\"single_call: 0 passed, 13 failed, 0 errors, 0 skipped; n=1, no verdict\""
+        "aria-label=\"single_call: 0 passed, 13 failed, 0 errors, 0 skipped; n=1; no verdict\""
     ));
     assert!(index.contains("<span class=\"measurement-state\">not measurable</span>"));
     assert!(index.contains("<i class=\"state-key state-error\"></i>execution / server error"));

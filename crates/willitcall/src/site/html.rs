@@ -199,9 +199,17 @@ pub(super) fn render_appendix_page(dataset: &SiteDataset, repo_base: &str) -> St
     })
 }
 
-fn render_reading_legend() -> String {
-    r#"      <div class="reading-key" aria-label="How to read the matrix">
-        <p class="reading-caption"><strong>How to read:</strong> ratios are passed scenarios / scenarios in the category; hatching means n&lt;5, so no verdict is drawn.</p>
+fn render_reading_legend(dataset: &SiteDataset) -> String {
+    let replication_note = if !dataset.rows.is_empty()
+        && (0..dataset.rows.len()).all(|index| dataset.replication_count(index) == 1)
+    {
+        "n=1, no verdict: every published arm is a single run, so no cell carries a verdict; hatching marks this."
+    } else {
+        "Hatching marks cells with fewer than five runs; those cells carry no verdict."
+    };
+    format!(
+        r#"      <div class="reading-key" aria-label="How to read the matrix">
+        <p class="reading-caption"><strong>How to read:</strong> ratios are passed scenarios / scenarios in the category.</p>
         <div class="mark-key" aria-label="Scenario outcome marks">
           <span><i class="state-key state-pass"></i>pass</span>
           <span><i class="state-key state-fail"></i>model / response failure</span>
@@ -209,12 +217,12 @@ fn render_reading_legend() -> String {
           <span><i class="state-key state-skipped"></i>not tested</span>
         </div>
         <div class="method-key">
-          <span><i class="hatch-key"></i>n&lt;5, no verdict</span>
+          <span><i class="hatch-key"></i>{replication_note}</span>
           <span><i class="identity-status verified"></i>identity status</span>
         </div>
       </div>
-"#
-    .to_owned()
+"#,
+    )
 }
 
 pub(super) fn render_table(dataset: &SiteDataset, repo_base: &str) -> String {
@@ -232,7 +240,6 @@ pub(super) fn render_table(dataset: &SiteDataset, repo_base: &str) -> String {
         </label>
       </div>
 {}
-      <p class="matrix-note">Machine-readable observations: <a href="results.json">JSON</a> and <a href="results.csv">CSV</a>. Scenario rasters are on the <a href="outcomes.html">outcomes page</a>; recorded metadata and transcripts are in the <a href="appendix.html">appendix</a>.</p>
       <p id="filter-status" class="filter-status" aria-live="polite">Showing {} stacks.</p>
       <div class="table-scroll">
         <table class="matrix-table">
@@ -240,7 +247,7 @@ pub(super) fn render_table(dataset: &SiteDataset, repo_base: &str) -> String {
             <tr>
               <th scope="col">Model / quant / server</th>
 "#,
-        render_reading_legend(),
+        render_reading_legend(dataset),
         dataset.rows.len()
     )
     .expect("write HTML");
@@ -262,15 +269,27 @@ pub(super) fn render_table(dataset: &SiteDataset, repo_base: &str) -> String {
         let first = &dataset.rows[row_indices[0]];
         let model_label = model_group_label(first);
         let search_text = model_search_text(dataset, &row_indices);
+        let group_class = if row_indices.len() > 1 {
+            "multi-row"
+        } else {
+            "single-row"
+        };
         writeln!(
             html,
-            "          <tbody class=\"model-group result-group\" data-model-key=\"{}\" data-model-search=\"{}\">\n            <tr class=\"model-heading\"><th colspan=\"{}\" scope=\"rowgroup\"><span>Model</span> {}</th></tr>",
+            "          <tbody class=\"model-group result-group {group_class}\" data-model-key=\"{}\" data-model-search=\"{}\">",
             escape_html(&model_key),
             escape_html(&search_text),
-            CATEGORIES.len() + 1,
-            escape_html(&model_label),
         )
         .expect("write model group");
+        if row_indices.len() > 1 {
+            writeln!(
+                html,
+                "            <tr class=\"model-heading\"><th colspan=\"{}\" scope=\"rowgroup\"><span>Model</span> {}</th></tr>",
+                CATEGORIES.len() + 1,
+                escape_html(&model_label),
+            )
+            .expect("write model heading");
+        }
         let spans_decode_strata = model_spans_decode_strata(dataset, &row_indices);
         let mut current_band = None;
         for index in row_indices {
@@ -279,14 +298,7 @@ pub(super) fn render_table(dataset: &SiteDataset, repo_base: &str) -> String {
                 render_decode_boundary(&mut html, row.decode_mode);
                 current_band = Some(row.decode_mode);
             }
-            render_result_row(
-                &mut html,
-                dataset,
-                index,
-                row,
-                repo_base,
-                !spans_decode_strata,
-            );
+            render_result_row(&mut html, dataset, index, row, repo_base);
         }
         html.push_str("          </tbody>\n");
     }
@@ -294,6 +306,7 @@ pub(super) fn render_table(dataset: &SiteDataset, repo_base: &str) -> String {
     html.push_str(
         r#"        </table>
       </div>
+      <p class="matrix-note">Machine-readable observations: <a href="results.json">JSON</a> and <a href="results.csv">CSV</a>. Scenario rasters are on the <a href="outcomes.html">outcomes page</a>; recorded metadata and transcripts are in the <a href="appendix.html">appendix</a>.</p>
     </section>"#,
     );
     html
@@ -320,7 +333,6 @@ fn render_result_row(
     index: usize,
     result: &StackRow,
     repo_base: &str,
-    show_decode_label: bool,
 ) {
     let server = &result.metadata.server.preset_name;
     let server_display = display_server(server);
@@ -330,10 +342,10 @@ fn render_result_row(
         .cross_model_key()
         .map(|key| format!(" data-cross-model-key=\"{}\"", escape_html(key)))
         .unwrap_or_default();
-    let identity_note = if model.identity_status == IdentityStatus::Unresolved {
-        " (provenance could not be established; excluded from cross-model comparison)"
-    } else {
-        ""
+    let identity_title = match model.identity_status {
+        IdentityStatus::Unresolved => "Identity status: unresolved. Provenance could not be established; excluded from cross-model comparison.",
+        IdentityStatus::Declared => "Identity status: declared.",
+        IdentityStatus::Verified => "Identity status: verified.",
     };
     let quant = result
         .metadata
@@ -343,15 +355,14 @@ fn render_result_row(
         .as_ref()
         .map(|quantization| quantization.label.as_str())
         .unwrap_or("not declared");
-    let decode_label = if show_decode_label {
-        let id = decode_mode_id(result.decode_mode);
-        format!("<span><span class=\"decode-badge {id}\">{id}</span></span>\n                ")
-    } else {
-        String::new()
-    };
+    let decode_title = format!(
+        "Decode mode: {}; decode provenance: {}.",
+        decode_mode_label(result.decode_mode),
+        decode_mode_source_label(result.decode_mode_source),
+    );
     write!(
         html,
-        "            <tr class=\"result-row\" data-server=\"{}\" data-identity-status=\"{}\" data-decode-mode=\"{}\" data-decode-source=\"{}\"{}>\n              <th scope=\"row\">\n                <strong>{}</strong>\n                <span>quant: {} - server: {}</span>\n                {decode_label}<span>decode provenance: {}</span>\n                <span class=\"identity-status {}\">identity status: {}{}</span>\n                <a class=\"detail-link\" href=\"appendix.html#stack-detail-{index}\">detail</a>\n              </th>\n",
+        "            <tr class=\"result-row\" data-server=\"{}\" data-identity-status=\"{}\" data-decode-mode=\"{}\" data-decode-source=\"{}\"{}>\n              <th scope=\"row\">\n                <strong>{}</strong>\n                <div class=\"row-meta\"><span>{} / {}</span><span class=\"decode-badge {}\" title=\"{}\">{} ({})</span><span class=\"identity-status {}\" title=\"{}\">id: {}</span><a class=\"detail-link\" href=\"appendix.html#stack-detail-{index}\">detail</a></div>\n              </th>\n",
         escape_html(server),
         identity_status,
         decode_mode_id(result.decode_mode),
@@ -360,10 +371,13 @@ fn render_result_row(
         escape_html(&result.display_name),
         escape_html(quant),
         escape_html(server_display),
-        decode_mode_source_label(result.decode_mode_source),
+        decode_mode_id(result.decode_mode),
+        escape_html(&decode_title),
+        decode_mode_short_label(result.decode_mode),
+        decode_mode_source_short_label(result.decode_mode_source),
         identity_status,
+        escape_html(identity_title),
         identity_status,
-        identity_note
     )
     .expect("write HTML");
 
@@ -475,6 +489,22 @@ fn decode_mode_id(mode: DecodeMode) -> &'static str {
     }
 }
 
+fn decode_mode_label(mode: DecodeMode) -> &'static str {
+    match mode {
+        DecodeMode::GrammarConstrained => "grammar constrained",
+        DecodeMode::UnconstrainedPostHoc => "unconstrained post-hoc",
+        DecodeMode::Unknown => "unknown",
+    }
+}
+
+fn decode_mode_short_label(mode: DecodeMode) -> &'static str {
+    match mode {
+        DecodeMode::GrammarConstrained => "grammar",
+        DecodeMode::UnconstrainedPostHoc => "post-hoc",
+        DecodeMode::Unknown => "unknown",
+    }
+}
+
 fn decode_mode_source_id(source: DecodeModeSource) -> &'static str {
     match source {
         DecodeModeSource::Recorded => "recorded",
@@ -488,6 +518,14 @@ fn decode_mode_source_label(source: DecodeModeSource) -> &'static str {
         DecodeModeSource::Recorded => "recorded by run",
         DecodeModeSource::PresetMapping => "documented preset mapping",
         DecodeModeSource::Unknown => "unknown (no cited mapping)",
+    }
+}
+
+fn decode_mode_source_short_label(source: DecodeModeSource) -> &'static str {
+    match source {
+        DecodeModeSource::Recorded => "run",
+        DecodeModeSource::PresetMapping => "mapping",
+        DecodeModeSource::Unknown => "source unknown",
     }
 }
 
@@ -1147,7 +1185,7 @@ fn render_category_cell(
         "              <td class=\"score {class}{replication_class}\" data-label=\"{}\" aria-label=\"{}: {passed} passed, {failed} failed, {errors} errors, {skipped} skipped; n={replication_count}{}\">",
         category_label(category),
         category,
-        if replication_count < 5 { ", no verdict" } else { "" },
+        if replication_count < 5 { "; no verdict" } else { "" },
     )
     .expect("write HTML");
     if let Some(evidence_path) = first_evidence {
@@ -1165,13 +1203,6 @@ fn render_category_cell(
     }
     if not_measurable {
         html.push_str("<span class=\"measurement-state\">not measurable</span>");
-    }
-    if replication_count < 5 {
-        write!(
-            html,
-            "<span class=\"replication-note\">n={replication_count}, no verdict</span>"
-        )
-        .expect("write replication note");
     }
     html.push_str("</td>\n");
 }
@@ -1607,8 +1638,9 @@ footer { padding: 1.5rem 0 3rem; color: var(--muted); border-top: 1px solid var(
 body { background: var(--paper); color: var(--ink); }
 a { color: inherit; text-decoration-thickness: 1px; }
 a:focus-visible, input:focus-visible, summary:focus-visible {
-  outline: 2px solid currentColor;
-  outline-offset: 3px;
+  outline: 2px solid var(--paper);
+  outline-offset: 2px;
+  box-shadow: 0 0 0 4px var(--ink);
 }
 code, .wordmark, .ratio, input { font-family: "IBM Plex Mono", "SFMono-Regular", Consolas, monospace; }
 
@@ -1637,10 +1669,10 @@ h1 { font-size: clamp(2rem, 5vw, 3.65rem); font-weight: 500; }
 h2 { font-size: var(--type-heading-1); font-weight: var(--type-heading-weight); letter-spacing: 0; }
 h3 { font-size: var(--type-heading-2); font-weight: var(--type-heading-weight); }
 
-.reading-key { margin-top: 1.5rem; padding: 0.9rem 0; border-block: 1px solid var(--line); }
-.reading-caption { margin: 0 0 0.7rem; font-size: 0.75rem; }
+.reading-key { margin-top: 0.7rem; padding: 0.6rem 0; border-block: 1px solid var(--line); }
+.reading-caption { margin: 0 0 0.5rem; font-size: 0.75rem; }
 .mark-key, .method-key { display: flex; flex-wrap: wrap; gap: 0.55rem 1.15rem; }
-.method-key { margin-top: 0.65rem; padding-top: 0.65rem; border-top: 1px dotted var(--line); }
+.method-key { margin-top: 0.5rem; padding-top: 0.5rem; border-top: 1px dotted var(--line); }
 .mark-key span, .method-key > span { display: inline-flex; align-items: center; gap: 0.4rem; font-size: 0.72rem; }
 .state-key, .mini-mark { position: relative; display: inline-block; width: 0.78rem; height: 0.78rem; flex: none; }
 .state-key.state-pass, .mini-mark.pass { background: var(--design-pass); }
@@ -1689,32 +1721,33 @@ input[type="search"] {
   font-size: 0.82rem;
 }
 .matrix-note, .filter-status { max-width: var(--measure-prose); color: var(--muted); font-size: 0.75rem; }
-.matrix-note { margin: 0.75rem 0 0; }
-.filter-status { margin: 0.25rem 0 0.8rem; }
+.matrix-note { margin: 0.55rem 0 0; }
+.filter-status { margin: 0.2rem 0 0.45rem; }
 .table-scroll { border: 1px solid var(--ink); }
 .matrix-table { min-width: 68rem; font-size: var(--type-table); }
-.matrix-table th, .matrix-table td { padding: 0.58rem; border-color: var(--line); }
+.matrix-table th, .matrix-table td { padding: 0.44rem 0.5rem; vertical-align: middle; border-color: var(--line); }
 .matrix-table thead th { color: var(--paper); background: var(--ink); font-size: 0.7rem; font-weight: 500; }
 .matrix-table thead th:first-child, .result-row > th { position: sticky; left: 0; z-index: 2; }
 .matrix-table thead th:first-child { z-index: 4; }
-.model-heading th { padding: 0.7rem 0.6rem 0.35rem; color: var(--ink); background: var(--paper); border-top: 2px solid var(--ink); border-bottom: 0; font: 500 0.9rem/1.3 "IBM Plex Mono", "SFMono-Regular", Consolas, monospace; }
+.model-heading th { padding: 0.55rem 0.5rem 0.3rem; color: var(--ink); background: var(--paper); border-top: 2px solid var(--ink); border-bottom: 0; font: 500 0.9rem/1.3 "IBM Plex Mono", "SFMono-Regular", Consolas, monospace; }
 .model-heading th > span { margin-right: 0.6rem; color: var(--muted); font: 500 0.62rem/1 "IBM Plex Sans", sans-serif; letter-spacing: 0.08em; text-transform: uppercase; }
 .decode-band th { padding: 0.35rem 0.6rem; color: var(--muted); background: var(--neutral-bg); border-block: 1px solid var(--ink); font-size: 0.68rem; font-weight: 400; }
 .decode-band .decode-badge { margin-right: 0.7rem; }
-.result-row > th { width: 18rem; background: var(--paper); }
-.result-row > th strong { margin: 0; font: 500 0.79rem/1.3 "IBM Plex Mono", "SFMono-Regular", Consolas, monospace; }
-.result-row > th span { color: var(--muted); font-size: 0.67rem; font-weight: 400; }
-.result-row > th .decode-badge { display: inline-block; margin: 0.2rem 0; color: var(--ink); }
+.result-row > th { width: 22rem; background: var(--paper); }
+.result-row > th strong { margin: 0; overflow: hidden; font: 500 0.79rem/1.3 "IBM Plex Mono", "SFMono-Regular", Consolas, monospace; text-overflow: ellipsis; white-space: nowrap; }
+.row-meta { display: flex; align-items: center; gap: 0.45rem; margin-top: 0.18rem; white-space: nowrap; }
+.result-row > th .row-meta > span { display: inline-block; color: var(--muted); font-size: 0.63rem; font-weight: 400; }
+.result-row > th .decode-badge { display: inline-block; margin: 0; color: var(--ink); font-size: 0.61rem; }
 .result-row > th .decode-badge.grammar_constrained { color: var(--paper); }
-.result-row > th .identity-status { margin-top: 0.15rem; padding-left: 0.35rem; }
-.detail-link { display: inline-block; margin-top: 0.25rem; font-size: 0.68rem; font-weight: 500; }
+.result-row > th .identity-status { margin: 0; padding-left: 0.3rem; }
+.detail-link { display: inline-block; margin: 0; font-size: 0.63rem; font-weight: 500; }
 .score { position: relative; min-width: 7.5rem; text-align: center; }
 .score.low-replication {
   background-image: repeating-linear-gradient(135deg, transparent 0 5px, rgb(28 28 28 / 12%) 5px 6px);
   background-blend-mode: multiply;
 }
 .ratio { font-size: 0.9rem; font-weight: 500; }
-.replication-note, .measurement-state, .legacy-evidence { display: block; margin-top: 0.2rem; font-size: 0.58rem; line-height: 1.2; }
+.measurement-state, .legacy-evidence { display: block; margin-top: 0.2rem; font-size: 0.58rem; line-height: 1.2; }
 
 .analysis { border-top: 2px solid var(--ink); padding-top: 1rem; }
 .analysis-primary { margin-top: -1.5rem; }
@@ -1794,11 +1827,14 @@ pre { color: var(--paper); background: var(--ink); border-left: 0; }
   .table-scroll { overflow: visible; border: 0; }
   .matrix-table, .matrix-table tbody, .matrix-table tr { display: block; min-width: 0; width: 100%; }
   .matrix-table thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
-  .model-group { margin-bottom: 1.5rem; border: 1px solid var(--ink); }
+  .model-group { margin-bottom: 1rem; border: 1px solid var(--ink); }
+  .model-group.single-row { margin-bottom: 0; border: 0; }
   .model-heading th, .decode-band th { display: block; width: 100%; border-inline: 0; }
   .result-row { display: grid !important; grid-template-columns: repeat(3, minmax(0, 1fr)); border-bottom: 1px solid var(--ink); }
   .result-row:last-child { border-bottom: 0; }
   .result-row > th { position: static; grid-column: 1 / -1; width: auto; border: 0; border-bottom: 1px solid var(--line); }
+  .row-meta { gap: 0.3rem; }
+  .result-row > th .row-meta > span, .row-meta .detail-link { font-size: 0.58rem; }
   .result-row > td { display: block; min-width: 0; padding: 0.5rem 0.25rem; border-width: 0 1px 1px 0; }
   .score::before { content: attr(data-label); display: block; min-height: 2.2em; margin-bottom: 0.25rem; color: currentColor; font-size: 0.57rem; line-height: 1.1; }
   .ratio { font-size: 0.78rem; }
