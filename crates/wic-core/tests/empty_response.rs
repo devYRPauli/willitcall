@@ -5,7 +5,7 @@ use std::time::Duration;
 
 use serde_json::{json, Value};
 use support::{MockServer, ScriptedResponse};
-use wic_core::runner::{run_scenarios, RunConfig};
+use wic_core::runner::{run_measurement, run_scenarios, RunConfig};
 use wic_core::{load_embedded_scenarios, Scenario};
 
 fn completion(content: Value) -> String {
@@ -58,7 +58,7 @@ async fn runner_classifies_only_empty_responses() {
             0.0,
         );
 
-        let result = run_scenarios(
+        let result = run_measurement(
             &config,
             &[single_weather()],
             &directory.path().join("result.json"),
@@ -70,6 +70,11 @@ async fn runner_classifies_only_empty_responses() {
         assert_eq!(outcome.status, wic_core::result::Status::Fail);
         assert_eq!(outcome.failure_class.as_deref(), expected_class);
         assert!(outcome.cause.is_none());
+        let failure = outcome.failure.as_ref().expect("structured failure");
+        assert_eq!(failure.stage, "scoring");
+        assert_eq!(failure.code, expected_class.unwrap_or("score_mismatch"));
+        assert_eq!(failure.http_status, None);
+        assert_eq!(failure.failed_turn_index, Some(1));
     }
 }
 

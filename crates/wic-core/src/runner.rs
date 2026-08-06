@@ -7,13 +7,18 @@ use std::time::{Duration, SystemTime, UNIX_EPOCH};
 
 use reqwest::header::HeaderMap;
 use ring::digest::{digest, SHA256};
+use ring::rand::{SecureRandom, SystemRandom};
 use serde_json::{json, Map, Value};
 
 use crate::client::{AssistantResponse, CompletionResult, EndpointClient, ToolCall};
+use crate::corpus::{corpus_identity, load_frozen_v1_catalog};
+use crate::registry::ModelRegistry;
 use crate::result::{
-    redact_transcript_turn, write_transcript_atomic, CapturedTurn, EnvironmentMetadata,
-    RunMetadata, RunResult, SamplingParams, ScenarioOutcome, ServerMetadata, Status, Totals,
-    Transcript, RESULT_SCHEMA_VERSION,
+    arm_fingerprint, redact_transcript_turn, write_transcript_atomic, CapturedTurn,
+    ChatTemplateMetadata, CorpusMetadata, DecodeMode, EnvironmentMetadata, EnvironmentMetadataV3,
+    Measurement, MeasurementMetadata, MeasurementScenarioOutcome, MeasurementServerMetadata,
+    ReplicationMetadata, RunMetadata, RunResult, SamplingParams, ScenarioFailure, ScenarioOutcome,
+    ServerMetadata, Status, Totals, Transcript, RESULT_SCHEMA_VERSION,
 };
 use crate::score::score_response;
 use crate::{Message, MessageRole, Scenario};
@@ -26,7 +31,13 @@ pub struct RunConfig {
     pub sampling: SamplingParams,
     pub server: ServerConfig,
     pub environment: EnvironmentMetadata,
+    pub measurement_environment: EnvironmentMetadataV3,
     pub declared_quant: Option<String>,
+    pub model_registry: ModelRegistry,
+    pub decode_mode: DecodeMode,
+    pub chat_template: Option<ChatTemplateMetadata>,
+    pub launch_config_sha256: Option<String>,
+    pub replication: Option<ReplicationMetadata>,
     pub request_headers: HeaderMap,
 }
 
@@ -51,6 +62,8 @@ impl RunConfig {
         seed: u64,
         temperature: f64,
     ) -> Self {
+        let environment = detect_environment();
+        let measurement_environment = detect_measurement_environment(&environment);
         Self {
             endpoint,
             model,
@@ -66,20 +79,32 @@ impl RunConfig {
                 quirk_flags: Vec::new(),
                 version_probe: None,
             },
-            environment: detect_environment(),
+            environment,
+            measurement_environment,
             declared_quant: None,
+            model_registry: ModelRegistry {
+                schema_version: 1,
+                entries: Vec::new(),
+            },
+            decode_mode: DecodeMode::Unknown,
+            chat_template: None,
+            launch_config_sha256: None,
+            replication: None,
             request_headers: HeaderMap::new(),
         }
     }
 
     pub fn with_server(mut self, server: ServerConfig) -> Self {
+        self.decode_mode = decode_mode(&server.quirk_flags);
         self.server = server;
         self
     }
 
     pub fn with_host_hardware_class(mut self, host_hardware_class: Option<String>) -> Self {
         if let Some(host_hardware_class) = host_hardware_class {
-            self.environment.host_hardware_class = host_hardware_class;
+            self.environment.host_hardware_class = host_hardware_class.clone();
+            self.measurement_environment.display_label =
+                format!("{host_hardware_class}; {}", self.environment.host_os);
         }
         self
     }
@@ -88,12 +113,110 @@ impl RunConfig {
         self.declared_quant = declared_quant;
         self
     }
+
+    pub fn with_model_registry(mut self, model_registry: ModelRegistry) -> Self {
+        self.model_registry = model_registry;
+        self
+    }
+
+    pub fn with_decode_mode(mut self, decode_mode: DecodeMode) -> Self {
+        self.decode_mode = decode_mode;
+        self
+    }
+
+    pub fn with_chat_template(mut self, chat_template: Option<ChatTemplateMetadata>) -> Self {
+        self.chat_template = chat_template;
+        self
+    }
+
+    pub fn with_launch_config_sha256(mut self, launch_config_sha256: Option<String>) -> Self {
+        self.launch_config_sha256 = launch_config_sha256;
+        self
+    }
+
+    pub fn with_replication(mut self, replication: Option<ReplicationMetadata>) -> Self {
+        self.replication = replication;
+        self
+    }
 }
 
 fn detect_environment() -> EnvironmentMetadata {
     EnvironmentMetadata {
         host_hardware_class: detect_host_hardware_class(),
         host_os: detect_host_os(),
+    }
+}
+
+fn detect_measurement_environment(environment: &EnvironmentMetadata) -> EnvironmentMetadataV3 {
+    let (os_name, os_version) = detect_os_name_and_version();
+    EnvironmentMetadataV3 {
+        display_label: format!(
+            "{}; {}",
+            environment.host_hardware_class, environment.host_os
+        ),
+        os_name,
+        os_version,
+        architecture: Some(std::env::consts::ARCH.to_owned()),
+        accelerator: detect_accelerator(),
+        memory_bytes: detect_memory_bytes(),
+    }
+}
+
+fn detect_os_name_and_version() -> (Option<String>, Option<String>) {
+    #[cfg(target_os = "macos")]
+    {
+        (
+            command_value("sw_vers", &["-productName"]),
+            command_value("sw_vers", &["-productVersion"]),
+        )
+    }
+
+    #[cfg(not(target_os = "macos"))]
+    {
+        (
+            command_value("uname", &["-s"]),
+            command_value("uname", &["-r"]),
+        )
+    }
+}
+
+fn detect_accelerator() -> Option<String> {
+    #[cfg(target_os = "macos")]
+    {
+        command_value("sysctl", &["-n", "machdep.cpu.brand_string"])
+    }
+
+    #[cfg(not(target_os = "macos"))]
+    {
+        None
+    }
+}
+
+fn detect_memory_bytes() -> Option<u64> {
+    #[cfg(target_os = "macos")]
+    {
+        command_value("sysctl", &["-n", "hw.memsize"]).and_then(|value| value.parse().ok())
+    }
+
+    #[cfg(not(target_os = "macos"))]
+    {
+        None
+    }
+}
+
+fn decode_mode(quirk_flags: &[String]) -> DecodeMode {
+    if quirk_flags
+        .iter()
+        .any(|flag| flag == "grammar_constrained_decoding")
+    {
+        DecodeMode::GrammarConstrained
+    } else if quirk_flags
+        .iter()
+        .any(|flag| flag == "unconstrained_post_hoc_parse")
+    {
+        DecodeMode::UnconstrainedPostHoc
+    } else {
+        DecodeMode::Unknown
     }
 }
 
@@ -264,6 +387,50 @@ pub async fn run_scenarios(
     scenarios: &[Scenario],
     result_path: &Path,
 ) -> io::Result<RunResult> {
+    let measurement = run_measurement(config, scenarios, result_path).await?;
+    Ok(RunResult {
+        schema_version: RESULT_SCHEMA_VERSION,
+        metadata: RunMetadata {
+            run_id: measurement.metadata.run_id,
+            timestamp: measurement.metadata.timestamp,
+            willitcall_version: measurement.metadata.willitcall_version,
+            endpoint: measurement.metadata.endpoint,
+            model_id: config.model.clone(),
+            declared_quant: config.declared_quant.clone(),
+            server: ServerMetadata {
+                preset_name: measurement.metadata.server.preset_name,
+                reported_version: measurement.metadata.server.reported_version,
+                quirk_flags: measurement.metadata.server.quirk_flags,
+            },
+            environment: Some(config.environment.clone()),
+            sampling: measurement.metadata.sampling,
+            preflight_override: measurement.metadata.preflight_override,
+            preflight_ignored_ports: measurement.metadata.preflight_ignored_ports,
+        },
+        scenarios: measurement
+            .scenarios
+            .into_iter()
+            .map(|outcome| ScenarioOutcome {
+                id: outcome.id,
+                category: outcome.category,
+                status: outcome.status,
+                failure_reason: outcome.failure_reason,
+                failure_class: outcome.failure_class,
+                cause: outcome.cause,
+                evidence_hash: outcome.evidence_hash,
+                evidence_path: outcome.evidence_path,
+                retried: outcome.retried,
+            })
+            .collect(),
+        totals: measurement.totals,
+    })
+}
+
+pub async fn run_measurement(
+    config: &RunConfig,
+    scenarios: &[Scenario],
+    result_path: &Path,
+) -> io::Result<Measurement> {
     let endpoint_client = client(config);
     let reported_version = match config.server.version_probe {
         Some(probe) => {
@@ -276,7 +443,7 @@ pub async fn run_scenarios(
     let mut ordered = scenarios.iter().collect::<Vec<_>>();
     ordered.sort_by(|left, right| left.id.cmp(&right.id));
     let timestamp = utc_timestamp();
-    let run_id = run_id(&timestamp, &config.endpoint, &config.model);
+    let run_id = run_id(&timestamp, &config.endpoint, &config.model)?;
     let result_parent = match result_path.parent() {
         Some(parent) if !parent.as_os_str().is_empty() => parent,
         _ => Path::new("."),
@@ -287,22 +454,47 @@ pub async fn run_scenarios(
     }
 
     let totals = totals(&outcomes);
-    Ok(RunResult {
-        schema_version: RESULT_SCHEMA_VERSION,
-        metadata: RunMetadata {
+    let catalog = load_frozen_v1_catalog().map_err(|error| io::Error::other(error.to_string()))?;
+    let scenario_count = u32::try_from(scenarios.len())
+        .map_err(|_| io::Error::other("scenario count does not fit in u32"))?;
+    let corpus = CorpusMetadata {
+        id: catalog.id,
+        revision: catalog.revision,
+        sha256: corpus_identity(scenarios),
+        scenario_count,
+        scoring_version: "v1".to_owned(),
+    };
+    let model = config.model_registry.resolve(&config.model);
+    let server = MeasurementServerMetadata {
+        preset_name: config.server.preset_name.clone(),
+        reported_version,
+        quirk_flags: config.server.quirk_flags.clone(),
+        decode_mode: config.decode_mode,
+        chat_template: config.chat_template.clone(),
+        launch_config_sha256: config.launch_config_sha256.clone(),
+    };
+    let environment = Some(config.measurement_environment.clone());
+    let fingerprint = arm_fingerprint(
+        &corpus,
+        &model,
+        &server,
+        environment.as_ref(),
+        &config.sampling,
+    );
+    Ok(Measurement {
+        schema_version: 3,
+        metadata: MeasurementMetadata {
             run_id,
             timestamp,
             willitcall_version: env!("CARGO_PKG_VERSION").to_owned(),
             endpoint: config.endpoint.clone(),
-            model_id: config.model.clone(),
-            declared_quant: config.declared_quant.clone(),
-            server: ServerMetadata {
-                preset_name: config.server.preset_name.clone(),
-                reported_version,
-                quirk_flags: config.server.quirk_flags.clone(),
-            },
-            environment: Some(config.environment.clone()),
+            model,
+            corpus: Some(corpus),
+            server,
+            environment,
             sampling: config.sampling.clone(),
+            replication: config.replication.clone(),
+            arm_fingerprint: fingerprint,
             preflight_override: None,
             preflight_ignored_ports: None,
         },
@@ -326,7 +518,7 @@ async fn run_scenario(
     scenario: &Scenario,
     run_id: &str,
     result_parent: &Path,
-) -> io::Result<ScenarioOutcome> {
+) -> io::Result<MeasurementScenarioOutcome> {
     let mut messages = Vec::new();
     let mut previous_calls = Vec::new();
     let mut evidence = Vec::new();
@@ -337,10 +529,12 @@ async fn run_scenario(
             match request_message(message, &previous_calls) {
                 Ok(message) => messages.push(message),
                 Err(reason) => {
+                    let failure =
+                        scenario_failure("request", "invalid_turn_message", None, turn_index);
                     return outcome(
                         scenario,
                         Status::Fail,
-                        Some(turn_reason(scenario, turn_index, reason)),
+                        Some((turn_reason(scenario, turn_index, reason), failure)),
                         &evidence,
                         retried,
                         run_id,
@@ -368,12 +562,19 @@ async fn run_scenario(
                 turns,
                 retried: completion_retried,
             } => {
+                let http_status = last_http_status(&turns);
                 evidence.extend(turns);
                 retried |= completion_retried;
+                let failure = scenario_failure(
+                    "response_parse",
+                    "invalid_response",
+                    http_status,
+                    turn_index,
+                );
                 return outcome(
                     scenario,
                     Status::Fail,
-                    Some(turn_reason(scenario, turn_index, reason)),
+                    Some((turn_reason(scenario, turn_index, reason), failure)),
                     &evidence,
                     retried,
                     run_id,
@@ -386,12 +587,23 @@ async fn run_scenario(
                 turns,
                 retried: completion_retried,
             } => {
+                let http_status = failed_http_status(&turns);
                 evidence.extend(turns);
                 retried |= completion_retried;
+                let failure = scenario_failure(
+                    "request",
+                    if http_status.is_some() {
+                        "http_error"
+                    } else {
+                        "request_error"
+                    },
+                    http_status,
+                    turn_index,
+                );
                 return outcome(
                     scenario,
                     Status::Error,
-                    Some(turn_reason(scenario, turn_index, reason)),
+                    Some((turn_reason(scenario, turn_index, reason), failure)),
                     &evidence,
                     retried,
                     run_id,
@@ -407,16 +619,27 @@ async fn run_scenario(
             response.content.as_deref(),
             &response.tool_calls,
         ) {
+            let reason = failure.reason;
+            let failure_class = failure.failure_class;
+            let structured_failure = scenario_failure(
+                "scoring",
+                failure_class.as_deref().unwrap_or("score_mismatch"),
+                None,
+                turn_index,
+            );
             let mut result = outcome(
                 scenario,
                 Status::Fail,
-                Some(turn_reason(scenario, turn_index, failure.reason)),
+                Some((
+                    turn_reason(scenario, turn_index, reason),
+                    structured_failure,
+                )),
                 &evidence,
                 retried,
                 run_id,
                 result_parent,
             )?;
-            result.failure_class = failure.failure_class;
+            result.failure_class = failure_class;
             return Ok(result);
         }
 
@@ -489,6 +712,31 @@ fn assistant_message(response: &AssistantResponse) -> Value {
     })
 }
 
+fn last_http_status(turns: &[CapturedTurn]) -> Option<u16> {
+    turns
+        .last()
+        .and_then(|turn| turn.response.as_ref())
+        .map(|response| response.status)
+}
+
+fn failed_http_status(turns: &[CapturedTurn]) -> Option<u16> {
+    last_http_status(turns).filter(|status| !(200..300).contains(status))
+}
+
+fn scenario_failure(
+    stage: &str,
+    code: &str,
+    http_status: Option<u16>,
+    turn_index: usize,
+) -> ScenarioFailure {
+    ScenarioFailure {
+        stage: stage.to_owned(),
+        code: code.to_owned(),
+        http_status,
+        failed_turn_index: u32::try_from(turn_index + 1).ok(),
+    }
+}
+
 fn turn_reason(scenario: &Scenario, turn_index: usize, reason: String) -> String {
     if scenario.turns.len() > 1 {
         format!("turn {}: {reason}", turn_index + 1)
@@ -500,12 +748,16 @@ fn turn_reason(scenario: &Scenario, turn_index: usize, reason: String) -> String
 fn outcome(
     scenario: &Scenario,
     status: Status,
-    failure_reason: Option<String>,
+    failure: Option<(String, ScenarioFailure)>,
     captured_turns: &[CapturedTurn],
     retried: bool,
     run_id: &str,
     result_parent: &Path,
-) -> io::Result<ScenarioOutcome> {
+) -> io::Result<MeasurementScenarioOutcome> {
+    let (failure_reason, failure) = match failure {
+        Some((reason, failure)) => (Some(reason), Some(failure)),
+        None => (None, None),
+    };
     let (evidence_hash, evidence_path) = if captured_turns.is_empty() {
         (None, None)
     } else {
@@ -526,11 +778,12 @@ fn outcome(
         let bytes = write_transcript_atomic(&path, &transcript)?;
         (Some(evidence_hash(&bytes)), Some(relative_path))
     };
-    Ok(ScenarioOutcome {
+    Ok(MeasurementScenarioOutcome {
         id: scenario.id.clone(),
         category: scenario.category,
         status,
         failure_reason,
+        failure,
         failure_class: None,
         cause: None,
         evidence_hash,
@@ -539,7 +792,7 @@ fn outcome(
     })
 }
 
-fn totals(outcomes: &[ScenarioOutcome]) -> Totals {
+fn totals(outcomes: &[MeasurementScenarioOutcome]) -> Totals {
     let mut totals = Totals {
         total: outcomes.len() as u32,
         passed: 0,
@@ -563,11 +816,15 @@ fn evidence_hash(transcript_bytes: &[u8]) -> String {
     format!("sha256:{}", hex(hash.as_ref()))
 }
 
-fn run_id(timestamp: &str, endpoint: &str, model_id: &str) -> String {
+fn run_id(timestamp: &str, endpoint: &str, model_id: &str) -> io::Result<String> {
     let compact_timestamp = timestamp.replace(['-', ':'], "");
-    let source = format!("{timestamp}\n{endpoint}\n{model_id}");
+    let mut nonce = [0_u8; 16];
+    SystemRandom::new()
+        .fill(&mut nonce)
+        .map_err(|_| io::Error::other("failed to generate random run id nonce"))?;
+    let source = format!("{timestamp}\n{endpoint}\n{model_id}\n{}", hex(&nonce));
     let hash = digest(&SHA256, source.as_bytes());
-    format!("{compact_timestamp}-{}", &hex(hash.as_ref())[..8])
+    Ok(format!("{compact_timestamp}-{}", &hex(hash.as_ref())[..32]))
 }
 
 fn hex(bytes: &[u8]) -> String {
@@ -659,6 +916,11 @@ mod tests {
             "Fixture workstation, 32GB"
         );
         assert!(!config.environment.host_os.is_empty());
+        assert!(config
+            .measurement_environment
+            .display_label
+            .starts_with("Fixture workstation, 32GB; "));
+        assert!(config.measurement_environment.architecture.is_some());
     }
 
     #[test]
@@ -859,15 +1121,31 @@ mod tests {
         task.abort();
     }
 
-    #[test]
-    fn run_id_uses_compact_timestamp_and_metadata_hash_prefix() {
-        assert_eq!(
-            super::run_id(
-                "2026-07-19T20:45:00Z",
-                "http://localhost:11434/v1",
-                "qwen2.5:7b-instruct",
-            ),
-            "20260719T204500Z-beda7dcb"
+    #[tokio::test]
+    async fn same_second_runs_have_distinct_ids() {
+        let directory = tempfile::tempdir().expect("temp directory");
+        let config = super::RunConfig::new(
+            "http://127.0.0.1:65535/v1".to_owned(),
+            "fixture-model".to_owned(),
+            std::time::Duration::from_secs(1),
+            42,
+            0.0,
         );
+
+        for _ in 0..5 {
+            let first = super::run_measurement(&config, &[], &directory.path().join("first.json"))
+                .await
+                .expect("construct first run");
+            let second =
+                super::run_measurement(&config, &[], &directory.path().join("second.json"))
+                    .await
+                    .expect("construct second run");
+            if first.metadata.timestamp == second.metadata.timestamp {
+                assert_ne!(first.metadata.run_id, second.metadata.run_id);
+                return;
+            }
+        }
+
+        panic!("could not construct two runs within the same second");
     }
 }
