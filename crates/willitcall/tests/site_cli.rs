@@ -190,6 +190,7 @@ fn analysis_views_render_the_published_observation_contract() {
         fs::read_to_string(output.join("results.json")).expect("generated JSON data");
     let results_csv = fs::read_to_string(output.join("results.csv")).expect("generated CSV data");
     assert_eq!(index.matches("class=\"result-row\"").count(), 32);
+    assert_eq!(index.matches("(unverified artifact)</strong>").count(), 4);
     assert_eq!(appendix.matches("class=\"stack-detail\"").count(), 32);
     assert_eq!(index.matches("<h2").count(), 3);
     assert!(index.len() < 150_000, "index is {} bytes", index.len());
@@ -264,10 +265,10 @@ fn analysis_views_render_the_published_observation_contract() {
     assert!(!svgs[0].contains("no-verdict-overlay"));
 
     assert!(outcomes.contains(
-        "multi_turn passes 37/224 (17%), and 22 of 32 rows pass none of the multi_turn scenarios"
+        "In these published observations, multi_turn passes 37/224 (17%). Of 32 rows, 22 pass none of the multi_turn scenarios."
     ));
     assert!(outcomes.contains(
-        "The repeated 7-pass signature is shared by 9 stacks, including the granite observations; it contains the same 5 negative_trap and 2 tool_choice_modes passes in every row."
+        "9 stacks share the repeated 7-pass signature. The stacks include the granite observations. Every row has the same 5 negative_trap passes and 2 tool_choice_modes passes."
     ));
     assert_eq!(
         figure_pages
@@ -441,10 +442,12 @@ fn site_generates_v1_and_v2_rows_ratios_links_and_plain_annotations() {
     assert!(appendix.contains("empty response"));
     assert!(appendix.contains("<span class=\"annotation\">unparsed tool call</span>"));
     assert!(!appendix.contains("class=\"badge"));
-    assert!(index.contains("A cell measures the whole stack"));
+    assert!(index.contains("Each cell measures one full stack"));
     assert!(index.contains("GBNF grammar"));
-    assert!(index.contains("Each published cell is one run."));
-    assert!(index.contains("replicated across at least five runs per arm"));
+    assert!(index.contains("Each published cell represents one run."));
+    assert!(
+        index.contains("The case studies draw a verdict only after at least five runs per arm.")
+    );
     assert!(index.contains("90 runs across 18 quantization arms"));
     assert!(index.contains("40 runs across 8 arms for the peg-native anomaly"));
     assert!(index.contains("Meta-Llama-3.1-8B-Instruct"));
@@ -467,8 +470,8 @@ fn site_generates_v1_and_v2_rows_ratios_links_and_plain_annotations() {
     assert!(submit.contains("cargo run -p willitcall -- run"));
     assert!(submit.contains("--server ollama"));
     assert!(submit.contains("--server llamacpp"));
-    assert!(submit.contains("preflight clean (no contention override)"));
-    assert!(submit.contains("empty responses cross-checked on a second server"));
+    assert!(submit.contains("Confirm that preflight is clean and has no contention override."));
+    assert!(submit.contains("Cross-check empty responses on a second server"));
     assert!(submit.contains("CONTRIBUTING.md"));
 }
 
@@ -581,7 +584,7 @@ fn site_uses_registry_identity_and_excludes_unresolved_rows_from_grouping() {
         .find(|line| line.contains("data-identity-status=\"unresolved\""))
         .expect("unresolved result group");
     assert!(!unresolved_group.contains("data-cross-model-key"));
-    assert!(index.contains("<strong>gemma3:4b</strong>"));
+    assert!(index.contains("<strong>gemma3:4b (unverified artifact)</strong>"));
     assert!(!index.contains("<strong>invented-filename-identity</strong>"));
     assert!(appendix.contains("<dt>Canonical id</dt><dd><code>not established</code>"));
     assert!(index.contains(
@@ -656,8 +659,8 @@ fn site_uses_one_global_environment_statement_when_uniform() {
     let index = fs::read_to_string(output.join("index.html")).expect("generated index");
     let appendix =
         fs::read_to_string(output.join("appendix.html")).expect("generated appendix page");
-    assert_eq!(index.matches("Measurement environment:").count(), 1);
-    assert!(index.contains("Measurement environment: Apple M4 Max, 64GB; macOS 15.5."));
+    assert_eq!(index.matches("All measurements used").count(), 1);
+    assert!(index.contains("All measurements used Apple M4 Max, 64GB; macOS 15.5."));
     assert_eq!(appendix.matches("<dt>Host hardware</dt>").count(), 2);
     assert_eq!(appendix.matches("<dt>Host OS</dt>").count(), 2);
 }

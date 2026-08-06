@@ -14,7 +14,7 @@ const ROW_STEP: u32 = 16;
 
 pub(super) fn render_outcomes(dataset: &SiteDataset) -> String {
     let mut figures = String::from(
-        "    <section class=\"analysis analysis-primary\" aria-labelledby=\"primary-analysis-title\">\n      <h2 id=\"primary-analysis-title\">Scenario evidence</h2>\n      <p>The complete raster shows all 50 scenarios; the focused raster isolates the seven multi-turn scenarios; the signature inventory groups only identical 50-outcome vectors. Figure captions link to the complete text alternative in JSON and CSV.</p>\n",
+        "    <section class=\"analysis analysis-primary\" aria-labelledby=\"primary-analysis-title\">\n      <h2 id=\"primary-analysis-title\">Scenario evidence</h2>\n      <p>The complete raster shows all 50 scenarios. The focused raster shows the seven multi-turn scenarios. The signature inventory groups identical 50-outcome vectors. Figure captions link to the complete text alternative in JSON and CSV.</p>\n",
     );
     figures.push_str(&render_scenario_raster(dataset));
     figures.push_str(&render_multi_turn_raster(dataset));
@@ -81,14 +81,14 @@ fn render_scenario_raster(dataset: &SiteDataset) -> String {
     }
     let marks = borrow_marks(&prepared);
     let texts = borrow_texts(&texts);
-    let caption = "Rows are published stack runs and columns are scenario ids grouped by capability. The n=1 hatch is intentionally omitted because every raster row is a single run, so hatching every cell would encode no difference.";
+    let caption = "Rows show published stack runs. Columns show scenario ids grouped by capability. We omit the n=1 hatch because every raster row is a single run. The hatch would mark every cell and add no distinction.";
     let mut figure = html::render_figure(Figure::StatusRaster {
         accessibility: FigureAccessibility {
             number: 1,
             title: "Scenario-status raster",
             description: "Four-state outcomes for every published stack and scenario. Cell titles contain only the scenario id and outcome; full text is linked in JSON and CSV.",
             caption,
-            does_not_show: "A leaderboard, an overall score, or how a stack would behave across repeated runs.",
+            does_not_show: "This figure does not rank stacks or assign an overall score. It does not predict how a stack will behave across repeated runs.",
         },
         width,
         height,
@@ -213,8 +213,8 @@ fn render_multi_turn_raster(dataset: &SiteDataset) -> String {
         (passed * 100 + total / 2) / total
     };
     let caption = format!(
-        "Across these published observations, multi_turn passes {passed}/{total} ({percentage}%), and {zero_pass_rows} of {} rows pass none of the multi_turn scenarios.",
-        row_indices.len()
+        "In these published observations, multi_turn passes {passed}/{total} ({percentage}%). Of {} rows, {zero_pass_rows} pass none of the multi_turn scenarios.",
+        row_indices.len(),
     );
     let marks = borrow_marks(&prepared);
     let texts = borrow_texts(&texts);
@@ -224,7 +224,7 @@ fn render_multi_turn_raster(dataset: &SiteDataset) -> String {
             title: "Multi-turn raster",
             description: "Four-state outcomes for the multi_turn scenarios across every published stack run.",
             caption: &caption,
-            does_not_show: "Why a turn failed, an isolated model or server effect, or repeated-run reliability.",
+            does_not_show: "This figure does not explain why a turn failed. It does not isolate model and server effects or measure reliability across repeated runs.",
         },
         width,
         height,
@@ -332,8 +332,8 @@ fn render_signature_inventory(dataset: &SiteDataset) -> String {
     let (axis_texts, rules) = column_axes(&columns, left, top, height);
     owned_texts.extend(axis_texts);
     let caption = repeated_seven_signature.map_or_else(
-        || "Each row is one distinct exact status vector; the names at right are the stack observations sharing it.".to_owned(),
-        |(count, negative_trap_passes, tool_choice_passes)| format!("Each row is one distinct exact status vector. The repeated 7-pass signature is shared by {count} stacks, including the granite observations; it contains the same {negative_trap_passes} negative_trap and {tool_choice_passes} tool_choice_modes passes in every row."),
+        || "Each row shows one exact status vector. The names on the right identify the stack observations that share it.".to_owned(),
+        |(count, negative_trap_passes, tool_choice_passes)| format!("Each row shows one exact status vector. {count} stacks share the repeated 7-pass signature. The stacks include the granite observations. Every row has the same {negative_trap_passes} negative_trap passes and {tool_choice_passes} tool_choice_modes passes."),
     );
     let marks = borrow_marks(&prepared);
     let texts = borrow_texts(&owned_texts);
@@ -343,7 +343,7 @@ fn render_signature_inventory(dataset: &SiteDataset) -> String {
             title: "Outcome-signature inventory",
             description: "Distinct exact scenario-status vectors and the published stack observations sharing each vector.",
             caption: &caption,
-            does_not_show: "Shared model identity, a common causal mechanism, or expected future behavior.",
+            does_not_show: "This figure does not establish shared model identity or a common cause. It does not predict future behavior.",
         },
         width,
         height,
@@ -489,8 +489,8 @@ fn render_pass_count_strip(dataset: &SiteDataset) -> String {
             number: 4,
             title: "Observed pass-count strip plot",
             description: "One pass-count dot per fully measurable published stack observation, with error-bearing or skipped rows listed separately and not assigned a pass count.",
-            caption: "Distribution of published one-run stack observations. Pass counts are plotted only when every scenario has a pass or fail verdict; rows with errors or skips are listed in the separate panel.",
-            does_not_show: "A model score distribution, rankings, uncertainty, or repeated-run variability.",
+            caption: "Each dot shows one published stack observation from a single run. We plot a pass count only when every scenario has a pass or fail verdict. A separate panel lists rows with errors or skips.",
+            does_not_show: "This figure does not show a model score distribution or rank models. It does not measure uncertainty or variation across repeated runs.",
         },
         width: plot_left + plot_width + 40,
         height,

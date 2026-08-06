@@ -135,7 +135,7 @@ pub(super) fn render_index(dataset: &SiteDataset, repo_base: &str) -> String {
         r#"    <section class="register-intro" aria-labelledby="page-title">
       <p class="eyebrow">Measurement register</p>
       <h1 id="page-title">Tool-calling support matrix</h1>
-      <p class="framing">Each row is one observed model, artifact, server, and decode stack, not a model ranking or a verdict.</p>
+      <p class="framing">Each row records one tested stack. The stack includes the model and its artifact. It also includes the server and decode mode. The matrix does not rank models or state verdicts.</p>
     </section>"#,
     )
     .expect("write HTML");
@@ -161,8 +161,8 @@ pub(super) fn render_outcomes(dataset: &SiteDataset) -> String {
         r#"    <section class="register-intro" aria-labelledby="page-title">
       <p class="eyebrow">Evidence layer</p>
       <h1 id="page-title">Observed outcomes</h1>
-      <p class="framing">These fixed-order rasters expose the scenario-level evidence behind the matrix without turning one-run observations into a ranking.</p>
-      <p>Each mark is one published stack and scenario outcome. Use the data files for descriptions, rationales, status text, evidence paths, and citation; use the appendix for recorded stack metadata and transcript links.</p>
+      <p class="framing">These rasters show the scenario-level evidence behind the matrix. They keep the same row order as the matrix. They do not rank observations from a single run.</p>
+      <p>Each mark shows one scenario outcome for one published stack. The data files include scenario descriptions and rationales. They also contain status text and evidence paths. They provide citation details. The appendix includes recorded stack metadata and transcript links.</p>
     </section>"#,
     );
     main.push_str(&super::analysis::render_outcomes(dataset));
@@ -209,7 +209,7 @@ fn render_reading_legend(dataset: &SiteDataset) -> String {
     };
     format!(
         r#"      <div class="reading-key" aria-label="How to read the matrix">
-        <p class="reading-caption"><strong>How to read:</strong> ratios are passed scenarios / scenarios in the category.</p>
+        <p class="reading-caption"><strong>How to read:</strong> Each ratio shows passed scenarios / all scenarios in that category.</p>
         <div class="mark-key" aria-label="Scenario outcome marks">
           <span><i class="state-key state-pass"></i>pass</span>
           <span><i class="state-key state-fail"></i>model / response failure</span>
@@ -338,6 +338,11 @@ fn render_result_row(
     let server_display = display_server(server);
     let model = &result.metadata.model;
     let identity_status = display_identity_status(model.identity_status);
+    let row_label = if model.identity_status == IdentityStatus::Unresolved {
+        format!("{} (unverified artifact)", result.display_name)
+    } else {
+        result.display_name.clone()
+    };
     let cross_model_attribute = result
         .cross_model_key()
         .map(|key| format!(" data-cross-model-key=\"{}\"", escape_html(key)))
@@ -368,7 +373,7 @@ fn render_result_row(
         decode_mode_id(result.decode_mode),
         decode_mode_source_id(result.decode_mode_source),
         cross_model_attribute,
-        escape_html(&result.display_name),
+        escape_html(&row_label),
         escape_html(quant),
         escape_html(server_display),
         decode_mode_id(result.decode_mode),
@@ -558,7 +563,7 @@ fn environment_display_parts(environment: &EnvironmentMetadataV3) -> (&str, &str
 
 fn render_environment_statement(environment: &EnvironmentMetadataV3) -> String {
     format!(
-        "      <p>Measurement environment: {}.</p>",
+        "      <p>All measurements used {}.</p>",
         escape_html(&environment.display_label)
     )
 }
@@ -580,14 +585,14 @@ fn render_methodology(
         r#"    <section class="methods" id="method-limitations" aria-labelledby="method-title">
       <p class="eyebrow">Calibration notes</p>
       <h2 id="method-title">Method and limitations</h2>
-      <p>A cell measures the whole stack: model x quant x server x server version. It is not a property of the model alone.</p>
-      <p>A failed observation means the combination failed as tested, not that the weights are bad. The same weights can pass on one server and fail on another; where that is proven, the cell carries a cause annotation.</p>
-      <p>Failing observations link to the full request/response transcript when the result schema supplies a transcript path. Legacy schema v1 results do not record transcript paths. See the <a href="{}">case studies under docs/case-studies/</a> for controlled comparisons.</p>
-      <p>The servers do not decode the same way. llama.cpp compiles supplied tool definitions into a GBNF grammar and constrains decoding with it. Ollama and MLX LM generate unconstrained text and parse the tool call afterwards. A cross-band difference is therefore a property of the full stack; same-server adjacency is the valid model comparison. Each row labels whether its mode was recorded by the run or resolved from the <a href="{}">cited preset mapping</a>; an unmapped preset remains unknown.</p>
-      <p>Sample size and method: {} distinct scenarios are represented. Each published cell is one run. Its hatch withholds a verdict rather than hiding the observation.</p>
-      <p>Findings in the case studies are replicated across at least five runs per arm before a verdict is drawn. The current case studies cover {}.</p>
+      <p>Each cell measures one full stack. The stack combines a model, quant, server, and server version. A cell does not describe the model alone.</p>
+      <p>A failed observation applies only to the tested combination. It does not mean the weights are bad. The same weights can pass on one server and fail on another. When the evidence proves that difference, the cell includes a cause annotation.</p>
+      <p>When the result includes a transcript path, a failing observation links to the full request and response transcript. Legacy schema v1 results do not record transcript paths. Read the <a href="{}">case studies in docs/case-studies/</a> for controlled comparisons.</p>
+      <p>The servers use different decode methods. llama.cpp compiles the supplied tool definitions into a GBNF grammar. It uses that grammar to constrain decoding. Ollama and MLX LM generate unconstrained text. They parse the tool call after decoding. Cross-band differences therefore reflect the full stack. Compare adjacent models only when they use the same server. Each row states whether the run recorded its decode mode or the site read the mode from the <a href="{}">cited preset mapping</a>. An unmapped preset has an unknown mode.</p>
+      <p>The site includes {} distinct scenarios. Each published cell represents one run. Hatching marks that the cell has no verdict.</p>
+      <p>The case studies draw a verdict only after at least five runs per arm. The current case studies cover {}.</p>
       <h3>Excluded rows</h3>
-      <p>Meta-Llama-3.1-8B-Instruct on llama.cpp (Q8_0, Q4_K_M, Q3_K_M) is excluded from the quantization conclusion because llama.cpp returns HTTP 500 on 7-9 of 50 scenarios per run for this model ("does not match the expected peg-native format"). These are server errors, not model failures, and are not comparable across arms. See the <a href="{}">peg-native case study</a>.</p>
+      <p>The quantization conclusion excludes Meta-Llama-3.1-8B-Instruct on llama.cpp (Q8_0, Q4_K_M, Q3_K_M). For this model, llama.cpp returns HTTP 500 on 7-9 of 50 scenarios per run ("does not match the expected peg-native format"). These results are server errors. They are not model failures and cannot be compared across arms. Read the <a href="{}">peg-native case study</a>.</p>
 {}
     </section>
 "#,
@@ -1256,8 +1261,8 @@ pub(super) fn render_submit(repo_base: &str) -> String {
     let main = format!(
         r#"    <section class="methods">
       <p class="eyebrow">Submission method</p>
-      <h1>Produce a new result cell</h1>
-      <p>Run one model at a time. Keep the result file and the evidence directory written beside it.</p>
+      <h1>Create a result</h1>
+      <p>Run one model at a time. Store its result file and evidence directory together.</p>
     </section>
     <section aria-labelledby="ollama-command">
       <h2 id="ollama-command">Ollama</h2>
@@ -1282,10 +1287,10 @@ cargo run -p willitcall -- validate "$OUT"</code></pre>
     <section aria-labelledby="pr-checklist">
       <h2 id="pr-checklist">Pull request checklist</h2>
       <ul class="checklist">
-        <li>preflight clean (no contention override), or the override is explained</li>
-        <li>result file schema-valid</li>
-        <li>evidence transcripts included</li>
-        <li>empty responses cross-checked on a second server per the seeding protocol</li>
+        <li>Confirm that preflight is clean and has no contention override. Explain any override.</li>
+        <li>Validate the result file against the schema.</li>
+        <li>Include the evidence transcripts.</li>
+        <li>Cross-check empty responses on a second server as required by the seeding protocol.</li>
       </ul>
       <p>Read <a href="{}">CONTRIBUTING.md</a> for the complete contribution rules.</p>
     </section>"#,
@@ -1297,7 +1302,7 @@ cargo run -p willitcall -- validate "$OUT"</code></pre>
         current_page: Page::Submit,
         main_class: Some("submit-page"),
         main: &main,
-        footer: "  <footer><p>Results are reviewed as measured stack behavior, not model-only claims.</p></footer>\n",
+        footer: "  <footer><p>Reviewers treat each result as measured stack behavior. They do not treat it as a model-only claim.</p></footer>\n",
         script: None,
     })
 }
