@@ -136,6 +136,9 @@ pub(super) fn render_index(dataset: &SiteDataset, repo_base: &str) -> String {
     .expect("write HTML");
     main.push('\n');
     main.push('\n');
+    main.push_str(&super::analysis::render(dataset));
+    main.push('\n');
+    main.push('\n');
     main.push_str(&render_table(
         dataset,
         repo_base,
@@ -706,6 +709,35 @@ main, footer {
 h1, h2 { margin: 0 0 1rem; line-height: 1.12; }
 h1 { font-size: clamp(2.2rem, 5vw, 4.4rem); letter-spacing: -0.045em; }
 h2 { font-size: clamp(1.45rem, 2.5vw, 2.1rem); letter-spacing: -0.025em; }
+
+.analysis { max-width: var(--measure-figure); margin-bottom: 4rem; }
+.analysis > p { max-width: var(--measure-prose); }
+.svg-figure { margin: 2.5rem 0 3.5rem; color: var(--design-ink); }
+.svg-figure figcaption { max-width: var(--measure-prose); margin-bottom: 1rem; }
+.svg-figure figcaption > span { display: block; margin-top: 0.45rem; }
+.svg-figure figcaption > strong { font-size: var(--type-heading-2); font-weight: var(--type-heading-weight); }
+.does-not-show { color: var(--design-grey-1); }
+.figure-scroll { overflow-x: auto; padding: 0.5rem; background: var(--design-paper); border: 1px solid var(--design-grey-3); }
+.svg-figure svg { display: block; max-width: none; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+.raster-row-label, .signature-stack-label, .bar-category-label, .bar-value-label,
+.plot-panel-label, .not-measurable-label, .strip-tick-label { fill: var(--design-ink); }
+.raster-row-label, .signature-stack-label, .raster-column-label,
+.not-measurable-label { font-size: var(--type-raster-label); }
+.raster-column-label { fill: var(--design-grey-1); }
+.raster-group-label, .bar-category-label, .plot-panel-label { fill: var(--design-ink); font-size: 12px; font-weight: 700; }
+.bar-value-label, .strip-tick-label { font-size: 11px; }
+.svg-text-fallback {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
 
 .matrix {
   margin-bottom: 4rem;

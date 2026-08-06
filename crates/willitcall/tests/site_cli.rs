@@ -144,6 +144,75 @@ fn site_contract_golden_matches_post_migration_renderer() {
 }
 
 #[test]
+fn analysis_views_render_the_published_observation_contract() {
+    let directory = tempfile::tempdir().expect("temp directory");
+    let repo = Path::new(env!("CARGO_MANIFEST_DIR")).join("../..");
+    let output = directory.path().join("site");
+
+    let generated = run_site(&repo.join("results"), &output, None);
+    assert_eq!(
+        generated.status.code(),
+        Some(0),
+        "{}",
+        String::from_utf8_lossy(&generated.stderr)
+    );
+
+    let index = fs::read_to_string(output.join("index.html")).expect("generated index");
+    assert_eq!(index.matches("class=\"result-row\"").count(), 32);
+    assert_eq!(index.matches("data-figure-number=").count(), 5);
+    assert_eq!(index.matches("What this does not show:").count(), 5);
+    assert_eq!(index.matches("class=\"svg-text-fallback\"").count(), 5);
+
+    let svgs = index
+        .split("<svg ")
+        .skip(1)
+        .map(|tail| tail.split_once("</svg>").expect("closed svg").0)
+        .collect::<Vec<_>>();
+    assert_eq!(svgs.len(), 5);
+    for svg in &svgs {
+        assert!(svg.contains("<title>"));
+        assert!(svg.contains("<desc>"));
+        assert!(!svg.contains("http://"));
+        assert!(!svg.contains("https://"));
+    }
+    assert!(!index.contains("/Users/"));
+    assert!(!index.contains("<script src=\"http"));
+
+    assert!(svgs[0].contains("Figure 1. Scenario-status raster"));
+    assert!(svgs[0].contains("single-weather: Call one weather tool with a city argument."));
+    assert!(svgs[0].contains("Rationale: This asserts selecting the weather tool"));
+    assert!(!svgs[0].contains("no-verdict-overlay"));
+
+    assert!(index.contains(
+        "multi_turn passes 37/224 (17%), and 22 of 32 rows pass none of the multi_turn scenarios"
+    ));
+    assert!(index.contains(
+        "The repeated 7-pass signature is shared by 9 stacks, including the granite observations; it contains the same 5 negative_trap and 2 tool_choice_modes passes in every row."
+    ));
+    assert!(index.contains("Category sizes are 13/8/8/7/7/7"));
+    assert!(index.contains("passed in 37 of 224 measurements (7 scenarios per stack)"));
+
+    assert_eq!(svgs[4].matches("class=\"strip-observation\"").count(), 27);
+    assert_eq!(
+        svgs[4]
+            .matches("class=\"not-fully-measurable-item\"")
+            .count(),
+        5
+    );
+    for gemma in ["gemma3:4b", "gemma3:12b"] {
+        let item = svgs[4]
+            .split(&format!("aria-label=\"{gemma}"))
+            .nth(1)
+            .expect("gemma row in not-fully-measurable panel")
+            .split_once("</g>")
+            .expect("closed gemma panel item")
+            .0;
+        assert!(item.contains("50 errors, 0 skipped; pass count not plotted"));
+        assert!(!item.contains("data-pass-count"));
+    }
+}
+
+#[test]
 fn site_generates_v1_and_v2_rows_ratios_links_and_badges() {
     let directory = tempfile::tempdir().expect("temp directory");
     let results = directory.path().join("results");
