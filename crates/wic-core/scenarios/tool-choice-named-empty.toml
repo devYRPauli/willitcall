@@ -20,6 +20,7 @@ mode = "named"
 name = "current_region"
 
 [[turns]]
+response_requirement = "tool_calls"
 [[turns.messages]]
 role = "user"
 content = "Get the current deployment region."

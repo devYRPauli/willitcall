@@ -650,6 +650,14 @@ content = "Reply ready."
     assert_eq!(v3.schema_version, 3);
     assert_eq!(v3.metadata.model.endpoint_id, "qwen2.5:7b-instruct");
     assert_eq!(v3.metadata.model.identity_status, IdentityStatus::Declared);
+    assert_eq!(
+        v3.metadata
+            .corpus
+            .as_ref()
+            .expect("v3 corpus metadata")
+            .scoring_version,
+        "v2"
+    );
     assert!(v3.metadata.replication.is_none());
     assert!(v3.metadata.arm_fingerprint.is_none());
 

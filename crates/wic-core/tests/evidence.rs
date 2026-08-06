@@ -289,7 +289,7 @@ async fn structured_http_failure_is_captured_at_the_request_boundary() {
     assert_eq!(corpus.revision, "v1");
     assert_eq!(corpus.sha256, expected_corpus_sha256);
     assert_eq!(corpus.scenario_count, 1);
-    assert_eq!(corpus.scoring_version, "v1");
+    assert_eq!(corpus.scoring_version, "v2");
     assert_eq!(measurement.metadata.model.endpoint_id, "fixture-model.gguf");
     assert_eq!(
         measurement.metadata.model.identity_status,

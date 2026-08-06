@@ -1,5 +1,6 @@
 id = "negative-unicode-argument"
 category = "negative_trap"
+facets = ["argument_fidelity", "unicode"]
 description = "Preserve a non-ASCII city argument."
 rationale = "This asserts copying the exact city spelling supplied verbatim in the prompt. The scorer compares strings in NFC and uses subset matching for the optional country code, so an NFD-emitting model or one adding that optional field is not failed."
 arguments_match = "subset"
@@ -22,6 +23,7 @@ type = "string"
 mode = "auto"
 
 [[turns]]
+response_requirement = "tool_calls"
 [[turns.messages]]
 role = "user"
 content = "Get the weather for the exact city name München."

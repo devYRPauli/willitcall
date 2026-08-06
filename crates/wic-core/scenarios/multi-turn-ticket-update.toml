@@ -28,6 +28,7 @@ enum = ["low", "normal", "high"]
 mode = "auto"
 
 [[turns]]
+response_requirement = "tool_calls"
 [[turns.messages]]
 role = "user"
 content = "Find ticket EXT-55 and set its priority to high."
@@ -38,6 +39,7 @@ name = "find_ticket"
 external_ref = "EXT-55"
 
 [[turns]]
+response_requirement = "tool_calls"
 [[turns.messages]]
 role = "tool"
 content = '{"ticket_id":"ticket-902"}'

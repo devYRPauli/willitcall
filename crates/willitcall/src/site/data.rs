@@ -435,6 +435,7 @@ mod tests {
         Scenario {
             id: id.to_owned(),
             category,
+            facets: Vec::new(),
             description: format!("description for {id}"),
             rationale: format!("rationale for {id}"),
             stream: false,

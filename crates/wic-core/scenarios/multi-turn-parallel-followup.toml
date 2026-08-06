@@ -33,6 +33,7 @@ type = "number"
 mode = "auto"
 
 [[turns]]
+response_requirement = "tool_calls"
 [[turns.messages]]
 role = "user"
 content = "Get temperatures for Boston and Tokyo, then compare the returned values."
@@ -48,6 +49,7 @@ name = "get_temperature"
 city = "Tokyo"
 
 [[turns]]
+response_requirement = "tool_calls"
 [[turns.messages]]
 role = "tool"
 content = '{"city":"Boston","temperature":21}'

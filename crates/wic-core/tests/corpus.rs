@@ -4,7 +4,9 @@ use std::fs;
 use wic_core::client::ToolCall;
 use wic_core::corpus::{corpus_identity, load_frozen_v1_catalog};
 use wic_core::score::score_calls;
-use wic_core::{load_embedded_scenarios, Scenario, ScenarioCategory};
+use wic_core::{
+    load_embedded_scenarios, ResponseRequirement, Scenario, ScenarioCategory, ScenarioFacet,
+};
 
 #[test]
 fn embedded_corpus_is_integral_and_covers_every_category() {
@@ -50,6 +52,8 @@ fn embedded_corpus_is_integral_and_covers_every_category() {
     for scenario in &scenarios {
         assert_filename_matches_id(scenario);
         assert_expected_calls_are_valid(scenario);
+        assert_response_requirements_are_explicit(scenario);
+        assert_facets_are_expected(scenario);
     }
 }
 
@@ -99,7 +103,7 @@ fn corpus_identity_is_order_stable_and_content_sensitive() {
 }
 
 #[test]
-fn frozen_v1_catalog_matches_current_embedded_corpus() {
+fn frozen_v1_catalog_remains_verified_and_distinct_from_the_live_corpus() {
     let live = load_embedded_scenarios().expect("embedded scenarios should load");
     let catalog = load_frozen_v1_catalog().expect("frozen v1 catalog should load and verify");
     let live_hash = corpus_identity(&live);
@@ -108,8 +112,17 @@ fn frozen_v1_catalog_matches_current_embedded_corpus() {
     assert_eq!(catalog.revision, "v1");
     assert_eq!(catalog.scenario_count, 50);
     assert_eq!(catalog.scenarios.len(), 50);
-    assert_eq!(catalog.sha256, live_hash);
-    assert_eq!(corpus_identity(&catalog.scenarios), live_hash);
+    assert_ne!(catalog.sha256, live_hash);
+    assert_eq!(corpus_identity(&catalog.scenarios), catalog.sha256);
+    assert!(catalog
+        .scenarios
+        .iter()
+        .all(|scenario| scenario.facets.is_empty()));
+    assert!(catalog
+        .scenarios
+        .iter()
+        .flat_map(|scenario| &scenario.turns)
+        .all(|turn| turn.response_requirement == ResponseRequirement::Either));
 }
 
 fn assert_filename_matches_id(scenario: &Scenario) {
@@ -163,4 +176,38 @@ fn assert_expected_calls_are_valid(scenario: &Scenario) {
         )
         .unwrap_or_else(|error| panic!("{} has invalid expected arguments: {error}", scenario.id));
     }
+}
+
+fn assert_response_requirements_are_explicit(scenario: &Scenario) {
+    for turn in &scenario.turns {
+        let expected = if turn.expected_calls.is_empty() {
+            ResponseRequirement::TextWithoutToolCalls
+        } else {
+            ResponseRequirement::ToolCalls
+        };
+        assert_eq!(
+            turn.response_requirement, expected,
+            "{} has the wrong response requirement",
+            scenario.id
+        );
+    }
+}
+
+fn assert_facets_are_expected(scenario: &Scenario) {
+    let expected: &[ScenarioFacet] = match scenario.id.as_str() {
+        "negative-auto-arithmetic"
+        | "negative-auto-knowledge"
+        | "negative-greeting"
+        | "negative-invalid-schema"
+        | "negative-plain-text" => &[ScenarioFacet::Abstention],
+        "negative-long-argument" => &[ScenarioFacet::ArgumentFidelity, ScenarioFacet::LongContext],
+        "negative-unicode-argument" => &[ScenarioFacet::ArgumentFidelity, ScenarioFacet::Unicode],
+        _ => &[],
+    };
+    assert_eq!(
+        scenario.facets.as_slice(),
+        expected,
+        "{} has the wrong facets",
+        scenario.id
+    );
 }

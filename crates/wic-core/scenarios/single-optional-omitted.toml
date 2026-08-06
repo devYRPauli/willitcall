@@ -21,6 +21,7 @@ type = "integer"
 mode = "auto"
 
 [[turns]]
+response_requirement = "tool_calls"
 [[turns.messages]]
 role = "user"
 content = "Search the catalog for brass compass. Do not set a result limit."

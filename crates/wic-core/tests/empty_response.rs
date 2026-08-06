@@ -79,10 +79,41 @@ async fn runner_classifies_only_empty_responses() {
 }
 
 #[tokio::test]
-async fn empty_response_preserves_negative_trap_pass() {
+async fn empty_response_fails_a_negative_trap_text_requirement() {
     let server = MockServer::start_scripted(
         "fixture-model",
         vec![ScriptedResponse::Json(completion(Value::Null))],
+    )
+    .await;
+    let directory = tempfile::tempdir().expect("temp directory");
+    let config = RunConfig::new(
+        server.endpoint(),
+        "fixture-model".to_owned(),
+        Duration::from_secs(5),
+        42,
+        0.0,
+    );
+
+    let result = run_scenarios(
+        &config,
+        &[negative_greeting()],
+        &directory.path().join("result.json"),
+    )
+    .await
+    .expect("run scenario");
+
+    let outcome = &result.scenarios[0];
+    assert_eq!(outcome.status, wic_core::result::Status::Fail);
+    assert_eq!(outcome.failure_class.as_deref(), Some("empty_response"));
+}
+
+#[tokio::test]
+async fn textual_refusal_passes_a_negative_trap_text_requirement() {
+    let server = MockServer::start_scripted(
+        "fixture-model",
+        vec![ScriptedResponse::Json(completion(json!(
+            "Hello. I will not use a tool."
+        )))],
     )
     .await;
     let directory = tempfile::tempdir().expect("temp directory");

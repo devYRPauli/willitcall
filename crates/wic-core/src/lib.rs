@@ -20,6 +20,8 @@ static EMBEDDED_SCENARIOS: Dir<'_> = include_dir!("$CARGO_MANIFEST_DIR/scenarios
 pub struct Scenario {
     pub id: String,
     pub category: ScenarioCategory,
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub facets: Vec<ScenarioFacet>,
     pub description: String,
     pub rationale: String,
     #[serde(default)]
@@ -29,6 +31,15 @@ pub struct Scenario {
     pub tools: Vec<ToolDefinition>,
     pub tool_choice: ToolChoice,
     pub turns: Vec<Turn>,
+}
+
+#[derive(Clone, Copy, Debug, Deserialize, Eq, Hash, PartialEq, Serialize)]
+#[serde(rename_all = "snake_case")]
+pub enum ScenarioFacet {
+    Abstention,
+    ArgumentFidelity,
+    Unicode,
+    LongContext,
 }
 
 #[derive(Clone, Copy, Debug, Deserialize, Eq, Hash, PartialEq, Serialize)]
@@ -79,6 +90,24 @@ pub struct Turn {
     pub messages: Vec<Message>,
     #[serde(default)]
     pub expected_calls: Vec<ExpectedCall>,
+    #[serde(default, skip_serializing_if = "ResponseRequirement::is_either")]
+    pub response_requirement: ResponseRequirement,
+}
+
+#[derive(Clone, Copy, Debug, Default, Deserialize, Eq, PartialEq, Serialize)]
+#[serde(rename_all = "snake_case")]
+pub enum ResponseRequirement {
+    ToolCalls,
+    TextWithoutToolCalls,
+    NoToolCalls,
+    #[default]
+    Either,
+}
+
+impl ResponseRequirement {
+    fn is_either(&self) -> bool {
+        *self == Self::Either
+    }
 }
 
 #[derive(Clone, Debug, Deserialize, Serialize)]

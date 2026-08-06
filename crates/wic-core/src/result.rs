@@ -1182,6 +1182,20 @@ mod tests {
             .expect("complete contract should produce a fingerprint");
         assert!(fingerprint.starts_with("v1:sha256:"));
 
+        let mut rescored_corpus = corpus.clone();
+        rescored_corpus.scoring_version = "v2".to_owned();
+        assert_ne!(
+            arm_fingerprint(
+                &rescored_corpus,
+                &model,
+                &server,
+                Some(&environment),
+                &sampling,
+            )
+            .as_deref(),
+            Some(fingerprint.as_str())
+        );
+
         let mut varied_seed = sampling.clone();
         varied_seed.seed = Some(7);
         assert_eq!(

@@ -29,6 +29,7 @@ type = "string"
 mode = "auto"
 
 [[turns]]
+response_requirement = "tool_calls"
 [[turns.messages]]
 role = "user"
 content = "Find a flight from BOS to DEN on 2026-10-04, then book the returned flight."
@@ -41,6 +42,7 @@ destination = "DEN"
 date = "2026-10-04"
 
 [[turns]]
+response_requirement = "tool_calls"
 [[turns.messages]]
 role = "tool"
 content = '{"flight_id":"FL-808"}'

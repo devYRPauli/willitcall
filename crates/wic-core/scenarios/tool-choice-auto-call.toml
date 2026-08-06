@@ -18,6 +18,7 @@ type = "string"
 mode = "auto"
 
 [[turns]]
+response_requirement = "tool_calls"
 [[turns.messages]]
 role = "user"
 content = "Get the temperature in Helsinki."

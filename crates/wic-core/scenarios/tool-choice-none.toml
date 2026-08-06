@@ -18,6 +18,7 @@ type = "string"
 mode = "none"
 
 [[turns]]
+response_requirement = "text_without_tool_calls"
 [[turns.messages]]
 role = "user"
 content = "Reply with the exact text: no tools"

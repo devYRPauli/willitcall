@@ -26,6 +26,7 @@ mode = "named"
 name = "search_contacts"
 
 [[turns]]
+response_requirement = "tool_calls"
 [[turns.messages]]
 role = "user"
 content = "Search contacts for Ada Stone."

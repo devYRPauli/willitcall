@@ -21,6 +21,7 @@ type = "number"
 mode = "required"
 
 [[turns]]
+response_requirement = "tool_calls"
 [[turns.messages]]
 role = "user"
 content = "Use separate calls to divide 42 by 6 and divide 10 by 4."
