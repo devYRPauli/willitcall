@@ -1,0 +1,44 @@
+{
+  "schema_version": 2,
+  "metadata": {
+    "run_id": "20260720T190335Z-fixture",
+    "timestamp": "2026-07-20T19:03:35Z",
+    "willitcall_version": "0.1.0",
+    "endpoint": "http://127.0.0.1:8080/v1",
+    "model_id": "fixture-model",
+    "declared_quant": "Q3_K_M",
+    "server": {
+      "preset_name": "llamacpp",
+      "reported_version": "fixture-version",
+      "quirk_flags": []
+    },
+    "environment": {
+      "host_hardware_class": "Fixture workstation, 64GB",
+      "host_os": "Fixture OS"
+    },
+    "sampling": {
+      "temperature": 0.0,
+      "top_p": 1.0,
+      "seed": 42,
+      "max_tokens": 1024
+    }
+  },
+  "scenarios": [
+    {
+      "id": "single-weather",
+      "category": "single_call",
+      "status": "error",
+      "failure_reason": "turn 1: fixture server error",
+      "evidence_hash": "sha256:fixture",
+      "evidence_path": "evidence/fixture/single-weather.json",
+      "retried": false
+    }
+  ],
+  "totals": {
+    "total": 1,
+    "passed": 0,
+    "failed": 0,
+    "errors": 1,
+    "skipped": 0
+  }
+}

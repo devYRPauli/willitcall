@@ -20,6 +20,7 @@ const HF_EVIDENCE: &str = "registry/evidence/huggingface-recovery.json";
 const SHA256: &str = "sha256:33706b165cd6777e29fdcd777ba1e09bd3b2006b428014e1bad17df3902ec1e7";
 const PUBLISHED_REGISTRY: &str = include_str!("../../../registry/models-v1.json");
 const MIGRATION_MANIFEST: &str = include_str!("../../../migrations/result-v2-to-v3-v1.json");
+const V2_MODEL_ID_PREIMAGE: &str = include_str!("fixtures/result-v2-model-id-preimage.json");
 
 #[tokio::test]
 async fn absolute_selector_is_sent_raw_but_serialized_safely() {
@@ -273,6 +274,15 @@ fn validate_published_registry(
     }
 
     let published_paths = published_result_paths(repo_root)?;
+    let v2_model_ids: BTreeMap<String, String> = serde_json::from_str(V2_MODEL_ID_PREIMAGE)
+        .map_err(|error| format!("parse v2 model-id preimage: {error}"))?;
+    if v2_model_ids.len() != 32
+        || v2_model_ids.keys().cloned().collect::<BTreeSet<_>>() != published_paths
+    {
+        return Err(
+            "v2 model-id preimage must cover every published result exactly once".to_owned(),
+        );
+    }
     let mut mapped_paths = BTreeSet::new();
     let mut mapped_selectors = BTreeSet::new();
     for mapping in mappings {
@@ -310,7 +320,10 @@ fn validate_published_registry(
             .map_err(|error| format!("read {result_path}: {error}"))?;
         let result: Value = serde_json::from_slice(&result_bytes)
             .map_err(|error| format!("parse {result_path}: {error}"))?;
-        if result["schema_version"] != 2 || result["metadata"]["model_id"] != selector {
+        if result["schema_version"] != 3 {
+            return Err(format!("published result {result_path} must be schema v3"));
+        }
+        if v2_model_ids.get(result_path).map(String::as_str) != Some(selector) {
             return Err(format!(
                 "migration selector for {result_path} must equal its v2 metadata.model_id"
             ));

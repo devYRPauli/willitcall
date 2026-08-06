@@ -68,10 +68,17 @@
           "$ref": "#/$defs/sampling_params"
         },
         "replication": {
-          "$ref": "#/$defs/replication_metadata"
+          "anyOf": [
+            {
+              "$ref": "#/$defs/replication_metadata"
+            },
+            {
+              "type": "null"
+            }
+          ]
         },
         "arm_fingerprint": {
-          "type": "string"
+          "type": ["string", "null"]
         },
         "preflight_override": {
           "$ref": "#/$defs/preflight_override"
