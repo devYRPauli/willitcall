@@ -24,6 +24,7 @@ type = "string"
 mode = "auto"
 
 [[turns]]
+response_requirement = "tool_calls"
 [[turns.messages]]
 role = "user"
 content = "Create playlist road-test with tracks t-3, t-1, and t-8 in that order."

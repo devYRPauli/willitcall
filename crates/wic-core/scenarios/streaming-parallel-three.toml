@@ -19,6 +19,7 @@ type = "string"
 mode = "required"
 
 [[turns]]
+response_requirement = "tool_calls"
 [[turns.messages]]
 role = "user"
 content = "Get local time for Accra, Kyoto, and Quito with three calls."

@@ -462,7 +462,7 @@ pub async fn run_measurement(
         revision: catalog.revision,
         sha256: corpus_identity(scenarios),
         scenario_count,
-        scoring_version: "v1".to_owned(),
+        scoring_version: "v2".to_owned(),
     };
     let model = config.model_registry.resolve(&config.model);
     let server = MeasurementServerMetadata {
@@ -616,6 +616,7 @@ async fn run_scenario(
             &scenario.tools,
             &turn.expected_calls,
             scenario.arguments_match,
+            turn.response_requirement,
             response.content.as_deref(),
             &response.tool_calls,
         ) {

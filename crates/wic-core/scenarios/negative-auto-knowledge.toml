@@ -1,5 +1,6 @@
 id = "negative-auto-knowledge"
 category = "negative_trap"
+facets = ["abstention"]
 description = "Do not call an irrelevant tool for a general knowledge reply."
 rationale = "This asserts abstaining from tool use for general knowledge. The prompt explicitly says not to use a tool, and the only offered order lookup cannot answer the ocean question, so every correct response has no call."
 
@@ -18,6 +19,7 @@ type = "string"
 mode = "auto"
 
 [[turns]]
+response_requirement = "text_without_tool_calls"
 [[turns.messages]]
 role = "user"
 content = "Name the largest ocean on Earth. Do not use a tool."

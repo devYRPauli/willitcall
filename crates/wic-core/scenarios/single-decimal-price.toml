@@ -21,6 +21,7 @@ type = "number"
 mode = "auto"
 
 [[turns]]
+response_requirement = "tool_calls"
 [[turns.messages]]
 role = "user"
 content = "Set the price of SKU AX-9 to exactly 19.95."

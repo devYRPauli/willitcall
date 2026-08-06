@@ -24,6 +24,7 @@ type = "string"
 mode = "auto"
 
 [[turns]]
+response_requirement = "tool_calls"
 [[turns.messages]]
 role = "user"
 content = "Find events in Denver from 2026-08-03 through 2026-08-05."

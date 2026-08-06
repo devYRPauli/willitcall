@@ -31,6 +31,7 @@ type = "string"
 mode = "required"
 
 [[turns]]
+response_requirement = "tool_calls"
 [[turns.messages]]
 role = "user"
 content = "Book room Cedar on 2026-09-02 at hour 14 and reserve a car in Boise on 2026-09-03."

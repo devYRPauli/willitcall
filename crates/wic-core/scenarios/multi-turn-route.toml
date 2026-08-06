@@ -32,6 +32,7 @@ type = "number"
 mode = "auto"
 
 [[turns]]
+response_requirement = "tool_calls"
 
 [[turns.messages]]
 role = "user"
@@ -45,6 +46,7 @@ arguments_match = "ignore"
 place = "Fenway Park"
 
 [[turns]]
+response_requirement = "tool_calls"
 
 [[turns.messages]]
 role = "tool"

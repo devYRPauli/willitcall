@@ -31,6 +31,7 @@ type = "boolean"
 mode = "auto"
 
 [[turns]]
+response_requirement = "tool_calls"
 [[turns.messages]]
 role = "user"
 content = "Render 'red circle' at width 640 and height 480 with transparency enabled."

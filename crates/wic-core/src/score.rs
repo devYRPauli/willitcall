@@ -3,7 +3,7 @@ use unicode_normalization::UnicodeNormalization;
 
 use crate::client::ToolCall;
 use crate::result::Status;
-use crate::{ArgumentsMatch, ExpectedCall, ToolDefinition};
+use crate::{ArgumentsMatch, ExpectedCall, ResponseRequirement, ToolDefinition};
 
 struct UnparsedToolCall {
     name: String,
@@ -24,17 +24,49 @@ pub fn score_response(
     tools: &[ToolDefinition],
     expected: &[ExpectedCall],
     default_policy: ArgumentsMatch,
+    response_requirement: ResponseRequirement,
     content: Option<&str>,
     actual: &[ToolCall],
 ) -> Result<(), ScoreFailure> {
-    score_calls(tools, expected, default_policy, actual).map_err(|reason| ScoreFailure {
-        failure_class: classify_failure(Status::Fail, tools, content, actual).map(str::to_owned),
-        reason: if is_empty_response(content, actual) {
-            "empty response: no content and no tool call".to_owned()
-        } else {
-            reason
-        },
-    })
+    score_calls(tools, expected, default_policy, actual)
+        .and_then(|()| score_response_requirement(response_requirement, content, actual))
+        .map_err(|reason| ScoreFailure {
+            failure_class: classify_failure(Status::Fail, tools, content, actual)
+                .map(str::to_owned),
+            reason: if is_empty_response(content, actual) {
+                "empty response: no content and no tool call".to_owned()
+            } else {
+                reason
+            },
+        })
+}
+
+fn score_response_requirement(
+    requirement: ResponseRequirement,
+    content: Option<&str>,
+    actual: &[ToolCall],
+) -> Result<(), String> {
+    match requirement {
+        ResponseRequirement::ToolCalls if actual.is_empty() => {
+            Err("response requirement not met: expected one or more tool calls".to_owned())
+        }
+        ResponseRequirement::TextWithoutToolCalls if !actual.is_empty() => {
+            Err("response requirement not met: expected text without tool calls".to_owned())
+        }
+        ResponseRequirement::TextWithoutToolCalls if matches!(content, None | Some("")) => {
+            Err("empty response: no content and no tool call".to_owned())
+        }
+        ResponseRequirement::NoToolCalls if !actual.is_empty() => {
+            Err("response requirement not met: expected no tool calls".to_owned())
+        }
+        ResponseRequirement::Either if is_empty_response(content, actual) => {
+            Err("empty response: no content and no tool call".to_owned())
+        }
+        ResponseRequirement::ToolCalls
+        | ResponseRequirement::TextWithoutToolCalls
+        | ResponseRequirement::NoToolCalls
+        | ResponseRequirement::Either => Ok(()),
+    }
 }
 
 pub fn classify_failure(

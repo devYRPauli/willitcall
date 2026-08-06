@@ -23,6 +23,7 @@ enum = ["debug", "info", "warn", "error"]
 mode = "auto"
 
 [[turns]]
+response_requirement = "tool_calls"
 [[turns.messages]]
 role = "user"
 content = "Set the log level for payments to warn."

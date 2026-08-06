@@ -34,6 +34,7 @@ type = "string"
 mode = "auto"
 
 [[turns]]
+response_requirement = "tool_calls"
 [[turns.messages]]
 role = "user"
 content = "Archive the account owned by sam@example.test. Resolve each required id first."
@@ -44,6 +45,7 @@ name = "find_user"
 email = "sam@example.test"
 
 [[turns]]
+response_requirement = "tool_calls"
 [[turns.messages]]
 role = "tool"
 content = '{"user_id":"user-41"}'
@@ -55,6 +57,7 @@ name = "find_account"
 user_id = "user-41"
 
 [[turns]]
+response_requirement = "tool_calls"
 [[turns.messages]]
 role = "tool"
 content = '{"account_id":"account-73"}'

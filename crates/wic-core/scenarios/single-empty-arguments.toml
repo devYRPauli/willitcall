@@ -14,6 +14,7 @@ type = "object"
 mode = "required"
 
 [[turns]]
+response_requirement = "tool_calls"
 [[turns.messages]]
 role = "user"
 content = "Get the current service status now."

@@ -1,5 +1,6 @@
 id = "negative-auto-arithmetic"
 category = "negative_trap"
+facets = ["abstention"]
 description = "Do not call an irrelevant tool for simple arithmetic."
 rationale = "This asserts abstaining from tool use for arithmetic. The prompt explicitly says to answer without a tool, and the only offered tool is topically irrelevant weather lookup, so every correct response has no tool call."
 
@@ -18,6 +19,7 @@ type = "string"
 mode = "auto"
 
 [[turns]]
+response_requirement = "text_without_tool_calls"
 [[turns.messages]]
 role = "user"
 content = "What is 19 plus 23? Answer without using a tool."

@@ -1,5 +1,6 @@
 id = "negative-plain-text"
 category = "negative_trap"
+facets = ["abstention"]
 description = "Use a plain text reply instead of an unrelated tool."
 rationale = "This asserts choosing plain text for an explanatory question. The prompt explicitly says not to send email, and the only offered tool sends email rather than answering the question, so a correct response cannot call it."
 
@@ -21,6 +22,7 @@ type = "string"
 mode = "auto"
 
 [[turns]]
+response_requirement = "text_without_tool_calls"
 [[turns.messages]]
 role = "user"
 content = "In one plain text sentence, explain why leaves are green. Do not send email."

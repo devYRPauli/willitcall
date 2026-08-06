@@ -21,6 +21,7 @@ type = "number"
 mode = "auto"
 
 [[turns]]
+response_requirement = "tool_calls"
 [[turns.messages]]
 role = "user"
 content = "Set the axis range from -12.5 to 0."

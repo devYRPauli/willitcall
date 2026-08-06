@@ -2,7 +2,7 @@ use serde_json::json;
 use wic_core::client::ToolCall;
 use wic_core::result::Status;
 use wic_core::score::{classify_failure, score_calls, score_response};
-use wic_core::{ArgumentsMatch, ExpectedCall, ToolDefinition};
+use wic_core::{ArgumentsMatch, ExpectedCall, ResponseRequirement, ToolDefinition};
 
 fn weather_tool() -> ToolDefinition {
     ToolDefinition {
@@ -74,8 +74,15 @@ fn empty_response_is_distinct_from_text_without_a_tool_call() {
     let expected = [expected("get_weather", json!({"city": "Boston"}))];
 
     for content in [None, Some("")] {
-        let failure = score_response(&tools, &expected, ArgumentsMatch::Exact, content, &[])
-            .expect_err("empty response must fail");
+        let failure = score_response(
+            &tools,
+            &expected,
+            ArgumentsMatch::Exact,
+            ResponseRequirement::ToolCalls,
+            content,
+            &[],
+        )
+        .expect_err("empty response must fail");
         assert_eq!(
             failure.reason,
             "empty response: no content and no tool call"
@@ -87,6 +94,7 @@ fn empty_response_is_distinct_from_text_without_a_tool_call() {
         &tools,
         &expected,
         ArgumentsMatch::Exact,
+        ResponseRequirement::ToolCalls,
         Some("I cannot call that tool."),
         &[],
     )
@@ -96,8 +104,51 @@ fn empty_response_is_distinct_from_text_without_a_tool_call() {
 }
 
 #[test]
-fn empty_response_preserves_a_negative_trap_pass() {
-    assert!(score_response(&[weather_tool()], &[], ArgumentsMatch::Exact, None, &[]).is_ok());
+fn text_requirement_rejects_an_empty_response_and_accepts_a_real_refusal() {
+    let failure = score_response(
+        &[weather_tool()],
+        &[],
+        ArgumentsMatch::Exact,
+        ResponseRequirement::TextWithoutToolCalls,
+        None,
+        &[],
+    )
+    .expect_err("empty response must fail a text requirement");
+    assert_eq!(failure.failure_class.as_deref(), Some("empty_response"));
+
+    assert!(score_response(
+        &[weather_tool()],
+        &[],
+        ArgumentsMatch::Exact,
+        ResponseRequirement::TextWithoutToolCalls,
+        Some("I cannot call that tool."),
+        &[],
+    )
+    .is_ok());
+}
+
+#[test]
+fn only_an_explicit_no_tool_calls_requirement_accepts_silence() {
+    assert!(score_response(
+        &[weather_tool()],
+        &[],
+        ArgumentsMatch::Exact,
+        ResponseRequirement::NoToolCalls,
+        None,
+        &[],
+    )
+    .is_ok());
+
+    let failure = score_response(
+        &[weather_tool()],
+        &[],
+        ArgumentsMatch::Exact,
+        ResponseRequirement::Either,
+        None,
+        &[],
+    )
+    .expect_err("either still requires a non-empty response");
+    assert_eq!(failure.failure_class.as_deref(), Some("empty_response"));
 }
 
 #[test]
@@ -111,8 +162,15 @@ fn unparsed_tool_call_shapes_classify_valid_offered_calls() {
         r#"[`get_weather` {"city": "Boston"}]"#,
         r#"`get_weather` {"city": "Boston"}"#,
     ] {
-        let failure = score_response(&tools, &expected, ArgumentsMatch::Exact, Some(content), &[])
-            .expect_err("unparsed call must remain a failing verdict");
+        let failure = score_response(
+            &tools,
+            &expected,
+            ArgumentsMatch::Exact,
+            ResponseRequirement::ToolCalls,
+            Some(content),
+            &[],
+        )
+        .expect_err("unparsed call must remain a failing verdict");
         assert_eq!(
             failure.failure_class.as_deref(),
             Some("unparsed_tool_call"),
@@ -134,8 +192,15 @@ fn unparsed_tool_call_near_misses_remain_plain_failures() {
         "I would use `get_weather` for that",
         "```text\n[`get_weather` {\"city\": \"Boston\"}]\n```",
     ] {
-        let failure = score_response(&tools, &expected, ArgumentsMatch::Exact, Some(content), &[])
-            .expect_err("missing parsed call must fail");
+        let failure = score_response(
+            &tools,
+            &expected,
+            ArgumentsMatch::Exact,
+            ResponseRequirement::ToolCalls,
+            Some(content),
+            &[],
+        )
+        .expect_err("missing parsed call must fail");
         assert_ne!(
             failure.failure_class.as_deref(),
             Some("unparsed_tool_call"),
@@ -150,6 +215,7 @@ fn unparsed_tool_call_preserves_a_negative_trap_pass() {
         &[weather_tool()],
         &[],
         ArgumentsMatch::Exact,
+        ResponseRequirement::TextWithoutToolCalls,
         Some(r#"[`get_weather` {"city": "Boston"}]"#),
         &[]
     )
