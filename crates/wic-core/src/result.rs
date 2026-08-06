@@ -3,6 +3,7 @@ use std::fs::File;
 use std::io::{self, Write};
 use std::path::Path;
 
+use ring::digest::{digest, SHA256};
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
 
@@ -322,6 +323,68 @@ impl Measurement {
             self.metadata.model.canonical_id.as_deref()
         }
     }
+}
+
+pub fn arm_fingerprint(
+    corpus: &CorpusMetadata,
+    model: &ModelMetadata,
+    server: &MeasurementServerMetadata,
+    environment: Option<&EnvironmentMetadataV3>,
+    sampling: &SamplingParams,
+) -> Option<String> {
+    let artifact = &model.artifact;
+    if model.identity_status == IdentityStatus::Unresolved
+        || artifact.source_kind == ArtifactSourceKind::Other
+        || artifact.source_id.is_none()
+        || (artifact.revision.is_none() && artifact.sha256.is_none())
+        || artifact.format == ArtifactFormat::Unknown
+    {
+        return None;
+    }
+
+    let reported_version = server.reported_version.as_ref()?;
+    let launch_config_sha256 = server.launch_config_sha256.as_ref()?;
+    let chat_template = server.chat_template.as_ref()?;
+    let chat_template_id = chat_template.id.as_ref()?;
+    let chat_template_sha256 = chat_template.sha256.as_ref()?;
+    if server.decode_mode == DecodeMode::Unknown {
+        return None;
+    }
+
+    let environment = environment?;
+    environment.os_name.as_ref()?;
+    environment.os_version.as_ref()?;
+    environment.architecture.as_ref()?;
+    environment.accelerator.as_ref()?;
+    environment.memory_bytes?;
+
+    let temperature = sampling.temperature.filter(|value| value.is_finite())?;
+    let top_p = sampling.top_p.filter(|value| value.is_finite())?;
+    let max_tokens = sampling.max_tokens?;
+    let input = serde_json::to_vec(&serde_json::json!({
+        "version": 1,
+        "corpus": corpus,
+        "artifact": artifact,
+        "server": {
+            "preset_name": server.preset_name,
+            "reported_version": reported_version,
+            "launch_config_sha256": launch_config_sha256,
+        },
+        "chat_template": {
+            "id": chat_template_id,
+            "sha256": chat_template_sha256,
+        },
+        "decode_mode": server.decode_mode,
+        "environment": environment,
+        "sampling": {
+            "temperature": temperature,
+            "top_p": top_p,
+            "max_tokens": max_tokens,
+        },
+    }))
+    .ok()?;
+    let hash = digest(&SHA256, &input);
+    Some(format!("v1:sha256:{}", hex(hash.as_ref())))
 }
 
 impl From<RunResultV1V2> for Measurement {
@@ -864,8 +927,11 @@ mod tests {
     use std::io::{self, Write};
 
     use super::{
-        atomic_write_with, write_result_atomic, Cause, CauseKind, EnvironmentMetadata, RunMetadata,
-        RunResult, SamplingParams, ScenarioOutcome, ServerMetadata, Status, Totals,
+        arm_fingerprint, atomic_write_with, write_result_atomic, ArtifactFormat, ArtifactMetadata,
+        ArtifactSourceKind, Cause, CauseKind, ChatTemplateMetadata, CorpusMetadata, DecodeMode,
+        EnvironmentMetadata, EnvironmentMetadataV3, IdentityStatus, MeasurementServerMetadata,
+        ModelMetadata, QuantizationMetadata, RunMetadata, RunResult, SamplingParams,
+        ScenarioOutcome, ServerMetadata, Status, Totals,
     };
     use crate::ScenarioCategory;
 
@@ -1055,6 +1121,143 @@ mod tests {
             .expect("existing v2 result without environment should remain valid");
 
         assert!(result.metadata.environment.is_none());
+    }
+
+    #[test]
+    fn v3_runtime_contract_is_complete() {
+        let corpus = CorpusMetadata {
+            id: "wic-50".to_owned(),
+            revision: "v1".to_owned(),
+            sha256: "sha256:corpus".to_owned(),
+            scenario_count: 50,
+            scoring_version: "v1".to_owned(),
+        };
+        let model = ModelMetadata {
+            display_name: "Fixture model".to_owned(),
+            family_id: Some("fixture".to_owned()),
+            canonical_id: Some("fixture/model".to_owned()),
+            parameter_count_b: Some(7.0),
+            endpoint_id: "fixture.gguf".to_owned(),
+            identity_status: IdentityStatus::Verified,
+            artifact: ArtifactMetadata {
+                source_kind: ArtifactSourceKind::LocalFile,
+                source_id: Some("fixture.gguf".to_owned()),
+                revision: None,
+                sha256: Some("sha256:artifact".to_owned()),
+                format: ArtifactFormat::Gguf,
+                quantization: Some(QuantizationMetadata {
+                    label: "Q4_K_M".to_owned(),
+                    scheme: Some("k-quant".to_owned()),
+                    bits: Some(4),
+                }),
+            },
+        };
+        let server = MeasurementServerMetadata {
+            preset_name: "llamacpp".to_owned(),
+            reported_version: Some("b7000".to_owned()),
+            quirk_flags: vec!["grammar_constrained_decoding".to_owned()],
+            decode_mode: DecodeMode::GrammarConstrained,
+            chat_template: Some(ChatTemplateMetadata {
+                id: Some("fixture-template".to_owned()),
+                sha256: Some("sha256:template".to_owned()),
+            }),
+            launch_config_sha256: Some("sha256:launch".to_owned()),
+        };
+        let environment = EnvironmentMetadataV3 {
+            display_label: "Fixture accelerator, 64GB; FixtureOS 1".to_owned(),
+            os_name: Some("FixtureOS".to_owned()),
+            os_version: Some("1".to_owned()),
+            architecture: Some("aarch64".to_owned()),
+            accelerator: Some("Fixture accelerator".to_owned()),
+            memory_bytes: Some(68_719_476_736),
+        };
+        let sampling = SamplingParams {
+            temperature: Some(0.0),
+            top_p: Some(1.0),
+            seed: Some(42),
+            max_tokens: Some(1024),
+        };
+
+        let fingerprint = arm_fingerprint(&corpus, &model, &server, Some(&environment), &sampling)
+            .expect("complete contract should produce a fingerprint");
+        assert!(fingerprint.starts_with("v1:sha256:"));
+
+        let mut varied_seed = sampling.clone();
+        varied_seed.seed = Some(7);
+        assert_eq!(
+            arm_fingerprint(&corpus, &model, &server, Some(&environment), &varied_seed,).as_deref(),
+            Some(fingerprint.as_str())
+        );
+
+        let mut incomplete_model = model.clone();
+        incomplete_model.artifact.source_id = None;
+        assert!(arm_fingerprint(
+            &corpus,
+            &incomplete_model,
+            &server,
+            Some(&environment),
+            &sampling,
+        )
+        .is_none());
+
+        let mut incomplete_server = server.clone();
+        incomplete_server.launch_config_sha256 = None;
+        assert!(arm_fingerprint(
+            &corpus,
+            &model,
+            &incomplete_server,
+            Some(&environment),
+            &sampling,
+        )
+        .is_none());
+
+        let mut unknown_decode_mode = server.clone();
+        unknown_decode_mode.decode_mode = DecodeMode::Unknown;
+        assert!(arm_fingerprint(
+            &corpus,
+            &model,
+            &unknown_decode_mode,
+            Some(&environment),
+            &sampling,
+        )
+        .is_none());
+
+        let mut incomplete_template = server.clone();
+        incomplete_template
+            .chat_template
+            .as_mut()
+            .expect("chat template")
+            .sha256 = None;
+        assert!(arm_fingerprint(
+            &corpus,
+            &model,
+            &incomplete_template,
+            Some(&environment),
+            &sampling,
+        )
+        .is_none());
+
+        let mut incomplete_environment = environment.clone();
+        incomplete_environment.accelerator = None;
+        assert!(arm_fingerprint(
+            &corpus,
+            &model,
+            &server,
+            Some(&incomplete_environment),
+            &sampling,
+        )
+        .is_none());
+
+        let mut incomplete_sampling = sampling.clone();
+        incomplete_sampling.max_tokens = None;
+        assert!(arm_fingerprint(
+            &corpus,
+            &model,
+            &server,
+            Some(&environment),
+            &incomplete_sampling,
+        )
+        .is_none());
     }
 
     #[test]

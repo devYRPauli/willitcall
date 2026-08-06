@@ -8,8 +8,11 @@ use reqwest::header::{HeaderValue, AUTHORIZATION};
 use ring::digest::{digest, SHA256};
 use serde_json::{json, Value};
 use support::{MockServer, ScriptedResponse};
-use wic_core::result::write_result_atomic;
-use wic_core::runner::{run_scenarios, RunConfig};
+use wic_core::corpus::corpus_identity;
+use wic_core::result::{
+    write_result_atomic, DecodeMode, IdentityStatus, ReplicationMetadata, ReplicationMode,
+};
+use wic_core::runner::{run_measurement, run_scenarios, RunConfig};
 use wic_core::{load_embedded_scenarios, Scenario};
 
 fn completion(calls: Value, content: Value) -> String {
@@ -244,6 +247,76 @@ async fn written_transcript_matches_checked_in_schema() {
     validator
         .validate(&document)
         .expect("written transcript should satisfy checked-in schema");
+}
+
+#[tokio::test]
+async fn structured_http_failure_is_captured_at_the_request_boundary() {
+    let raw_model = "/Users/alice/private-models/fixture-model.gguf";
+    let server = MockServer::start_scripted(
+        raw_model,
+        vec![ScriptedResponse::Status(400, "bad request".to_owned())],
+    )
+    .await;
+    let directory = tempfile::tempdir().expect("temp directory");
+    let config = RunConfig::new(
+        server.endpoint(),
+        raw_model.to_owned(),
+        Duration::from_secs(5),
+        42,
+        0.0,
+    )
+    .with_replication(Some(ReplicationMetadata {
+        study_id: "fixture-study".to_owned(),
+        arm_id: "fixture-arm".to_owned(),
+        run_index: 2,
+        mode: ReplicationMode::GreedyReproducibility,
+    }));
+    let scenarios = [embedded_scenario("single-weather")];
+    let expected_corpus_sha256 = corpus_identity(&scenarios);
+
+    let measurement = run_measurement(&config, &scenarios, &directory.path().join("result.json"))
+        .await
+        .expect("run scenario");
+    let outcome = &measurement.scenarios[0];
+    let failure = outcome.failure.as_ref().expect("structured failure");
+    let corpus = measurement
+        .metadata
+        .corpus
+        .as_ref()
+        .expect("runtime corpus metadata");
+
+    assert_eq!(corpus.id, "wic-50");
+    assert_eq!(corpus.revision, "v1");
+    assert_eq!(corpus.sha256, expected_corpus_sha256);
+    assert_eq!(corpus.scenario_count, 1);
+    assert_eq!(corpus.scoring_version, "v1");
+    assert_eq!(measurement.metadata.model.endpoint_id, "fixture-model.gguf");
+    assert_eq!(
+        measurement.metadata.model.identity_status,
+        IdentityStatus::Unresolved
+    );
+    assert_eq!(measurement.metadata.server.decode_mode, DecodeMode::Unknown);
+    assert!(measurement.metadata.server.chat_template.is_none());
+    assert!(measurement.metadata.server.launch_config_sha256.is_none());
+    assert!(measurement.metadata.environment.is_some());
+    assert_eq!(
+        measurement
+            .metadata
+            .replication
+            .as_ref()
+            .expect("replication metadata")
+            .run_index,
+        2
+    );
+    assert!(measurement.metadata.arm_fingerprint.is_none());
+    assert_eq!(
+        outcome.failure_reason.as_deref(),
+        Some("server returned HTTP 400 Bad Request")
+    );
+    assert_eq!(failure.stage, "request");
+    assert_eq!(failure.code, "http_error");
+    assert_eq!(failure.http_status, Some(400));
+    assert_eq!(failure.failed_turn_index, Some(1));
 }
 
 fn hex(bytes: &[u8]) -> String {
