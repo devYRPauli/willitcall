@@ -433,13 +433,28 @@ def _scenario_map(result: Any, label: str) -> dict[str, tuple[int, dict[str, Any
     return scenarios
 
 
+def _result_model_pointer(result: Any, label: str) -> tuple[str, ...]:
+    try:
+        schema_version = result["schema_version"]
+    except (KeyError, TypeError) as exc:
+        raise RedactionError(f"{label}: missing schema_version") from exc
+    if schema_version in (1, 2):
+        return ("metadata", "model_id")
+    if schema_version == 3:
+        return ("metadata", "model", "endpoint_id")
+    raise RedactionError(f"{label}: unsupported schema_version {schema_version!r}")
+
+
 def _result_identity(result: Any, label: str) -> tuple[str, str]:
+    model_pointer = _result_model_pointer(result, label)
     try:
         run_id = result["metadata"]["run_id"]
-        model_id = result["metadata"]["model_id"]
+        model_id = result
+        for part in model_pointer:
+            model_id = model_id[part]
     except (KeyError, TypeError) as exc:
         raise RedactionError(
-            f"{label}: missing metadata.run_id or metadata.model_id"
+            f"{label}: missing metadata.run_id or {_pointer(model_pointer)}"
         ) from exc
     if not isinstance(run_id, str) or not isinstance(model_id, str):
         raise RedactionError(f"{label}: result identity fields must be strings")
@@ -686,6 +701,11 @@ def check_ledger(
     new_result_bytes = result_path.read_bytes()
     old_result = _load_json(old_result_bytes, f"{result_relative} at {commit}")
     new_result = _load_json(new_result_bytes, result_relative)
+    old_model_pointer = _result_model_pointer(
+        old_result, f"{result_relative} preimage"
+    )
+    old_schema_version = old_result["schema_version"]
+    new_schema_version = new_result.get("schema_version")
     old_run_id, old_model = _result_identity(old_result, f"{result_relative} preimage")
     new_run_id, new_model = _result_identity(new_result, result_relative)
     replacement = ledger.get("replacement_identifier")
@@ -698,8 +718,23 @@ def check_ledger(
         raise RedactionError(f"{ledger_path}: replacement identifier is invalid")
     if new_model != replacement:
         raise RedactionError(
-            f"{result_relative}: metadata.model_id was not re-anchored"
+            f"{result_relative}: model identifier was not re-anchored"
         )
+    if old_schema_version != new_schema_version and not (
+        old_schema_version in (1, 2) and new_schema_version == 3
+    ):
+        raise RedactionError(
+            f"{result_relative}: unsupported result schema transition "
+            f"{old_schema_version!r} -> {new_schema_version!r}"
+        )
+    if b"/Users/" in new_result_bytes or any(
+        any(isinstance(part, str) and "/Users/" in part for part in path)
+        or (isinstance(value, str) and "/Users/" in value)
+        for path, (_, _, value) in _json_value_spans(
+            new_result_bytes, result_relative
+        ).items()
+    ):
+        raise RedactionError(f"{result_relative}: absolute path survives in new result")
 
     old_scenarios = _scenario_map(old_result, f"{result_relative} preimage")
     new_scenarios = _scenario_map(new_result, result_relative)
@@ -707,7 +742,7 @@ def check_ledger(
         raise RedactionError(f"{result_relative}: scenario set changed")
     entry_map: dict[str, dict[str, Any]] = {}
     result_replacements: dict[tuple[Any, ...], tuple[str, str]] = {
-        ("metadata", "model_id"): (old_model, replacement)
+        old_model_pointer: (old_model, replacement)
     }
 
     for entry in entries:
@@ -819,13 +854,15 @@ def check_ledger(
 
     if set(entry_map) != set(old_scenarios):
         raise RedactionError(f"{ledger_path}: ledger does not cover the whole run")
-    expected_result = _replace_string_values(
-        old_result_bytes, result_replacements, f"{result_relative} preimage"
-    )
-    if expected_result != new_result_bytes:
-        raise RedactionError(
-            f"{result_relative}: result changed outside metadata.model_id and evidence_hash"
+    if old_schema_version == new_schema_version:
+        expected_result = _replace_string_values(
+            old_result_bytes, result_replacements, f"{result_relative} preimage"
         )
+        if expected_result != new_result_bytes:
+            raise RedactionError(
+                f"{result_relative}: result changed outside the model identifier "
+                "and evidence_hash"
+            )
     return ledger
 
 
@@ -882,7 +919,10 @@ def main(argv: list[str] | None = None) -> int:
     try:
         if arguments.check_all:
             ledgers = check_all_ledgers(arguments.check_all, arguments.evidence_root)
-            print(f"checked {len(ledgers)} redaction ledgers")
+            transcript_count = sum(len(ledger["scenarios"]) for ledger in ledgers)
+            print(
+                f"checked {len(ledgers)} runs / {transcript_count} transcripts verified"
+            )
         elif arguments.check:
             if arguments.ledger is None:
                 parser.error("--check requires --ledger")
