@@ -1,0 +1,436 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://willitcall.dev/schemas/model-registry-v1.schema.json",
+  "title": "willitcall model registry v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "entries"],
+  "properties": {
+    "schema_version": {
+      "const": 1
+    },
+    "entries": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/model_registry_entry"
+      }
+    }
+  },
+  "$defs": {
+    "model_registry_entry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "selectors",
+        "display_name",
+        "family_id",
+        "canonical_id",
+        "parameter_count_b",
+        "identity_status",
+        "artifact"
+      ],
+      "properties": {
+        "selectors": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/safe_selector"
+          }
+        },
+        "display_name": {
+          "$ref": "#/$defs/provenanced_string"
+        },
+        "family_id": {
+          "$ref": "#/$defs/nullable_provenanced_string"
+        },
+        "canonical_id": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/canonical_id_claim"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "parameter_count_b": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/provenanced_nonnegative_number"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "identity_status": {
+          "enum": ["verified", "declared", "unresolved"]
+        },
+        "artifact": {
+          "$ref": "#/$defs/registry_artifact"
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "$ref": "#/$defs/verified_entry"
+          },
+          "then": {
+            "properties": {
+              "identity_status": {
+                "const": "verified"
+              }
+            }
+          },
+          "else": {
+            "if": {
+              "$ref": "#/$defs/unresolved_entry"
+            },
+            "then": {
+              "properties": {
+                "identity_status": {
+                  "const": "unresolved"
+                }
+              }
+            },
+            "else": {
+              "properties": {
+                "identity_status": {
+                  "const": "declared"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "registry_artifact": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "source_kind",
+        "source_id",
+        "revision",
+        "sha256",
+        "format",
+        "quantization"
+      ],
+      "properties": {
+        "source_kind": {
+          "$ref": "#/$defs/provenanced_source_kind"
+        },
+        "source_id": {
+          "$ref": "#/$defs/nullable_provenanced_string"
+        },
+        "revision": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/revision_claim"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "sha256": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/provenanced_sha256"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "format": {
+          "$ref": "#/$defs/provenanced_format"
+        },
+        "quantization": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/provenanced_quantization"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      }
+    },
+    "provenanced_string": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["value", "provenance_ref"],
+      "properties": {
+        "value": {
+          "type": "string",
+          "minLength": 1
+        },
+        "provenance_ref": {
+          "$ref": "#/$defs/provenance_ref"
+        }
+      }
+    },
+    "nullable_provenanced_string": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/provenanced_string"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "provenanced_nonnegative_number": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["value", "provenance_ref"],
+      "properties": {
+        "value": {
+          "type": "number",
+          "minimum": 0
+        },
+        "provenance_ref": {
+          "$ref": "#/$defs/provenance_ref"
+        }
+      }
+    },
+    "canonical_id_claim": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["value", "provenance_ref", "corroboration"],
+      "properties": {
+        "value": {
+          "type": "string",
+          "minLength": 1
+        },
+        "provenance_ref": {
+          "$ref": "#/$defs/provenance_ref"
+        },
+        "corroboration": {
+          "enum": ["declared", "corroborated"]
+        }
+      }
+    },
+    "revision_claim": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["value", "provenance_ref", "revision_scope"],
+      "properties": {
+        "value": {
+          "type": "string",
+          "minLength": 1
+        },
+        "provenance_ref": {
+          "$ref": "#/$defs/provenance_ref"
+        },
+        "revision_scope": {
+          "enum": ["measured_artifact", "repository_head_at_capture"]
+        }
+      }
+    },
+    "provenanced_sha256": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["value", "provenance_ref"],
+      "properties": {
+        "value": {
+          "type": "string",
+          "pattern": "^sha256:[0-9a-f]{64}$"
+        },
+        "provenance_ref": {
+          "$ref": "#/$defs/provenance_ref"
+        }
+      }
+    },
+    "provenanced_source_kind": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["value", "provenance_ref"],
+      "properties": {
+        "value": {
+          "enum": ["huggingface", "ollama", "local_file", "other"]
+        },
+        "provenance_ref": {
+          "$ref": "#/$defs/provenance_ref"
+        }
+      }
+    },
+    "provenanced_format": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["value", "provenance_ref"],
+      "properties": {
+        "value": {
+          "enum": ["gguf", "mlx", "safetensors", "ollama_blob", "unknown"]
+        },
+        "provenance_ref": {
+          "$ref": "#/$defs/provenance_ref"
+        }
+      }
+    },
+    "provenanced_quantization": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["value", "provenance_ref"],
+      "properties": {
+        "value": {
+          "$ref": "#/$defs/quantization"
+        },
+        "provenance_ref": {
+          "$ref": "#/$defs/provenance_ref"
+        }
+      }
+    },
+    "quantization": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["label", "scheme", "bits"],
+      "properties": {
+        "label": {
+          "type": "string",
+          "minLength": 1
+        },
+        "scheme": {
+          "type": ["string", "null"]
+        },
+        "bits": {
+          "type": ["integer", "null"],
+          "minimum": 0,
+          "maximum": 255
+        }
+      }
+    },
+    "provenance_ref": {
+      "type": "string",
+      "pattern": "^registry/evidence/[A-Za-z0-9._-]+[.]json(#/[^ ]+)?$"
+    },
+    "safe_selector": {
+      "type": "string",
+      "minLength": 1,
+      "allOf": [
+        {
+          "not": {
+            "pattern": "^/"
+          }
+        },
+        {
+          "not": {
+            "pattern": "^~[/\\\\]"
+          }
+        },
+        {
+          "not": {
+            "pattern": "^[A-Za-z]:[/\\\\]"
+          }
+        },
+        {
+          "not": {
+            "pattern": "^\\\\\\\\"
+          }
+        },
+        {
+          "not": {
+            "pattern": "^file://"
+          }
+        }
+      ]
+    },
+    "verified_entry": {
+      "allOf": [
+        {
+          "properties": {
+            "canonical_id": {
+              "type": "object",
+              "properties": {
+                "corroboration": {
+                  "const": "corroborated"
+                }
+              },
+              "required": ["corroboration"]
+            }
+          },
+          "required": ["canonical_id"]
+        },
+        {
+          "$ref": "#/$defs/immutable_artifact_entry"
+        }
+      ]
+    },
+    "immutable_artifact_entry": {
+      "properties": {
+        "artifact": {
+          "anyOf": [
+            {
+              "properties": {
+                "sha256": {
+                  "type": "object"
+                }
+              },
+              "required": ["sha256"]
+            },
+            {
+              "properties": {
+                "source_kind": {
+                  "properties": {
+                    "value": {
+                      "not": {
+                        "const": "local_file"
+                      }
+                    }
+                  },
+                  "required": ["value"]
+                },
+                "revision": {
+                  "type": "object",
+                  "properties": {
+                    "revision_scope": {
+                      "const": "measured_artifact"
+                    }
+                  },
+                  "required": ["revision_scope"]
+                }
+              },
+              "required": ["source_kind", "revision"]
+            }
+          ]
+        }
+      },
+      "required": ["artifact"]
+    },
+    "unresolved_entry": {
+      "anyOf": [
+        {
+          "properties": {
+            "canonical_id": {
+              "type": "null"
+            }
+          },
+          "required": ["canonical_id"]
+        },
+        {
+          "properties": {
+            "artifact": {
+              "properties": {
+                "source_kind": {
+                  "properties": {
+                    "value": {
+                      "const": "local_file"
+                    }
+                  },
+                  "required": ["value"]
+                },
+                "sha256": {
+                  "type": "null"
+                }
+              },
+              "required": ["source_kind", "sha256"]
+            }
+          },
+          "required": ["artifact"]
+        }
+      ]
+    }
+  }
+}

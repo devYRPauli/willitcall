@@ -8,6 +8,7 @@ use serde::{Deserialize, Serialize};
 
 pub mod client;
 pub mod corpus;
+pub mod registry;
 pub mod result;
 pub mod runner;
 pub mod score;
