@@ -113,7 +113,7 @@ pub(super) fn render_index(dataset: &SiteDataset, repo_base: &str) -> String {
         r#"    <section class="register-intro" aria-labelledby="page-title">
       <p class="eyebrow">Measurement register</p>
       <h1 id="page-title">Tool-calling support matrix</h1>
-      <p class="framing">Each row is one observed model, artifact, server, and decode stack—not a model ranking or a verdict.</p>
+      <p class="framing">Each row is one observed model, artifact, server, and decode stack, not a model ranking or a verdict.</p>
 {}
     </section>"#,
         render_reading_legend(),
@@ -202,9 +202,10 @@ pub(super) fn render_table(dataset: &SiteDataset, repo_base: &str) -> String {
         let search_text = model_search_text(dataset, &row_indices);
         writeln!(
             html,
-            "          <tbody class=\"model-group result-group\" data-model-key=\"{}\" data-model-search=\"{}\">\n            <tr class=\"model-heading\"><th colspan=\"7\" scope=\"rowgroup\"><span>Model</span> {}</th></tr>",
+            "          <tbody class=\"model-group result-group\" data-model-key=\"{}\" data-model-search=\"{}\">\n            <tr class=\"model-heading\"><th colspan=\"{}\" scope=\"rowgroup\"><span>Model</span> {}</th></tr>",
             escape_html(&model_key),
             escape_html(&search_text),
+            CATEGORIES.len() + 1,
             escape_html(&model_label),
         )
         .expect("write model group");
@@ -241,8 +242,9 @@ fn render_decode_boundary(html: &mut String, decode_mode: DecodeMode, server: &s
     };
     writeln!(
         html,
-        "            <tr class=\"decode-band {id}\" data-decode-mode=\"{id}\" data-server-band=\"{}\"><th colspan=\"7\" scope=\"rowgroup\"><span class=\"decode-badge {id}\">{id}</span><span>{} · {note}</span></th></tr>",
+        "            <tr class=\"decode-band {id}\" data-decode-mode=\"{id}\" data-server-band=\"{}\"><th colspan=\"{}\" scope=\"rowgroup\"><span class=\"decode-badge {id}\">{id}</span><span>{} - {note}</span></th></tr>",
         escape_html(server),
+        CATEGORIES.len() + 1,
         escape_html(display_server(server)),
     )
     .expect("write decode band");
@@ -278,7 +280,7 @@ fn render_result_row(
         .unwrap_or("not declared");
     write!(
         html,
-        "            <tr class=\"result-row\" data-server=\"{}\" data-identity-status=\"{}\"{}>\n              <th scope=\"row\">\n                <strong>{}</strong>\n                <span>quant: {} · server: {}</span>\n                <span>identity status: {}{}</span>\n                <a class=\"detail-link\" href=\"#stack-detail-{index}\">detail</a>\n              </th>\n",
+        "            <tr class=\"result-row\" data-server=\"{}\" data-identity-status=\"{}\"{}>\n              <th scope=\"row\">\n                <strong>{}</strong>\n                <span>quant: {} - server: {}</span>\n                <span>identity status: {}{}</span>\n                <a class=\"detail-link\" href=\"#stack-detail-{index}\">detail</a>\n              </th>\n",
         escape_html(server),
         identity_status,
         cross_model_attribute,
@@ -963,7 +965,7 @@ fn render_colophon(dataset: &SiteDataset, main: &str) -> String {
         hash = hash.wrapping_mul(0x100000001b3);
     }
     format!(
-        "  <footer class=\"colophon\"><p>Build hash <code>{hash:016x}</code> · corpus revision <code>{}</code> · data date <time datetime=\"{}\">{}</time></p></footer>\n",
+        "  <footer class=\"colophon\"><p>Build hash <code>{hash:016x}</code> - corpus revision <code>{}</code> - data date <time datetime=\"{}\">{}</time></p></footer>\n",
         escape_html(&revision),
         escape_html(date),
         escape_html(date),

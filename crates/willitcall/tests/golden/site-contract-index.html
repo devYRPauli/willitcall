@@ -19,7 +19,7 @@
     <section class="register-intro" aria-labelledby="page-title">
       <p class="eyebrow">Measurement register</p>
       <h1 id="page-title">Tool-calling support matrix</h1>
-      <p class="framing">Each row is one observed model, artifact, server, and decode stack—not a model ranking or a verdict.</p>
+      <p class="framing">Each row is one observed model, artifact, server, and decode stack, not a model ranking or a verdict.</p>
       <div class="reading-key" aria-labelledby="reading-key-title">
         <h2 id="reading-key-title">How to read this</h2>
         <div class="mark-key" aria-label="Scenario outcome marks">
@@ -62,11 +62,11 @@
           </thead>
           <tbody class="model-group result-group" data-model-key="Fixture/Declared" data-model-search="declared-fixture.gguf fixture/declared">
             <tr class="model-heading"><th colspan="7" scope="rowgroup"><span>Model</span> Fixture/Declared</th></tr>
-            <tr class="decode-band grammar_constrained" data-decode-mode="grammar_constrained" data-server-band="llamacpp"><th colspan="7" scope="rowgroup"><span class="decode-badge grammar_constrained">grammar_constrained</span><span>llama.cpp · tool grammar constrains generation</span></th></tr>
+            <tr class="decode-band grammar_constrained" data-decode-mode="grammar_constrained" data-server-band="llamacpp"><th colspan="7" scope="rowgroup"><span class="decode-badge grammar_constrained">grammar_constrained</span><span>llama.cpp - tool grammar constrains generation</span></th></tr>
             <tr class="result-row" data-server="llamacpp" data-identity-status="declared" data-cross-model-key="Fixture/Declared">
               <th scope="row">
                 <strong>declared-fixture.gguf</strong>
-                <span>quant: Q4_K_M · server: llama.cpp</span>
+                <span>quant: Q4_K_M - server: llama.cpp</span>
                 <span>identity status: declared</span>
                 <a class="detail-link" href="#stack-detail-2">detail</a>
               </th>
@@ -80,11 +80,11 @@
           </tbody>
           <tbody class="model-group result-group" data-model-key="Fixture/Verified" data-model-search="fixture/verified verified &amp; fixture verified-fixture:latest">
             <tr class="model-heading"><th colspan="7" scope="rowgroup"><span>Model</span> Fixture/Verified</th></tr>
-            <tr class="decode-band unconstrained_post_hoc" data-decode-mode="unconstrained_post_hoc" data-server-band="ollama"><th colspan="7" scope="rowgroup"><span class="decode-badge unconstrained_post_hoc">unconstrained_post_hoc</span><span>ollama · generated text is parsed after decoding</span></th></tr>
+            <tr class="decode-band unconstrained_post_hoc" data-decode-mode="unconstrained_post_hoc" data-server-band="ollama"><th colspan="7" scope="rowgroup"><span class="decode-badge unconstrained_post_hoc">unconstrained_post_hoc</span><span>ollama - generated text is parsed after decoding</span></th></tr>
             <tr class="result-row" data-server="ollama" data-identity-status="verified" data-cross-model-key="Fixture/Verified">
               <th scope="row">
                 <strong>Verified &amp; Fixture</strong>
-                <span>quant: not declared · server: ollama</span>
+                <span>quant: not declared - server: ollama</span>
                 <span>identity status: verified</span>
                 <a class="detail-link" href="#stack-detail-3">detail</a>
               </th>
@@ -98,11 +98,11 @@
           </tbody>
           <tbody class="model-group result-group" data-model-key="legacy-unresolved.gguf" data-model-search="legacy-unresolved.gguf">
             <tr class="model-heading"><th colspan="7" scope="rowgroup"><span>Model</span> legacy-unresolved.gguf</th></tr>
-            <tr class="decode-band unconstrained_post_hoc" data-decode-mode="unconstrained_post_hoc" data-server-band="ollama"><th colspan="7" scope="rowgroup"><span class="decode-badge unconstrained_post_hoc">unconstrained_post_hoc</span><span>ollama · generated text is parsed after decoding</span></th></tr>
+            <tr class="decode-band unconstrained_post_hoc" data-decode-mode="unconstrained_post_hoc" data-server-band="ollama"><th colspan="7" scope="rowgroup"><span class="decode-badge unconstrained_post_hoc">unconstrained_post_hoc</span><span>ollama - generated text is parsed after decoding</span></th></tr>
             <tr class="result-row" data-server="ollama" data-identity-status="unresolved">
               <th scope="row">
                 <strong>legacy-unresolved.gguf</strong>
-                <span>quant: not declared · server: ollama</span>
+                <span>quant: not declared - server: ollama</span>
                 <span>identity status: unresolved (provenance could not be established; excluded from cross-model comparison)</span>
                 <a class="detail-link" href="#stack-detail-0">detail</a>
               </th>
@@ -116,11 +116,11 @@
           </tbody>
           <tbody class="model-group result-group" data-model-key="v2-unresolved:model" data-model-search="v2-unresolved:model">
             <tr class="model-heading"><th colspan="7" scope="rowgroup"><span>Model</span> v2-unresolved:model</th></tr>
-            <tr class="decode-band unconstrained_post_hoc" data-decode-mode="unconstrained_post_hoc" data-server-band="mlx_lm"><th colspan="7" scope="rowgroup"><span class="decode-badge unconstrained_post_hoc">unconstrained_post_hoc</span><span>MLX LM · generated text is parsed after decoding</span></th></tr>
+            <tr class="decode-band unconstrained_post_hoc" data-decode-mode="unconstrained_post_hoc" data-server-band="mlx_lm"><th colspan="7" scope="rowgroup"><span class="decode-badge unconstrained_post_hoc">unconstrained_post_hoc</span><span>MLX LM - generated text is parsed after decoding</span></th></tr>
             <tr class="result-row" data-server="mlx_lm" data-identity-status="unresolved">
               <th scope="row">
                 <strong>v2-unresolved:model</strong>
-                <span>quant: Q5_K_M · server: MLX LM</span>
+                <span>quant: Q5_K_M - server: MLX LM</span>
                 <span>identity status: unresolved (provenance could not be established; excluded from cross-model comparison)</span>
                 <a class="detail-link" href="#stack-detail-1">detail</a>
               </th>
@@ -807,7 +807,7 @@
     </section>
 
   </main>
-  <footer class="colophon"><p>Build hash <code>5d50bdedb02301fd</code> · corpus revision <code>site-contract fixture-v1</code> · data date <time datetime="2000-01-04">2000-01-04</time></p></footer>
+  <footer class="colophon"><p>Build hash <code>a491053d92d9d283</code> - corpus revision <code>site-contract fixture-v1</code> - data date <time datetime="2000-01-04">2000-01-04</time></p></footer>
   <script src="site.js"></script>
 </body>
 </html>
