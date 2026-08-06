@@ -12,11 +12,6 @@ pub(super) struct FigureAccessibility<'a> {
     pub does_not_show: &'a str,
 }
 
-pub(super) struct TableFallback<'a> {
-    pub headers: &'a [&'a str],
-    pub rows: &'a [Vec<String>],
-}
-
 /// A closed set of figure primitives. Each variant requires the same accessibility
 /// contract, and the module exposes no alternate complete-SVG renderer.
 #[allow(dead_code)] // Brief 8 constructs the first production figure.
@@ -40,16 +35,6 @@ pub(super) enum Figure<'a> {
         marks: &'a [StatusMark<'a>],
         texts: &'a [FigureText<'a>],
         rules: &'a [FigureRule],
-        fallback: TableFallback<'a>,
-    },
-    Bars {
-        accessibility: FigureAccessibility<'a>,
-        width: u32,
-        height: u32,
-        bars: &'a [Bar<'a>],
-        texts: &'a [FigureText<'a>],
-        rules: &'a [FigureRule],
-        fallback: TableFallback<'a>,
     },
     StripPlot {
         accessibility: FigureAccessibility<'a>,
@@ -59,7 +44,6 @@ pub(super) enum Figure<'a> {
         not_fully_measurable: &'a [NotFullyMeasurableMark<'a>],
         texts: &'a [FigureText<'a>],
         rules: &'a [FigureRule],
-        fallback: TableFallback<'a>,
     },
 }
 
@@ -84,17 +68,7 @@ pub(super) fn render_figure(figure: Figure<'_>) -> String {
             marks,
             texts,
             rules,
-            fallback,
-        } => render_status_raster(accessibility, width, height, marks, texts, rules, fallback),
-        Figure::Bars {
-            accessibility,
-            width,
-            height,
-            bars,
-            texts,
-            rules,
-            fallback,
-        } => render_bars(accessibility, width, height, bars, texts, rules, fallback),
+        } => render_status_raster(accessibility, width, height, marks, texts, rules),
         Figure::StripPlot {
             accessibility,
             width,
@@ -103,7 +77,6 @@ pub(super) fn render_figure(figure: Figure<'_>) -> String {
             not_fully_measurable,
             texts,
             rules,
-            fallback,
         } => render_strip_plot(
             accessibility,
             (width, height),
@@ -111,7 +84,6 @@ pub(super) fn render_figure(figure: Figure<'_>) -> String {
             not_fully_measurable,
             texts,
             rules,
-            fallback,
         ),
     }
 }
@@ -150,16 +122,6 @@ pub(super) struct FigureRule {
     pub x2: u32,
     pub y2: u32,
     pub class: &'static str,
-}
-
-#[derive(Clone, Copy, Debug, Eq, PartialEq)]
-pub(super) struct Bar<'a> {
-    pub x: u32,
-    pub y: u32,
-    pub height: u32,
-    pub track_width: u32,
-    pub value_width: u32,
-    pub label: &'a str,
 }
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
@@ -225,7 +187,6 @@ fn render_status_marks(
     marks: &[StatusMark<'_>],
 ) -> String {
     let mut body = String::new();
-    let mut rows = Vec::with_capacity(marks.len());
 
     for mark in marks {
         writeln!(
@@ -238,19 +199,9 @@ fn render_status_marks(
         .expect("write SVG");
         write_mark_shape(&mut body, mark.state, mark.x, mark.y, DENSE_MARK_SIZE);
         body.push_str("    </g>\n");
-        rows.push(vec![mark.label.to_owned(), mark.state.label().to_owned()]);
     }
 
-    render_accessible_figure(
-        accessibility,
-        width,
-        height,
-        &body,
-        TableFallback {
-            headers: &["Item", "Status"],
-            rows: &rows,
-        },
-    )
+    render_accessible_figure(accessibility, width, height, &body)
 }
 
 /// Renders prepared 44 px aggregate cells. The caller explicitly selects `no_verdict` per cell.
@@ -261,7 +212,6 @@ fn render_aggregate_marks(
     marks: &[AggregateMark<'_>],
 ) -> String {
     let mut body = String::new();
-    let mut rows = Vec::with_capacity(marks.len());
 
     for mark in marks {
         writeln!(
@@ -292,28 +242,9 @@ fn render_aggregate_marks(
             body.push_str(&render_no_verdict_overlay(mark.x, mark.y));
         }
         body.push_str("    </g>\n");
-        rows.push(vec![
-            mark.label.to_owned(),
-            mark.state.label().to_owned(),
-            format!("{}/{}", mark.passed, mark.measured),
-            if mark.no_verdict {
-                "n=1, no verdict".to_owned()
-            } else {
-                String::new()
-            },
-        ]);
     }
 
-    render_accessible_figure(
-        accessibility,
-        width,
-        height,
-        &body,
-        TableFallback {
-            headers: &["Item", "Status", "Passed / measured", "Verdict"],
-            rows: &rows,
-        },
-    )
+    render_accessible_figure(accessibility, width, height, &body)
 }
 
 fn render_status_raster(
@@ -323,7 +254,6 @@ fn render_status_raster(
     marks: &[StatusMark<'_>],
     texts: &[FigureText<'_>],
     rules: &[FigureRule],
-    fallback: TableFallback<'_>,
 ) -> String {
     let mut body = String::new();
     write_rules(&mut body, rules);
@@ -331,39 +261,7 @@ fn render_status_raster(
     for mark in marks {
         write_status_mark(&mut body, mark);
     }
-    render_accessible_figure(accessibility, width, height, &body, fallback)
-}
-
-fn render_bars(
-    accessibility: FigureAccessibility<'_>,
-    width: u32,
-    height: u32,
-    bars: &[Bar<'_>],
-    texts: &[FigureText<'_>],
-    rules: &[FigureRule],
-    fallback: TableFallback<'_>,
-) -> String {
-    let mut body = String::new();
-    write_rules(&mut body, rules);
-    write_texts(&mut body, texts);
-    for bar in bars {
-        writeln!(
-            body,
-            "    <g class=\"capability-bar\" aria-label=\"{}\">\n      <title>{}</title>\n      <rect class=\"bar-track\" x=\"{}\" y=\"{}\" width=\"{}\" height=\"{}\" fill=\"none\" stroke=\"var(--design-grey-2, #8c8a85)\" stroke-width=\"1\" />\n      <rect class=\"bar-value\" x=\"{}\" y=\"{}\" width=\"{}\" height=\"{}\" fill=\"var(--design-pass, #00513a)\" stroke=\"var(--design-ink, #1c1c1c)\" stroke-width=\"0.75\" />\n    </g>",
-            escape_html(bar.label),
-            escape_html(bar.label),
-            bar.x,
-            bar.y,
-            bar.track_width,
-            bar.height,
-            bar.x,
-            bar.y,
-            bar.value_width,
-            bar.height,
-        )
-        .expect("write SVG bar");
-    }
-    render_accessible_figure(accessibility, width, height, &body, fallback)
+    render_accessible_figure(accessibility, width, height, &body)
 }
 
 fn render_strip_plot(
@@ -373,7 +271,6 @@ fn render_strip_plot(
     not_fully_measurable: &[NotFullyMeasurableMark<'_>],
     texts: &[FigureText<'_>],
     rules: &[FigureRule],
-    fallback: TableFallback<'_>,
 ) -> String {
     let (width, height) = size;
     let mut body = String::new();
@@ -404,7 +301,7 @@ fn render_strip_plot(
         write_mark_shape(&mut body, MarkState::Error, mark.x, mark.y, DENSE_MARK_SIZE);
         body.push_str("    </g>\n");
     }
-    render_accessible_figure(accessibility, width, height, &body, fallback)
+    render_accessible_figure(accessibility, width, height, &body)
 }
 
 fn write_status_mark(svg: &mut String, mark: &StatusMark<'_>) {
@@ -546,12 +443,11 @@ fn render_accessible_figure(
     width: u32,
     height: u32,
     body: &str,
-    fallback: TableFallback<'_>,
 ) -> String {
     let mut figure = String::new();
     write!(
         figure,
-        "<figure class=\"svg-figure\" data-figure-number=\"{}\">\n  <figcaption>\n    <strong>Figure {}. {}</strong>\n    <span>{}</span>\n    <span class=\"does-not-show\"><strong>What this does not show:</strong> {}</span>\n    <a class=\"figure-method-link\" href=\"#method-limitations\">Method and limitations</a>\n  </figcaption>\n  <div class=\"figure-scroll\">\n  <svg role=\"img\" width=\"{width}\" height=\"{height}\" viewBox=\"0 0 {width} {height}\">\n    <title>Figure {}. {}</title>\n    <desc>{}</desc>\n{body}  </svg>\n  </div>\n  <table class=\"svg-text-fallback\">\n    <caption>Figure {}. {}</caption>\n    <thead><tr>",
+        "<figure class=\"svg-figure\" data-figure-number=\"{}\">\n  <figcaption>\n    <strong>Figure {}. {}</strong>\n    <span>{}</span>\n    <span class=\"does-not-show\"><strong>What this does not show:</strong> {}</span>\n    <span class=\"figure-links\"><a class=\"figure-method-link\" href=\"index.html#method-limitations\">Method and limitations</a> - Data: <a href=\"results.json\">JSON</a>, <a href=\"results.csv\">CSV</a></span>\n  </figcaption>\n  <div class=\"figure-scroll\">\n  <svg role=\"img\" width=\"{width}\" height=\"{height}\" viewBox=\"0 0 {width} {height}\">\n    <title>Figure {}. {}</title>\n    <desc>{}</desc>\n{body}  </svg>\n  </div>\n</figure>\n",
         accessibility.number,
         accessibility.number,
         escape_html(accessibility.title),
@@ -560,23 +456,8 @@ fn render_accessible_figure(
         accessibility.number,
         escape_html(accessibility.title),
         escape_html(accessibility.description),
-        accessibility.number,
-        escape_html(accessibility.title)
     )
     .expect("write SVG figure");
-    for header in fallback.headers {
-        write!(figure, "<th scope=\"col\">{}</th>", escape_html(header))
-            .expect("write SVG fallback");
-    }
-    figure.push_str("</tr></thead>\n    <tbody>\n");
-    for row in fallback.rows {
-        figure.push_str("      <tr>");
-        for cell in row {
-            write!(figure, "<td>{}</td>", escape_html(cell)).expect("write SVG fallback");
-        }
-        figure.push_str("</tr>\n");
-    }
-    figure.push_str("    </tbody>\n  </table>\n</figure>\n");
     figure
 }
 
@@ -668,7 +549,7 @@ mod tests {
     }
 
     #[test]
-    fn every_renderer_includes_title_description_and_table_fallback() {
+    fn every_renderer_includes_title_description_and_data_links() {
         for figure in [
             render_one_status(MarkState::Pass, "result"),
             aggregate(false),
@@ -677,7 +558,9 @@ mod tests {
             assert!(figure.contains("</title>"));
             assert!(figure.contains("<desc>"));
             assert!(figure.contains("</desc>"));
-            assert!(figure.contains("<table class=\"svg-text-fallback\">"));
+            assert!(figure.contains("href=\"results.json\""));
+            assert!(figure.contains("href=\"results.csv\""));
+            assert!(!figure.contains("svg-text-fallback"));
         }
     }
 

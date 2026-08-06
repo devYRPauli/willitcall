@@ -182,30 +182,50 @@ fn analysis_views_render_the_published_observation_contract() {
     );
 
     let index = fs::read_to_string(output.join("index.html")).expect("generated index");
+    let outcomes =
+        fs::read_to_string(output.join("outcomes.html")).expect("generated outcomes page");
+    let appendix =
+        fs::read_to_string(output.join("appendix.html")).expect("generated appendix page");
+    let results_json =
+        fs::read_to_string(output.join("results.json")).expect("generated JSON data");
+    let results_csv = fs::read_to_string(output.join("results.csv")).expect("generated CSV data");
     assert_eq!(index.matches("class=\"result-row\"").count(), 32);
-    assert_eq!(index.matches("data-figure-number=").count(), 5);
-    assert_eq!(index.matches("What this does not show:").count(), 5);
-    assert_eq!(index.matches("class=\"svg-text-fallback\"").count(), 5);
+    assert_eq!(appendix.matches("class=\"stack-detail\"").count(), 32);
+    assert_eq!(index.matches("<h2").count(), 3);
+    assert!(index.len() < 150_000, "index is {} bytes", index.len());
+    assert_eq!(outcomes.matches("data-figure-number=").count(), 3);
+    assert_eq!(index.matches("data-figure-number=").count(), 1);
+    assert_eq!(outcomes.matches("What this does not show:").count(), 3);
+    assert_eq!(index.matches("What this does not show:").count(), 1);
+    assert!(!index.contains("svg-text-fallback"));
+    assert!(!outcomes.contains("svg-text-fallback"));
+    assert!(!index.contains("Per-capability aggregate"));
+    assert!(!outcomes.contains("Per-capability aggregate"));
+    assert!(!index.contains("capability-bar"));
+    assert!(!outcomes.contains("capability-bar"));
 
-    let svgs = index
+    let figure_pages = format!("{outcomes}{index}");
+    let svgs = figure_pages
         .split("<svg ")
         .skip(1)
         .map(|tail| tail.split_once("</svg>").expect("closed svg").0)
         .collect::<Vec<_>>();
-    assert_eq!(svgs.len(), 5);
+    assert_eq!(svgs.len(), 4);
     for svg in &svgs {
         assert!(svg.contains("<title>"));
         assert!(svg.contains("<desc>"));
         assert!(!svg.contains("http://"));
         assert!(!svg.contains("https://"));
     }
-    assert!(!index.contains("/Users/"));
+    for generated in [&index, &outcomes, &appendix, &results_json, &results_csv] {
+        assert!(!generated.contains("/Users/"));
+        assert!(generated.is_ascii());
+    }
     assert!(!index.contains("<script src=\"http"));
     assert!(!index.contains("View 50 scenarios and row metadata"));
     assert!(!index.contains("class=\"detail-row\""));
     assert_eq!(index.matches("class=\"detail-link\"").count(), 32);
-    assert_eq!(index.matches("class=\"stack-detail\"").count(), 32);
-    assert_eq!(index.matches("class=\"mini-raster-panel\"").count(), 6);
+    assert_eq!(outcomes.matches("class=\"mini-raster-panel\"").count(), 6);
     assert_eq!(index.matches("class=\"replication-note\"").count(), 32 * 6);
     assert!(index.contains("id=\"model-search\" type=\"search\""));
     assert!(index.contains("data-decode-mode=\"grammar_constrained\""));
@@ -218,6 +238,8 @@ fn analysis_views_render_the_published_observation_contract() {
         26
     );
     assert_eq!(index.matches("data-decode-source=\"unknown\"").count(), 0);
+    assert_eq!(index.matches("class=\"decode-band").count(), 0);
+    assert_eq!(index.matches("class=\"decode-badge").count(), 32);
     for (id, label) in [
         ("single_call", "Single call"),
         ("tool_choice_modes", "Tool choice"),
@@ -229,41 +251,45 @@ fn analysis_views_render_the_published_observation_contract() {
         assert!(index.contains(&format!("title=\"{id}\">{label}</th>")));
     }
 
-    let matrix = index.find("class=\"matrix\"").expect("matrix");
-    let first_figure = index.find("data-figure-number=\"1\"").expect("figure 1");
-    let second_figure = index.find("data-figure-number=\"2\"").expect("figure 2");
-    let methods = index
-        .find("id=\"method-limitations\"")
-        .expect("method section");
-    let appendix = index.find("id=\"stack-appendix\"").expect("appendix");
-    assert!(matrix < first_figure);
-    assert!(first_figure < second_figure);
-    assert!(second_figure < methods);
-    assert!(methods < appendix);
-
     assert!(svgs[0].contains("Figure 1. Scenario-status raster"));
-    assert!(svgs[0].contains("single-weather: Call one weather tool with a city argument."));
-    assert!(svgs[0].contains("Rationale: This asserts selecting the weather tool"));
+    assert!(svgs[0].contains("<title>single-weather: pass</title>"));
+    assert!(!svgs[0].contains("Call one weather tool with a city argument."));
+    assert!(!svgs[0].contains("Rationale:"));
     assert!(!svgs[0].contains("no-verdict-overlay"));
 
-    assert!(index.contains(
+    assert!(outcomes.contains(
         "multi_turn passes 37/224 (17%), and 22 of 32 rows pass none of the multi_turn scenarios"
     ));
-    assert!(index.contains(
+    assert!(outcomes.contains(
         "The repeated 7-pass signature is shared by 9 stacks, including the granite observations; it contains the same 5 negative_trap and 2 tool_choice_modes passes in every row."
     ));
-    assert!(index.contains("Category sizes are 13/8/8/7/7/7"));
-    assert!(index.contains("passed in 37 of 224 measurements (7 scenarios per stack)"));
-
-    assert_eq!(svgs[4].matches("class=\"strip-observation\"").count(), 27);
     assert_eq!(
-        svgs[4]
+        figure_pages
+            .matches("Data: <a href=\"results.json\"")
+            .count(),
+        4
+    );
+    assert_eq!(
+        figure_pages
+            .matches("Data: <a href=\"results.json\">JSON</a>, <a href=\"results.csv\"")
+            .count(),
+        4
+    );
+    assert!(index.contains("Machine-readable observations: <a href=\"results.json\">JSON</a>"));
+    let json: Value = serde_json::from_str(&results_json).expect("valid site results JSON");
+    assert_eq!(json["row_count"], 32);
+    assert_eq!(json["stacks"].as_array().expect("stacks array").len(), 32);
+    assert_eq!(results_csv.lines().count(), 1_601);
+
+    assert_eq!(svgs[3].matches("class=\"strip-observation\"").count(), 27);
+    assert_eq!(
+        svgs[3]
             .matches("class=\"not-fully-measurable-item\"")
             .count(),
         5
     );
     for gemma in ["gemma3:4b", "gemma3:12b"] {
-        let item = svgs[4]
+        let item = svgs[3]
             .split(&format!("aria-label=\"{gemma}"))
             .nth(1)
             .expect("gemma row in not-fully-measurable panel")
@@ -276,7 +302,7 @@ fn analysis_views_render_the_published_observation_contract() {
 }
 
 #[test]
-fn site_generates_v1_and_v2_rows_ratios_links_and_badges() {
+fn site_generates_v1_and_v2_rows_ratios_links_and_plain_annotations() {
     let directory = tempfile::tempdir().expect("temp directory");
     let results = directory.path().join("results");
     let output = directory.path().join("site");
@@ -379,6 +405,8 @@ fn site_generates_v1_and_v2_rows_ratios_links_and_badges() {
     );
 
     let index = fs::read_to_string(output.join("index.html")).expect("generated index");
+    let appendix =
+        fs::read_to_string(output.join("appendix.html")).expect("generated appendix page");
     let submit = fs::read_to_string(output.join("submit.html")).expect("generated submit page");
     assert!(output.join("style.css").is_file());
     assert!(output.join("site.js").is_file());
@@ -390,23 +418,24 @@ fn site_generates_v1_and_v2_rows_ratios_links_and_badges() {
     assert!(index.contains("data-decode-mode=\"grammar_constrained\""));
     assert!(index.contains("data-decode-mode=\"unconstrained_post_hoc\""));
     assert!(index.contains("server: MLX LM"));
-    assert!(index.contains("blob-model"));
+    assert!(appendix.contains("blob-model"));
     assert!(index.contains("quant: Q4_K_M"));
     assert!(index.contains("server: llama.cpp"));
-    assert!(index.contains("sha256-deadbeef"));
-    assert!(!index.contains("/models/blobs/sha256-deadbeef"));
+    assert!(appendix.contains("sha256-deadbeef"));
+    assert!(!appendix.contains("/models/blobs/sha256-deadbeef"));
     assert!(index.contains(">1/2<"));
     assert!(index.contains(">0/1<"));
     assert!(index.contains(">1/2<"));
     assert!(index.contains(
         "https://github.com/devYRPauli/willitcall/blob/main/results/evidence/fixture/parallel-bad.json"
     ));
-    assert!(index.contains(
+    assert!(appendix.contains(
         "https://github.com/devYRPauli/willitcall/blob/main/docs/case-studies/server-defect.md"
     ));
-    assert!(index.contains("server defect"));
-    assert!(index.contains("empty response"));
-    assert!(index.contains("<span class=\"badge neutral unparsed\">unparsed tool call</span>"));
+    assert!(appendix.contains("server defect"));
+    assert!(appendix.contains("empty response"));
+    assert!(appendix.contains("<span class=\"annotation\">unparsed tool call</span>"));
+    assert!(!appendix.contains("class=\"badge"));
     assert!(index.contains("A cell measures the whole stack"));
     assert!(index.contains("GBNF grammar"));
     assert!(index.contains("Each published cell is one run."));
@@ -417,15 +446,17 @@ fn site_generates_v1_and_v2_rows_ratios_links_and_badges() {
     assert!(index.contains(
         "https://github.com/devYRPauli/willitcall/blob/main/docs/case-studies/2026-07-21-llamacpp-500s-on-llama-3.1-tool-calls.md"
     ));
-    assert!(index.contains("Host hardware"));
-    assert!(index.contains("Apple M4 Max, 64GB"));
-    assert!(index.contains("Host OS"));
-    assert!(index.contains("macOS 15.5"));
+    assert!(appendix.contains("Host hardware"));
+    assert!(appendix.contains("Apple M4 Max, 64GB"));
+    assert!(appendix.contains("Host OS"));
+    assert!(appendix.contains("macOS 15.5"));
     assert!(index.contains("docs/case-studies/"));
     assert!(!index.contains("class=\"detail-row\""));
     assert!(!index.contains("View 50 scenarios and row metadata"));
     assert_eq!(index.matches("class=\"detail-link\"").count(), 3);
-    assert_eq!(index.matches("class=\"stack-detail\"").count(), 3);
+    assert_eq!(appendix.matches("class=\"stack-detail\"").count(), 3);
+    assert!(output.join("results.json").is_file());
+    assert!(output.join("results.csv").is_file());
     assert!(!index.contains("<script src=\"http"));
 
     assert!(submit.contains("cargo run -p willitcall -- run"));
@@ -484,9 +515,15 @@ fn site_never_renders_absolute_model_paths() {
         String::from_utf8_lossy(&generated.stderr)
     );
     let index = fs::read_to_string(output.join("index.html")).expect("generated index");
-    assert!(!index.contains("/Users/"));
-    assert!(index.contains("sha256-deadbeef"));
-    assert!(index.contains("custom-model.gguf"));
+    let appendix =
+        fs::read_to_string(output.join("appendix.html")).expect("generated appendix page");
+    let results_json =
+        fs::read_to_string(output.join("results.json")).expect("generated JSON data");
+    for generated in [&index, &appendix, &results_json] {
+        assert!(!generated.contains("/Users/"));
+    }
+    assert!(appendix.contains("sha256-deadbeef"));
+    assert!(appendix.contains("custom-model.gguf"));
     assert!(index.contains("qwen3:8b"));
     assert!(index.contains("Qwen/Qwen2.5-7B-Instruct-GGUF:Q4_K_M"));
     assert!(index.contains("mlx-community/Qwen3-8B-4bit"));
@@ -525,9 +562,11 @@ fn site_uses_registry_identity_and_excludes_unresolved_rows_from_grouping() {
     );
 
     let index = fs::read_to_string(output.join("index.html")).expect("generated index");
+    let appendix =
+        fs::read_to_string(output.join("appendix.html")).expect("generated appendix page");
     assert!(index.contains("<strong>qwen3:14b</strong>"));
     assert!(!index.contains("<strong>filename-derived-label</strong>"));
-    assert!(index.contains("<dt>Canonical id</dt><dd><code>Qwen/Qwen3-14B</code>"));
+    assert!(appendix.contains("<dt>Canonical id</dt><dd><code>Qwen/Qwen3-14B</code>"));
     assert!(index.contains("quant: Q4_K_M"));
     assert!(index.contains("identity status: declared"));
     assert!(index.contains("data-cross-model-key=\"Qwen/Qwen3-14B\""));
@@ -539,7 +578,7 @@ fn site_uses_registry_identity_and_excludes_unresolved_rows_from_grouping() {
     assert!(!unresolved_group.contains("data-cross-model-key"));
     assert!(index.contains("<strong>gemma3:4b</strong>"));
     assert!(!index.contains("<strong>invented-filename-identity</strong>"));
-    assert!(index.contains("<dt>Canonical id</dt><dd><code>not established</code>"));
+    assert!(appendix.contains("<dt>Canonical id</dt><dd><code>not established</code>"));
     assert!(index.contains(
         "identity status: unresolved (provenance could not be established; excluded from cross-model comparison)"
     ));
@@ -610,10 +649,12 @@ fn site_uses_one_global_environment_statement_when_uniform() {
         String::from_utf8_lossy(&generated.stderr)
     );
     let index = fs::read_to_string(output.join("index.html")).expect("generated index");
+    let appendix =
+        fs::read_to_string(output.join("appendix.html")).expect("generated appendix page");
     assert_eq!(index.matches("Measurement environment:").count(), 1);
     assert!(index.contains("Measurement environment: Apple M4 Max, 64GB; macOS 15.5."));
-    assert_eq!(index.matches("<dt>Host hardware</dt>").count(), 2);
-    assert_eq!(index.matches("<dt>Host OS</dt>").count(), 2);
+    assert_eq!(appendix.matches("<dt>Host hardware</dt>").count(), 2);
+    assert_eq!(appendix.matches("<dt>Host OS</dt>").count(), 2);
 }
 
 #[test]

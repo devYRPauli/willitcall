@@ -753,9 +753,10 @@ content = "Reply ready."
         "{}",
         String::from_utf8_lossy(&site.stderr)
     );
-    let index = fs::read_to_string(site_output.join("index.html")).expect("generated site");
-    assert!(index.contains("Schema</dt><dd>v2"));
-    assert!(index.contains("Schema</dt><dd>v3"));
+    let appendix =
+        fs::read_to_string(site_output.join("appendix.html")).expect("generated appendix");
+    assert!(appendix.contains("Schema</dt><dd>v2"));
+    assert!(appendix.contains("Schema</dt><dd>v3"));
 }
 
 fn write_m1a_scenarios(path: &std::path::Path) {

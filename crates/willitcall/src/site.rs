@@ -3,6 +3,7 @@ use std::path::{Path, PathBuf};
 
 mod analysis;
 mod data;
+mod export;
 mod html;
 mod svg;
 
@@ -26,8 +27,24 @@ pub(crate) fn generate(
         &html::render_index(&dataset, repo_base),
     )?;
     write_site_file(
+        output_directory.join("outcomes.html"),
+        &html::render_outcomes(&dataset),
+    )?;
+    write_site_file(
+        output_directory.join("appendix.html"),
+        &html::render_appendix_page(&dataset, repo_base),
+    )?;
+    write_site_file(
         output_directory.join("submit.html"),
         &html::render_submit(repo_base),
+    )?;
+    write_site_file(
+        output_directory.join("results.json"),
+        &export::render_json(&dataset)?,
+    )?;
+    write_site_file(
+        output_directory.join("results.csv"),
+        &export::render_csv(&dataset),
     )?;
     write_site_file(output_directory.join("style.css"), html::STYLE)?;
     write_site_file(output_directory.join("site.js"), html::SCRIPT)?;

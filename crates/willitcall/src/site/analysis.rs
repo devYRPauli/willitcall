@@ -6,28 +6,27 @@ use wic_core::ScenarioCategory;
 
 use super::data::{SiteDataset, StackRow, CATEGORIES};
 use super::html;
-use super::svg::{self, Figure, FigureAccessibility, TableFallback};
+use super::svg::{self, Figure, FigureAccessibility};
 
 const MARK_SIZE: u32 = 13;
 const CELL_STEP: u32 = 15;
 const ROW_STEP: u32 = 16;
 
-pub(super) fn render_primary(dataset: &SiteDataset) -> String {
+pub(super) fn render_outcomes(dataset: &SiteDataset) -> String {
     let mut figures = String::from(
-        "    <section class=\"analysis analysis-primary\" aria-labelledby=\"primary-analysis-title\">\n      <p class=\"eyebrow\">Scenario register</p>\n      <h2 id=\"primary-analysis-title\">All observed outcomes</h2>\n",
+        "    <section class=\"analysis analysis-primary\" aria-labelledby=\"primary-analysis-title\">\n      <h2 id=\"primary-analysis-title\">Scenario evidence</h2>\n      <p>The complete raster shows all 50 scenarios; the focused raster isolates the seven multi-turn scenarios; the signature inventory groups only identical 50-outcome vectors. Figure captions link to the complete text alternative in JSON and CSV.</p>\n",
     );
     figures.push_str(&render_scenario_raster(dataset));
+    figures.push_str(&render_multi_turn_raster(dataset));
+    figures.push_str(&render_signature_inventory(dataset));
     figures.push_str("    </section>\n");
     figures
 }
 
-pub(super) fn render_secondary(dataset: &SiteDataset) -> String {
+pub(super) fn render_pass_counts(dataset: &SiteDataset) -> String {
     let mut figures = String::from(
-        "    <section class=\"analysis analysis-secondary\" aria-labelledby=\"analysis-title\">\n      <p class=\"eyebrow\">Analysis views</p>\n      <h2 id=\"analysis-title\">Published one-run observations</h2>\n      <p>All stack and scenario orders are fixed by identity and catalog fields, never by a pass count.</p>\n",
+        "    <section class=\"analysis analysis-secondary\" aria-labelledby=\"analysis-title\">\n      <p class=\"eyebrow\">One-run observations</p>\n      <h2 id=\"analysis-title\">Observed pass counts</h2>\n      <p>Pass counts are shown in fixed stack order and withheld for rows with errors or skips. They are not scores or a ranking.</p>\n",
     );
-    figures.push_str(&render_multi_turn_raster(dataset));
-    figures.push_str(&render_signature_inventory(dataset));
-    figures.push_str(&render_capability_aggregate(dataset));
     figures.push_str(&render_pass_count_strip(dataset));
     figures.push_str("    </section>\n");
     figures
@@ -37,8 +36,6 @@ pub(super) fn render_secondary(dataset: &SiteDataset) -> String {
 struct ScenarioColumn {
     id: String,
     category: ScenarioCategory,
-    description: String,
-    rationale: String,
 }
 
 struct PreparedMark {
@@ -66,32 +63,18 @@ fn render_scenario_raster(dataset: &SiteDataset) -> String {
     let height = top + row_indices.len() as u32 * ROW_STEP + 20;
     let (texts, rules) = raster_axes(&columns, &row_indices, dataset, left, top, height);
     let mut prepared = Vec::new();
-    let mut fallback_rows = Vec::new();
 
     for (row_position, row_index) in row_indices.iter().copied().enumerate() {
         let row = &dataset.rows[row_index];
-        let stack = stack_label(row);
         for (column_position, column) in columns.iter().enumerate() {
             let status = scenario_status(row, &column.id);
-            let status_text = status.map(status_label).unwrap_or("not present");
-            fallback_rows.push(vec![
-                stack.clone(),
-                column.category.to_string(),
-                column.id.clone(),
-                column.description.clone(),
-                column.rationale.clone(),
-                status_text.to_owned(),
-            ]);
             let Some(status) = status else {
                 continue;
             };
             prepared.push(PreparedMark {
                 x: left + column_position as u32 * CELL_STEP,
                 y: top + row_position as u32 * ROW_STEP,
-                label: format!(
-                    "{stack}; {}: {} Rationale: {}",
-                    column.id, column.description, column.rationale
-                ),
+                label: column.id.clone(),
                 state: mark_state(status),
             });
         }
@@ -103,7 +86,7 @@ fn render_scenario_raster(dataset: &SiteDataset) -> String {
         accessibility: FigureAccessibility {
             number: 1,
             title: "Scenario-status raster",
-            description: "Four-state outcomes for every published stack and scenario. Each cell label includes the scenario description and rationale.",
+            description: "Four-state outcomes for every published stack and scenario. Cell titles contain only the scenario id and outcome; full text is linked in JSON and CSV.",
             caption,
             does_not_show: "A leaderboard, an overall score, or how a stack would behave across repeated runs.",
         },
@@ -112,24 +95,9 @@ fn render_scenario_raster(dataset: &SiteDataset) -> String {
         marks: &marks,
         texts: &texts,
         rules: &rules,
-        fallback: TableFallback {
-            headers: &[
-                "Stack",
-                "Category",
-                "Scenario id",
-                "Description",
-                "Rationale",
-                "Status",
-            ],
-            rows: &fallback_rows,
-        },
     });
     let mobile = render_mobile_scenario_rasters(dataset, &columns, &row_indices);
-    figure = figure.replacen(
-        "  <table class=\"svg-text-fallback\">",
-        &format!("{mobile}  <table class=\"svg-text-fallback\">"),
-        1,
-    );
+    figure = figure.replacen("</figure>", &format!("{mobile}</figure>"), 1);
     figure
 }
 
@@ -148,8 +116,7 @@ fn render_mobile_scenario_rasters(
             .collect::<Vec<_>>();
         write!(
             html,
-            "    <section class=\"mini-raster-panel\" data-category=\"{}\"><h3 title=\"{}\">{}</h3><div class=\"mini-raster-grid\" style=\"grid-template-columns:8.5rem repeat({},0.78rem)\">\n      <span class=\"mini-raster-corner\">Stack</span>",
-            category,
+            "    <section class=\"mini-raster-panel\" data-category=\"{}\"><h3>{}</h3><div class=\"mini-raster-grid\" style=\"grid-template-columns:8.5rem repeat({},0.78rem)\">\n      <span class=\"mini-raster-corner\">Stack</span>",
             category,
             category_label(category),
             category_columns.len(),
@@ -158,9 +125,7 @@ fn render_mobile_scenario_rasters(
         for column in &category_columns {
             write!(
                 html,
-                "<span class=\"mini-column-label\" title=\"{}: {}\">{}</span>",
-                html::escape_html(&column.id),
-                html::escape_html(&column.description),
+                "<span class=\"mini-column-label\">{}</span>",
                 html::escape_html(&column.id),
             )
             .expect("write mobile raster column");
@@ -171,20 +136,13 @@ fn render_mobile_scenario_rasters(
             let stack = stack_label(row);
             write!(
                 html,
-                "      <span class=\"mini-row-label\" title=\"{}\">{}</span>",
-                html::escape_html(&stack),
+                "      <span class=\"mini-row-label\">{}</span>",
                 html::escape_html(&stack),
             )
             .expect("write mobile raster row label");
             for column in &category_columns {
                 if let Some(status) = scenario_status(row, &column.id) {
-                    let label = format!(
-                        "{stack}; {}: {}. Rationale: {}. {}",
-                        column.id,
-                        column.description,
-                        column.rationale,
-                        status_label(status),
-                    );
+                    let label = format!("{}: {}", column.id, status_label(status));
                     write!(
                         html,
                         "<i class=\"mini-mark {}\" role=\"img\" aria-label=\"{}\" title=\"{}\"></i>",
@@ -217,14 +175,12 @@ fn render_multi_turn_raster(dataset: &SiteDataset) -> String {
     let height = top + row_indices.len() as u32 * ROW_STEP + 20;
     let (texts, rules) = raster_axes(&columns, &row_indices, dataset, left, top, height);
     let mut prepared = Vec::new();
-    let mut fallback_rows = Vec::new();
     let mut passed = 0;
     let mut total = 0;
     let mut zero_pass_rows = 0;
 
     for (row_position, row_index) in row_indices.iter().copied().enumerate() {
         let row = &dataset.rows[row_index];
-        let stack = stack_label(row);
         let row_passes = row
             .scenarios
             .iter()
@@ -237,7 +193,6 @@ fn render_multi_turn_raster(dataset: &SiteDataset) -> String {
         }
         for (column_position, column) in columns.iter().enumerate() {
             let status = scenario_status(row, &column.id);
-            let status_text = status.map(status_label).unwrap_or("not present");
             if let Some(status) = status {
                 total += 1;
                 if status == Status::Pass {
@@ -246,20 +201,10 @@ fn render_multi_turn_raster(dataset: &SiteDataset) -> String {
                 prepared.push(PreparedMark {
                     x: left + column_position as u32 * CELL_STEP,
                     y: top + row_position as u32 * ROW_STEP,
-                    label: format!(
-                        "{stack}; {}: {} Rationale: {}",
-                        column.id, column.description, column.rationale
-                    ),
+                    label: column.id.clone(),
                     state: mark_state(status),
                 });
             }
-            fallback_rows.push(vec![
-                stack.clone(),
-                column.id.clone(),
-                column.description.clone(),
-                column.rationale.clone(),
-                status_text.to_owned(),
-            ]);
         }
     }
     let percentage = if total == 0 {
@@ -286,16 +231,6 @@ fn render_multi_turn_raster(dataset: &SiteDataset) -> String {
         marks: &marks,
         texts: &texts,
         rules: &rules,
-        fallback: TableFallback {
-            headers: &[
-                "Stack",
-                "Scenario id",
-                "Description",
-                "Rationale",
-                "Status",
-            ],
-            rows: &fallback_rows,
-        },
     })
 }
 
@@ -317,7 +252,6 @@ fn render_signature_inventory(dataset: &SiteDataset) -> String {
     let mut y = top;
     let mut prepared = Vec::new();
     let mut owned_texts = Vec::new();
-    let mut fallback_rows = Vec::new();
     let mut repeated_seven_signature = None;
 
     for (signature_index, members) in grouped.values().enumerate() {
@@ -352,19 +286,11 @@ fn render_signature_inventory(dataset: &SiteDataset) -> String {
                 prepared.push(PreparedMark {
                     x: left + column_index as u32 * CELL_STEP,
                     y,
-                    label: format!(
-                        "{signature_name}; {}: {} Rationale: {}",
-                        column.id, column.description, column.rationale
-                    ),
+                    label: column.id.clone(),
                     state: mark_state(status),
                 });
             }
         }
-        fallback_rows.push(vec![
-            signature_name,
-            signature_text(representative, &columns),
-            member_labels.join("; "),
-        ]);
 
         let statuses = columns
             .iter()
@@ -424,127 +350,6 @@ fn render_signature_inventory(dataset: &SiteDataset) -> String {
         marks: &marks,
         texts: &texts,
         rules: &rules,
-        fallback: TableFallback {
-            headers: &["Signature", "Exact status vector", "Stacks sharing it"],
-            rows: &fallback_rows,
-        },
-    })
-}
-
-fn render_capability_aggregate(dataset: &SiteDataset) -> String {
-    let left = 230;
-    let top = 35;
-    let track_width = 620;
-    let bar_height = 22;
-    let row_step = 50;
-    let mut prepared_bars = Vec::new();
-    let mut owned_texts = Vec::new();
-    let mut fallback_rows = Vec::new();
-
-    for (index, category) in CATEGORIES.into_iter().enumerate() {
-        let counts =
-            dataset
-                .rows
-                .iter()
-                .fold(super::data::StatusCounts::default(), |mut total, row| {
-                    let row_counts = row.category_counts.for_category(category);
-                    total.passed += row_counts.passed;
-                    total.failed += row_counts.failed;
-                    total.errors += row_counts.errors;
-                    total.skipped += row_counts.skipped;
-                    total
-                });
-        let total = counts.total();
-        let per_stack = dataset
-            .rows
-            .iter()
-            .map(|row| row.category_counts.for_category(category).total())
-            .max()
-            .unwrap_or(0);
-        let y = top + index as u32 * row_step;
-        let value_width = if total == 0 {
-            0
-        } else {
-            (counts.passed as u32 * track_width) / total as u32
-        };
-        let label = format!(
-            "{}: passed in {} of {} measurements",
-            category, counts.passed, total
-        );
-        prepared_bars.push((left, y, value_width, label));
-        owned_texts.push(PreparedText {
-            x: left - 10,
-            y: y + 16,
-            text: category.to_string(),
-            class: "bar-category-label",
-            anchor: svg::TextAnchor::End,
-            rotation: None,
-        });
-        owned_texts.push(PreparedText {
-            x: left + track_width + 12,
-            y: y + 16,
-            text: format!(
-                "passed in {} of {} measurements ({} scenarios per stack)",
-                counts.passed, total, per_stack
-            ),
-            class: "bar-value-label",
-            anchor: svg::TextAnchor::Start,
-            rotation: None,
-        });
-        fallback_rows.push(vec![
-            category.to_string(),
-            per_stack.to_string(),
-            counts.passed.to_string(),
-            counts.failed.to_string(),
-            counts.errors.to_string(),
-            counts.skipped.to_string(),
-            total.to_string(),
-            format!("passed in {} of {} measurements", counts.passed, total),
-        ]);
-    }
-
-    let bars = prepared_bars
-        .iter()
-        .map(|(x, y, value_width, label)| svg::Bar {
-            x: *x,
-            y: *y,
-            height: bar_height,
-            track_width,
-            value_width: *value_width,
-            label,
-        })
-        .collect::<Vec<_>>();
-    let texts = borrow_texts(&owned_texts);
-    let caption = format!(
-        "Each bar counts passed scenario observations across all {} published rows. Category sizes are 13/8/8/7/7/7; every numerator and denominator is shown, and no replication filter is applied.",
-        dataset.rows.len()
-    );
-    html::render_figure(Figure::Bars {
-        accessibility: FigureAccessibility {
-            number: 4,
-            title: "Per-capability aggregate across stacks",
-            description: "Six fixed-order bars counting pass, fail, error, and skipped observations in each capability category.",
-            caption: &caption,
-            does_not_show: "A comparison of model families or servers, equal category weighting, or replicated-arm estimates.",
-        },
-        width: left + track_width + 390,
-        height: top + CATEGORIES.len() as u32 * row_step,
-        bars: &bars,
-        texts: &texts,
-        rules: &[],
-        fallback: TableFallback {
-            headers: &[
-                "Capability",
-                "Scenarios per stack",
-                "Passed",
-                "Failed",
-                "Errors",
-                "Skipped",
-                "Total",
-                "Count statement",
-            ],
-            rows: &fallback_rows,
-        },
     })
 }
 
@@ -567,7 +372,6 @@ fn render_pass_count_strip(dataset: &SiteDataset) -> String {
     let axis_y = 48;
     let mut pass_occurrences = BTreeMap::<usize, usize>::new();
     let mut prepared_dots = Vec::new();
-    let mut fallback_rows = Vec::new();
 
     for row_index in fully_measurable.iter().copied() {
         let row = &dataset.rows[row_index];
@@ -581,14 +385,6 @@ fn render_pass_count_strip(dataset: &SiteDataset) -> String {
             passed,
             format!("{}: {passed} passes", stack_label(row)),
         ));
-        fallback_rows.push(vec![
-            stack_label(row),
-            "fully measurable".to_owned(),
-            passed.to_string(),
-            row.category_counts.failed.to_string(),
-            "0".to_owned(),
-            "0".to_owned(),
-        ]);
     }
 
     let max_overlap = pass_occurrences.values().copied().max().unwrap_or(1) as u32;
@@ -666,14 +462,6 @@ fn render_pass_count_strip(dataset: &SiteDataset) -> String {
             anchor: svg::TextAnchor::Start,
             rotation: None,
         });
-        fallback_rows.push(vec![
-            stack_label(row),
-            "not fully measurable".to_owned(),
-            "not plotted".to_owned(),
-            row.category_counts.failed.to_string(),
-            row.category_counts.errors.to_string(),
-            row.category_counts.skipped.to_string(),
-        ]);
     }
 
     let dots = prepared_dots
@@ -698,7 +486,7 @@ fn render_pass_count_strip(dataset: &SiteDataset) -> String {
     let height = not_panel_y + 35 + not_fully_measurable.len() as u32 * 20;
     html::render_figure(Figure::StripPlot {
         accessibility: FigureAccessibility {
-            number: 5,
+            number: 4,
             title: "Observed pass-count strip plot",
             description: "One pass-count dot per fully measurable published stack observation, with error-bearing or skipped rows listed separately and not assigned a pass count.",
             caption: "Distribution of published one-run stack observations. Pass counts are plotted only when every scenario has a pass or fail verdict; rows with errors or skips are listed in the separate panel.",
@@ -710,17 +498,6 @@ fn render_pass_count_strip(dataset: &SiteDataset) -> String {
         not_fully_measurable: &not_measurable_marks,
         texts: &texts,
         rules: &rules,
-        fallback: TableFallback {
-            headers: &[
-                "Stack",
-                "Panel",
-                "Pass count",
-                "Failed",
-                "Errors",
-                "Skipped",
-            ],
-            rows: &fallback_rows,
-        },
     })
 }
 
@@ -838,8 +615,6 @@ fn scenario_columns(dataset: &SiteDataset) -> Vec<ScenarioColumn> {
                 .or_insert_with(|| ScenarioColumn {
                     id: scenario.id.clone(),
                     category,
-                    description: scenario.description.clone(),
-                    rationale: scenario.rationale.clone(),
                 });
         }
         columns.extend(category_columns.into_values());
@@ -942,25 +717,6 @@ fn signature_key(row: &StackRow, columns: &[ScenarioColumn]) -> String {
             None => '-',
         })
         .collect()
-}
-
-fn signature_text(row: &StackRow, columns: &[ScenarioColumn]) -> String {
-    let mut text = String::new();
-    for (index, column) in columns.iter().enumerate() {
-        if index > 0 {
-            text.push_str("; ");
-        }
-        write!(
-            text,
-            "{}={}",
-            column.id,
-            scenario_status(row, &column.id)
-                .map(status_label)
-                .unwrap_or("not present")
-        )
-        .expect("write signature text");
-    }
-    text
 }
 
 fn borrow_marks(prepared: &[PreparedMark]) -> Vec<svg::StatusMark<'_>> {

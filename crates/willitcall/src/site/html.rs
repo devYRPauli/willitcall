@@ -19,6 +19,8 @@ const CASE_STUDY_SAMPLE_SUMMARY: &str =
 #[derive(Clone, Copy, Eq, PartialEq)]
 pub(super) enum Page {
     Matrix,
+    Outcomes,
+    Appendix,
     Submit,
 }
 
@@ -73,12 +75,32 @@ pub(super) fn render_nav(current_page: Page) -> String {
         Page::Matrix => {
             r#"    <nav aria-label="Primary navigation">
       <a aria-current="page" href="index.html">Matrix</a>
+      <a href="outcomes.html">Outcomes</a>
+      <a href="appendix.html">Appendix</a>
+      <a href="submit.html">Submit a result</a>
+    </nav>"#
+        }
+        Page::Outcomes => {
+            r#"    <nav aria-label="Primary navigation">
+      <a href="index.html">Matrix</a>
+      <a aria-current="page" href="outcomes.html">Outcomes</a>
+      <a href="appendix.html">Appendix</a>
+      <a href="submit.html">Submit a result</a>
+    </nav>"#
+        }
+        Page::Appendix => {
+            r#"    <nav aria-label="Primary navigation">
+      <a href="index.html">Matrix</a>
+      <a href="outcomes.html">Outcomes</a>
+      <a aria-current="page" href="appendix.html">Appendix</a>
       <a href="submit.html">Submit a result</a>
     </nav>"#
         }
         Page::Submit => {
             r#"    <nav aria-label="Primary navigation">
       <a href="index.html">Matrix</a>
+      <a href="outcomes.html">Outcomes</a>
+      <a href="appendix.html">Appendix</a>
       <a aria-current="page" href="submit.html">Submit a result</a>
     </nav>"#
         }
@@ -114,16 +136,12 @@ pub(super) fn render_index(dataset: &SiteDataset, repo_base: &str) -> String {
       <p class="eyebrow">Measurement register</p>
       <h1 id="page-title">Tool-calling support matrix</h1>
       <p class="framing">Each row is one observed model, artifact, server, and decode stack, not a model ranking or a verdict.</p>
-{}
     </section>"#,
-        render_reading_legend(),
     )
     .expect("write HTML");
     main.push_str(&render_table(dataset, repo_base));
-    main.push_str(&super::analysis::render_primary(dataset));
-    main.push_str(&super::analysis::render_secondary(dataset));
+    main.push_str(&super::analysis::render_pass_counts(dataset));
     main.push_str(&render_methodology(dataset, repo_base, uniform_environment));
-    main.push_str(&render_appendix(dataset, repo_base));
 
     let footer = render_colophon(dataset, &main);
 
@@ -138,9 +156,52 @@ pub(super) fn render_index(dataset: &SiteDataset, repo_base: &str) -> String {
     })
 }
 
+pub(super) fn render_outcomes(dataset: &SiteDataset) -> String {
+    let mut main = String::from(
+        r#"    <section class="register-intro" aria-labelledby="page-title">
+      <p class="eyebrow">Evidence layer</p>
+      <h1 id="page-title">Observed outcomes</h1>
+      <p class="framing">These fixed-order rasters expose the scenario-level evidence behind the matrix without turning one-run observations into a ranking.</p>
+      <p>Each mark is one published stack and scenario outcome. Use the data files for descriptions, rationales, status text, evidence paths, and citation; use the appendix for recorded stack metadata and transcript links.</p>
+    </section>"#,
+    );
+    main.push_str(&super::analysis::render_outcomes(dataset));
+    let footer = render_colophon(dataset, &main);
+    render_page_shell(PageShell {
+        description: "Scenario-level evidence behind the willitcall support matrix.",
+        title: "Observed outcomes - willitcall",
+        current_page: Page::Outcomes,
+        main_class: None,
+        main: &main,
+        footer: &footer,
+        script: None,
+    })
+}
+
+pub(super) fn render_appendix_page(dataset: &SiteDataset, repo_base: &str) -> String {
+    let mut main = String::from(
+        r#"    <section class="register-intro" aria-labelledby="page-title">
+      <p class="eyebrow">Evidence register</p>
+      <h1 id="page-title">Per-stack appendix</h1>
+      <p class="framing">Recorded metadata and scenario-level transcript links for every published stack.</p>
+    </section>"#,
+    );
+    main.push_str(&render_appendix(dataset, repo_base));
+    let footer = render_colophon(dataset, &main);
+    render_page_shell(PageShell {
+        description: "Recorded metadata and transcript links for published willitcall stacks.",
+        title: "Per-stack appendix - willitcall",
+        current_page: Page::Appendix,
+        main_class: None,
+        main: &main,
+        footer: &footer,
+        script: None,
+    })
+}
+
 fn render_reading_legend() -> String {
-    r#"      <div class="reading-key" aria-labelledby="reading-key-title">
-        <h2 id="reading-key-title">How to read this</h2>
+    r#"      <div class="reading-key" aria-label="How to read the matrix">
+        <p class="reading-caption"><strong>How to read:</strong> ratios are passed scenarios / scenarios in the category; hatching means n&lt;5, so no verdict is drawn.</p>
         <div class="mark-key" aria-label="Scenario outcome marks">
           <span><i class="state-key state-pass"></i>pass</span>
           <span><i class="state-key state-fail"></i>model / response failure</span>
@@ -149,8 +210,7 @@ fn render_reading_legend() -> String {
         </div>
         <div class="method-key">
           <span><i class="hatch-key"></i>n&lt;5, no verdict</span>
-          <span class="decode-badge grammar_constrained">grammar_constrained</span>
-          <span class="decode-badge unconstrained_post_hoc">unconstrained_post_hoc</span>
+          <span><i class="identity-status verified"></i>identity status</span>
         </div>
       </div>
 "#
@@ -171,7 +231,8 @@ pub(super) fn render_table(dataset: &SiteDataset, repo_base: &str) -> String {
           <input id="model-search" type="search" autocomplete="off" placeholder="e.g. Qwen2.5" aria-describedby="filter-status">
         </label>
       </div>
-      <p class="matrix-note">Ratios are passed scenarios / scenarios in the category. All published arms are hatched because they have fewer than five runs.</p>
+{}
+      <p class="matrix-note">Machine-readable observations: <a href="results.json">JSON</a> and <a href="results.csv">CSV</a>. Scenario rasters are on the <a href="outcomes.html">outcomes page</a>; recorded metadata and transcripts are in the <a href="appendix.html">appendix</a>.</p>
       <p id="filter-status" class="filter-status" aria-live="polite">Showing {} stacks.</p>
       <div class="table-scroll">
         <table class="matrix-table">
@@ -179,6 +240,7 @@ pub(super) fn render_table(dataset: &SiteDataset, repo_base: &str) -> String {
             <tr>
               <th scope="col">Model / quant / server</th>
 "#,
+        render_reading_legend(),
         dataset.rows.len()
     )
     .expect("write HTML");
@@ -209,18 +271,22 @@ pub(super) fn render_table(dataset: &SiteDataset, repo_base: &str) -> String {
             escape_html(&model_label),
         )
         .expect("write model group");
-        let mut current_band: Option<(DecodeMode, String)> = None;
+        let spans_decode_strata = model_spans_decode_strata(dataset, &row_indices);
+        let mut current_band = None;
         for index in row_indices {
             let row = &dataset.rows[index];
-            let band = (row.decode_mode, row.metadata.server.preset_name.as_str());
-            if current_band
-                .as_ref()
-                .is_none_or(|current| current.0 != band.0 || current.1 != band.1)
-            {
-                render_decode_boundary(&mut html, row.decode_mode, band.1);
-                current_band = Some((band.0, band.1.to_owned()));
+            if spans_decode_strata && current_band != Some(row.decode_mode) {
+                render_decode_boundary(&mut html, row.decode_mode);
+                current_band = Some(row.decode_mode);
             }
-            render_result_row(&mut html, dataset, index, row, repo_base);
+            render_result_row(
+                &mut html,
+                dataset,
+                index,
+                row,
+                repo_base,
+                !spans_decode_strata,
+            );
         }
         html.push_str("          </tbody>\n");
     }
@@ -233,7 +299,7 @@ pub(super) fn render_table(dataset: &SiteDataset, repo_base: &str) -> String {
     html
 }
 
-fn render_decode_boundary(html: &mut String, decode_mode: DecodeMode, server: &str) {
+fn render_decode_boundary(html: &mut String, decode_mode: DecodeMode) {
     let id = decode_mode_id(decode_mode);
     let note = match decode_mode {
         DecodeMode::GrammarConstrained => "tool grammar constrains generation",
@@ -242,10 +308,8 @@ fn render_decode_boundary(html: &mut String, decode_mode: DecodeMode, server: &s
     };
     writeln!(
         html,
-        "            <tr class=\"decode-band {id}\" data-decode-mode=\"{id}\" data-server-band=\"{}\"><th colspan=\"{}\" scope=\"rowgroup\"><span class=\"decode-badge {id}\">{id}</span><span>{} - {note}</span></th></tr>",
-        escape_html(server),
+        "            <tr class=\"decode-band {id}\" data-decode-mode=\"{id}\"><th colspan=\"{}\" scope=\"rowgroup\"><span class=\"decode-badge {id}\">{id}</span><span>{note}</span></th></tr>",
         CATEGORIES.len() + 1,
-        escape_html(display_server(server)),
     )
     .expect("write decode band");
 }
@@ -256,6 +320,7 @@ fn render_result_row(
     index: usize,
     result: &StackRow,
     repo_base: &str,
+    show_decode_label: bool,
 ) {
     let server = &result.metadata.server.preset_name;
     let server_display = display_server(server);
@@ -278,17 +343,25 @@ fn render_result_row(
         .as_ref()
         .map(|quantization| quantization.label.as_str())
         .unwrap_or("not declared");
+    let decode_label = if show_decode_label {
+        let id = decode_mode_id(result.decode_mode);
+        format!("<span><span class=\"decode-badge {id}\">{id}</span></span>\n                ")
+    } else {
+        String::new()
+    };
     write!(
         html,
-        "            <tr class=\"result-row\" data-server=\"{}\" data-identity-status=\"{}\" data-decode-source=\"{}\"{}>\n              <th scope=\"row\">\n                <strong>{}</strong>\n                <span>quant: {} - server: {}</span>\n                <span>decode provenance: {}</span>\n                <span>identity status: {}{}</span>\n                <a class=\"detail-link\" href=\"#stack-detail-{index}\">detail</a>\n              </th>\n",
+        "            <tr class=\"result-row\" data-server=\"{}\" data-identity-status=\"{}\" data-decode-mode=\"{}\" data-decode-source=\"{}\"{}>\n              <th scope=\"row\">\n                <strong>{}</strong>\n                <span>quant: {} - server: {}</span>\n                {decode_label}<span>decode provenance: {}</span>\n                <span class=\"identity-status {}\">identity status: {}{}</span>\n                <a class=\"detail-link\" href=\"appendix.html#stack-detail-{index}\">detail</a>\n              </th>\n",
         escape_html(server),
         identity_status,
+        decode_mode_id(result.decode_mode),
         decode_mode_source_id(result.decode_mode_source),
         cross_model_attribute,
         escape_html(&result.display_name),
         escape_html(quant),
         escape_html(server_display),
         decode_mode_source_label(result.decode_mode_source),
+        identity_status,
         identity_status,
         identity_note
     )
@@ -341,6 +414,36 @@ fn model_group_label(row: &StackRow) -> String {
     row.cross_model_key()
         .unwrap_or(&row.display_name)
         .to_owned()
+}
+
+fn model_spans_decode_strata(dataset: &SiteDataset, indices: &[usize]) -> bool {
+    indices.iter().enumerate().any(|(position, left_index)| {
+        let left = &dataset.rows[*left_index];
+        indices[position + 1..].iter().any(|right_index| {
+            let right = &dataset.rows[*right_index];
+            left.decode_mode != right.decode_mode
+                && left.metadata.model.artifact.source_kind
+                    == right.metadata.model.artifact.source_kind
+                && left.metadata.model.artifact.source_id == right.metadata.model.artifact.source_id
+                && left.metadata.model.artifact.revision == right.metadata.model.artifact.revision
+                && left.metadata.model.artifact.sha256 == right.metadata.model.artifact.sha256
+                && left.metadata.model.artifact.format == right.metadata.model.artifact.format
+                && left
+                    .metadata
+                    .model
+                    .artifact
+                    .quantization
+                    .as_ref()
+                    .map(|value| (&value.label, &value.scheme, value.bits))
+                    == right
+                        .metadata
+                        .model
+                        .artifact
+                        .quantization
+                        .as_ref()
+                        .map(|value| (&value.label, &value.scheme, value.bits))
+        })
+    })
 }
 
 fn model_search_text(dataset: &SiteDataset, indices: &[usize]) -> String {
@@ -461,7 +564,7 @@ fn render_methodology(
 
 fn render_appendix(dataset: &SiteDataset, repo_base: &str) -> String {
     let mut html = String::from(
-        "    <section class=\"appendix\" id=\"stack-appendix\" aria-labelledby=\"appendix-title\">\n      <p class=\"eyebrow\">Evidence register</p>\n      <h2 id=\"appendix-title\">Per-stack appendix</h2>\n      <p>Full recorded metadata and scenario-level evidence, in the same model and decode order as the matrix.</p>\n",
+        "    <section class=\"appendix\" id=\"stack-appendix\" aria-labelledby=\"appendix-title\">\n      <h2 id=\"appendix-title\">Recorded stacks</h2>\n      <p>Full recorded metadata and scenario-level evidence, in the same model and decode order as the matrix. Machine-readable observations are available as <a href=\"results.json\">JSON</a> and <a href=\"results.csv\">CSV</a>.</p>\n",
     );
     for (_, row_indices) in grouped_row_indices(dataset) {
         for index in row_indices {
@@ -808,7 +911,7 @@ fn render_stack_detail(
     for scenario in &result.scenarios {
         render_scenario_detail(html, result.schema_version, scenario, repo_base);
     }
-    html.push_str("        </ol>\n        <a class=\"back-link\" href=\"#matrix-title\">Back to matrix</a>\n        </div>\n      </article>\n");
+    html.push_str("        </ol>\n        <a class=\"back-link\" href=\"index.html#matrix-title\">Back to matrix</a>\n        </div>\n      </article>\n");
 }
 
 fn metadata_item(html: &mut String, label: &str, value: &str, code: bool) {
@@ -888,7 +991,7 @@ fn render_scenario_detail(
         .expect("write evidence hash");
     }
     if scenario.retried {
-        html.push_str(" <span class=\"badge neutral\">retried</span>");
+        html.push_str(" <span class=\"annotation\">retried</span>");
     }
     render_annotation(html, schema_version, scenario, repo_base);
     html.push_str("</li>\n");
@@ -1084,35 +1187,28 @@ fn render_annotation(
             CauseKind::ServerDefect => "server defect",
             CauseKind::Unknown => "cause unknown",
         };
-        let title = cause.note.as_deref().unwrap_or(label);
         if let Some(reference) = cause.reference.as_deref() {
             let reference = reference_url(repo_base, reference);
             write!(
                 html,
-                " <a class=\"badge cause\" href=\"{}\" title=\"{}\">{label}</a>",
+                " <a class=\"annotation\" href=\"{}\">{label}</a>",
                 escape_html(&reference),
-                escape_html(title)
             )
             .expect("write HTML");
         } else {
-            write!(
-                html,
-                " <span class=\"badge cause\" title=\"{}\">{label}</span>",
-                escape_html(title)
-            )
-            .expect("write HTML");
+            write!(html, " <span class=\"annotation\">{label}</span>").expect("write HTML");
         }
     }
     if scenario.failure_class.as_deref() == Some("empty_response") {
-        html.push_str(" <span class=\"badge neutral\">empty response</span>");
+        html.push_str(" <span class=\"annotation\">empty response</span>");
     } else if scenario.failure_class.as_deref() == Some("unparsed_tool_call") {
-        html.push_str(" <span class=\"badge neutral unparsed\">unparsed tool call</span>");
+        html.push_str(" <span class=\"annotation\">unparsed tool call</span>");
     } else if schema_version == 1
         && scenario.cause.is_none()
         && scenario.status != Status::Pass
         && scenario.evidence_hash.is_some()
     {
-        html.push_str(" <span class=\"badge neutral\">legacy evidence hash only</span>");
+        html.push_str(" <span class=\"annotation\">legacy evidence hash only</span>");
     }
 }
 
@@ -1317,7 +1413,7 @@ a:focus-visible, select:focus-visible, summary:focus-visible {
   letter-spacing: 0.04em;
 }
 
-nav { display: flex; gap: 1.25rem; }
+nav { display: flex; flex-wrap: wrap; gap: 1.25rem; }
 nav a { color: #dcebed; font-weight: 650; text-decoration: none; }
 nav a[aria-current="page"] { color: #ffffff; text-decoration: underline; }
 
@@ -1355,25 +1451,13 @@ h2 { font-size: clamp(1.45rem, 2.5vw, 2.1rem); letter-spacing: -0.025em; }
 .does-not-show { color: var(--design-grey-1); }
 .figure-scroll { overflow-x: auto; padding: 0.5rem; background: var(--design-paper); border: 1px solid var(--design-grey-3); }
 .svg-figure svg { display: block; max-width: none; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
-.raster-row-label, .signature-stack-label, .bar-category-label, .bar-value-label,
+.raster-row-label, .signature-stack-label,
 .plot-panel-label, .not-measurable-label, .strip-tick-label { fill: var(--design-ink); }
 .raster-row-label, .signature-stack-label, .raster-column-label,
 .not-measurable-label { font-size: var(--type-raster-label); }
 .raster-column-label { fill: var(--design-grey-1); }
-.raster-group-label, .bar-category-label, .plot-panel-label { fill: var(--design-ink); font-size: 12px; font-weight: 700; }
-.bar-value-label, .strip-tick-label { font-size: 11px; }
-.svg-text-fallback {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  margin: -1px;
-  padding: 0;
-  overflow: hidden;
-  clip: rect(0 0 0 0);
-  clip-path: inset(50%);
-  white-space: nowrap;
-  border: 0;
-}
+.raster-group-label, .plot-panel-label { fill: var(--design-ink); font-size: 12px; font-weight: 700; }
+.strip-tick-label { font-size: 11px; }
 
 .matrix {
   margin-bottom: 4rem;
@@ -1456,10 +1540,7 @@ thead code { color: inherit; }
 .failure-reason { display: inline; color: var(--muted); }
 .failure-reason::before { content: "- "; }
 .transcript { margin-left: 0.55rem; font-size: 0.85rem; }
-.badge { display: inline-block; margin-left: 0.45rem; padding: 0.12rem 0.42rem; border-radius: 999px; font-size: 0.7rem; font-weight: 800; text-decoration: none; }
-.badge.cause { color: #632014; background: #ffe0d4; border: 1px solid #e6a18d; }
-.badge.neutral { color: var(--neutral-ink); background: var(--neutral-bg); border: 1px solid #bcc7cf; }
-.badge.neutral.unparsed { color: #4a3410; background: #fdf0d5; border: 1px solid #d9b877; }
+.annotation { margin-left: 0.45rem; font-size: 0.72rem; }
 
 .submit-page { max-width: 58rem; }
 .submit-page section { margin-bottom: 2.5rem; }
@@ -1557,7 +1638,7 @@ h2 { font-size: var(--type-heading-1); font-weight: var(--type-heading-weight); 
 h3 { font-size: var(--type-heading-2); font-weight: var(--type-heading-weight); }
 
 .reading-key { margin-top: 1.5rem; padding: 0.9rem 0; border-block: 1px solid var(--line); }
-.reading-key h2 { margin-bottom: 0.7rem; font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.08em; }
+.reading-caption { margin: 0 0 0.7rem; font-size: 0.75rem; }
 .mark-key, .method-key { display: flex; flex-wrap: wrap; gap: 0.55rem 1.15rem; }
 .method-key { margin-top: 0.65rem; padding-top: 0.65rem; border-top: 1px dotted var(--line); }
 .mark-key span, .method-key > span { display: inline-flex; align-items: center; gap: 0.4rem; font-size: 0.72rem; }
@@ -1583,6 +1664,9 @@ h3 { font-size: var(--type-heading-2); font-weight: var(--type-heading-weight); 
 }
 .decode-badge.grammar_constrained { color: var(--paper); background: var(--ink); }
 .decode-badge.unknown { border-style: dashed; }
+.identity-status { border-left: 2px solid var(--ink); }
+i.identity-status { display: inline-block; width: 0.55rem; height: 0.7rem; }
+.identity-status.unresolved { border-left-style: dashed; }
 
 .matrix, .analysis, .appendix {
   width: min(var(--measure-figure), calc(100% - 2.5rem));
@@ -1620,6 +1704,9 @@ input[type="search"] {
 .result-row > th { width: 18rem; background: var(--paper); }
 .result-row > th strong { margin: 0; font: 500 0.79rem/1.3 "IBM Plex Mono", "SFMono-Regular", Consolas, monospace; }
 .result-row > th span { color: var(--muted); font-size: 0.67rem; font-weight: 400; }
+.result-row > th .decode-badge { display: inline-block; margin: 0.2rem 0; color: var(--ink); }
+.result-row > th .decode-badge.grammar_constrained { color: var(--paper); }
+.result-row > th .identity-status { margin-top: 0.15rem; padding-left: 0.35rem; }
 .detail-link { display: inline-block; margin-top: 0.25rem; font-size: 0.68rem; font-weight: 500; }
 .score { position: relative; min-width: 7.5rem; text-align: center; }
 .score.low-replication {
@@ -1635,8 +1722,7 @@ input[type="search"] {
 .svg-figure { margin: 1.5rem 0 3.25rem; }
 .svg-figure figcaption { max-width: var(--measure-prose); }
 .figure-scroll { padding: 0.5rem; background: var(--design-paper); border-color: var(--ink); }
-.svg-text-fallback { display: block; min-width: 0; table-layout: fixed; }
-.figure-method-link { font-size: 0.75rem; }
+.figure-links { font-size: 0.75rem; }
 .desktop-raster { display: block; }
 .mobile-raster { display: none; }
 
@@ -1662,8 +1748,6 @@ input[type="search"] {
 .scenario .rationale { color: var(--muted); }
 .failure-detail, .evidence-hash { display: inline-block; margin: 0.3rem 0 0 0.45rem; color: var(--muted); font-size: 0.68rem; }
 .evidence-hash { max-width: 100%; overflow-wrap: anywhere; word-break: break-all; }
-.badge { border-radius: 0; }
-.badge.cause, .badge.neutral, .badge.neutral.unparsed { color: var(--ink); background: var(--neutral-bg); border-color: var(--ink); }
 .back-link { font-size: 0.75rem; }
 
 .colophon {
