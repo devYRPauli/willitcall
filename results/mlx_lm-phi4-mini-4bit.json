@@ -47,7 +47,7 @@
     },
     "server": {
       "chat_template": null,
-      "decode_mode": "unknown",
+      "decode_mode": "unconstrained_post_hoc",
       "launch_config_sha256": null,
       "preset_name": "mlx_lm",
       "quirk_flags": [

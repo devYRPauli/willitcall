@@ -8,7 +8,7 @@ use wic_core::result::{
 };
 use wic_core::ScenarioCategory;
 
-use super::data::{ScenarioView, SiteDataset, StackRow, CATEGORIES};
+use super::data::{DecodeModeSource, ScenarioView, SiteDataset, StackRow, CATEGORIES};
 use super::svg;
 
 // The replicated source runs behind these two case studies live off-repository, so
@@ -280,13 +280,15 @@ fn render_result_row(
         .unwrap_or("not declared");
     write!(
         html,
-        "            <tr class=\"result-row\" data-server=\"{}\" data-identity-status=\"{}\"{}>\n              <th scope=\"row\">\n                <strong>{}</strong>\n                <span>quant: {} - server: {}</span>\n                <span>identity status: {}{}</span>\n                <a class=\"detail-link\" href=\"#stack-detail-{index}\">detail</a>\n              </th>\n",
+        "            <tr class=\"result-row\" data-server=\"{}\" data-identity-status=\"{}\" data-decode-source=\"{}\"{}>\n              <th scope=\"row\">\n                <strong>{}</strong>\n                <span>quant: {} - server: {}</span>\n                <span>decode provenance: {}</span>\n                <span>identity status: {}{}</span>\n                <a class=\"detail-link\" href=\"#stack-detail-{index}\">detail</a>\n              </th>\n",
         escape_html(server),
         identity_status,
+        decode_mode_source_id(result.decode_mode_source),
         cross_model_attribute,
         escape_html(&result.display_name),
         escape_html(quant),
         escape_html(server_display),
+        decode_mode_source_label(result.decode_mode_source),
         identity_status,
         identity_note
     )
@@ -370,6 +372,22 @@ fn decode_mode_id(mode: DecodeMode) -> &'static str {
     }
 }
 
+fn decode_mode_source_id(source: DecodeModeSource) -> &'static str {
+    match source {
+        DecodeModeSource::Recorded => "recorded",
+        DecodeModeSource::PresetMapping => "preset_mapping",
+        DecodeModeSource::Unknown => "unknown",
+    }
+}
+
+fn decode_mode_source_label(source: DecodeModeSource) -> &'static str {
+    match source {
+        DecodeModeSource::Recorded => "recorded by run",
+        DecodeModeSource::PresetMapping => "documented preset mapping",
+        DecodeModeSource::Unknown => "unknown (no cited mapping)",
+    }
+}
+
 fn category_label(category: ScenarioCategory) -> &'static str {
     match category {
         ScenarioCategory::SingleCall => "Single call",
@@ -413,6 +431,7 @@ fn render_methodology(
     let peg_native_case_study_url = format!(
         "{repo_base}/blob/main/docs/case-studies/2026-07-21-llamacpp-500s-on-llama-3.1-tool-calls.md"
     );
+    let decode_mapping_url = format!("{repo_base}/blob/main/registry/decode-modes-v1.json");
     let environment_statement = uniform_environment
         .map(render_environment_statement)
         .unwrap_or_default();
@@ -423,7 +442,7 @@ fn render_methodology(
       <p>A cell measures the whole stack: model x quant x server x server version. It is not a property of the model alone.</p>
       <p>A failed observation means the combination failed as tested, not that the weights are bad. The same weights can pass on one server and fail on another; where that is proven, the cell carries a cause annotation.</p>
       <p>Failing observations link to the full request/response transcript when the result schema supplies a transcript path. Legacy schema v1 results do not record transcript paths. See the <a href="{}">case studies under docs/case-studies/</a> for controlled comparisons.</p>
-      <p>The servers do not decode the same way. llama.cpp compiles supplied tool definitions into a GBNF grammar and constrains decoding with it. Ollama and MLX LM generate unconstrained text and parse the tool call afterwards. A cross-band difference is therefore a property of the full stack; same-server adjacency is the valid model comparison.</p>
+      <p>The servers do not decode the same way. llama.cpp compiles supplied tool definitions into a GBNF grammar and constrains decoding with it. Ollama and MLX LM generate unconstrained text and parse the tool call afterwards. A cross-band difference is therefore a property of the full stack; same-server adjacency is the valid model comparison. Each row labels whether its mode was recorded by the run or resolved from the <a href="{}">cited preset mapping</a>; an unmapped preset remains unknown.</p>
       <p>Sample size and method: {} distinct scenarios are represented. Each published cell is one run. Its hatch withholds a verdict rather than hiding the observation.</p>
       <p>Findings in the case studies are replicated across at least five runs per arm before a verdict is drawn. The current case studies cover {}.</p>
       <h3>Excluded rows</h3>
@@ -432,6 +451,7 @@ fn render_methodology(
     </section>
 "#,
         escape_html(&case_studies_url),
+        escape_html(&decode_mapping_url),
         dataset.scenario_count,
         CASE_STUDY_SAMPLE_SUMMARY,
         escape_html(&peg_native_case_study_url),
@@ -592,6 +612,12 @@ fn render_stack_detail(
         "Decode class",
         decode_mode_id(result.decode_mode),
         true,
+    );
+    metadata_item(
+        html,
+        "Decode provenance",
+        decode_mode_source_label(result.decode_mode_source),
+        false,
     );
     metadata_item(
         html,

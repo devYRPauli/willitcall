@@ -63,10 +63,11 @@
           <tbody class="model-group result-group" data-model-key="Fixture/Declared" data-model-search="declared-fixture.gguf fixture/declared">
             <tr class="model-heading"><th colspan="7" scope="rowgroup"><span>Model</span> Fixture/Declared</th></tr>
             <tr class="decode-band grammar_constrained" data-decode-mode="grammar_constrained" data-server-band="llamacpp"><th colspan="7" scope="rowgroup"><span class="decode-badge grammar_constrained">grammar_constrained</span><span>llama.cpp - tool grammar constrains generation</span></th></tr>
-            <tr class="result-row" data-server="llamacpp" data-identity-status="declared" data-cross-model-key="Fixture/Declared">
+            <tr class="result-row" data-server="llamacpp" data-identity-status="declared" data-decode-source="recorded" data-cross-model-key="Fixture/Declared">
               <th scope="row">
                 <strong>declared-fixture.gguf</strong>
                 <span>quant: Q4_K_M - server: llama.cpp</span>
+                <span>decode provenance: recorded by run</span>
                 <span>identity status: declared</span>
                 <a class="detail-link" href="#stack-detail-2">detail</a>
               </th>
@@ -81,10 +82,11 @@
           <tbody class="model-group result-group" data-model-key="Fixture/Verified" data-model-search="fixture/verified verified &amp; fixture verified-fixture:latest">
             <tr class="model-heading"><th colspan="7" scope="rowgroup"><span>Model</span> Fixture/Verified</th></tr>
             <tr class="decode-band unconstrained_post_hoc" data-decode-mode="unconstrained_post_hoc" data-server-band="ollama"><th colspan="7" scope="rowgroup"><span class="decode-badge unconstrained_post_hoc">unconstrained_post_hoc</span><span>ollama - generated text is parsed after decoding</span></th></tr>
-            <tr class="result-row" data-server="ollama" data-identity-status="verified" data-cross-model-key="Fixture/Verified">
+            <tr class="result-row" data-server="ollama" data-identity-status="verified" data-decode-source="recorded" data-cross-model-key="Fixture/Verified">
               <th scope="row">
                 <strong>Verified &amp; Fixture</strong>
                 <span>quant: not declared - server: ollama</span>
+                <span>decode provenance: recorded by run</span>
                 <span>identity status: verified</span>
                 <a class="detail-link" href="#stack-detail-3">detail</a>
               </th>
@@ -99,10 +101,11 @@
           <tbody class="model-group result-group" data-model-key="legacy-unresolved.gguf" data-model-search="legacy-unresolved.gguf">
             <tr class="model-heading"><th colspan="7" scope="rowgroup"><span>Model</span> legacy-unresolved.gguf</th></tr>
             <tr class="decode-band unconstrained_post_hoc" data-decode-mode="unconstrained_post_hoc" data-server-band="ollama"><th colspan="7" scope="rowgroup"><span class="decode-badge unconstrained_post_hoc">unconstrained_post_hoc</span><span>ollama - generated text is parsed after decoding</span></th></tr>
-            <tr class="result-row" data-server="ollama" data-identity-status="unresolved">
+            <tr class="result-row" data-server="ollama" data-identity-status="unresolved" data-decode-source="preset_mapping">
               <th scope="row">
                 <strong>legacy-unresolved.gguf</strong>
                 <span>quant: not declared - server: ollama</span>
+                <span>decode provenance: documented preset mapping</span>
                 <span>identity status: unresolved (provenance could not be established; excluded from cross-model comparison)</span>
                 <a class="detail-link" href="#stack-detail-0">detail</a>
               </th>
@@ -117,10 +120,11 @@
           <tbody class="model-group result-group" data-model-key="v2-unresolved:model" data-model-search="v2-unresolved:model">
             <tr class="model-heading"><th colspan="7" scope="rowgroup"><span>Model</span> v2-unresolved:model</th></tr>
             <tr class="decode-band unconstrained_post_hoc" data-decode-mode="unconstrained_post_hoc" data-server-band="mlx_lm"><th colspan="7" scope="rowgroup"><span class="decode-badge unconstrained_post_hoc">unconstrained_post_hoc</span><span>MLX LM - generated text is parsed after decoding</span></th></tr>
-            <tr class="result-row" data-server="mlx_lm" data-identity-status="unresolved">
+            <tr class="result-row" data-server="mlx_lm" data-identity-status="unresolved" data-decode-source="preset_mapping">
               <th scope="row">
                 <strong>v2-unresolved:model</strong>
                 <span>quant: Q5_K_M - server: MLX LM</span>
+                <span>decode provenance: documented preset mapping</span>
                 <span>identity status: unresolved (provenance could not be established; excluded from cross-model comparison)</span>
                 <a class="detail-link" href="#stack-detail-1">detail</a>
               </th>
@@ -576,7 +580,7 @@
       <p>A cell measures the whole stack: model x quant x server x server version. It is not a property of the model alone.</p>
       <p>A failed observation means the combination failed as tested, not that the weights are bad. The same weights can pass on one server and fail on another; where that is proven, the cell carries a cause annotation.</p>
       <p>Failing observations link to the full request/response transcript when the result schema supplies a transcript path. Legacy schema v1 results do not record transcript paths. See the <a href="https://example.invalid/willitcall/tree/main/docs/case-studies">case studies under docs/case-studies/</a> for controlled comparisons.</p>
-      <p>The servers do not decode the same way. llama.cpp compiles supplied tool definitions into a GBNF grammar and constrains decoding with it. Ollama and MLX LM generate unconstrained text and parse the tool call afterwards. A cross-band difference is therefore a property of the full stack; same-server adjacency is the valid model comparison.</p>
+      <p>The servers do not decode the same way. llama.cpp compiles supplied tool definitions into a GBNF grammar and constrains decoding with it. Ollama and MLX LM generate unconstrained text and parse the tool call afterwards. A cross-band difference is therefore a property of the full stack; same-server adjacency is the valid model comparison. Each row labels whether its mode was recorded by the run or resolved from the <a href="https://example.invalid/willitcall/blob/main/registry/decode-modes-v1.json">cited preset mapping</a>; an unmapped preset remains unknown.</p>
       <p>Sample size and method: 9 distinct scenarios are represented. Each published cell is one run. Its hatch withholds a verdict rather than hiding the observation.</p>
       <p>Findings in the case studies are replicated across at least five runs per arm before a verdict is drawn. The current case studies cover 90 runs across 18 quantization arms, and 40 runs across 8 arms for the peg-native anomaly.</p>
       <h3>Excluded rows</h3>
@@ -612,6 +616,7 @@
           <div><dt>Server</dt><dd>llama.cpp</dd></div>
           <div><dt>Server version</dt><dd><code>fixture-v3-declared</code></dd></div>
           <div><dt>Decode class</dt><dd><code>grammar_constrained</code></dd></div>
+          <div><dt>Decode provenance</dt><dd>recorded by run</dd></div>
           <div><dt>Recorded decode mode</dt><dd><code>grammar_constrained</code></dd></div>
           <div><dt>Quirk flags</dt><dd><code>grammar_constrained_decoding</code></dd></div>
           <div><dt>Chat template id</dt><dd><code>not recorded</code></dd></div>
@@ -667,6 +672,7 @@
           <div><dt>Server</dt><dd>ollama</dd></div>
           <div><dt>Server version</dt><dd><code>fixture-v3-verified</code></dd></div>
           <div><dt>Decode class</dt><dd><code>unconstrained_post_hoc</code></dd></div>
+          <div><dt>Decode provenance</dt><dd>recorded by run</dd></div>
           <div><dt>Recorded decode mode</dt><dd><code>unconstrained_post_hoc</code></dd></div>
           <div><dt>Quirk flags</dt><dd><code>not recorded</code></dd></div>
           <div><dt>Chat template id</dt><dd><code>fixture-template</code></dd></div>
@@ -722,6 +728,7 @@
           <div><dt>Server</dt><dd>ollama</dd></div>
           <div><dt>Server version</dt><dd><code>version not reported</code></dd></div>
           <div><dt>Decode class</dt><dd><code>unconstrained_post_hoc</code></dd></div>
+          <div><dt>Decode provenance</dt><dd>documented preset mapping</dd></div>
           <div><dt>Recorded decode mode</dt><dd><code>unknown</code></dd></div>
           <div><dt>Quirk flags</dt><dd><code>not recorded</code></dd></div>
           <div><dt>Chat template id</dt><dd><code>not recorded</code></dd></div>
@@ -775,6 +782,7 @@
           <div><dt>Server</dt><dd>MLX LM</dd></div>
           <div><dt>Server version</dt><dd><code>fixture-v2</code></dd></div>
           <div><dt>Decode class</dt><dd><code>unconstrained_post_hoc</code></dd></div>
+          <div><dt>Decode provenance</dt><dd>documented preset mapping</dd></div>
           <div><dt>Recorded decode mode</dt><dd><code>unknown</code></dd></div>
           <div><dt>Quirk flags</dt><dd><code>not recorded</code></dd></div>
           <div><dt>Chat template id</dt><dd><code>not recorded</code></dd></div>
@@ -807,7 +815,7 @@
     </section>
 
   </main>
-  <footer class="colophon"><p>Build hash <code>a491053d92d9d283</code> - corpus revision <code>site-contract fixture-v1</code> - data date <time datetime="2000-01-04">2000-01-04</time></p></footer>
+  <footer class="colophon"><p>Build hash <code>0e1fad6e9fd657b6</code> - corpus revision <code>site-contract fixture-v1</code> - data date <time datetime="2000-01-04">2000-01-04</time></p></footer>
   <script src="site.js"></script>
 </body>
 </html>
