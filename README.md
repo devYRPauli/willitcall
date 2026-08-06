@@ -132,11 +132,13 @@ model. So:
   nearly right that the parser then rejected. The `unparsed_tool_call` failure
   class exists to mark exactly that case, and the transcript shows the bytes.
 
-Each v3 result records which side of this line its server sits on in
-`metadata.server.decode_mode`, while retaining the corresponding
+V3 results can record which side of this line their server sits on in
+`metadata.server.decode_mode`, while retaining any corresponding
 `server.quirk_flags`: `grammar_constrained_decoding` for llama.cpp and
-`unconstrained_post_hoc_parse` for Ollama and mlx-lm. LM Studio and vLLM use
-`unknown` because their decode path has not been verified here.
+`unconstrained_post_hoc_parse` for Ollama and mlx-lm. When a historical run did
+not record the mode, the site consults the cited preset mapping in
+`registry/decode-modes-v1.json`; presets absent from that mapping remain
+`unknown` rather than being guessed.
 
 This was established the hard way. An earlier version of this project published
 a claim that Ollama discarded valid tool calls. Recovering the discarded bytes

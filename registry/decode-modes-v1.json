@@ -1,0 +1,29 @@
+{
+  "schema_version": 1,
+  "entries": [
+    {
+      "preset_name": "llamacpp",
+      "decode_mode": "grammar_constrained",
+      "provenance_refs": [
+        "README.md#a-cell-is-a-property-of-the-whole-stack",
+        "docs/superpowers/specs/2026-07-19-willitcall-design.md#L248-L267"
+      ]
+    },
+    {
+      "preset_name": "ollama",
+      "decode_mode": "unconstrained_post_hoc",
+      "provenance_refs": [
+        "README.md#a-cell-is-a-property-of-the-whole-stack",
+        "docs/superpowers/specs/2026-07-19-willitcall-design.md#L248-L267"
+      ]
+    },
+    {
+      "preset_name": "mlx_lm",
+      "decode_mode": "unconstrained_post_hoc",
+      "provenance_refs": [
+        "README.md#a-cell-is-a-property-of-the-whole-stack",
+        "docs/superpowers/specs/2026-07-19-willitcall-design.md#L248-L267"
+      ]
+    }
+  ]
+}

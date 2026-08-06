@@ -9,6 +9,8 @@ use wic_core::result::{
 };
 use wic_core::{load_scenarios_from_dir, Scenario, ScenarioCategory};
 
+const DECODE_MODE_REGISTRY: &[u8] = include_bytes!("../../../../registry/decode-modes-v1.json");
+
 pub(super) const CATEGORIES: [ScenarioCategory; 6] = [
     ScenarioCategory::SingleCall,
     ScenarioCategory::ParallelCalls,
@@ -35,8 +37,108 @@ pub(super) struct StackRow {
     pub(super) display_name: String,
     pub(super) endpoint_display: String,
     pub(super) decode_mode: DecodeMode,
+    pub(super) decode_mode_source: DecodeModeSource,
     pub(super) scenarios: Vec<ScenarioView>,
     pub(super) category_counts: CategoryCounts,
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub(super) enum DecodeModeSource {
+    Recorded,
+    PresetMapping,
+    Unknown,
+}
+
+struct DecodeModeRegistry {
+    by_preset: HashMap<String, DecodeMode>,
+}
+
+impl DecodeModeRegistry {
+    fn from_json(bytes: &[u8]) -> Result<Self, String> {
+        let document: serde_json::Value = serde_json::from_slice(bytes)
+            .map_err(|error| format!("invalid decode mode registry: {error}"))?;
+        let root = document
+            .as_object()
+            .ok_or_else(|| "invalid decode mode registry: expected an object".to_owned())?;
+        if root.len() != 2 || !root.contains_key("schema_version") || !root.contains_key("entries")
+        {
+            return Err(
+                "invalid decode mode registry: expected schema_version and entries".to_owned(),
+            );
+        }
+        if root
+            .get("schema_version")
+            .and_then(serde_json::Value::as_u64)
+            != Some(1)
+        {
+            return Err("invalid decode mode registry: schema_version must be 1".to_owned());
+        }
+        let entries = root
+            .get("entries")
+            .and_then(serde_json::Value::as_array)
+            .filter(|entries| !entries.is_empty())
+            .ok_or_else(|| {
+                "invalid decode mode registry: entries must be a non-empty array".to_owned()
+            })?;
+        let mut by_preset = HashMap::new();
+        for (index, entry) in entries.iter().enumerate() {
+            let entry = entry.as_object().ok_or_else(|| {
+                format!("invalid decode mode registry entry {index}: expected an object")
+            })?;
+            if entry.len() != 3
+                || !entry.contains_key("preset_name")
+                || !entry.contains_key("decode_mode")
+                || !entry.contains_key("provenance_refs")
+            {
+                return Err(format!(
+                    "invalid decode mode registry entry {index}: expected preset_name, decode_mode, and provenance_refs"
+                ));
+            }
+            let preset_name = entry
+                .get("preset_name")
+                .and_then(serde_json::Value::as_str)
+                .filter(|value| !value.trim().is_empty())
+                .ok_or_else(|| {
+                    format!(
+                        "invalid decode mode registry entry {index}: preset_name must be non-empty"
+                    )
+                })?;
+            let decode_mode = match entry.get("decode_mode").and_then(serde_json::Value::as_str) {
+                Some("grammar_constrained") => DecodeMode::GrammarConstrained,
+                Some("unconstrained_post_hoc") => DecodeMode::UnconstrainedPostHoc,
+                _ => {
+                    return Err(format!(
+                        "invalid decode mode registry entry {index}: decode_mode must establish a known mode"
+                    ));
+                }
+            };
+            entry
+                .get("provenance_refs")
+                .and_then(serde_json::Value::as_array)
+                .filter(|references| {
+                    !references.is_empty()
+                        && references.iter().all(|reference| {
+                            reference
+                                .as_str()
+                                .is_some_and(|value| !value.trim().is_empty())
+                        })
+                })
+                .ok_or_else(|| {
+                    format!(
+                        "invalid decode mode registry entry {index}: provenance_refs must contain non-empty references"
+                    )
+                })?;
+            if by_preset
+                .insert(preset_name.to_owned(), decode_mode)
+                .is_some()
+            {
+                return Err(format!(
+                    "invalid decode mode registry: duplicate preset_name {preset_name:?}"
+                ));
+            }
+        }
+        Ok(Self { by_preset })
+    }
 }
 
 impl StackRow {
@@ -198,6 +300,7 @@ pub(super) fn load(
     results_directory: &Path,
     catalog_directory: Option<&Path>,
 ) -> Result<SiteDataset, String> {
+    let decode_modes = DecodeModeRegistry::from_json(DECODE_MODE_REGISTRY)?;
     let frozen = Catalog::from_scenarios(
         load_frozen_v1_catalog()
             .map_err(|error| format!("failed to load frozen wic-50-v1 catalog: {error}"))?
@@ -227,7 +330,7 @@ pub(super) fn load(
             .to_string_lossy()
             .into_owned();
         let catalog = select_catalog(&file_name, &measurement, &frozen, custom.as_ref())?;
-        rows.push(stack_row(file_name, measurement, catalog)?);
+        rows.push(stack_row(file_name, measurement, catalog, &decode_modes)?);
     }
 
     let scenario_count = rows
@@ -296,14 +399,16 @@ fn stack_row(
     file_name: String,
     measurement: Measurement,
     catalog: Option<&Catalog>,
+    decode_modes: &DecodeModeRegistry,
 ) -> Result<StackRow, String> {
     let scenarios = join_scenarios(&file_name, &measurement.scenarios, catalog)?;
     let category_counts = CategoryCounts::from_scenarios(&scenarios);
     let display_name = safe_display_id(&measurement.metadata.model.display_name);
     let endpoint_display = safe_display_id(&measurement.metadata.model.endpoint_id);
-    let decode_mode = effective_decode_mode(
+    let (decode_mode, decode_mode_source) = effective_decode_mode(
         measurement.metadata.server.decode_mode,
         &measurement.metadata.server.preset_name,
+        decode_modes,
     );
     Ok(StackRow {
         file_name,
@@ -312,20 +417,26 @@ fn stack_row(
         display_name,
         endpoint_display,
         decode_mode,
+        decode_mode_source,
         scenarios,
         category_counts,
     })
 }
 
-fn effective_decode_mode(recorded: DecodeMode, server: &str) -> DecodeMode {
+fn effective_decode_mode(
+    recorded: DecodeMode,
+    server: &str,
+    decode_modes: &DecodeModeRegistry,
+) -> (DecodeMode, DecodeModeSource) {
     if recorded != DecodeMode::Unknown {
-        return recorded;
+        return (recorded, DecodeModeSource::Recorded);
     }
-    match server {
-        "llamacpp" => DecodeMode::GrammarConstrained,
-        "ollama" | "mlx_lm" => DecodeMode::UnconstrainedPostHoc,
-        _ => DecodeMode::Unknown,
-    }
+    decode_modes
+        .by_preset
+        .get(server)
+        .copied()
+        .map(|mode| (mode, DecodeModeSource::PresetMapping))
+        .unwrap_or((DecodeMode::Unknown, DecodeModeSource::Unknown))
 }
 
 fn join_scenarios(
@@ -485,8 +596,9 @@ mod tests {
     use wic_core::{ArgumentsMatch, Scenario, ScenarioCategory, ToolChoice};
 
     use super::{
-        effective_decode_mode, join_scenarios, select_catalog, stack_row, study_views, Catalog,
-        CategoryCounts, CATALOG_UNAVAILABLE,
+        effective_decode_mode, join_scenarios, load, select_catalog, stack_row, study_views,
+        Catalog, CategoryCounts, DecodeModeRegistry, DecodeModeSource, CATALOG_UNAVAILABLE,
+        DECODE_MODE_REGISTRY,
     };
 
     fn scenario(id: &str, category: ScenarioCategory) -> Scenario {
@@ -625,21 +737,75 @@ mod tests {
     }
 
     #[test]
-    fn legacy_unknown_decode_modes_use_the_server_decode_class_for_layout() {
+    fn cited_preset_mapping_resolves_only_explicit_entries() {
+        let registry = DecodeModeRegistry::from_json(DECODE_MODE_REGISTRY)
+            .expect("published decode mode registry");
         assert_eq!(
-            effective_decode_mode(DecodeMode::Unknown, "llamacpp"),
-            DecodeMode::GrammarConstrained
+            effective_decode_mode(DecodeMode::Unknown, "llamacpp", &registry),
+            (
+                DecodeMode::GrammarConstrained,
+                DecodeModeSource::PresetMapping
+            )
         );
         for server in ["ollama", "mlx_lm"] {
             assert_eq!(
-                effective_decode_mode(DecodeMode::Unknown, server),
-                DecodeMode::UnconstrainedPostHoc
+                effective_decode_mode(DecodeMode::Unknown, server, &registry),
+                (
+                    DecodeMode::UnconstrainedPostHoc,
+                    DecodeModeSource::PresetMapping
+                )
             );
         }
         assert_eq!(
-            effective_decode_mode(DecodeMode::Unknown, "custom"),
-            DecodeMode::Unknown
+            effective_decode_mode(DecodeMode::Unknown, "custom", &registry),
+            (DecodeMode::Unknown, DecodeModeSource::Unknown)
         );
+    }
+
+    #[test]
+    fn decode_mode_mapping_requires_citations() {
+        let mut document: serde_json::Value =
+            serde_json::from_slice(DECODE_MODE_REGISTRY).expect("decode mode registry JSON");
+        document["entries"][0]
+            .as_object_mut()
+            .expect("decode mode entry")
+            .remove("provenance_refs");
+        assert!(DecodeModeRegistry::from_json(
+            &serde_json::to_vec(&document).expect("encode registry without provenance")
+        )
+        .is_err());
+    }
+
+    #[test]
+    fn recorded_decode_mode_is_not_overridden_by_the_preset_mapping() {
+        let registry = DecodeModeRegistry::from_json(DECODE_MODE_REGISTRY)
+            .expect("published decode mode registry");
+        assert_eq!(
+            effective_decode_mode(DecodeMode::UnconstrainedPostHoc, "llamacpp", &registry),
+            (DecodeMode::UnconstrainedPostHoc, DecodeModeSource::Recorded)
+        );
+    }
+
+    #[test]
+    fn published_mlx_rows_use_their_recorded_quirk_fact() {
+        let results = std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("../../results");
+        let dataset = load(&results, None).expect("published site dataset");
+        let mlx_rows = dataset
+            .rows
+            .iter()
+            .filter(|row| row.metadata.server.preset_name == "mlx_lm")
+            .collect::<Vec<_>>();
+        assert_eq!(mlx_rows.len(), 6);
+        assert!(mlx_rows.iter().all(|row| {
+            row.metadata
+                .server
+                .quirk_flags
+                .iter()
+                .any(|flag| flag == "unconstrained_post_hoc_parse")
+                && row.metadata.server.decode_mode == DecodeMode::UnconstrainedPostHoc
+                && row.decode_mode == DecodeMode::UnconstrainedPostHoc
+                && row.decode_mode_source == DecodeModeSource::Recorded
+        }));
     }
 
     #[test]
@@ -667,7 +833,15 @@ mod tests {
             mode: ReplicationMode::GreedyReproducibility,
         });
         measurement.metadata.arm_fingerprint = Some(fingerprint.to_owned());
-        stack_row(format!("result-{run_index}.json"), measurement, None).expect("stack row")
+        let decode_modes = DecodeModeRegistry::from_json(DECODE_MODE_REGISTRY)
+            .expect("published decode mode registry");
+        stack_row(
+            format!("result-{run_index}.json"),
+            measurement,
+            None,
+            &decode_modes,
+        )
+        .expect("stack row")
     }
 
     fn measurement_with_corpus(sha256: &str) -> wic_core::result::Measurement {

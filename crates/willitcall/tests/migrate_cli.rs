@@ -194,6 +194,48 @@ fn second_migration_is_a_byte_identical_no_op() {
 }
 
 #[test]
+fn quirk_flag_carries_decode_mode_forward_and_repairs_the_old_v3_gap() {
+    let fixture = Fixture::new(
+        V2_RESULT_FIXTURE,
+        "mlx-community/Meta-Llama-3.1-8B-Instruct-4bit",
+        None,
+    );
+    let mut source = fixture.document();
+    source["metadata"]["server"]["quirk_flags"] = json!(["unconstrained_post_hoc_parse"]);
+    fs::write(
+        &fixture.result_path,
+        serde_json::to_vec_pretty(&source).expect("encode v2 quirk fixture"),
+    )
+    .expect("write v2 quirk fixture");
+
+    assert_success(&fixture.run(&[]));
+    let migrated = fixture.document();
+    assert_eq!(
+        migrated["metadata"]["server"]["decode_mode"],
+        "unconstrained_post_hoc"
+    );
+
+    let mut old_v3 = migrated;
+    old_v3["metadata"]["server"]["decode_mode"] = json!("unknown");
+    fs::write(
+        &fixture.result_path,
+        serde_json::to_vec_pretty(&old_v3).expect("encode old v3 fixture"),
+    )
+    .expect("write old v3 fixture");
+
+    assert_success(&fixture.run(&[]));
+    assert_eq!(
+        fixture.document()["metadata"]["server"]["decode_mode"],
+        "unconstrained_post_hoc"
+    );
+    let repaired = fixture.bytes();
+    let second = fixture.run(&[]);
+    assert_success(&second);
+    assert_eq!(repaired, fixture.bytes());
+    assert!(String::from_utf8_lossy(&second.stdout).contains("no changes required"));
+}
+
+#[test]
 fn refuses_an_unlisted_result_before_writing() {
     let fixture = Fixture::new(
         V2_RESULT_FIXTURE,

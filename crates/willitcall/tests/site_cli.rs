@@ -210,6 +210,14 @@ fn analysis_views_render_the_published_observation_contract() {
     assert!(index.contains("id=\"model-search\" type=\"search\""));
     assert!(index.contains("data-decode-mode=\"grammar_constrained\""));
     assert!(index.contains("data-decode-mode=\"unconstrained_post_hoc\""));
+    assert_eq!(index.matches("data-decode-source=\"recorded\"").count(), 6);
+    assert_eq!(
+        index
+            .matches("data-decode-source=\"preset_mapping\"")
+            .count(),
+        26
+    );
+    assert_eq!(index.matches("data-decode-source=\"unknown\"").count(), 0);
     for (id, label) in [
         ("single_call", "Single call"),
         ("tool_choice_modes", "Tool choice"),

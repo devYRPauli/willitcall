@@ -117,7 +117,19 @@ pub(crate) fn run(
                     bytes: output,
                 });
             }
-            3 => validate_historical_v3(&document, &expected_model, &corpus, path)?,
+            3 => {
+                let migrated = repair_v3_decode_mode(&document, path)?;
+                validate_historical_v3(&migrated, &expected_model, &corpus, path)?;
+                if migrated != document {
+                    let mut output = serde_json::to_vec_pretty(&migrated)
+                        .map_err(|error| format!("failed to encode {}: {error}", path.display()))?;
+                    output.push(b'\n');
+                    pending.push(PendingWrite {
+                        path: path.clone(),
+                        bytes: output,
+                    });
+                }
+            }
             version => {
                 return Err(format!(
                     "result {} has schema_version {version}; manifest requires source version 2 or an already-migrated v3 file",
@@ -456,6 +468,7 @@ fn migrate_v2(
         .iter()
         .map(migrate_scenario)
         .collect::<Result<Vec<_>, _>>()?;
+    let decode_mode = decode_mode_from_quirk_flags(server, path)?;
     let mut migrated_metadata = Map::new();
     copy_required(metadata, &mut migrated_metadata, "run_id", path)?;
     copy_required(metadata, &mut migrated_metadata, "timestamp", path)?;
@@ -469,7 +482,7 @@ fn migrate_v2(
             "preset_name": server.get("preset_name").expect("validated v2 server"),
             "reported_version": server.get("reported_version").expect("validated v2 server"),
             "quirk_flags": server.get("quirk_flags").expect("validated v2 server"),
-            "decode_mode": "unknown",
+            "decode_mode": decode_mode,
             "chat_template": null,
             "launch_config_sha256": null,
         }),
@@ -497,6 +510,63 @@ fn migrate_v2(
         "scenarios": scenarios,
         "totals": root.get("totals").expect("validated v2 result has totals"),
     }))
+}
+
+fn repair_v3_decode_mode(document: &Value, path: &Path) -> Result<Value, String> {
+    let mut migrated = document.clone();
+    let server = migrated
+        .get_mut("metadata")
+        .and_then(Value::as_object_mut)
+        .and_then(|metadata| metadata.get_mut("server"))
+        .and_then(Value::as_object_mut)
+        .ok_or_else(|| {
+            format!(
+                "invalid result {}: server must be an object",
+                path.display()
+            )
+        })?;
+    let decode_mode = decode_mode_from_quirk_flags(server, path)?;
+    if decode_mode != "unknown"
+        && server.get("decode_mode").and_then(Value::as_str) == Some("unknown")
+    {
+        server.insert(
+            "decode_mode".to_owned(),
+            Value::String(decode_mode.to_owned()),
+        );
+    }
+    Ok(migrated)
+}
+
+fn decode_mode_from_quirk_flags(
+    server: &Map<String, Value>,
+    path: &Path,
+) -> Result<&'static str, String> {
+    let quirk_flags = server
+        .get("quirk_flags")
+        .and_then(Value::as_array)
+        .ok_or_else(|| {
+            format!(
+                "invalid result {}: server.quirk_flags must be an array",
+                path.display()
+            )
+        })?;
+    let has_flag = |expected: &str| {
+        quirk_flags
+            .iter()
+            .any(|flag| flag.as_str() == Some(expected))
+    };
+    match (
+        has_flag("grammar_constrained_decoding"),
+        has_flag("unconstrained_post_hoc_parse"),
+    ) {
+        (true, false) => Ok("grammar_constrained"),
+        (false, true) => Ok("unconstrained_post_hoc"),
+        (false, false) => Ok("unknown"),
+        (true, true) => Err(format!(
+            "invalid result {}: server.quirk_flags record conflicting decode modes",
+            path.display()
+        )),
+    }
 }
 
 fn migrate_scenario(scenario: &Value) -> Result<Value, String> {
@@ -580,7 +650,8 @@ fn validate_historical_v3(
                 path.display()
             )
         })?;
-    if server.get("decode_mode").and_then(Value::as_str) != Some("unknown")
+    let expected_decode_mode = decode_mode_from_quirk_flags(server, path)?;
+    if server.get("decode_mode").and_then(Value::as_str) != Some(expected_decode_mode)
         || !server.get("chat_template").is_some_and(Value::is_null)
         || !server
             .get("launch_config_sha256")
