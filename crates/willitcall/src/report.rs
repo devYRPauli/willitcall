@@ -1,4 +1,4 @@
-use wic_core::result::{RunResult, Status};
+use wic_core::result::{Measurement, Status};
 use wic_core::ScenarioCategory;
 
 const CATEGORIES: [ScenarioCategory; 6] = [
@@ -10,7 +10,7 @@ const CATEGORIES: [ScenarioCategory; 6] = [
     ScenarioCategory::NegativeTrap,
 ];
 
-pub fn render_report(result: &RunResult, color: bool) -> String {
+pub fn render_report(result: &Measurement, color: bool) -> String {
     let mut rendered = String::new();
     if color {
         rendered.push_str("\x1b[1mwillitcall report\x1b[0m\n");

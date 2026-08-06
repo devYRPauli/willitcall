@@ -59,8 +59,14 @@ record_id = "rec-17"
 ## Submitting a result file
 
 1. Run the full scenario corpus against one loaded model at a time.
-2. Run `willitcall validate results/<file>.json`; it must pass against `schemas/result-v1.schema.json`.
-3. Open a pull request adding the file under `results/`, and state the hardware and server version used.
+2. Add the exact model selector to `registry/models-v1.json`. Every claimed
+   identity field needs a provenance reference. If the provenance cannot be
+   recovered, an explicit unresolved entry is acceptable and will be displayed
+   as `unresolved`; do not infer identity from the selector or result filename.
+3. Run `willitcall validate results/<file>.json`; new runs must pass as schema v3
+   against `schemas/result-v3.schema.json`. The CLI continues to accept schema v1
+   and v2 files without upgrading them during `annotate` or `rescore`.
+4. Open a pull request adding the file under `results/`, and state the hardware and server version used.
 
 Never hand-edit a result file. Each scenario record carries an evidence hash, so edited results are not comparable.
 
