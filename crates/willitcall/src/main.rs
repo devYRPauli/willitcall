@@ -1,3 +1,4 @@
+mod migrate;
 mod report;
 mod site;
 
@@ -55,6 +56,7 @@ enum Command {
     Run(RunArgs),
     Scenarios(ScenariosArgs),
     Validate(ValidateArgs),
+    MigrateV3(MigrateArgs),
     Annotate(AnnotateArgs),
     Rescore(RescoreArgs),
     Site(SiteArgs),
@@ -183,6 +185,18 @@ struct ListArgs {
 #[derive(Debug, Args)]
 struct ValidateArgs {
     result_file: PathBuf,
+}
+
+#[derive(Debug, Args)]
+struct MigrateArgs {
+    #[arg(long)]
+    manifest: PathBuf,
+    #[arg(long)]
+    registry: PathBuf,
+    #[arg(long)]
+    batch: Option<String>,
+    #[arg(long)]
+    check: bool,
 }
 
 #[derive(Debug, Args)]
@@ -713,6 +727,36 @@ async fn execute_with_known_servers(
                 })?;
                 parse_and_validate_measurement(&bytes).map_err(ExecuteError::Usage)?;
                 println!("valid: {}", path.display());
+            }
+            Ok(0)
+        }
+        Command::MigrateV3(args) => {
+            let summary = migrate::run(
+                &args.manifest,
+                &args.registry,
+                args.batch.as_deref(),
+                args.check,
+            )
+            .map_err(ExecuteError::Usage)?;
+            let scope = args.batch.as_deref().map_or_else(
+                || "published files".to_owned(),
+                |batch| format!("batch {batch}"),
+            );
+            if summary.changed == 0 {
+                println!(
+                    "{scope}: all {} files are canonical v3; no changes required",
+                    summary.selected
+                );
+            } else if args.check {
+                println!(
+                    "{scope}: {} of {} files require migration; no files written",
+                    summary.changed, summary.selected
+                );
+            } else {
+                println!(
+                    "{scope}: migrated {} of {} files to v3",
+                    summary.changed, summary.selected
+                );
             }
             Ok(0)
         }
