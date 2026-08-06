@@ -1,5 +1,6 @@
 id = "negative-long-argument"
 category = "negative_trap"
+facets = ["argument_fidelity", "long_context"]
 description = "Preserve one long ASCII argument exactly."
 rationale = "This asserts exact transport of the 256-character token supplied verbatim in the prompt. The named tool choice fixes the tool, and the run-path max_tokens default is large enough that a correct model is not truncated."
 
@@ -19,6 +20,7 @@ mode = "named"
 name = "store_token"
 
 [[turns]]
+response_requirement = "tool_calls"
 [[turns.messages]]
 role = "user"
 content = "Store this exact token: abcdefghijklmnopqrstuvwxyz0123456789-ABCDEFGHIJKLMNOPQRSTUVWXYZ-abcdefghijklmnopqrstuvwxyz0123456789-ABCDEFGHIJKLMNOPQRSTUVWXYZ-abcdefghijklmnopqrstuvwxyz0123456789-ABCDEFGHIJKLMNOPQRSTUVWXYZ-abcdefghijklmnopqrstuvwxyz0123456789-ABCDEFGHIJKLMNOPQRSTUVWXYZ"

@@ -19,7 +19,7 @@
               "role": "user"
             }
           ],
-          "model": "/Users/bbadmin/.ollama/models/blobs/sha256-44d19d212d76a6f3fc442e8411fdb44ea6b67ceccfb00be4b4345c9a4cf813e8",
+          "model": "sha256-44d19d212d76a6f3fc442e8411fdb44ea6b67ceccfb00be4b4345c9a4cf813e8",
           "seed": 42,
           "stream": false,
           "temperature": 0.0,
@@ -88,7 +88,7 @@
           "keep-alive": "timeout=5, max=100",
           "server": "llama.cpp"
         },
-        "body_raw": "{\"choices\":[{\"finish_reason\":\"stop\",\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"<tool_call>[{\\\"arguments\\\": {\\\"city\\\": \\\"Boston\\\"}, \\\"name\\\": \\\"get_temperature\\\"}, {\\\"arguments\\\": {\\\"city\\\": \\\"Tokyo\\\"}, \\\"name\\\": \\\"get_temperature\\\"}]\"}}],\"created\":1784574770,\"model\":\"/Users/bbadmin/.ollama/models/blobs/sha256-44d19d212d76a6f3fc442e8411fdb44ea6b67ceccfb00be4b4345c9a4cf813e8\",\"system_fingerprint\":\"b10050-b15ca938a\",\"object\":\"chat.completion\",\"usage\":{\"completion_tokens\":43,\"prompt_tokens\":406,\"total_tokens\":449,\"prompt_tokens_details\":{\"cached_tokens\":133}},\"id\":\"chatcmpl-8oaeh9SGRK3QMlIpb5TvR2kp9SBX0BXv\",\"timings\":{\"cache_n\":133,\"prompt_n\":273,\"prompt_ms\":380.625,\"prompt_per_token_ms\":1.3942307692307692,\"prompt_per_second\":717.2413793103448,\"predicted_n\":43,\"predicted_ms\":535.541,\"predicted_per_token_ms\":12.454441860465117,\"predicted_per_second\":80.2926386588515}}"
+        "body_raw": "{\"choices\":[{\"finish_reason\":\"stop\",\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"<tool_call>[{\\\"arguments\\\": {\\\"city\\\": \\\"Boston\\\"}, \\\"name\\\": \\\"get_temperature\\\"}, {\\\"arguments\\\": {\\\"city\\\": \\\"Tokyo\\\"}, \\\"name\\\": \\\"get_temperature\\\"}]\"}}],\"created\":1784574770,\"model\":\"sha256-44d19d212d76a6f3fc442e8411fdb44ea6b67ceccfb00be4b4345c9a4cf813e8\",\"system_fingerprint\":\"b10050-b15ca938a\",\"object\":\"chat.completion\",\"usage\":{\"completion_tokens\":43,\"prompt_tokens\":406,\"total_tokens\":449,\"prompt_tokens_details\":{\"cached_tokens\":133}},\"id\":\"chatcmpl-8oaeh9SGRK3QMlIpb5TvR2kp9SBX0BXv\",\"timings\":{\"cache_n\":133,\"prompt_n\":273,\"prompt_ms\":380.625,\"prompt_per_token_ms\":1.3942307692307692,\"prompt_per_second\":717.2413793103448,\"predicted_n\":43,\"predicted_ms\":535.541,\"predicted_per_token_ms\":12.454441860465117,\"predicted_per_second\":80.2926386588515}}"
       },
       "retried": false
     }

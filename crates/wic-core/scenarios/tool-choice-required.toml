@@ -18,6 +18,7 @@ type = "string"
 mode = "required"
 
 [[turns]]
+response_requirement = "tool_calls"
 [[turns.messages]]
 role = "user"
 content = "Look up order ORD-204."

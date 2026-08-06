@@ -27,6 +27,7 @@ type = "integer"
 mode = "auto"
 
 [[turns]]
+response_requirement = "tool_calls"
 [[turns.messages]]
 role = "user"
 content = "Check inventory for SKU QZ-4 and order exactly 3 if available."
@@ -37,6 +38,7 @@ name = "check_inventory"
 sku = "QZ-4"
 
 [[turns]]
+response_requirement = "tool_calls"
 [[turns.messages]]
 role = "tool"
 content = '{"sku":"QZ-4","available":12}'

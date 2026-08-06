@@ -2,8 +2,11 @@ use std::collections::HashSet;
 use std::fs;
 
 use wic_core::client::ToolCall;
+use wic_core::corpus::{corpus_identity, load_frozen_v1_catalog};
 use wic_core::score::score_calls;
-use wic_core::{load_embedded_scenarios, Scenario, ScenarioCategory};
+use wic_core::{
+    load_embedded_scenarios, ResponseRequirement, Scenario, ScenarioCategory, ScenarioFacet,
+};
 
 #[test]
 fn embedded_corpus_is_integral_and_covers_every_category() {
@@ -49,6 +52,8 @@ fn embedded_corpus_is_integral_and_covers_every_category() {
     for scenario in &scenarios {
         assert_filename_matches_id(scenario);
         assert_expected_calls_are_valid(scenario);
+        assert_response_requirements_are_explicit(scenario);
+        assert_facets_are_expected(scenario);
     }
 }
 
@@ -63,6 +68,61 @@ fn every_embedded_scenario_has_a_substantive_rationale() {
             scenario.id
         );
     }
+}
+
+#[test]
+fn corpus_identity_is_order_stable_and_content_sensitive() {
+    let scenarios = load_embedded_scenarios().expect("embedded scenarios should load");
+    let identity = corpus_identity(&scenarios);
+
+    let mut reordered = scenarios.clone();
+    reordered.reverse();
+    assert_eq!(identity, corpus_identity(&reordered));
+
+    let mut prompt_changed = scenarios.clone();
+    prompt_changed[0].turns[0].messages[0]
+        .content
+        .push_str(" Identity probe.");
+    assert_ne!(identity, corpus_identity(&prompt_changed));
+
+    let mut schema_changed = scenarios.clone();
+    schema_changed[0].tools[0]
+        .parameters
+        .as_object_mut()
+        .expect("tool parameters should be an object")
+        .insert("identity_probe".to_owned(), serde_json::Value::Bool(true));
+    assert_ne!(identity, corpus_identity(&schema_changed));
+
+    let mut expected_argument_changed = scenarios.clone();
+    expected_argument_changed[0].turns[0].expected_calls[0]
+        .arguments
+        .as_object_mut()
+        .expect("expected arguments should be an object")
+        .insert("identity_probe".to_owned(), serde_json::Value::Bool(true));
+    assert_ne!(identity, corpus_identity(&expected_argument_changed));
+}
+
+#[test]
+fn frozen_v1_catalog_remains_verified_and_distinct_from_the_live_corpus() {
+    let live = load_embedded_scenarios().expect("embedded scenarios should load");
+    let catalog = load_frozen_v1_catalog().expect("frozen v1 catalog should load and verify");
+    let live_hash = corpus_identity(&live);
+
+    assert_eq!(catalog.id, "wic-50");
+    assert_eq!(catalog.revision, "v1");
+    assert_eq!(catalog.scenario_count, 50);
+    assert_eq!(catalog.scenarios.len(), 50);
+    assert_ne!(catalog.sha256, live_hash);
+    assert_eq!(corpus_identity(&catalog.scenarios), catalog.sha256);
+    assert!(catalog
+        .scenarios
+        .iter()
+        .all(|scenario| scenario.facets.is_empty()));
+    assert!(catalog
+        .scenarios
+        .iter()
+        .flat_map(|scenario| &scenario.turns)
+        .all(|turn| turn.response_requirement == ResponseRequirement::Either));
 }
 
 fn assert_filename_matches_id(scenario: &Scenario) {
@@ -116,4 +176,38 @@ fn assert_expected_calls_are_valid(scenario: &Scenario) {
         )
         .unwrap_or_else(|error| panic!("{} has invalid expected arguments: {error}", scenario.id));
     }
+}
+
+fn assert_response_requirements_are_explicit(scenario: &Scenario) {
+    for turn in &scenario.turns {
+        let expected = if turn.expected_calls.is_empty() {
+            ResponseRequirement::TextWithoutToolCalls
+        } else {
+            ResponseRequirement::ToolCalls
+        };
+        assert_eq!(
+            turn.response_requirement, expected,
+            "{} has the wrong response requirement",
+            scenario.id
+        );
+    }
+}
+
+fn assert_facets_are_expected(scenario: &Scenario) {
+    let expected: &[ScenarioFacet] = match scenario.id.as_str() {
+        "negative-auto-arithmetic"
+        | "negative-auto-knowledge"
+        | "negative-greeting"
+        | "negative-invalid-schema"
+        | "negative-plain-text" => &[ScenarioFacet::Abstention],
+        "negative-long-argument" => &[ScenarioFacet::ArgumentFidelity, ScenarioFacet::LongContext],
+        "negative-unicode-argument" => &[ScenarioFacet::ArgumentFidelity, ScenarioFacet::Unicode],
+        _ => &[],
+    };
+    assert_eq!(
+        scenario.facets.as_slice(),
+        expected,
+        "{} has the wrong facets",
+        scenario.id
+    );
 }

@@ -21,6 +21,7 @@ type = "integer"
 mode = "auto"
 
 [[turns]]
+response_requirement = "tool_calls"
 [[turns.messages]]
 role = "user"
 content = "List exactly 12 messages from the support mailbox."

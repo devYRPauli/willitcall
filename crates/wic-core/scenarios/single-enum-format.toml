@@ -22,6 +22,7 @@ enum = ["csv", "json", "pdf"]
 mode = "auto"
 
 [[turns]]
+response_requirement = "tool_calls"
 [[turns.messages]]
 role = "user"
 content = "Export report quarterly-7 as csv."

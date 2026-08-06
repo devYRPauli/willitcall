@@ -25,6 +25,22 @@ jobs:
       - name: Test
         run: cargo test --workspace
 
+  site:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+      # pages.yml only builds on push, so without this a change that breaks site
+      # generation lands on main and is discovered after deploy.
+      - name: Generate site
+        run: cargo run -q -p willitcall -- site --results results/ --out site/
+      - name: Check expected pages exist
+        run: |
+          for page in index.html submit.html style.css site.js; do
+            test -s "site/$page" || { echo "site/$page missing or empty"; exit 1; }
+          done
+
   results:
     runs-on: ubuntu-latest
     steps:
@@ -48,38 +64,28 @@ jobs:
           from pathlib import Path
           from jsonschema import Draft202012Validator
 
-          # Pre-amendment-6 rows scheduled for re-measurement.
-          PRE_AMENDMENT_6_RESULTS = {
-              "llamacpp-granite3.1-dense-8b.json",
-              "llamacpp-phi4-mini.json",
-              "llamacpp-qwen2.5-1.5b-instruct-q4_k_m.json",
-              "llamacpp-watt-tool-8b-q4_k_m.json",
-              "ollama-gemma3-12b.json",
-              "ollama-gemma3-4b.json",
-              "ollama-granite3.1-dense-8b.json",
-              "ollama-hermes3-8b.json",
-              "ollama-llama3-groq-tool-use-8b.json",
-              "ollama-llama3.1-8b.json",
-              "ollama-mistral-7b.json",
-              "ollama-phi4-mini.json",
-              "ollama-qwen2.5-7b-instruct.json",
-              "ollama-qwen3-0.6b.json",
-              "ollama-qwen3-1.7b.json",
-              "ollama-qwen3-14b.json",
-              "ollama-qwen3-4b.json",
-              "ollama-qwen3-8b.json",
-          }
+          # Rows exempt from the amendment-6 environment requirement, which only
+          # ever applied to schema v2. Every row it covered is now v3, so it is
+          # empty; the staleness check below keeps it that way.
+          PRE_AMENDMENT_6_RESULTS = set()
 
+          # Every schema the repository ships must be loaded here. Pinning this
+          # list behind the current schema version is what kept CI red for two
+          # milestones once already; a version we cannot validate is reported as
+          # a failure, so the list going stale is loud rather than silent.
           validators = {}
-          for version in (1, 2):
+          for version in (1, 2, 3):
               with open(f"schemas/result-v{version}.schema.json") as handle:
                   validators[version] = Draft202012Validator(json.load(handle))
 
           failed = False
+          exemptions_used = set()
           for path in sys.argv[1:]:
               with open(path) as handle:
                   document = json.load(handle)
               version = document.get("schema_version", 1)
+              if version == 2 and Path(path).name in PRE_AMENDMENT_6_RESULTS:
+                  exemptions_used.add(Path(path).name)
               validator = validators.get(version)
               if validator is None:
                   failed = True
@@ -98,5 +104,15 @@ jobs:
                       print(f"{path}: {location}: {error.message}")
               else:
                   print(f"{path}: ok")
+
+          # The exemption list is hand maintained, so it has to say when it stops
+          # describing reality. A name that no longer needs exempting is debt that
+          # would otherwise sit here indefinitely looking load bearing.
+          stale = sorted(PRE_AMENDMENT_6_RESULTS - exemptions_used)
+          if stale:
+              failed = True
+              print("PRE_AMENDMENT_6_RESULTS is stale; remove these entries:")
+              for name in stale:
+                  print(f"  {name}")
           sys.exit(1 if failed else 0)
           PY

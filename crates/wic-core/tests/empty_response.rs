@@ -5,7 +5,7 @@ use std::time::Duration;
 
 use serde_json::{json, Value};
 use support::{MockServer, ScriptedResponse};
-use wic_core::runner::{run_scenarios, RunConfig};
+use wic_core::runner::{run_measurement, run_scenarios, RunConfig};
 use wic_core::{load_embedded_scenarios, Scenario};
 
 fn completion(content: Value) -> String {
@@ -58,7 +58,7 @@ async fn runner_classifies_only_empty_responses() {
             0.0,
         );
 
-        let result = run_scenarios(
+        let result = run_measurement(
             &config,
             &[single_weather()],
             &directory.path().join("result.json"),
@@ -70,14 +70,50 @@ async fn runner_classifies_only_empty_responses() {
         assert_eq!(outcome.status, wic_core::result::Status::Fail);
         assert_eq!(outcome.failure_class.as_deref(), expected_class);
         assert!(outcome.cause.is_none());
+        let failure = outcome.failure.as_ref().expect("structured failure");
+        assert_eq!(failure.stage, "scoring");
+        assert_eq!(failure.code, expected_class.unwrap_or("score_mismatch"));
+        assert_eq!(failure.http_status, None);
+        assert_eq!(failure.failed_turn_index, Some(1));
     }
 }
 
 #[tokio::test]
-async fn empty_response_preserves_negative_trap_pass() {
+async fn empty_response_fails_a_negative_trap_text_requirement() {
     let server = MockServer::start_scripted(
         "fixture-model",
         vec![ScriptedResponse::Json(completion(Value::Null))],
+    )
+    .await;
+    let directory = tempfile::tempdir().expect("temp directory");
+    let config = RunConfig::new(
+        server.endpoint(),
+        "fixture-model".to_owned(),
+        Duration::from_secs(5),
+        42,
+        0.0,
+    );
+
+    let result = run_scenarios(
+        &config,
+        &[negative_greeting()],
+        &directory.path().join("result.json"),
+    )
+    .await
+    .expect("run scenario");
+
+    let outcome = &result.scenarios[0];
+    assert_eq!(outcome.status, wic_core::result::Status::Fail);
+    assert_eq!(outcome.failure_class.as_deref(), Some("empty_response"));
+}
+
+#[tokio::test]
+async fn textual_refusal_passes_a_negative_trap_text_requirement() {
+    let server = MockServer::start_scripted(
+        "fixture-model",
+        vec![ScriptedResponse::Json(completion(json!(
+            "Hello. I will not use a tool."
+        )))],
     )
     .await;
     let directory = tempfile::tempdir().expect("temp directory");

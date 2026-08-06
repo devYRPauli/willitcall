@@ -1,3 +1,4 @@
+mod migrate;
 mod report;
 mod site;
 
@@ -5,21 +6,24 @@ mod site;
 #[path = "../../wic-core/tests/support/mod.rs"]
 mod support;
 
-use std::io::IsTerminal;
+use std::io::{IsTerminal, Write};
 use std::path::{Path, PathBuf};
 use std::process::ExitCode;
+use std::sync::atomic::{AtomicU64, Ordering};
 use std::time::Duration;
 
 use clap::{ArgGroup, Args, Parser, Subcommand, ValueEnum};
 use wic_core::client::{
     parse_non_streaming, parse_sse_data, reassemble_sse_payloads, AssistantResponse,
 };
+use wic_core::registry::ModelRegistry;
 use wic_core::result::{
-    exit_code_for_totals, parse_and_validate_result, validate_result, write_result_atomic, Cause,
-    CauseKind, PreflightOverride, RunResult, Status,
+    exit_code_for_totals, parse_and_validate_measurement, validate_measurement, validate_result,
+    write_result_atomic, Cause, CauseKind, Measurement, PreflightOverride, QuantizationMetadata,
+    RunMetadataV3, RunResult, RunResultV3, ScenarioOutcomeV3, ServerMetadataV3, Status,
 };
 use wic_core::runner::{
-    contention_preflight_ignoring_ports, preflight, run_scenarios, RunConfig, ServerConfig,
+    contention_preflight_ignoring_ports, preflight, run_measurement, RunConfig, ServerConfig,
     ServerVersionProbe,
 };
 use wic_core::score::classify_failure;
@@ -36,6 +40,8 @@ const KNOWN_INFERENCE_SERVERS: &[(u16, &str)] = &[
     (1234, "LM Studio"),
     (8000, "vLLM"),
 ];
+const MODEL_REGISTRY: &[u8] = include_bytes!("../../../registry/models-v1.json");
+static NEXT_TEMP_FILE: AtomicU64 = AtomicU64::new(0);
 
 #[derive(Debug, Parser)]
 #[command(name = "willitcall", after_long_help = EXIT_CODE_HELP)]
@@ -49,6 +55,7 @@ enum Command {
     Run(RunArgs),
     Scenarios(ScenariosArgs),
     Validate(ValidateArgs),
+    MigrateV3(MigrateArgs),
     Annotate(AnnotateArgs),
     Rescore(RescoreArgs),
     Site(SiteArgs),
@@ -180,6 +187,18 @@ struct ValidateArgs {
 }
 
 #[derive(Debug, Args)]
+struct MigrateArgs {
+    #[arg(long)]
+    manifest: PathBuf,
+    #[arg(long)]
+    registry: PathBuf,
+    #[arg(long)]
+    batch: Option<String>,
+    #[arg(long)]
+    check: bool,
+}
+
+#[derive(Debug, Args)]
 #[command(group(
     ArgGroup::new("target")
         .required(true)
@@ -230,6 +249,8 @@ struct SiteArgs {
     results: PathBuf,
     #[arg(long)]
     out: PathBuf,
+    #[arg(long)]
+    catalog: Option<PathBuf>,
     #[arg(long, default_value = "https://github.com/devYRPauli/willitcall")]
     repo_base: String,
 }
@@ -241,16 +262,94 @@ enum ExecuteError {
     Harness(String),
 }
 
-fn read_result(path: &Path) -> Result<RunResult, ExecuteError> {
+enum ResultWire {
+    V1V2(Box<RunResult>),
+    V3(Box<RunResultV3>),
+}
+
+struct EditableResult {
+    measurement: Measurement,
+    wire: ResultWire,
+}
+
+impl EditableResult {
+    fn set_cause(&mut self, index: usize, cause: Cause) {
+        self.measurement.scenarios[index].cause = Some(cause.clone());
+        match &mut self.wire {
+            ResultWire::V1V2(result) => result.scenarios[index].cause = Some(cause),
+            ResultWire::V3(result) => result.scenarios[index].cause = Some(cause),
+        }
+    }
+
+    fn set_failure_class(&mut self, index: usize, failure_class: String) {
+        self.measurement.scenarios[index].failure_class = Some(failure_class.clone());
+        match &mut self.wire {
+            ResultWire::V1V2(result) => result.scenarios[index].failure_class = Some(failure_class),
+            ResultWire::V3(result) => result.scenarios[index].failure_class = Some(failure_class),
+        }
+    }
+}
+
+fn read_result(path: &Path) -> Result<EditableResult, ExecuteError> {
     let bytes = std::fs::read(path).map_err(|error| {
         ExecuteError::Usage(format!("failed to read result {}: {error}", path.display()))
     })?;
-    parse_and_validate_result(&bytes).map_err(ExecuteError::Usage)
+    let measurement = parse_and_validate_measurement(&bytes).map_err(ExecuteError::Usage)?;
+    let wire = match measurement.schema_version {
+        1 | 2 => ResultWire::V1V2(Box::new(serde_json::from_slice(&bytes).map_err(
+            |error| ExecuteError::Usage(format!("invalid result document: {error}")),
+        )?)),
+        3 => ResultWire::V3(Box::new(serde_json::from_slice(&bytes).map_err(
+            |error| ExecuteError::Usage(format!("invalid result document: {error}")),
+        )?)),
+        _ => unreachable!("measurement parser accepts only schema versions 1 through 3"),
+    };
+    Ok(EditableResult { measurement, wire })
 }
 
-fn write_updated_result(path: &Path, result: &RunResult) -> Result<(), ExecuteError> {
-    validate_result(result).map_err(ExecuteError::Usage)?;
-    write_result_atomic(path, result).map_err(|error| {
+fn write_v3_result_atomic(path: &Path, result: &RunResultV3) -> std::io::Result<Vec<u8>> {
+    let mut bytes = serde_json::to_vec_pretty(result).map_err(std::io::Error::other)?;
+    bytes.push(b'\n');
+    let parent = match path.parent() {
+        Some(parent) if !parent.as_os_str().is_empty() => parent,
+        _ => Path::new("."),
+    };
+    let file_name = path
+        .file_name()
+        .and_then(|name| name.to_str())
+        .unwrap_or("result.json");
+    let suffix = NEXT_TEMP_FILE.fetch_add(1, Ordering::Relaxed);
+    let temporary_path = parent.join(format!(
+        ".{file_name}.{}.{}.tmp",
+        std::process::id(),
+        suffix
+    ));
+    let write_result = (|| {
+        let mut temporary = std::fs::OpenOptions::new()
+            .write(true)
+            .create_new(true)
+            .open(&temporary_path)?;
+        temporary.write_all(&bytes)?;
+        temporary.flush()?;
+        temporary.sync_all()?;
+        std::fs::rename(&temporary_path, path)
+    })();
+    if write_result.is_err() {
+        let _ = std::fs::remove_file(&temporary_path);
+    }
+    write_result.map(|()| bytes)
+}
+
+fn write_updated_result(path: &Path, result: &EditableResult) -> Result<(), ExecuteError> {
+    validate_measurement(&result.measurement).map_err(ExecuteError::Usage)?;
+    let write_result = match &result.wire {
+        ResultWire::V1V2(result) => {
+            validate_result(result).map_err(ExecuteError::Usage)?;
+            write_result_atomic(path, result)
+        }
+        ResultWire::V3(result) => write_v3_result_atomic(path, result).map(|_| ()),
+    };
+    write_result.map_err(|error| {
         ExecuteError::Harness(format!(
             "failed to write result {}: {error}",
             path.display()
@@ -267,27 +366,34 @@ fn annotate(args: AnnotateArgs) -> Result<usize, ExecuteError> {
     };
 
     let count = if let Some(id) = args.scenario {
-        let outcome = result
+        let index = result
+            .measurement
             .scenarios
-            .iter_mut()
-            .find(|outcome| outcome.id == id)
+            .iter()
+            .position(|outcome| outcome.id == id)
             .ok_or_else(|| ExecuteError::Usage(format!("scenario '{id}' was not found")))?;
+        let outcome = &result.measurement.scenarios[index];
         if outcome.failure_class.as_deref() != Some("empty_response") && !args.force {
             return Err(ExecuteError::Usage(format!(
                 "scenario '{id}' is not an empty-response failure; use --force to annotate it"
             )));
         }
-        outcome.cause = Some(cause);
+        result.set_cause(index, cause);
         1
     } else {
-        let mut count = 0;
-        for outcome in &mut result.scenarios {
-            if outcome.failure_class.as_deref() == Some("empty_response") {
-                outcome.cause = Some(cause.clone());
-                count += 1;
-            }
+        let indexes = result
+            .measurement
+            .scenarios
+            .iter()
+            .enumerate()
+            .filter_map(|(index, outcome)| {
+                (outcome.failure_class.as_deref() == Some("empty_response")).then_some(index)
+            })
+            .collect::<Vec<_>>();
+        for index in &indexes {
+            result.set_cause(*index, cause.clone());
         }
-        count
+        indexes.len()
     };
 
     if count > 0 {
@@ -368,7 +474,8 @@ fn rescore(args: RescoreArgs) -> Result<(usize, Vec<String>), ExecuteError> {
     let mut changed = 0;
     let mut unparseable = Vec::new();
 
-    for outcome in &mut result.scenarios {
+    for index in 0..result.measurement.scenarios.len() {
+        let outcome = &result.measurement.scenarios[index];
         if outcome.status != Status::Fail || outcome.failure_class.is_some() {
             continue;
         }
@@ -384,7 +491,7 @@ fn rescore(args: RescoreArgs) -> Result<(usize, Vec<String>), ExecuteError> {
                     response.content.as_deref(),
                     &response.tool_calls,
                 ) {
-                    outcome.failure_class = Some(failure_class.to_owned());
+                    result.set_failure_class(index, failure_class.to_owned());
                     changed += 1;
                 }
             }
@@ -396,6 +503,58 @@ fn rescore(args: RescoreArgs) -> Result<(usize, Vec<String>), ExecuteError> {
         write_updated_result(&args.result, &result)?;
     }
     Ok((changed, unparseable))
+}
+
+fn v3_wire_result(measurement: &Measurement) -> Result<RunResultV3, ExecuteError> {
+    let metadata = &measurement.metadata;
+    let corpus = metadata.corpus.clone().ok_or_else(|| {
+        ExecuteError::Harness("new run is missing required corpus metadata".to_owned())
+    })?;
+    let environment = metadata.environment.clone().ok_or_else(|| {
+        ExecuteError::Harness("new run is missing required environment metadata".to_owned())
+    })?;
+    Ok(RunResultV3 {
+        schema_version: 3,
+        metadata: RunMetadataV3 {
+            run_id: metadata.run_id.clone(),
+            timestamp: metadata.timestamp.clone(),
+            willitcall_version: metadata.willitcall_version.clone(),
+            endpoint: metadata.endpoint.clone(),
+            model: metadata.model.clone(),
+            corpus,
+            server: ServerMetadataV3 {
+                preset_name: metadata.server.preset_name.clone(),
+                reported_version: metadata.server.reported_version.clone(),
+                quirk_flags: metadata.server.quirk_flags.clone(),
+                decode_mode: metadata.server.decode_mode,
+                chat_template: metadata.server.chat_template.clone(),
+                launch_config_sha256: metadata.server.launch_config_sha256.clone(),
+            },
+            environment,
+            sampling: metadata.sampling.clone(),
+            replication: metadata.replication.clone(),
+            arm_fingerprint: metadata.arm_fingerprint.clone(),
+            preflight_override: metadata.preflight_override.clone(),
+            preflight_ignored_ports: metadata.preflight_ignored_ports.clone(),
+        },
+        scenarios: measurement
+            .scenarios
+            .iter()
+            .map(|outcome| ScenarioOutcomeV3 {
+                id: outcome.id.clone(),
+                category: outcome.category,
+                status: outcome.status,
+                failure_reason: outcome.failure_reason.clone(),
+                failure: outcome.failure.clone(),
+                failure_class: outcome.failure_class.clone(),
+                cause: outcome.cause.clone(),
+                evidence_hash: outcome.evidence_hash.clone(),
+                evidence_path: outcome.evidence_path.clone(),
+                retried: outcome.retried,
+            })
+            .collect(),
+        totals: measurement.totals.clone(),
+    })
 }
 
 async fn execute(cli: Cli) -> Result<u8, ExecuteError> {
@@ -439,6 +598,10 @@ async fn execute_with_known_servers(
                     "another inference server is responding on {endpoints}; {stop}, or re-run with --force"
                 )));
             }
+            let model_registry = ModelRegistry::from_json(MODEL_REGISTRY).map_err(|error| {
+                ExecuteError::Harness(format!("failed to load model registry: {error}"))
+            })?;
+            let declared_quant = args.quant.clone();
             let config = RunConfig::new(
                 endpoint,
                 args.model,
@@ -448,9 +611,10 @@ async fn execute_with_known_servers(
             )
             .with_server(args.server.config())
             .with_host_hardware_class(args.host_hardware_class)
-            .with_declared_quant(args.quant);
+            .with_declared_quant(args.quant)
+            .with_model_registry(model_registry);
             preflight(&config).await.map_err(ExecuteError::Preflight)?;
-            let mut result = run_scenarios(&config, &scenarios, &args.out)
+            let mut result = run_measurement(&config, &scenarios, &args.out)
                 .await
                 .map_err(|error| {
                     ExecuteError::Harness(format!(
@@ -458,6 +622,14 @@ async fn execute_with_known_servers(
                         args.out.display()
                     ))
                 })?;
+            if result.metadata.model.artifact.quantization.is_none() {
+                result.metadata.model.artifact.quantization =
+                    declared_quant.map(|label| QuantizationMetadata {
+                        label,
+                        scheme: None,
+                        bits: None,
+                    });
+            }
             if args.force && !occupied.is_empty() {
                 result.metadata.preflight_override = Some(PreflightOverride {
                     forced: true,
@@ -470,17 +642,18 @@ async fn execute_with_known_servers(
             if !args.ignore_port.is_empty() {
                 result.metadata.preflight_ignored_ports = Some(args.ignore_port);
             }
-            write_result_atomic(&args.out, &result).map_err(|error| {
+            validate_measurement(&result).map_err(ExecuteError::Harness)?;
+            let wire_result = v3_wire_result(&result)?;
+            let document = write_v3_result_atomic(&args.out, &wire_result).map_err(|error| {
                 ExecuteError::Harness(format!(
                     "failed to write result {}: {error}",
                     args.out.display()
                 ))
             })?;
             if args.json {
-                let document = serde_json::to_string_pretty(&result).map_err(|error| {
-                    ExecuteError::Harness(format!("failed to serialize result: {error}"))
+                std::io::stdout().write_all(&document).map_err(|error| {
+                    ExecuteError::Harness(format!("failed to write JSON output: {error}"))
                 })?;
-                println!("{document}");
             } else {
                 let color =
                     std::io::stdout().is_terminal() && std::env::var_os("NO_COLOR").is_none();
@@ -538,8 +711,38 @@ async fn execute_with_known_servers(
                         path.display()
                     ))
                 })?;
-                parse_and_validate_result(&bytes).map_err(ExecuteError::Usage)?;
+                parse_and_validate_measurement(&bytes).map_err(ExecuteError::Usage)?;
                 println!("valid: {}", path.display());
+            }
+            Ok(0)
+        }
+        Command::MigrateV3(args) => {
+            let summary = migrate::run(
+                &args.manifest,
+                &args.registry,
+                args.batch.as_deref(),
+                args.check,
+            )
+            .map_err(ExecuteError::Usage)?;
+            let scope = args.batch.as_deref().map_or_else(
+                || "published files".to_owned(),
+                |batch| format!("batch {batch}"),
+            );
+            if summary.changed == 0 {
+                println!(
+                    "{scope}: all {} files are canonical v3; no changes required",
+                    summary.selected
+                );
+            } else if args.check {
+                println!(
+                    "{scope}: {} of {} files require migration; no files written",
+                    summary.changed, summary.selected
+                );
+            } else {
+                println!(
+                    "{scope}: migrated {} of {} files to v3",
+                    summary.changed, summary.selected
+                );
             }
             Ok(0)
         }
@@ -565,8 +768,13 @@ async fn execute_with_known_servers(
             Ok(0)
         }
         Command::Site(args) => {
-            let count = site::generate(&args.results, &args.out, &args.repo_base)
-                .map_err(ExecuteError::Harness)?;
+            let count = site::generate(
+                &args.results,
+                &args.out,
+                &args.repo_base,
+                args.catalog.as_deref(),
+            )
+            .map_err(ExecuteError::Harness)?;
             println!(
                 "generated {} from {count} result file{}",
                 args.out.display(),
@@ -609,7 +817,8 @@ mod tests {
 
     use clap::Parser;
     use wic_core::result::{
-        RunMetadata, RunResult, SamplingParams, ScenarioOutcome, ServerMetadata, Status, Totals,
+        Measurement, RunMetadata, RunResult, SamplingParams, ScenarioOutcome, ServerMetadata,
+        Status, Totals,
     };
     use wic_core::ScenarioCategory;
 
@@ -976,7 +1185,7 @@ mod tests {
             },
         };
 
-        let rendered = super::report::render_report(&result, false);
+        let rendered = super::report::render_report(&result.into(), false);
 
         assert!(rendered.contains("single_call       1 passed  1 failed  0 errors"));
         assert!(rendered.contains("streaming         0 passed  0 failed  1 errors"));
@@ -1021,6 +1230,7 @@ mod tests {
                 skipped: 0,
             },
         };
+        let result = Measurement::from(result);
 
         assert!(super::report::render_report(&result, true).contains('\u{1b}'));
         assert!(!super::report::render_report(&result, false).contains('\u{1b}'));
@@ -1034,6 +1244,25 @@ mod tests {
             panic!("expected validate command");
         };
         assert_eq!(args.result_file, PathBuf::from("result.json"));
+    }
+
+    #[test]
+    fn site_subcommand_accepts_an_explicit_catalog_directory() {
+        let cli = Cli::try_parse_from([
+            "willitcall",
+            "site",
+            "--results",
+            "results",
+            "--out",
+            "site",
+            "--catalog",
+            "scenarios",
+        ])
+        .expect("site arguments should parse");
+        let Command::Site(args) = cli.command else {
+            panic!("expected site command");
+        };
+        assert_eq!(args.catalog, Some(PathBuf::from("scenarios")));
     }
 
     #[test]

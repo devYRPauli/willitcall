@@ -1,0 +1,83 @@
+{
+  "schema_version": 3,
+  "metadata": {
+    "run_id": "site-contract-v3-verified",
+    "timestamp": "2000-01-04T00:00:00Z",
+    "willitcall_version": "site-contract-fixture",
+    "endpoint": "https://fixture.invalid/v1",
+    "model": {
+      "display_name": "Verified & Fixture",
+      "family_id": "fixture-verified",
+      "canonical_id": "Fixture/Verified",
+      "parameter_count_b": 2.0,
+      "endpoint_id": "verified-fixture:latest",
+      "identity_status": "verified",
+      "artifact": {
+        "source_kind": "local_file",
+        "source_id": "verified-fixture.gguf",
+        "revision": null,
+        "sha256": "sha256:verified-fixture",
+        "format": "gguf",
+        "quantization": null
+      }
+    },
+    "corpus": {
+      "id": "site-contract",
+      "revision": "fixture-v1",
+      "sha256": "sha256:fixture-corpus",
+      "scenario_count": 1,
+      "scoring_version": "fixture-v1"
+    },
+    "server": {
+      "preset_name": "ollama",
+      "reported_version": "fixture-v3-verified",
+      "quirk_flags": [],
+      "decode_mode": "unconstrained_post_hoc",
+      "chat_template": {
+        "id": "fixture-template",
+        "sha256": "sha256:fixture-template"
+      },
+      "launch_config_sha256": "sha256:fixture-launch"
+    },
+    "environment": {
+      "display_label": "Verified fixture host; Fixture OS v3",
+      "os_name": "Fixture OS",
+      "os_version": "v3",
+      "architecture": "fixture-arch",
+      "accelerator": "fixture-accelerator",
+      "memory_bytes": 1024
+    },
+    "sampling": {
+      "temperature": 0.0,
+      "top_p": 1.0,
+      "seed": 4,
+      "max_tokens": 64
+    },
+    "replication": {
+      "study_id": "site-contract",
+      "arm_id": "verified",
+      "run_index": 0,
+      "mode": "greedy_reproducibility"
+    },
+    "arm_fingerprint": "v1:fixture"
+  },
+  "scenarios": [
+    {
+      "id": "v3-verified-pass",
+      "category": "negative_trap",
+      "status": "pass",
+      "failure_reason": null,
+      "failure": null,
+      "evidence_hash": null,
+      "evidence_path": null,
+      "retried": false
+    }
+  ],
+  "totals": {
+    "total": 1,
+    "passed": 1,
+    "failed": 0,
+    "errors": 0,
+    "skipped": 0
+  }
+}

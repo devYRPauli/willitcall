@@ -6,7 +6,7 @@ use std::process::Command;
 
 use serde_json::{json, Value};
 use support::{MockServer, ScriptedResponse};
-use wic_core::result::{RunResult, Status};
+use wic_core::result::{parse_and_validate_measurement, IdentityStatus, Status};
 
 fn completion(calls: Value, content: Value) -> String {
     json!({
@@ -121,6 +121,82 @@ fn write_result_fixture(path: &std::path::Path, schema_version: u32, mut scenari
         serde_json::to_vec_pretty(&result).expect("encode result fixture"),
     )
     .expect("write result fixture");
+}
+
+fn write_v3_result_fixture(path: &std::path::Path, mut scenarios: Vec<Value>) {
+    for scenario in &mut scenarios {
+        scenario["failure"] = Value::Null;
+    }
+    let total = scenarios.len() as u32;
+    let result = json!({
+        "schema_version": 3,
+        "metadata": {
+            "run_id": "019fd4e8-8e84-7a90-a686-f3caf2e147ef",
+            "timestamp": "2026-08-05T12:00:00Z",
+            "willitcall_version": "0.1.0",
+            "endpoint": "http://127.0.0.1:8080/v1",
+            "model": {
+                "display_name": "Unresolved model",
+                "family_id": null,
+                "canonical_id": null,
+                "parameter_count_b": null,
+                "endpoint_id": "fixture-model",
+                "identity_status": "unresolved",
+                "artifact": {
+                    "source_kind": "other",
+                    "source_id": null,
+                    "revision": null,
+                    "sha256": null,
+                    "format": "unknown",
+                    "quantization": null
+                }
+            },
+            "corpus": {
+                "id": "wic-50",
+                "revision": "v1",
+                "sha256": "sha256:fixture",
+                "scenario_count": total,
+                "scoring_version": "v1"
+            },
+            "server": {
+                "preset_name": "custom",
+                "reported_version": null,
+                "quirk_flags": [],
+                "decode_mode": "unknown",
+                "chat_template": null,
+                "launch_config_sha256": null
+            },
+            "environment": {
+                "display_label": "Fixture workstation; Fixture OS",
+                "os_name": "Fixture OS",
+                "os_version": null,
+                "architecture": null,
+                "accelerator": null,
+                "memory_bytes": null
+            },
+            "sampling": {
+                "temperature": 0.0,
+                "top_p": 1.0,
+                "seed": 42,
+                "max_tokens": 1024
+            },
+            "replication": null,
+            "arm_fingerprint": null
+        },
+        "scenarios": scenarios,
+        "totals": {
+            "total": total,
+            "passed": 0,
+            "failed": total,
+            "errors": 0,
+            "skipped": 0
+        }
+    });
+    fs::write(
+        path,
+        serde_json::to_vec_pretty(&result).expect("encode v3 result fixture"),
+    )
+    .expect("write v3 result fixture");
 }
 
 fn write_transcript_fixture(
@@ -509,6 +585,180 @@ async fn rescore_leaves_v1_without_evidence_paths_alone() {
     assert_eq!(fs::read(result_path).expect("result bytes"), before);
 }
 
+#[tokio::test(flavor = "multi_thread", worker_threads = 2)]
+async fn new_runs_emit_v3_and_legacy_edits_preserve_their_version() {
+    let server = MockServer::start_scripted(
+        "qwen2.5:7b-instruct",
+        vec![ScriptedResponse::Json(completion(
+            json!([]),
+            json!("ready"),
+        ))],
+    )
+    .await;
+    let directory = tempfile::tempdir().expect("temp directory");
+    let scenario_path = directory.path().join("scenarios");
+    fs::create_dir(&scenario_path).expect("scenario directory");
+    fs::write(
+        scenario_path.join("v3-run.toml"),
+        r#"
+id = "v3-run"
+category = "negative_trap"
+description = "Produce no tool call."
+rationale = "This fixture asserts v3 emission; tool_choice none forbids the offered tool."
+
+[[tools]]
+name = "get_weather"
+description = "Get weather."
+
+[tools.parameters]
+type = "object"
+
+[tool_choice]
+mode = "none"
+
+[[turns]]
+[[turns.messages]]
+role = "user"
+content = "Reply ready."
+"#,
+    )
+    .expect("write scenario");
+    let v3_path = directory.path().join("new-run.json");
+
+    let run = run_binary(vec![
+        "run".to_owned(),
+        "--endpoint".to_owned(),
+        server.endpoint(),
+        "--model".to_owned(),
+        "qwen2.5:7b-instruct".to_owned(),
+        "--force".to_owned(),
+        "--scenarios".to_owned(),
+        scenario_path.display().to_string(),
+        "--out".to_owned(),
+        v3_path.display().to_string(),
+    ])
+    .await;
+
+    assert_eq!(
+        run.status.code(),
+        Some(0),
+        "{}",
+        String::from_utf8_lossy(&run.stderr)
+    );
+    let v3_bytes = fs::read(&v3_path).expect("v3 result");
+    let v3 = parse_and_validate_measurement(&v3_bytes).expect("valid v3 measurement");
+    assert_eq!(v3.schema_version, 3);
+    assert_eq!(v3.metadata.model.endpoint_id, "qwen2.5:7b-instruct");
+    assert_eq!(v3.metadata.model.identity_status, IdentityStatus::Declared);
+    assert_eq!(
+        v3.metadata
+            .corpus
+            .as_ref()
+            .expect("v3 corpus metadata")
+            .scoring_version,
+        "v2"
+    );
+    assert!(v3.metadata.replication.is_none());
+    assert!(v3.metadata.arm_fingerprint.is_none());
+
+    let validation = run_binary(vec!["validate".to_owned(), v3_path.display().to_string()]).await;
+    assert_eq!(
+        validation.status.code(),
+        Some(0),
+        "{}",
+        String::from_utf8_lossy(&validation.stderr)
+    );
+
+    let v2_path = directory.path().join("legacy-v2.json");
+    write_result_fixture(
+        &v2_path,
+        2,
+        vec![
+            scenario_fixture(
+                "annotate-me",
+                Some("empty_response"),
+                Some("evidence/annotate.json"),
+            ),
+            scenario_fixture("rescore-me", None, Some("evidence/rescore.json")),
+        ],
+    );
+    write_transcript_fixture(
+        &v2_path,
+        "evidence/rescore.json",
+        &completion(json!([]), Value::Null),
+        json!([]),
+    );
+    let before: Value =
+        serde_json::from_slice(&fs::read(&v2_path).expect("v2 result")).expect("valid v2 JSON");
+
+    let annotation = run_binary(vec![
+        "annotate".to_owned(),
+        "--result".to_owned(),
+        v2_path.display().to_string(),
+        "--scenario".to_owned(),
+        "annotate-me".to_owned(),
+        "--cause".to_owned(),
+        "unknown".to_owned(),
+    ])
+    .await;
+    assert_eq!(
+        annotation.status.code(),
+        Some(0),
+        "{}",
+        String::from_utf8_lossy(&annotation.stderr)
+    );
+    let annotated: Value = serde_json::from_slice(&fs::read(&v2_path).expect("annotated v2"))
+        .expect("valid annotated v2 JSON");
+    assert_eq!(annotated["schema_version"], 2);
+    assert!(annotated["metadata"].get("model").is_none());
+
+    let rescored = run_binary(vec![
+        "rescore".to_owned(),
+        "--result".to_owned(),
+        v2_path.display().to_string(),
+    ])
+    .await;
+    assert_eq!(
+        rescored.status.code(),
+        Some(0),
+        "{}",
+        String::from_utf8_lossy(&rescored.stderr)
+    );
+    let after: Value = serde_json::from_slice(&fs::read(&v2_path).expect("rescored v2"))
+        .expect("valid rescored v2 JSON");
+    assert_eq!(after["schema_version"], 2);
+    assert!(after["metadata"].get("model").is_none());
+
+    let mut expected = before;
+    expected["scenarios"][0]["cause"] = json!({
+        "kind": "unknown",
+        "reference": null,
+        "note": null
+    });
+    expected["scenarios"][1]["failure_class"] = json!("empty_response");
+    assert_eq!(after, expected, "only the requested v2 fields may change");
+
+    let site_output = directory.path().join("site");
+    let site = run_binary(vec![
+        "site".to_owned(),
+        "--results".to_owned(),
+        directory.path().display().to_string(),
+        "--out".to_owned(),
+        site_output.display().to_string(),
+    ])
+    .await;
+    assert_eq!(
+        site.status.code(),
+        Some(0),
+        "{}",
+        String::from_utf8_lossy(&site.stderr)
+    );
+    let appendix =
+        fs::read_to_string(site_output.join("appendix.html")).expect("generated appendix");
+    assert!(appendix.contains("Schema</dt><dd>v2"));
+    assert!(appendix.contains("Schema</dt><dd>v3"));
+}
+
 fn write_m1a_scenarios(path: &std::path::Path) {
     fs::create_dir(path).expect("scenario directory");
     for (name, contents) in [
@@ -596,7 +846,7 @@ async fn happy_run_passes_all_scenarios_and_writes_a_valid_result() {
     .await;
 
     let document = fs::read(&output_path).expect("result file");
-    let result: RunResult = serde_json::from_slice(&document).expect("schema-valid result");
+    let result = parse_and_validate_measurement(&document).expect("schema-valid result");
     assert_eq!(
         output.status.code(),
         Some(0),
@@ -604,8 +854,12 @@ async fn happy_run_passes_all_scenarios_and_writes_a_valid_result() {
         String::from_utf8_lossy(&output.stderr),
         result.scenarios
     );
-    assert_eq!(result.schema_version, 2);
-    assert_eq!(result.metadata.declared_quant, None);
+    assert_eq!(result.schema_version, 3);
+    assert!(result.metadata.model.artifact.quantization.is_none());
+    assert_eq!(
+        result.metadata.model.identity_status,
+        IdentityStatus::Unresolved
+    );
     assert_eq!(result.metadata.sampling.seed, Some(42));
     assert_eq!(result.metadata.sampling.temperature, Some(0.0));
     assert_eq!(result.totals.passed, 5);
@@ -711,10 +965,17 @@ content = "Reply ready."
         "{}",
         String::from_utf8_lossy(&output.stderr)
     );
-    let result: RunResult = serde_json::from_slice(&output.stdout).expect("stdout is only JSON");
+    let result =
+        parse_and_validate_measurement(&output.stdout).expect("stdout is schema-valid JSON");
     assert_eq!(result.metadata.server.preset_name, "ollama");
     assert_eq!(
-        result.metadata.declared_quant.as_deref(),
+        result
+            .metadata
+            .model
+            .artifact
+            .quantization
+            .as_ref()
+            .map(|quantization| quantization.label.as_str()),
         Some("Q4_K_M-imatrix")
     );
     assert_eq!(result.metadata.sampling.seed, Some(8675309));
@@ -732,8 +993,9 @@ content = "Reply ready."
         .environment
         .as_ref()
         .expect("measurement environment");
-    assert_eq!(environment.host_hardware_class, "Fixture workstation, 32GB");
-    assert!(!environment.host_os.is_empty());
+    assert!(environment
+        .display_label
+        .starts_with("Fixture workstation, 32GB; "));
     assert_eq!(
         fs::read(&output_path).expect("result file"),
         output.stdout,
@@ -772,8 +1034,8 @@ content = "Reply ready."
             "{}",
             String::from_utf8_lossy(&output.stderr)
         );
-        let result: RunResult =
-            serde_json::from_slice(&output.stdout).expect("stdout is only JSON");
+        let result =
+            parse_and_validate_measurement(&output.stdout).expect("stdout is schema-valid JSON");
         assert_eq!(result.metadata.server.preset_name, recorded_name);
         assert_eq!(result.metadata.server.quirk_flags, expected_quirks);
     }
@@ -803,7 +1065,7 @@ async fn validate_directory_ignores_archive() {
 }
 
 #[tokio::test(flavor = "multi_thread", worker_threads = 2)]
-async fn validate_accepts_v1_and_v2_fixtures_and_rejects_v3() {
+async fn validate_accepts_v1_v2_and_v3_fixtures() {
     let directory = tempfile::tempdir().expect("temp directory");
     let v1_path = std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
         .join("../../results/ollama-qwen2.5-7b-instruct.json");
@@ -843,7 +1105,10 @@ async fn validate_accepts_v1_and_v2_fixtures_and_rejects_v3() {
     )
     .expect("write v2 result");
 
-    for fixture in [&v1_path, &v2_path] {
+    let v3_path = directory.path().join("v3.json");
+    write_v3_result_fixture(&v3_path, Vec::new());
+
+    for fixture in [&v1_path, &v2_path, &v3_path] {
         let output = run_binary(vec!["validate".to_owned(), fixture.display().to_string()]).await;
         assert_eq!(
             output.status.code(),
@@ -853,19 +1118,51 @@ async fn validate_accepts_v1_and_v2_fixtures_and_rejects_v3() {
         );
     }
 
-    let v3_path = directory.path().join("v3.json");
-    let mut v3: Value =
+    let unsupported_path = directory.path().join("v4.json");
+    let mut unsupported: Value =
         serde_json::from_slice(&fs::read(&v2_path).expect("v2 bytes")).expect("v2 JSON");
-    v3["schema_version"] = json!(3);
-    fs::write(&v3_path, serde_json::to_vec_pretty(&v3).expect("encode v3"))
-        .expect("write v3 result");
-    let output = run_binary(vec!["validate".to_owned(), v3_path.display().to_string()]).await;
+    unsupported["schema_version"] = json!(4);
+    fs::write(
+        &unsupported_path,
+        serde_json::to_vec_pretty(&unsupported).expect("encode unsupported result"),
+    )
+    .expect("write unsupported result");
+    let output = run_binary(vec![
+        "validate".to_owned(),
+        unsupported_path.display().to_string(),
+    ])
+    .await;
 
     assert_eq!(output.status.code(), Some(2));
     assert!(output.stdout.is_empty());
     let stderr = String::from_utf8_lossy(&output.stderr);
     assert!(
-        stderr.contains("unsupported schema_version 3; expected 1 or 2"),
+        stderr.contains("unsupported schema_version 4; expected 1, 2, or 3"),
+        "{stderr}"
+    );
+}
+
+#[tokio::test(flavor = "multi_thread", worker_threads = 2)]
+async fn validate_rejects_a_corrupt_document_with_a_nonzero_exit() {
+    let directory = tempfile::tempdir().expect("temp directory");
+    let path = directory.path().join("corrupt.json");
+    write_v3_result_fixture(&path, Vec::new());
+    let mut corrupt: Value =
+        serde_json::from_slice(&fs::read(&path).expect("v3 bytes")).expect("v3 JSON");
+    corrupt["totals"]["total"] = json!(1);
+    fs::write(
+        &path,
+        serde_json::to_vec_pretty(&corrupt).expect("encode corrupt result"),
+    )
+    .expect("write corrupt result");
+
+    let output = run_binary(vec!["validate".to_owned(), path.display().to_string()]).await;
+
+    assert_eq!(output.status.code(), Some(2));
+    assert!(output.stdout.is_empty());
+    let stderr = String::from_utf8_lossy(&output.stderr);
+    assert!(
+        stderr.contains("totals.total is 1 but scenarios contains 0 outcomes"),
         "{stderr}"
     );
 }
@@ -942,8 +1239,8 @@ city = "Boston"
         "{}",
         String::from_utf8_lossy(&output.stderr)
     );
-    let result: RunResult =
-        serde_json::from_slice(&fs::read(output_path).expect("result file")).expect("valid result");
+    let result = parse_and_validate_measurement(&fs::read(output_path).expect("result file"))
+        .expect("valid result");
     assert_eq!(result.scenarios[0].status, Status::Fail);
     assert_eq!(
         result.scenarios[0].failure_reason.as_deref(),
@@ -1014,8 +1311,8 @@ content = "Say hello."
     .await;
 
     assert_eq!(output.status.code(), Some(0));
-    let result: RunResult =
-        serde_json::from_slice(&fs::read(output_path).expect("result file")).expect("valid result");
+    let result = parse_and_validate_measurement(&fs::read(output_path).expect("result file"))
+        .expect("valid result");
     assert!(result.scenarios[0].retried);
     let evidence_path = directory.path().join(
         result.scenarios[0]

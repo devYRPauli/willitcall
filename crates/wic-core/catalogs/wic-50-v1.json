@@ -1,0 +1,2921 @@
+{
+  "id": "wic-50",
+  "revision": "v1",
+  "scenario_count": 50,
+  "sha256": "sha256:042f625c2f898787834524323862c42ab1dffc66fe012d27927944705159f9d8",
+  "scenarios": [
+    {
+      "id": "multi-turn-calendar-followup",
+      "category": "multi_turn",
+      "description": "Use a calendar lookup result in a follow-up event call.",
+      "rationale": "This asserts using a calendar result in a later create_event call. The date and title are literal in the prompt, and the time is copied verbatim from the prior tool-result JSON.",
+      "stream": false,
+      "arguments_match": "exact",
+      "tools": [
+        {
+          "name": "get_calendar",
+          "description": "Get calendar availability for a date.",
+          "parameters": {
+            "properties": {
+              "date": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "date"
+            ],
+            "type": "object"
+          }
+        },
+        {
+          "name": "create_event",
+          "description": "Create an event at an exact date and time.",
+          "parameters": {
+            "properties": {
+              "date": {
+                "type": "string"
+              },
+              "time": {
+                "type": "string"
+              },
+              "title": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "title",
+              "date",
+              "time"
+            ],
+            "type": "object"
+          }
+        }
+      ],
+      "tool_choice": {
+        "mode": "auto"
+      },
+      "turns": [
+        {
+          "messages": [
+            {
+              "role": "user",
+              "content": "Check my calendar on 2026-08-11, then create event Review at the available time."
+            }
+          ],
+          "expected_calls": [
+            {
+              "name": "get_calendar",
+              "arguments": {
+                "date": "2026-08-11"
+              }
+            }
+          ]
+        },
+        {
+          "messages": [
+            {
+              "role": "tool",
+              "content": "{\"available_time\":\"15:30\"}",
+              "tool_call_ref": 0
+            }
+          ],
+          "expected_calls": [
+            {
+              "name": "create_event",
+              "arguments": {
+                "date": "2026-08-11",
+                "time": "15:30",
+                "title": "Review"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "multi-turn-flight-booking",
+      "category": "multi_turn",
+      "description": "Use a flight search result in a follow-up booking call.",
+      "rationale": "This asserts chaining a flight search into a booking. The route and date are literal in the prompt, while the opaque flight id is copied verbatim from the prior tool-result JSON.",
+      "stream": false,
+      "arguments_match": "exact",
+      "tools": [
+        {
+          "name": "find_flight",
+          "description": "Find a flight for an exact route and date.",
+          "parameters": {
+            "properties": {
+              "date": {
+                "type": "string"
+              },
+              "destination": {
+                "type": "string"
+              },
+              "origin": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "origin",
+              "destination",
+              "date"
+            ],
+            "type": "object"
+          }
+        },
+        {
+          "name": "book_flight",
+          "description": "Book a flight by exact id.",
+          "parameters": {
+            "properties": {
+              "flight_id": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "flight_id"
+            ],
+            "type": "object"
+          }
+        }
+      ],
+      "tool_choice": {
+        "mode": "auto"
+      },
+      "turns": [
+        {
+          "messages": [
+            {
+              "role": "user",
+              "content": "Find a flight from BOS to DEN on 2026-10-04, then book the returned flight."
+            }
+          ],
+          "expected_calls": [
+            {
+              "name": "find_flight",
+              "arguments": {
+                "date": "2026-10-04",
+                "destination": "DEN",
+                "origin": "BOS"
+              }
+            }
+          ]
+        },
+        {
+          "messages": [
+            {
+              "role": "tool",
+              "content": "{\"flight_id\":\"FL-808\"}",
+              "tool_call_ref": 0
+            }
+          ],
+          "expected_calls": [
+            {
+              "name": "book_flight",
+              "arguments": {
+                "flight_id": "FL-808"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "multi-turn-inventory-order",
+      "category": "multi_turn",
+      "description": "Use an inventory result in a follow-up order call.",
+      "rationale": "This asserts checking availability before placing an order. The opaque SKU and exact quantity are literal in the prompt, and the prior tool-result JSON establishes that stock is available.",
+      "stream": false,
+      "arguments_match": "exact",
+      "tools": [
+        {
+          "name": "check_inventory",
+          "description": "Check inventory for a SKU.",
+          "parameters": {
+            "properties": {
+              "sku": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "sku"
+            ],
+            "type": "object"
+          }
+        },
+        {
+          "name": "create_order",
+          "description": "Create an order for a SKU and quantity.",
+          "parameters": {
+            "properties": {
+              "quantity": {
+                "type": "integer"
+              },
+              "sku": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "sku",
+              "quantity"
+            ],
+            "type": "object"
+          }
+        }
+      ],
+      "tool_choice": {
+        "mode": "auto"
+      },
+      "turns": [
+        {
+          "messages": [
+            {
+              "role": "user",
+              "content": "Check inventory for SKU QZ-4 and order exactly 3 if available."
+            }
+          ],
+          "expected_calls": [
+            {
+              "name": "check_inventory",
+              "arguments": {
+                "sku": "QZ-4"
+              }
+            }
+          ]
+        },
+        {
+          "messages": [
+            {
+              "role": "tool",
+              "content": "{\"sku\":\"QZ-4\",\"available\":12}",
+              "tool_call_ref": 0
+            }
+          ],
+          "expected_calls": [
+            {
+              "name": "create_order",
+              "arguments": {
+                "quantity": 3,
+                "sku": "QZ-4"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "multi-turn-parallel-followup",
+      "category": "multi_turn",
+      "description": "Feed two parallel results into one follow-up call.",
+      "rationale": "This asserts combining two parallel lookup results in one follow-up call; the city order is defined by the prompt and schema descriptions, and the values come verbatim from tool-result JSON. Turn 1 expects only lookups because the temperatures are not known yet, so an early comparison would invent them.",
+      "stream": false,
+      "arguments_match": "exact",
+      "tools": [
+        {
+          "name": "get_temperature",
+          "description": "Get the temperature for a city.",
+          "parameters": {
+            "properties": {
+              "city": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "city"
+            ],
+            "type": "object"
+          }
+        },
+        {
+          "name": "compare_temperatures",
+          "description": "Compare two named city temperatures.",
+          "parameters": {
+            "properties": {
+              "first_city": {
+                "description": "The city the user mentioned first.",
+                "type": "string"
+              },
+              "first_value": {
+                "type": "number"
+              },
+              "second_city": {
+                "description": "The city the user mentioned second.",
+                "type": "string"
+              },
+              "second_value": {
+                "type": "number"
+              }
+            },
+            "required": [
+              "first_city",
+              "first_value",
+              "second_city",
+              "second_value"
+            ],
+            "type": "object"
+          }
+        }
+      ],
+      "tool_choice": {
+        "mode": "auto"
+      },
+      "turns": [
+        {
+          "messages": [
+            {
+              "role": "user",
+              "content": "Get temperatures for Boston and Tokyo, then compare the returned values."
+            }
+          ],
+          "expected_calls": [
+            {
+              "name": "get_temperature",
+              "arguments": {
+                "city": "Boston"
+              }
+            },
+            {
+              "name": "get_temperature",
+              "arguments": {
+                "city": "Tokyo"
+              }
+            }
+          ]
+        },
+        {
+          "messages": [
+            {
+              "role": "tool",
+              "content": "{\"city\":\"Boston\",\"temperature\":21}",
+              "tool_call_ref": 0
+            },
+            {
+              "role": "tool",
+              "content": "{\"city\":\"Tokyo\",\"temperature\":28}",
+              "tool_call_ref": 1
+            }
+          ],
+          "expected_calls": [
+            {
+              "name": "compare_temperatures",
+              "arguments": {
+                "first_city": "Boston",
+                "first_value": 21,
+                "second_city": "Tokyo",
+                "second_value": 28
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "multi-turn-route",
+      "category": "multi_turn",
+      "description": "Use a geocode result in a follow-up route call.",
+      "rationale": "This asserts passing exact geocode coordinates into a follow-up route call. Turn 1 ignores arguments because a correct model may geocode Fenway Park, Boston, MA, while turn 2 is pinned verbatim by the tool-result JSON.",
+      "stream": false,
+      "arguments_match": "exact",
+      "tools": [
+        {
+          "name": "geocode",
+          "description": "Resolve a place to coordinates.",
+          "parameters": {
+            "properties": {
+              "place": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "place"
+            ],
+            "type": "object"
+          }
+        },
+        {
+          "name": "get_route",
+          "description": "Get a route to coordinates.",
+          "parameters": {
+            "properties": {
+              "latitude": {
+                "type": "number"
+              },
+              "longitude": {
+                "type": "number"
+              }
+            },
+            "required": [
+              "latitude",
+              "longitude"
+            ],
+            "type": "object"
+          }
+        }
+      ],
+      "tool_choice": {
+        "mode": "auto"
+      },
+      "turns": [
+        {
+          "messages": [
+            {
+              "role": "user",
+              "content": "Find a route to Fenway Park."
+            }
+          ],
+          "expected_calls": [
+            {
+              "name": "geocode",
+              "arguments": {
+                "place": "Fenway Park"
+              },
+              "arguments_match": "ignore"
+            }
+          ]
+        },
+        {
+          "messages": [
+            {
+              "role": "tool",
+              "content": "{\"latitude\":42.3467,\"longitude\":-71.0972}",
+              "tool_call_ref": 0
+            }
+          ],
+          "expected_calls": [
+            {
+              "name": "get_route",
+              "arguments": {
+                "latitude": 42.3467,
+                "longitude": -71.0972
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "multi-turn-ticket-update",
+      "category": "multi_turn",
+      "description": "Use a ticket lookup result in a follow-up update call.",
+      "rationale": "This asserts looking up a ticket before updating its priority; EXT-55 and high are literal in the prompt, and ticket-902 comes verbatim from the tool-result JSON. Turn 1 expects only the lookup because emitting the update before receiving the internal id would require inventing it.",
+      "stream": false,
+      "arguments_match": "exact",
+      "tools": [
+        {
+          "name": "find_ticket",
+          "description": "Find a ticket by exact external reference.",
+          "parameters": {
+            "properties": {
+              "external_ref": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "external_ref"
+            ],
+            "type": "object"
+          }
+        },
+        {
+          "name": "set_ticket_priority",
+          "description": "Set ticket priority by internal id.",
+          "parameters": {
+            "properties": {
+              "priority": {
+                "enum": [
+                  "low",
+                  "normal",
+                  "high"
+                ],
+                "type": "string"
+              },
+              "ticket_id": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "ticket_id",
+              "priority"
+            ],
+            "type": "object"
+          }
+        }
+      ],
+      "tool_choice": {
+        "mode": "auto"
+      },
+      "turns": [
+        {
+          "messages": [
+            {
+              "role": "user",
+              "content": "Find ticket EXT-55 and set its priority to high."
+            }
+          ],
+          "expected_calls": [
+            {
+              "name": "find_ticket",
+              "arguments": {
+                "external_ref": "EXT-55"
+              }
+            }
+          ]
+        },
+        {
+          "messages": [
+            {
+              "role": "tool",
+              "content": "{\"ticket_id\":\"ticket-902\"}",
+              "tool_call_ref": 0
+            }
+          ],
+          "expected_calls": [
+            {
+              "name": "set_ticket_priority",
+              "arguments": {
+                "priority": "high",
+                "ticket_id": "ticket-902"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "multi-turn-two-hop-chain",
+      "category": "multi_turn",
+      "description": "Complete a two-hop chain across three tool calls.",
+      "rationale": "This asserts a three-call dependency chain. The email is literal in the prompt, and each opaque downstream id must be copied verbatim from the immediately preceding tool-result JSON, so no correct alternative value exists.",
+      "stream": false,
+      "arguments_match": "exact",
+      "tools": [
+        {
+          "name": "find_user",
+          "description": "Find a user id by exact email.",
+          "parameters": {
+            "properties": {
+              "email": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "email"
+            ],
+            "type": "object"
+          }
+        },
+        {
+          "name": "find_account",
+          "description": "Find an account id for a user id.",
+          "parameters": {
+            "properties": {
+              "user_id": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "user_id"
+            ],
+            "type": "object"
+          }
+        },
+        {
+          "name": "archive_account",
+          "description": "Archive an account by exact id.",
+          "parameters": {
+            "properties": {
+              "account_id": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "account_id"
+            ],
+            "type": "object"
+          }
+        }
+      ],
+      "tool_choice": {
+        "mode": "auto"
+      },
+      "turns": [
+        {
+          "messages": [
+            {
+              "role": "user",
+              "content": "Archive the account owned by sam@example.test. Resolve each required id first."
+            }
+          ],
+          "expected_calls": [
+            {
+              "name": "find_user",
+              "arguments": {
+                "email": "sam@example.test"
+              }
+            }
+          ]
+        },
+        {
+          "messages": [
+            {
+              "role": "tool",
+              "content": "{\"user_id\":\"user-41\"}",
+              "tool_call_ref": 0
+            }
+          ],
+          "expected_calls": [
+            {
+              "name": "find_account",
+              "arguments": {
+                "user_id": "user-41"
+              }
+            }
+          ]
+        },
+        {
+          "messages": [
+            {
+              "role": "tool",
+              "content": "{\"account_id\":\"account-73\"}",
+              "tool_call_ref": 0
+            }
+          ],
+          "expected_calls": [
+            {
+              "name": "archive_account",
+              "arguments": {
+                "account_id": "account-73"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "negative-auto-arithmetic",
+      "category": "negative_trap",
+      "description": "Do not call an irrelevant tool for simple arithmetic.",
+      "rationale": "This asserts abstaining from tool use for arithmetic. The prompt explicitly says to answer without a tool, and the only offered tool is topically irrelevant weather lookup, so every correct response has no tool call.",
+      "stream": false,
+      "arguments_match": "exact",
+      "tools": [
+        {
+          "name": "get_weather",
+          "description": "Get weather for a city.",
+          "parameters": {
+            "properties": {
+              "city": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "city"
+            ],
+            "type": "object"
+          }
+        }
+      ],
+      "tool_choice": {
+        "mode": "auto"
+      },
+      "turns": [
+        {
+          "messages": [
+            {
+              "role": "user",
+              "content": "What is 19 plus 23? Answer without using a tool."
+            }
+          ],
+          "expected_calls": []
+        }
+      ]
+    },
+    {
+      "id": "negative-auto-knowledge",
+      "category": "negative_trap",
+      "description": "Do not call an irrelevant tool for a general knowledge reply.",
+      "rationale": "This asserts abstaining from tool use for general knowledge. The prompt explicitly says not to use a tool, and the only offered order lookup cannot answer the ocean question, so every correct response has no call.",
+      "stream": false,
+      "arguments_match": "exact",
+      "tools": [
+        {
+          "name": "lookup_order",
+          "description": "Look up an order by exact id.",
+          "parameters": {
+            "properties": {
+              "order_id": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "order_id"
+            ],
+            "type": "object"
+          }
+        }
+      ],
+      "tool_choice": {
+        "mode": "auto"
+      },
+      "turns": [
+        {
+          "messages": [
+            {
+              "role": "user",
+              "content": "Name the largest ocean on Earth. Do not use a tool."
+            }
+          ],
+          "expected_calls": []
+        }
+      ]
+    },
+    {
+      "id": "negative-greeting",
+      "category": "negative_trap",
+      "description": "Do not call a tool for a simple greeting.",
+      "rationale": "This asserts honoring a no-tools request for a greeting. The API request enforces tool_choice none, so tool calls are forbidden and the unscored wording of the short text reply cannot cause a false red.",
+      "stream": false,
+      "arguments_match": "exact",
+      "tools": [
+        {
+          "name": "get_weather",
+          "description": "Get the current weather for a city.",
+          "parameters": {
+            "properties": {
+              "city": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "city"
+            ],
+            "type": "object"
+          }
+        }
+      ],
+      "tool_choice": {
+        "mode": "none"
+      },
+      "turns": [
+        {
+          "messages": [
+            {
+              "role": "user",
+              "content": "Say hello in one short sentence."
+            }
+          ],
+          "expected_calls": []
+        }
+      ]
+    },
+    {
+      "id": "negative-invalid-schema",
+      "category": "negative_trap",
+      "description": "Refuse a tool call when the requested value is outside its schema.",
+      "rationale": "This asserts refusing to fabricate a schema-valid call for an unsupported value. Kelvin is absent from the celsius-or-fahrenheit enum, and the prompt explicitly requires plain text without a call when the schema cannot express it.",
+      "stream": false,
+      "arguments_match": "exact",
+      "tools": [
+        {
+          "name": "set_temperature_unit",
+          "description": "Set one supported temperature unit.",
+          "parameters": {
+            "properties": {
+              "unit": {
+                "enum": [
+                  "celsius",
+                  "fahrenheit"
+                ],
+                "type": "string"
+              }
+            },
+            "required": [
+              "unit"
+            ],
+            "type": "object"
+          }
+        }
+      ],
+      "tool_choice": {
+        "mode": "auto"
+      },
+      "turns": [
+        {
+          "messages": [
+            {
+              "role": "user",
+              "content": "Set the temperature unit to kelvin. If the schema cannot express it, explain that in plain text without calling a tool."
+            }
+          ],
+          "expected_calls": []
+        }
+      ]
+    },
+    {
+      "id": "negative-long-argument",
+      "category": "negative_trap",
+      "description": "Preserve one long ASCII argument exactly.",
+      "rationale": "This asserts exact transport of the 256-character token supplied verbatim in the prompt. The named tool choice fixes the tool, and the run-path max_tokens default is large enough that a correct model is not truncated.",
+      "stream": false,
+      "arguments_match": "exact",
+      "tools": [
+        {
+          "name": "store_token",
+          "description": "Store one exact token.",
+          "parameters": {
+            "properties": {
+              "token": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "token"
+            ],
+            "type": "object"
+          }
+        }
+      ],
+      "tool_choice": {
+        "mode": "named",
+        "name": "store_token"
+      },
+      "turns": [
+        {
+          "messages": [
+            {
+              "role": "user",
+              "content": "Store this exact token: abcdefghijklmnopqrstuvwxyz0123456789-ABCDEFGHIJKLMNOPQRSTUVWXYZ-abcdefghijklmnopqrstuvwxyz0123456789-ABCDEFGHIJKLMNOPQRSTUVWXYZ-abcdefghijklmnopqrstuvwxyz0123456789-ABCDEFGHIJKLMNOPQRSTUVWXYZ-abcdefghijklmnopqrstuvwxyz0123456789-ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+            }
+          ],
+          "expected_calls": [
+            {
+              "name": "store_token",
+              "arguments": {
+                "token": "abcdefghijklmnopqrstuvwxyz0123456789-ABCDEFGHIJKLMNOPQRSTUVWXYZ-abcdefghijklmnopqrstuvwxyz0123456789-ABCDEFGHIJKLMNOPQRSTUVWXYZ-abcdefghijklmnopqrstuvwxyz0123456789-ABCDEFGHIJKLMNOPQRSTUVWXYZ-abcdefghijklmnopqrstuvwxyz0123456789-ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "negative-plain-text",
+      "category": "negative_trap",
+      "description": "Use a plain text reply instead of an unrelated tool.",
+      "rationale": "This asserts choosing plain text for an explanatory question. The prompt explicitly says not to send email, and the only offered tool sends email rather than answering the question, so a correct response cannot call it.",
+      "stream": false,
+      "arguments_match": "exact",
+      "tools": [
+        {
+          "name": "send_email",
+          "description": "Send an email to an exact address.",
+          "parameters": {
+            "properties": {
+              "address": {
+                "type": "string"
+              },
+              "body": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "address",
+              "body"
+            ],
+            "type": "object"
+          }
+        }
+      ],
+      "tool_choice": {
+        "mode": "auto"
+      },
+      "turns": [
+        {
+          "messages": [
+            {
+              "role": "user",
+              "content": "In one plain text sentence, explain why leaves are green. Do not send email."
+            }
+          ],
+          "expected_calls": []
+        }
+      ]
+    },
+    {
+      "id": "negative-unicode-argument",
+      "category": "negative_trap",
+      "description": "Preserve a non-ASCII city argument.",
+      "rationale": "This asserts copying the exact city spelling supplied verbatim in the prompt. The scorer compares strings in NFC and uses subset matching for the optional country code, so an NFD-emitting model or one adding that optional field is not failed.",
+      "stream": false,
+      "arguments_match": "subset",
+      "tools": [
+        {
+          "name": "get_weather",
+          "description": "Get weather for a city with an optional country code.",
+          "parameters": {
+            "properties": {
+              "city": {
+                "type": "string"
+              },
+              "country_code": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "city"
+            ],
+            "type": "object"
+          }
+        }
+      ],
+      "tool_choice": {
+        "mode": "auto"
+      },
+      "turns": [
+        {
+          "messages": [
+            {
+              "role": "user",
+              "content": "Get the weather for the exact city name München."
+            }
+          ],
+          "expected_calls": [
+            {
+              "name": "get_weather",
+              "arguments": {
+                "city": "München"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "parallel-city-time",
+      "category": "parallel_calls",
+      "description": "Call the time tool for two cities in parallel.",
+      "rationale": "This asserts emitting both city-time calls in one response, so a model that can only call sequentially genuinely lacks the measured capability. Boston and Tokyo are literal prompt values that pin both arguments.",
+      "stream": false,
+      "arguments_match": "exact",
+      "tools": [
+        {
+          "name": "get_time",
+          "description": "Get the local time for a city.",
+          "parameters": {
+            "properties": {
+              "city": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "city"
+            ],
+            "type": "object"
+          }
+        }
+      ],
+      "tool_choice": {
+        "mode": "required"
+      },
+      "turns": [
+        {
+          "messages": [
+            {
+              "role": "user",
+              "content": "What time is it in Boston and Tokyo?"
+            }
+          ],
+          "expected_calls": [
+            {
+              "name": "get_time",
+              "arguments": {
+                "city": "Boston"
+              }
+            },
+            {
+              "name": "get_time",
+              "arguments": {
+                "city": "Tokyo"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "parallel-different-tools",
+      "category": "parallel_calls",
+      "description": "Call two different tools in parallel.",
+      "rationale": "This asserts emitting weather and time calls together in one response, so sequential-only calling is a true red. The prompt maps the literal Oslo and Cairo values to distinct named tools, leaving no argument ambiguity.",
+      "stream": false,
+      "arguments_match": "exact",
+      "tools": [
+        {
+          "name": "get_weather",
+          "description": "Get weather for a city.",
+          "parameters": {
+            "properties": {
+              "city": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "city"
+            ],
+            "type": "object"
+          }
+        },
+        {
+          "name": "get_time",
+          "description": "Get local time for a city.",
+          "parameters": {
+            "properties": {
+              "city": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "city"
+            ],
+            "type": "object"
+          }
+        }
+      ],
+      "tool_choice": {
+        "mode": "required"
+      },
+      "turns": [
+        {
+          "messages": [
+            {
+              "role": "user",
+              "content": "Get the weather in Oslo and the local time in Cairo."
+            }
+          ],
+          "expected_calls": [
+            {
+              "name": "get_weather",
+              "arguments": {
+                "city": "Oslo"
+              }
+            },
+            {
+              "name": "get_time",
+              "arguments": {
+                "city": "Cairo"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "parallel-three-cities",
+      "category": "parallel_calls",
+      "description": "Call the same tool three times in parallel.",
+      "rationale": "This asserts emitting three weather calls in one response, so a model that calls them only sequentially genuinely lacks the capability. Austin, Dublin, and Seoul are supplied verbatim and the prompt explicitly requests three calls.",
+      "stream": false,
+      "arguments_match": "exact",
+      "tools": [
+        {
+          "name": "get_weather",
+          "description": "Get weather for a city.",
+          "parameters": {
+            "properties": {
+              "city": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "city"
+            ],
+            "type": "object"
+          }
+        }
+      ],
+      "tool_choice": {
+        "mode": "required"
+      },
+      "turns": [
+        {
+          "messages": [
+            {
+              "role": "user",
+              "content": "Get weather for Austin, Dublin, and Seoul with three calls."
+            }
+          ],
+          "expected_calls": [
+            {
+              "name": "get_weather",
+              "arguments": {
+                "city": "Austin"
+              }
+            },
+            {
+              "name": "get_weather",
+              "arguments": {
+                "city": "Dublin"
+              }
+            },
+            {
+              "name": "get_weather",
+              "arguments": {
+                "city": "Seoul"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "parallel-three-different-tools",
+      "category": "parallel_calls",
+      "description": "Call three different tools in parallel.",
+      "rationale": "This asserts emitting three distinct tool calls in one response, so sequential-only calling is a true red. The prompt explicitly pairs Rome with weather, Nairobi with time, and the literal amount and currency codes with conversion.",
+      "stream": false,
+      "arguments_match": "exact",
+      "tools": [
+        {
+          "name": "get_weather",
+          "description": "Get weather for a city.",
+          "parameters": {
+            "properties": {
+              "city": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "city"
+            ],
+            "type": "object"
+          }
+        },
+        {
+          "name": "get_time",
+          "description": "Get local time for a city.",
+          "parameters": {
+            "properties": {
+              "city": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "city"
+            ],
+            "type": "object"
+          }
+        },
+        {
+          "name": "convert_currency",
+          "description": "Convert an exact currency amount.",
+          "parameters": {
+            "properties": {
+              "amount": {
+                "type": "number"
+              },
+              "from": {
+                "type": "string"
+              },
+              "to": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "amount",
+              "from",
+              "to"
+            ],
+            "type": "object"
+          }
+        }
+      ],
+      "tool_choice": {
+        "mode": "required"
+      },
+      "turns": [
+        {
+          "messages": [
+            {
+              "role": "user",
+              "content": "Get weather in Rome, time in Nairobi, and convert 25 USD to EUR."
+            }
+          ],
+          "expected_calls": [
+            {
+              "name": "get_weather",
+              "arguments": {
+                "city": "Rome"
+              }
+            },
+            {
+              "name": "get_time",
+              "arguments": {
+                "city": "Nairobi"
+              }
+            },
+            {
+              "name": "convert_currency",
+              "arguments": {
+                "amount": 25,
+                "from": "USD",
+                "to": "EUR"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "parallel-two-calculations",
+      "category": "parallel_calls",
+      "description": "Call the same arithmetic tool twice in parallel.",
+      "rationale": "This asserts emitting both division calls in one response, so sequential-only calling is a true red. Division is non-commutative, and the named dividend and divisor parameters plus the literal prompt wording force operand position.",
+      "stream": false,
+      "arguments_match": "exact",
+      "tools": [
+        {
+          "name": "divide",
+          "description": "Divide one number by another.",
+          "parameters": {
+            "properties": {
+              "dividend": {
+                "type": "number"
+              },
+              "divisor": {
+                "type": "number"
+              }
+            },
+            "required": [
+              "dividend",
+              "divisor"
+            ],
+            "type": "object"
+          }
+        }
+      ],
+      "tool_choice": {
+        "mode": "required"
+      },
+      "turns": [
+        {
+          "messages": [
+            {
+              "role": "user",
+              "content": "Use separate calls to divide 42 by 6 and divide 10 by 4."
+            }
+          ],
+          "expected_calls": [
+            {
+              "name": "divide",
+              "arguments": {
+                "dividend": 42,
+                "divisor": 6
+              }
+            },
+            {
+              "name": "divide",
+              "arguments": {
+                "dividend": 10,
+                "divisor": 4
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "parallel-two-multiple-args",
+      "category": "parallel_calls",
+      "description": "Call two different tools with multiple arguments.",
+      "rationale": "This asserts emitting the room and car calls together in one response, so sequential-only calling is a true red. Each room, city, date, and hour is supplied verbatim and mapped to a distinct named tool by the prompt.",
+      "stream": false,
+      "arguments_match": "exact",
+      "tools": [
+        {
+          "name": "book_room",
+          "description": "Book a room for an exact date and hour.",
+          "parameters": {
+            "properties": {
+              "date": {
+                "type": "string"
+              },
+              "hour": {
+                "type": "integer"
+              },
+              "room": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "room",
+              "date",
+              "hour"
+            ],
+            "type": "object"
+          }
+        },
+        {
+          "name": "reserve_car",
+          "description": "Reserve a car in a city for an exact date.",
+          "parameters": {
+            "properties": {
+              "city": {
+                "type": "string"
+              },
+              "date": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "city",
+              "date"
+            ],
+            "type": "object"
+          }
+        }
+      ],
+      "tool_choice": {
+        "mode": "required"
+      },
+      "turns": [
+        {
+          "messages": [
+            {
+              "role": "user",
+              "content": "Book room Cedar on 2026-09-02 at hour 14 and reserve a car in Boise on 2026-09-03."
+            }
+          ],
+          "expected_calls": [
+            {
+              "name": "book_room",
+              "arguments": {
+                "date": "2026-09-02",
+                "hour": 14,
+                "room": "Cedar"
+              }
+            },
+            {
+              "name": "reserve_car",
+              "arguments": {
+                "city": "Boise",
+                "date": "2026-09-03"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "parallel-two-searches",
+      "category": "parallel_calls",
+      "description": "Call the same search tool twice with distinct queries.",
+      "rationale": "This asserts emitting two search calls in one response, so a model that only calls sequentially genuinely lacks the capability. Both exact query strings appear verbatim in quotes and the prompt explicitly requests separate searches.",
+      "stream": false,
+      "arguments_match": "exact",
+      "tools": [
+        {
+          "name": "search_docs",
+          "description": "Search documents for an exact query.",
+          "parameters": {
+            "properties": {
+              "query": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "query"
+            ],
+            "type": "object"
+          }
+        }
+      ],
+      "tool_choice": {
+        "mode": "required"
+      },
+      "turns": [
+        {
+          "messages": [
+            {
+              "role": "user",
+              "content": "Run separate document searches for 'alpha protocol' and 'beta protocol'."
+            }
+          ],
+          "expected_calls": [
+            {
+              "name": "search_docs",
+              "arguments": {
+                "query": "alpha protocol"
+              }
+            },
+            {
+              "name": "search_docs",
+              "arguments": {
+                "query": "beta protocol"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "parallel-weather-and-time",
+      "category": "parallel_calls",
+      "description": "Call weather and time tools for the same city.",
+      "rationale": "This asserts emitting weather and time calls together in one response, so sequential-only calling is a true red even under auto choice. The prompt explicitly requests both tools and supplies Denver verbatim for each argument.",
+      "stream": false,
+      "arguments_match": "exact",
+      "tools": [
+        {
+          "name": "get_weather",
+          "description": "Get weather for a city.",
+          "parameters": {
+            "properties": {
+              "city": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "city"
+            ],
+            "type": "object"
+          }
+        },
+        {
+          "name": "get_time",
+          "description": "Get local time for a city.",
+          "parameters": {
+            "properties": {
+              "city": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "city"
+            ],
+            "type": "object"
+          }
+        }
+      ],
+      "tool_choice": {
+        "mode": "auto"
+      },
+      "turns": [
+        {
+          "messages": [
+            {
+              "role": "user",
+              "content": "Get both the weather and local time for Denver."
+            }
+          ],
+          "expected_calls": [
+            {
+              "name": "get_weather",
+              "arguments": {
+                "city": "Denver"
+              }
+            },
+            {
+              "name": "get_time",
+              "arguments": {
+                "city": "Denver"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "single-array-tags",
+      "category": "single_call",
+      "description": "Call one tool with an array of strings.",
+      "rationale": "This asserts an exact string-array argument for document doc-17. Array comparison is positional, and the prompt supplies every literal tag and says in that order, so the expected sequence is fully pinned.",
+      "stream": false,
+      "arguments_match": "exact",
+      "tools": [
+        {
+          "name": "tag_document",
+          "description": "Apply tags to a document.",
+          "parameters": {
+            "properties": {
+              "document_id": {
+                "type": "string"
+              },
+              "tags": {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              }
+            },
+            "required": [
+              "document_id",
+              "tags"
+            ],
+            "type": "object"
+          }
+        }
+      ],
+      "tool_choice": {
+        "mode": "auto"
+      },
+      "turns": [
+        {
+          "messages": [
+            {
+              "role": "user",
+              "content": "Tag document doc-17 with exactly alpha, beta, and gamma in that order."
+            }
+          ],
+          "expected_calls": [
+            {
+              "name": "tag_document",
+              "arguments": {
+                "document_id": "doc-17",
+                "tags": [
+                  "alpha",
+                  "beta",
+                  "gamma"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "single-boolean-flag",
+      "category": "single_call",
+      "description": "Call one tool with a boolean argument.",
+      "rationale": "This asserts encoding a disabled state as the boolean false. The opaque feature name audit-log is supplied verbatim, and the imperative Disable pins the boolean without relying on a paraphrasable text answer.",
+      "stream": false,
+      "arguments_match": "exact",
+      "tools": [
+        {
+          "name": "set_feature",
+          "description": "Enable or disable a feature.",
+          "parameters": {
+            "properties": {
+              "enabled": {
+                "type": "boolean"
+              },
+              "feature": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "feature",
+              "enabled"
+            ],
+            "type": "object"
+          }
+        }
+      ],
+      "tool_choice": {
+        "mode": "auto"
+      },
+      "turns": [
+        {
+          "messages": [
+            {
+              "role": "user",
+              "content": "Disable the feature named audit-log."
+            }
+          ],
+          "expected_calls": [
+            {
+              "name": "set_feature",
+              "arguments": {
+                "enabled": false,
+                "feature": "audit-log"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "single-date-range",
+      "category": "single_call",
+      "description": "Call one tool with multiple required arguments.",
+      "rationale": "This asserts populating all fields of an inclusive date-range call. Denver and both ISO dates are supplied verbatim, while from and through map unambiguously to the named start_date and end_date parameters.",
+      "stream": false,
+      "arguments_match": "exact",
+      "tools": [
+        {
+          "name": "find_events",
+          "description": "Find events in an inclusive date range.",
+          "parameters": {
+            "properties": {
+              "city": {
+                "type": "string"
+              },
+              "end_date": {
+                "type": "string"
+              },
+              "start_date": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "city",
+              "start_date",
+              "end_date"
+            ],
+            "type": "object"
+          }
+        }
+      ],
+      "tool_choice": {
+        "mode": "auto"
+      },
+      "turns": [
+        {
+          "messages": [
+            {
+              "role": "user",
+              "content": "Find events in Denver from 2026-08-03 through 2026-08-05."
+            }
+          ],
+          "expected_calls": [
+            {
+              "name": "find_events",
+              "arguments": {
+                "city": "Denver",
+                "end_date": "2026-08-05",
+                "start_date": "2026-08-03"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "single-decimal-price",
+      "category": "single_call",
+      "description": "Call one tool with a decimal number.",
+      "rationale": "This asserts preserving a decimal numeric argument in a price call. The opaque SKU AX-9 and exact value 19.95 are supplied verbatim in the prompt, so neither field admits a legitimate rewording.",
+      "stream": false,
+      "arguments_match": "exact",
+      "tools": [
+        {
+          "name": "set_price",
+          "description": "Set the price of a product.",
+          "parameters": {
+            "properties": {
+              "price": {
+                "type": "number"
+              },
+              "sku": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "sku",
+              "price"
+            ],
+            "type": "object"
+          }
+        }
+      ],
+      "tool_choice": {
+        "mode": "auto"
+      },
+      "turns": [
+        {
+          "messages": [
+            {
+              "role": "user",
+              "content": "Set the price of SKU AX-9 to exactly 19.95."
+            }
+          ],
+          "expected_calls": [
+            {
+              "name": "set_price",
+              "arguments": {
+                "price": 19.95,
+                "sku": "AX-9"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "single-empty-arguments",
+      "category": "single_call",
+      "description": "Call a function that accepts no arguments.",
+      "rationale": "This asserts calling an empty-argument function. The API request enforces required tool use, only get_service_status is offered, and its object schema defines no properties, so the empty argument object is forced.",
+      "stream": false,
+      "arguments_match": "exact",
+      "tools": [
+        {
+          "name": "get_service_status",
+          "description": "Get the current service status.",
+          "parameters": {
+            "type": "object"
+          }
+        }
+      ],
+      "tool_choice": {
+        "mode": "required"
+      },
+      "turns": [
+        {
+          "messages": [
+            {
+              "role": "user",
+              "content": "Get the current service status now."
+            }
+          ],
+          "expected_calls": [
+            {
+              "name": "get_service_status",
+              "arguments": {}
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "single-enum-format",
+      "category": "single_call",
+      "description": "Call one tool with an enum argument.",
+      "rationale": "This asserts selecting a schema enum value alongside an opaque report id. The prompt supplies quarterly-7 and csv verbatim, and csv is the exact supported enum spelling, leaving no valid alternate serialization.",
+      "stream": false,
+      "arguments_match": "exact",
+      "tools": [
+        {
+          "name": "export_report",
+          "description": "Export a report in a supported format.",
+          "parameters": {
+            "properties": {
+              "format": {
+                "enum": [
+                  "csv",
+                  "json",
+                  "pdf"
+                ],
+                "type": "string"
+              },
+              "report_id": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "report_id",
+              "format"
+            ],
+            "type": "object"
+          }
+        }
+      ],
+      "tool_choice": {
+        "mode": "auto"
+      },
+      "turns": [
+        {
+          "messages": [
+            {
+              "role": "user",
+              "content": "Export report quarterly-7 as csv."
+            }
+          ],
+          "expected_calls": [
+            {
+              "name": "export_report",
+              "arguments": {
+                "format": "csv",
+                "report_id": "quarterly-7"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "single-integer-limit",
+      "category": "single_call",
+      "description": "Call one tool with an integer argument.",
+      "rationale": "This asserts encoding an exact integer limit in a mailbox call. The prompt names the support mailbox and says exactly 12, so both expected values are literal and no open-ended text is compared.",
+      "stream": false,
+      "arguments_match": "exact",
+      "tools": [
+        {
+          "name": "list_messages",
+          "description": "List a fixed number of messages.",
+          "parameters": {
+            "properties": {
+              "limit": {
+                "type": "integer"
+              },
+              "mailbox": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "mailbox",
+              "limit"
+            ],
+            "type": "object"
+          }
+        }
+      ],
+      "tool_choice": {
+        "mode": "auto"
+      },
+      "turns": [
+        {
+          "messages": [
+            {
+              "role": "user",
+              "content": "List exactly 12 messages from the support mailbox."
+            }
+          ],
+          "expected_calls": [
+            {
+              "name": "list_messages",
+              "arguments": {
+                "limit": 12,
+                "mailbox": "support"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "single-nested-options",
+      "category": "single_call",
+      "description": "Call one tool with nested option arguments.",
+      "rationale": "This asserts constructing the required nested options object with numeric and boolean fields. The quoted prompt, dimensions, and enabled transparency state supply every expected value explicitly, so the nested structure follows directly from the schema.",
+      "stream": false,
+      "arguments_match": "exact",
+      "tools": [
+        {
+          "name": "render_image",
+          "description": "Render an image with explicit options.",
+          "parameters": {
+            "properties": {
+              "options": {
+                "properties": {
+                  "height": {
+                    "type": "integer"
+                  },
+                  "transparent": {
+                    "type": "boolean"
+                  },
+                  "width": {
+                    "type": "integer"
+                  }
+                },
+                "required": [
+                  "width",
+                  "height",
+                  "transparent"
+                ],
+                "type": "object"
+              },
+              "prompt": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "prompt",
+              "options"
+            ],
+            "type": "object"
+          }
+        }
+      ],
+      "tool_choice": {
+        "mode": "auto"
+      },
+      "turns": [
+        {
+          "messages": [
+            {
+              "role": "user",
+              "content": "Render 'red circle' at width 640 and height 480 with transparency enabled."
+            }
+          ],
+          "expected_calls": [
+            {
+              "name": "render_image",
+              "arguments": {
+                "options": {
+                  "height": 480,
+                  "transparent": true,
+                  "width": 640
+                },
+                "prompt": "red circle"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "single-optional-omitted",
+      "category": "single_call",
+      "description": "Omit an optional argument that the prompt does not provide.",
+      "rationale": "This asserts omitting an optional schema field rather than inventing it. The prompt gives the exact search query and explicitly says not to set a result limit, so the exact expected object is complete.",
+      "stream": false,
+      "arguments_match": "exact",
+      "tools": [
+        {
+          "name": "search_catalog",
+          "description": "Search a catalog with an optional result limit.",
+          "parameters": {
+            "properties": {
+              "limit": {
+                "type": "integer"
+              },
+              "query": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "query"
+            ],
+            "type": "object"
+          }
+        }
+      ],
+      "tool_choice": {
+        "mode": "auto"
+      },
+      "turns": [
+        {
+          "messages": [
+            {
+              "role": "user",
+              "content": "Search the catalog for brass compass. Do not set a result limit."
+            }
+          ],
+          "expected_calls": [
+            {
+              "name": "search_catalog",
+              "arguments": {
+                "query": "brass compass"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "single-optional-present",
+      "category": "single_call",
+      "description": "Include an optional argument when explicitly provided.",
+      "rationale": "This asserts including an optional limit when the user supplies it. The prompt gives brass compass verbatim as the search query and says exactly 4 results, which pins both expected arguments.",
+      "stream": false,
+      "arguments_match": "exact",
+      "tools": [
+        {
+          "name": "search_catalog",
+          "description": "Search a catalog with an optional result limit.",
+          "parameters": {
+            "properties": {
+              "limit": {
+                "type": "integer"
+              },
+              "query": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "query"
+            ],
+            "type": "object"
+          }
+        }
+      ],
+      "tool_choice": {
+        "mode": "auto"
+      },
+      "turns": [
+        {
+          "messages": [
+            {
+              "role": "user",
+              "content": "Search the catalog for brass compass and return exactly 4 results."
+            }
+          ],
+          "expected_calls": [
+            {
+              "name": "search_catalog",
+              "arguments": {
+                "limit": 4,
+                "query": "brass compass"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "single-string-list",
+      "category": "single_call",
+      "description": "Call one tool with an ordered array argument.",
+      "rationale": "This asserts preserving an ordered array of opaque track ids. Array comparison is positional, and the prompt supplies the playlist name and every id verbatim while saying in that order.",
+      "stream": false,
+      "arguments_match": "exact",
+      "tools": [
+        {
+          "name": "create_playlist",
+          "description": "Create a playlist from ordered track ids.",
+          "parameters": {
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "track_ids": {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              }
+            },
+            "required": [
+              "name",
+              "track_ids"
+            ],
+            "type": "object"
+          }
+        }
+      ],
+      "tool_choice": {
+        "mode": "auto"
+      },
+      "turns": [
+        {
+          "messages": [
+            {
+              "role": "user",
+              "content": "Create playlist road-test with tracks t-3, t-1, and t-8 in that order."
+            }
+          ],
+          "expected_calls": [
+            {
+              "name": "create_playlist",
+              "arguments": {
+                "name": "road-test",
+                "track_ids": [
+                  "t-3",
+                  "t-1",
+                  "t-8"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "single-weather",
+      "category": "single_call",
+      "description": "Call one weather tool with a city argument.",
+      "rationale": "This asserts selecting the weather tool with one city argument. Boston appears verbatim in the prompt, the schema requires only city, and no generated natural-language answer is compared.",
+      "stream": false,
+      "arguments_match": "exact",
+      "tools": [
+        {
+          "name": "get_weather",
+          "description": "Get the current weather for a city.",
+          "parameters": {
+            "properties": {
+              "city": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "city"
+            ],
+            "type": "object"
+          }
+        }
+      ],
+      "tool_choice": {
+        "mode": "auto"
+      },
+      "turns": [
+        {
+          "messages": [
+            {
+              "role": "user",
+              "content": "What is the weather in Boston?"
+            }
+          ],
+          "expected_calls": [
+            {
+              "name": "get_weather",
+              "arguments": {
+                "city": "Boston"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "single-zero-and-negative",
+      "category": "single_call",
+      "description": "Call one tool with zero and a negative number.",
+      "rationale": "This asserts preserving zero and a negative decimal in distinct numeric fields. The prompt says from -12.5 to 0, and the named minimum and maximum parameters force which literal occupies each position.",
+      "stream": false,
+      "arguments_match": "exact",
+      "tools": [
+        {
+          "name": "set_axis_range",
+          "description": "Set an axis range.",
+          "parameters": {
+            "properties": {
+              "maximum": {
+                "type": "number"
+              },
+              "minimum": {
+                "type": "number"
+              }
+            },
+            "required": [
+              "minimum",
+              "maximum"
+            ],
+            "type": "object"
+          }
+        }
+      ],
+      "tool_choice": {
+        "mode": "auto"
+      },
+      "turns": [
+        {
+          "messages": [
+            {
+              "role": "user",
+              "content": "Set the axis range from -12.5 to 0."
+            }
+          ],
+          "expected_calls": [
+            {
+              "name": "set_axis_range",
+              "arguments": {
+                "maximum": 0,
+                "minimum": -12.5
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "streaming-array-arguments",
+      "category": "streaming",
+      "description": "Stream a tool call with an array argument.",
+      "rationale": "This asserts reconstructing an ordered array from streamed arguments. Array comparison is positional, the prompt supplies all opaque record ids verbatim and says in that order, and the API request enforces the named tool.",
+      "stream": true,
+      "arguments_match": "exact",
+      "tools": [
+        {
+          "name": "fetch_records",
+          "description": "Fetch records by exact ids.",
+          "parameters": {
+            "properties": {
+              "record_ids": {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              }
+            },
+            "required": [
+              "record_ids"
+            ],
+            "type": "object"
+          }
+        }
+      ],
+      "tool_choice": {
+        "mode": "named",
+        "name": "fetch_records"
+      },
+      "turns": [
+        {
+          "messages": [
+            {
+              "role": "user",
+              "content": "Fetch record ids r-2, r-5, and r-9 in that order."
+            }
+          ],
+          "expected_calls": [
+            {
+              "name": "fetch_records",
+              "arguments": {
+                "record_ids": [
+                  "r-2",
+                  "r-5",
+                  "r-9"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "streaming-boolean-argument",
+      "category": "streaming",
+      "description": "Stream a tool call with a boolean argument.",
+      "rationale": "This asserts reconstructing a boolean argument from a streamed tool call. The prompt supplies billing verbatim and the imperative Enable pins enabled to true, so no paraphrasable response text is scored.",
+      "stream": true,
+      "arguments_match": "exact",
+      "tools": [
+        {
+          "name": "set_maintenance",
+          "description": "Enable or disable maintenance mode.",
+          "parameters": {
+            "properties": {
+              "enabled": {
+                "type": "boolean"
+              },
+              "service": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "service",
+              "enabled"
+            ],
+            "type": "object"
+          }
+        }
+      ],
+      "tool_choice": {
+        "mode": "auto"
+      },
+      "turns": [
+        {
+          "messages": [
+            {
+              "role": "user",
+              "content": "Enable maintenance mode for the billing service."
+            }
+          ],
+          "expected_calls": [
+            {
+              "name": "set_maintenance",
+              "arguments": {
+                "enabled": true,
+                "service": "billing"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "streaming-empty-arguments",
+      "category": "streaming",
+      "description": "Stream a call to a function with no arguments.",
+      "rationale": "This asserts reconstructing an empty argument object from a streamed call. The API request requires tool use, get_uptime is the only offered tool, and its schema has no properties, so the expected call is forced.",
+      "stream": true,
+      "arguments_match": "exact",
+      "tools": [
+        {
+          "name": "get_uptime",
+          "description": "Get service uptime.",
+          "parameters": {
+            "type": "object"
+          }
+        }
+      ],
+      "tool_choice": {
+        "mode": "required"
+      },
+      "turns": [
+        {
+          "messages": [
+            {
+              "role": "user",
+              "content": "Get the service uptime."
+            }
+          ],
+          "expected_calls": [
+            {
+              "name": "get_uptime",
+              "arguments": {}
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "streaming-enum-arguments",
+      "category": "streaming",
+      "description": "Stream a tool call with an enum argument.",
+      "rationale": "This asserts reconstructing an enum argument from streamed fragments. The prompt supplies payments and warn verbatim, and warn exactly matches a supported schema enum value, leaving no valid alternative.",
+      "stream": true,
+      "arguments_match": "exact",
+      "tools": [
+        {
+          "name": "set_log_level",
+          "description": "Set a supported log level.",
+          "parameters": {
+            "properties": {
+              "level": {
+                "enum": [
+                  "debug",
+                  "info",
+                  "warn",
+                  "error"
+                ],
+                "type": "string"
+              },
+              "service": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "service",
+              "level"
+            ],
+            "type": "object"
+          }
+        }
+      ],
+      "tool_choice": {
+        "mode": "auto"
+      },
+      "turns": [
+        {
+          "messages": [
+            {
+              "role": "user",
+              "content": "Set the log level for payments to warn."
+            }
+          ],
+          "expected_calls": [
+            {
+              "name": "set_log_level",
+              "arguments": {
+                "level": "warn",
+                "service": "payments"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "streaming-nested-arguments",
+      "category": "streaming",
+      "description": "Stream a tool call with nested arguments.",
+      "rationale": "This asserts reconstructing a nested object from streamed argument fragments. The opaque marker name and both signed coordinates are literal prompt values, and the schema uniquely assigns x and y within position.",
+      "stream": true,
+      "arguments_match": "exact",
+      "tools": [
+        {
+          "name": "create_marker",
+          "description": "Create a named map marker.",
+          "parameters": {
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "position": {
+                "properties": {
+                  "x": {
+                    "type": "number"
+                  },
+                  "y": {
+                    "type": "number"
+                  }
+                },
+                "required": [
+                  "x",
+                  "y"
+                ],
+                "type": "object"
+              }
+            },
+            "required": [
+              "name",
+              "position"
+            ],
+            "type": "object"
+          }
+        }
+      ],
+      "tool_choice": {
+        "mode": "named",
+        "name": "create_marker"
+      },
+      "turns": [
+        {
+          "messages": [
+            {
+              "role": "user",
+              "content": "Create marker origin-shift at x 4.5 and y -3.25."
+            }
+          ],
+          "expected_calls": [
+            {
+              "name": "create_marker",
+              "arguments": {
+                "name": "origin-shift",
+                "position": {
+                  "x": 4.5,
+                  "y": -3.25
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "streaming-parallel-three",
+      "category": "streaming",
+      "description": "Stream three calls to the same tool.",
+      "rationale": "This asserts reconstructing three parallel calls from one streamed response, so sequential-only calling is a true red. Accra, Kyoto, and Quito are supplied verbatim, and the prompt explicitly requests three calls.",
+      "stream": true,
+      "arguments_match": "exact",
+      "tools": [
+        {
+          "name": "get_time",
+          "description": "Get local time for a city.",
+          "parameters": {
+            "properties": {
+              "city": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "city"
+            ],
+            "type": "object"
+          }
+        }
+      ],
+      "tool_choice": {
+        "mode": "required"
+      },
+      "turns": [
+        {
+          "messages": [
+            {
+              "role": "user",
+              "content": "Get local time for Accra, Kyoto, and Quito with three calls."
+            }
+          ],
+          "expected_calls": [
+            {
+              "name": "get_time",
+              "arguments": {
+                "city": "Accra"
+              }
+            },
+            {
+              "name": "get_time",
+              "arguments": {
+                "city": "Kyoto"
+              }
+            },
+            {
+              "name": "get_time",
+              "arguments": {
+                "city": "Quito"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "streaming-parallel-two",
+      "category": "streaming",
+      "description": "Stream two different tool calls.",
+      "rationale": "This asserts reconstructing two parallel calls from one streamed response, so sequential-only calling is a true red. The prompt explicitly maps literal Prague to weather and Manila to time, pinning both tool-argument pairs.",
+      "stream": true,
+      "arguments_match": "exact",
+      "tools": [
+        {
+          "name": "get_weather",
+          "description": "Get weather for a city.",
+          "parameters": {
+            "properties": {
+              "city": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "city"
+            ],
+            "type": "object"
+          }
+        },
+        {
+          "name": "get_time",
+          "description": "Get local time for a city.",
+          "parameters": {
+            "properties": {
+              "city": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "city"
+            ],
+            "type": "object"
+          }
+        }
+      ],
+      "tool_choice": {
+        "mode": "required"
+      },
+      "turns": [
+        {
+          "messages": [
+            {
+              "role": "user",
+              "content": "Get the weather in Prague and the local time in Manila."
+            }
+          ],
+          "expected_calls": [
+            {
+              "name": "get_weather",
+              "arguments": {
+                "city": "Prague"
+              }
+            },
+            {
+              "name": "get_time",
+              "arguments": {
+                "city": "Manila"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "streaming-weather",
+      "category": "streaming",
+      "description": "Stream one weather tool call.",
+      "rationale": "This asserts reconstructing a basic tool call from streamed output. The API request enforces the named get_weather tool, and the prompt supplies Seattle verbatim as its only required argument.",
+      "stream": true,
+      "arguments_match": "exact",
+      "tools": [
+        {
+          "name": "get_weather",
+          "description": "Get the current weather for a city.",
+          "parameters": {
+            "properties": {
+              "city": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "city"
+            ],
+            "type": "object"
+          }
+        }
+      ],
+      "tool_choice": {
+        "mode": "named",
+        "name": "get_weather"
+      },
+      "turns": [
+        {
+          "messages": [
+            {
+              "role": "user",
+              "content": "Use get_weather for Seattle."
+            }
+          ],
+          "expected_calls": [
+            {
+              "name": "get_weather",
+              "arguments": {
+                "city": "Seattle"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "tool-choice-auto-call",
+      "category": "tool_choice_modes",
+      "description": "Use auto tool choice when a tool is clearly needed.",
+      "rationale": "This asserts choosing a needed lookup under auto tool choice, where the API leaves call-or-text discretion to the model. The requested temperature requires the only offered tool, and Helsinki is supplied verbatim as its city argument.",
+      "stream": false,
+      "arguments_match": "exact",
+      "tools": [
+        {
+          "name": "get_temperature",
+          "description": "Get the temperature for a city.",
+          "parameters": {
+            "properties": {
+              "city": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "city"
+            ],
+            "type": "object"
+          }
+        }
+      ],
+      "tool_choice": {
+        "mode": "auto"
+      },
+      "turns": [
+        {
+          "messages": [
+            {
+              "role": "user",
+              "content": "Get the temperature in Helsinki."
+            }
+          ],
+          "expected_calls": [
+            {
+              "name": "get_temperature",
+              "arguments": {
+                "city": "Helsinki"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "tool-choice-auto-no-call",
+      "category": "tool_choice_modes",
+      "description": "Use auto tool choice without calling an irrelevant tool.",
+      "rationale": "This asserts declining an irrelevant tool under auto choice, where the API leaves call-or-text discretion to the model. The prompt requests literal text and the only tool fetches temperatures, while response wording is not scored.",
+      "stream": false,
+      "arguments_match": "exact",
+      "tools": [
+        {
+          "name": "get_temperature",
+          "description": "Get the temperature for a city.",
+          "parameters": {
+            "properties": {
+              "city": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "city"
+            ],
+            "type": "object"
+          }
+        }
+      ],
+      "tool_choice": {
+        "mode": "auto"
+      },
+      "turns": [
+        {
+          "messages": [
+            {
+              "role": "user",
+              "content": "Reply with the exact text: ready"
+            }
+          ],
+          "expected_calls": []
+        }
+      ]
+    },
+    {
+      "id": "tool-choice-named",
+      "category": "tool_choice_modes",
+      "description": "Force one named function from two available tools.",
+      "rationale": "This asserts honoring a named tool choice among two tools. The API request enforces search_contacts rather than leaving tool selection to the model, and the opaque name Ada Stone is supplied verbatim for the required argument.",
+      "stream": false,
+      "arguments_match": "exact",
+      "tools": [
+        {
+          "name": "search_files",
+          "description": "Search files for an exact phrase.",
+          "parameters": {
+            "properties": {
+              "phrase": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "phrase"
+            ],
+            "type": "object"
+          }
+        },
+        {
+          "name": "search_contacts",
+          "description": "Search contacts for an exact name.",
+          "parameters": {
+            "properties": {
+              "name": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "name"
+            ],
+            "type": "object"
+          }
+        }
+      ],
+      "tool_choice": {
+        "mode": "named",
+        "name": "search_contacts"
+      },
+      "turns": [
+        {
+          "messages": [
+            {
+              "role": "user",
+              "content": "Search contacts for Ada Stone."
+            }
+          ],
+          "expected_calls": [
+            {
+              "name": "search_contacts",
+              "arguments": {
+                "name": "Ada Stone"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "tool-choice-named-empty",
+      "category": "tool_choice_modes",
+      "description": "Force a named empty-argument function.",
+      "rationale": "This asserts honoring a named tool choice when another tool is offered. The API request enforces current_region, and its schema has no properties, so the model has no discretion over the tool or arguments.",
+      "stream": false,
+      "arguments_match": "exact",
+      "tools": [
+        {
+          "name": "current_region",
+          "description": "Get the current deployment region.",
+          "parameters": {
+            "type": "object"
+          }
+        },
+        {
+          "name": "current_zone",
+          "description": "Get the current deployment zone.",
+          "parameters": {
+            "type": "object"
+          }
+        }
+      ],
+      "tool_choice": {
+        "mode": "named",
+        "name": "current_region"
+      },
+      "turns": [
+        {
+          "messages": [
+            {
+              "role": "user",
+              "content": "Get the current deployment region."
+            }
+          ],
+          "expected_calls": [
+            {
+              "name": "current_region",
+              "arguments": {}
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "tool-choice-none",
+      "category": "tool_choice_modes",
+      "description": "Forbid tool calls for a direct text response.",
+      "rationale": "This asserts honoring tool_choice none. The API request forbids every offered tool call, so the model has discretion only over its direct text response, whose contents are not compared by the scorer.",
+      "stream": false,
+      "arguments_match": "exact",
+      "tools": [
+        {
+          "name": "get_weather",
+          "description": "Get weather for a city.",
+          "parameters": {
+            "properties": {
+              "city": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "city"
+            ],
+            "type": "object"
+          }
+        }
+      ],
+      "tool_choice": {
+        "mode": "none"
+      },
+      "turns": [
+        {
+          "messages": [
+            {
+              "role": "user",
+              "content": "Reply with the exact text: no tools"
+            }
+          ],
+          "expected_calls": []
+        }
+      ]
+    },
+    {
+      "id": "tool-choice-required",
+      "category": "tool_choice_modes",
+      "description": "Require one tool call with explicit arguments.",
+      "rationale": "This asserts honoring required tool choice with an explicit argument. The API request enforces a call, lookup_order is the only offered tool, and opaque order id ORD-204 appears verbatim in the prompt.",
+      "stream": false,
+      "arguments_match": "exact",
+      "tools": [
+        {
+          "name": "lookup_order",
+          "description": "Look up an order by exact id.",
+          "parameters": {
+            "properties": {
+              "order_id": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "order_id"
+            ],
+            "type": "object"
+          }
+        }
+      ],
+      "tool_choice": {
+        "mode": "required"
+      },
+      "turns": [
+        {
+          "messages": [
+            {
+              "role": "user",
+              "content": "Look up order ORD-204."
+            }
+          ],
+          "expected_calls": [
+            {
+              "name": "lookup_order",
+              "arguments": {
+                "order_id": "ORD-204"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "tool-choice-required-empty",
+      "category": "tool_choice_modes",
+      "description": "Require a call to an empty-argument function.",
+      "rationale": "This asserts honoring required tool choice with an empty schema. The API request enforces at least one call, current_sequence is the only offered tool, and its schema permits no arguments, removing model discretion.",
+      "stream": false,
+      "arguments_match": "exact",
+      "tools": [
+        {
+          "name": "current_sequence",
+          "description": "Get the current sequence number.",
+          "parameters": {
+            "type": "object"
+          }
+        }
+      ],
+      "tool_choice": {
+        "mode": "required"
+      },
+      "turns": [
+        {
+          "messages": [
+            {
+              "role": "user",
+              "content": "Get the current sequence number."
+            }
+          ],
+          "expected_calls": [
+            {
+              "name": "current_sequence",
+              "arguments": {}
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

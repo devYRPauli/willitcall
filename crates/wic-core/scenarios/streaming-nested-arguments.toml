@@ -30,6 +30,7 @@ mode = "named"
 name = "create_marker"
 
 [[turns]]
+response_requirement = "tool_calls"
 [[turns.messages]]
 role = "user"
 content = "Create marker origin-shift at x 4.5 and y -3.25."

@@ -22,6 +22,7 @@ type = "boolean"
 mode = "auto"
 
 [[turns]]
+response_requirement = "tool_calls"
 [[turns.messages]]
 role = "user"
 content = "Enable maintenance mode for the billing service."

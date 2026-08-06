@@ -1,0 +1,497 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://willitcall.dev/schemas/result-v3.schema.json",
+  "title": "willitcall result v3",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "metadata", "scenarios", "totals"],
+  "properties": {
+    "schema_version": {
+      "const": 3
+    },
+    "metadata": {
+      "$ref": "#/$defs/run_metadata"
+    },
+    "scenarios": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/scenario_outcome"
+      }
+    },
+    "totals": {
+      "$ref": "#/$defs/totals"
+    }
+  },
+  "$defs": {
+    "run_metadata": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "run_id",
+        "timestamp",
+        "willitcall_version",
+        "endpoint",
+        "model",
+        "corpus",
+        "server",
+        "environment",
+        "sampling",
+        "replication",
+        "arm_fingerprint"
+      ],
+      "properties": {
+        "run_id": {
+          "type": "string"
+        },
+        "timestamp": {
+          "type": "string"
+        },
+        "willitcall_version": {
+          "type": "string"
+        },
+        "endpoint": {
+          "type": "string"
+        },
+        "model": {
+          "$ref": "#/$defs/model_metadata"
+        },
+        "corpus": {
+          "$ref": "#/$defs/corpus_metadata"
+        },
+        "server": {
+          "$ref": "#/$defs/server_metadata"
+        },
+        "environment": {
+          "$ref": "#/$defs/environment_metadata"
+        },
+        "sampling": {
+          "$ref": "#/$defs/sampling_params"
+        },
+        "replication": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/replication_metadata"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "arm_fingerprint": {
+          "type": ["string", "null"]
+        },
+        "preflight_override": {
+          "$ref": "#/$defs/preflight_override"
+        },
+        "preflight_ignored_ports": {
+          "$ref": "#/$defs/preflight_ignored_ports"
+        }
+      }
+    },
+    "model_metadata": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "display_name",
+        "family_id",
+        "canonical_id",
+        "parameter_count_b",
+        "endpoint_id",
+        "identity_status",
+        "artifact"
+      ],
+      "properties": {
+        "display_name": {
+          "type": "string"
+        },
+        "family_id": {
+          "type": ["string", "null"]
+        },
+        "canonical_id": {
+          "type": ["string", "null"]
+        },
+        "parameter_count_b": {
+          "type": ["number", "null"],
+          "minimum": 0
+        },
+        "endpoint_id": {
+          "type": "string"
+        },
+        "identity_status": {
+          "enum": ["verified", "declared", "unresolved"]
+        },
+        "artifact": {
+          "$ref": "#/$defs/artifact_metadata"
+        }
+      }
+    },
+    "artifact_metadata": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "source_kind",
+        "source_id",
+        "revision",
+        "sha256",
+        "format",
+        "quantization"
+      ],
+      "properties": {
+        "source_kind": {
+          "enum": ["huggingface", "ollama", "local_file", "other"]
+        },
+        "source_id": {
+          "type": ["string", "null"]
+        },
+        "revision": {
+          "type": ["string", "null"]
+        },
+        "sha256": {
+          "type": ["string", "null"]
+        },
+        "format": {
+          "enum": ["gguf", "mlx", "safetensors", "ollama_blob", "unknown"]
+        },
+        "quantization": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/quantization_metadata"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      }
+    },
+    "quantization_metadata": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["label", "scheme", "bits"],
+      "properties": {
+        "label": {
+          "type": "string"
+        },
+        "scheme": {
+          "type": ["string", "null"]
+        },
+        "bits": {
+          "type": ["integer", "null"],
+          "minimum": 0,
+          "maximum": 255
+        }
+      }
+    },
+    "corpus_metadata": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "revision", "sha256", "scenario_count", "scoring_version"],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "revision": {
+          "type": "string"
+        },
+        "sha256": {
+          "type": "string"
+        },
+        "scenario_count": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4294967295
+        },
+        "scoring_version": {
+          "type": "string"
+        }
+      }
+    },
+    "server_metadata": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "preset_name",
+        "reported_version",
+        "quirk_flags",
+        "decode_mode",
+        "chat_template",
+        "launch_config_sha256"
+      ],
+      "properties": {
+        "preset_name": {
+          "type": "string"
+        },
+        "reported_version": {
+          "type": ["string", "null"]
+        },
+        "quirk_flags": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "decode_mode": {
+          "enum": ["grammar_constrained", "unconstrained_post_hoc", "unknown"]
+        },
+        "chat_template": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/chat_template_metadata"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "launch_config_sha256": {
+          "type": ["string", "null"]
+        }
+      }
+    },
+    "chat_template_metadata": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "sha256"],
+      "properties": {
+        "id": {
+          "type": ["string", "null"]
+        },
+        "sha256": {
+          "type": ["string", "null"]
+        }
+      }
+    },
+    "environment_metadata": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "display_label",
+        "os_name",
+        "os_version",
+        "architecture",
+        "accelerator",
+        "memory_bytes"
+      ],
+      "properties": {
+        "display_label": {
+          "type": "string"
+        },
+        "os_name": {
+          "type": ["string", "null"]
+        },
+        "os_version": {
+          "type": ["string", "null"]
+        },
+        "architecture": {
+          "type": ["string", "null"]
+        },
+        "accelerator": {
+          "type": ["string", "null"]
+        },
+        "memory_bytes": {
+          "type": ["integer", "null"],
+          "minimum": 0
+        }
+      }
+    },
+    "sampling_params": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["temperature", "top_p", "seed", "max_tokens"],
+      "properties": {
+        "temperature": {
+          "type": ["number", "null"]
+        },
+        "top_p": {
+          "type": ["number", "null"]
+        },
+        "seed": {
+          "type": ["integer", "null"],
+          "minimum": 0
+        },
+        "max_tokens": {
+          "type": ["integer", "null"],
+          "minimum": 0,
+          "maximum": 4294967295
+        }
+      }
+    },
+    "replication_metadata": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["study_id", "arm_id", "run_index", "mode"],
+      "properties": {
+        "study_id": {
+          "type": "string"
+        },
+        "arm_id": {
+          "type": "string"
+        },
+        "run_index": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4294967295
+        },
+        "mode": {
+          "enum": ["greedy_reproducibility", "seed_varied_variance"]
+        }
+      }
+    },
+    "preflight_override": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["forced", "foreign_endpoints"],
+      "properties": {
+        "forced": {
+          "const": true
+        },
+        "foreign_endpoints": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "preflight_ignored_ports": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "integer",
+        "minimum": 1,
+        "maximum": 65535
+      }
+    },
+    "scenario_outcome": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "category",
+        "status",
+        "failure_reason",
+        "failure",
+        "evidence_hash",
+        "evidence_path",
+        "retried"
+      ],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "category": {
+          "enum": [
+            "single_call",
+            "parallel_calls",
+            "streaming",
+            "tool_choice_modes",
+            "multi_turn",
+            "negative_trap"
+          ]
+        },
+        "status": {
+          "enum": ["pass", "fail", "error", "skipped"]
+        },
+        "failure_reason": {
+          "type": ["string", "null"]
+        },
+        "failure": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/scenario_failure"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "failure_class": {
+          "enum": ["empty_response", "unparsed_tool_call"]
+        },
+        "cause": {
+          "$ref": "#/$defs/cause"
+        },
+        "evidence_hash": {
+          "type": ["string", "null"]
+        },
+        "evidence_path": {
+          "type": ["string", "null"]
+        },
+        "retried": {
+          "type": "boolean"
+        }
+      }
+    },
+    "scenario_failure": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["stage", "code", "http_status", "failed_turn_index"],
+      "properties": {
+        "stage": {
+          "type": "string"
+        },
+        "code": {
+          "type": "string"
+        },
+        "http_status": {
+          "type": ["integer", "null"],
+          "minimum": 100,
+          "maximum": 599
+        },
+        "failed_turn_index": {
+          "type": ["integer", "null"],
+          "minimum": 0,
+          "maximum": 4294967295
+        }
+      }
+    },
+    "cause": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "reference", "note"],
+      "properties": {
+        "kind": {
+          "enum": ["server-defect", "unknown"]
+        },
+        "reference": {
+          "type": ["string", "null"]
+        },
+        "note": {
+          "type": ["string", "null"]
+        }
+      }
+    },
+    "totals": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["total", "passed", "failed", "errors", "skipped"],
+      "properties": {
+        "total": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4294967295
+        },
+        "passed": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4294967295
+        },
+        "failed": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4294967295
+        },
+        "errors": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4294967295
+        },
+        "skipped": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4294967295
+        }
+      }
+    }
+  }
+}

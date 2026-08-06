@@ -19,7 +19,7 @@
               "role": "user"
             }
           ],
-          "model": "/Users/bbadmin/.ollama/models/blobs/sha256-44d19d212d76a6f3fc442e8411fdb44ea6b67ceccfb00be4b4345c9a4cf813e8",
+          "model": "sha256-44d19d212d76a6f3fc442e8411fdb44ea6b67ceccfb00be4b4345c9a4cf813e8",
           "seed": 42,
           "stream": false,
           "temperature": 0.0,
@@ -56,7 +56,7 @@
           "keep-alive": "timeout=5, max=100",
           "server": "llama.cpp"
         },
-        "body_raw": "{\"choices\":[{\"finish_reason\":\"stop\",\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"<tool_call>[{\\\"arguments\\\": {\\\"query\\\": \\\"alpha protocol\\\"}, \\\"name\\\": \\\"search_docs\\\"}, {\\\"arguments\\\": {\\\"query\\\": \\\"beta protocol\\\"}, \\\"name\\\": \\\"search_docs\\\"}]\"}}],\"created\":1784559602,\"model\":\"/Users/bbadmin/.ollama/models/blobs/sha256-44d19d212d76a6f3fc442e8411fdb44ea6b67ceccfb00be4b4345c9a4cf813e8\",\"system_fingerprint\":\"b10050-b15ca938a\",\"object\":\"chat.completion\",\"usage\":{\"completion_tokens\":42,\"prompt_tokens\":225,\"total_tokens\":267,\"prompt_tokens_details\":{\"cached_tokens\":133}},\"id\":\"chatcmpl-qhgrP26z3qsZ9vHuesBX0nUjf299T5wx\",\"timings\":{\"cache_n\":133,\"prompt_n\":92,\"prompt_ms\":138.028,\"prompt_per_token_ms\":1.500304347826087,\"prompt_per_second\":666.5314284058308,\"predicted_n\":42,\"predicted_ms\":521.954,\"predicted_per_token_ms\":12.42747619047619,\"predicted_per_second\":80.46686106438499}}"
+        "body_raw": "{\"choices\":[{\"finish_reason\":\"stop\",\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"<tool_call>[{\\\"arguments\\\": {\\\"query\\\": \\\"alpha protocol\\\"}, \\\"name\\\": \\\"search_docs\\\"}, {\\\"arguments\\\": {\\\"query\\\": \\\"beta protocol\\\"}, \\\"name\\\": \\\"search_docs\\\"}]\"}}],\"created\":1784559602,\"model\":\"sha256-44d19d212d76a6f3fc442e8411fdb44ea6b67ceccfb00be4b4345c9a4cf813e8\",\"system_fingerprint\":\"b10050-b15ca938a\",\"object\":\"chat.completion\",\"usage\":{\"completion_tokens\":42,\"prompt_tokens\":225,\"total_tokens\":267,\"prompt_tokens_details\":{\"cached_tokens\":133}},\"id\":\"chatcmpl-qhgrP26z3qsZ9vHuesBX0nUjf299T5wx\",\"timings\":{\"cache_n\":133,\"prompt_n\":92,\"prompt_ms\":138.028,\"prompt_per_token_ms\":1.500304347826087,\"prompt_per_second\":666.5314284058308,\"predicted_n\":42,\"predicted_ms\":521.954,\"predicted_per_token_ms\":12.42747619047619,\"predicted_per_second\":80.46686106438499}}"
       },
       "retried": false
     }

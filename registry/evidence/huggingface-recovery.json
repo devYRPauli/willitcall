@@ -1,0 +1,169 @@
+{
+  "records": [
+    {
+      "subject": "llamacpp-qwen2.5-1.5b-instruct-q3_k_m.json",
+      "model_id": "Qwen/Qwen2.5-1.5B-Instruct-GGUF:Q3_K_M",
+      "status": "recovered",
+      "source": "GET https://huggingface.co/api/models/Qwen/Qwen2.5-1.5B-Instruct-GGUF (.sha and .cardData.base_model)",
+      "captured_at": "2026-08-05T18:01:51Z",
+      "artifact_repository": "Qwen/Qwen2.5-1.5B-Instruct-GGUF",
+      "revision": "91cad51170dc346986eccefdc2dd33a9da36ead9",
+      "revision_scope": "repository_head_at_capture",
+      "upstream_canonical_checkpoint": "Qwen/Qwen2.5-1.5B-Instruct"
+    },
+    {
+      "subject": "llamacpp-qwen2.5-1.5b-instruct-q4_k_m.json",
+      "model_id": "Qwen/Qwen2.5-1.5B-Instruct-GGUF:Q4_K_M",
+      "status": "recovered",
+      "source": "GET https://huggingface.co/api/models/Qwen/Qwen2.5-1.5B-Instruct-GGUF (.sha and .cardData.base_model)",
+      "captured_at": "2026-08-05T18:01:51Z",
+      "artifact_repository": "Qwen/Qwen2.5-1.5B-Instruct-GGUF",
+      "revision": "91cad51170dc346986eccefdc2dd33a9da36ead9",
+      "revision_scope": "repository_head_at_capture",
+      "upstream_canonical_checkpoint": "Qwen/Qwen2.5-1.5B-Instruct"
+    },
+    {
+      "subject": "llamacpp-qwen2.5-1.5b-instruct-q8_0.json",
+      "model_id": "Qwen/Qwen2.5-1.5B-Instruct-GGUF:Q8_0",
+      "status": "recovered",
+      "source": "GET https://huggingface.co/api/models/Qwen/Qwen2.5-1.5B-Instruct-GGUF (.sha and .cardData.base_model)",
+      "captured_at": "2026-08-05T18:01:51Z",
+      "artifact_repository": "Qwen/Qwen2.5-1.5B-Instruct-GGUF",
+      "revision": "91cad51170dc346986eccefdc2dd33a9da36ead9",
+      "revision_scope": "repository_head_at_capture",
+      "upstream_canonical_checkpoint": "Qwen/Qwen2.5-1.5B-Instruct"
+    },
+    {
+      "subject": "llamacpp-qwen2.5-7b-instruct-q3_k_m.json",
+      "model_id": "Qwen/Qwen2.5-7B-Instruct-GGUF:Q3_K_M",
+      "status": "recovered",
+      "source": "GET https://huggingface.co/api/models/Qwen/Qwen2.5-7B-Instruct-GGUF (.sha and .cardData.base_model)",
+      "captured_at": "2026-08-05T18:01:51Z",
+      "artifact_repository": "Qwen/Qwen2.5-7B-Instruct-GGUF",
+      "revision": "bb5d59e06d9551d752d08b292a50eb208b07ab1f",
+      "revision_scope": "repository_head_at_capture",
+      "upstream_canonical_checkpoint": "Qwen/Qwen2.5-7B-Instruct"
+    },
+    {
+      "subject": "llamacpp-qwen2.5-7b-instruct-q4_k_m.json",
+      "model_id": "Qwen/Qwen2.5-7B-Instruct-GGUF:Q4_K_M",
+      "status": "recovered",
+      "source": "GET https://huggingface.co/api/models/Qwen/Qwen2.5-7B-Instruct-GGUF (.sha and .cardData.base_model)",
+      "captured_at": "2026-08-05T18:01:51Z",
+      "artifact_repository": "Qwen/Qwen2.5-7B-Instruct-GGUF",
+      "revision": "bb5d59e06d9551d752d08b292a50eb208b07ab1f",
+      "revision_scope": "repository_head_at_capture",
+      "upstream_canonical_checkpoint": "Qwen/Qwen2.5-7B-Instruct"
+    },
+    {
+      "subject": "llamacpp-qwen2.5-7b-instruct-q8_0.json",
+      "model_id": "Qwen/Qwen2.5-7B-Instruct-GGUF:Q8_0",
+      "status": "recovered",
+      "source": "GET https://huggingface.co/api/models/Qwen/Qwen2.5-7B-Instruct-GGUF (.sha and .cardData.base_model)",
+      "captured_at": "2026-08-05T18:01:51Z",
+      "artifact_repository": "Qwen/Qwen2.5-7B-Instruct-GGUF",
+      "revision": "bb5d59e06d9551d752d08b292a50eb208b07ab1f",
+      "revision_scope": "repository_head_at_capture",
+      "upstream_canonical_checkpoint": "Qwen/Qwen2.5-7B-Instruct"
+    },
+    {
+      "subject": "llamacpp-meta-llama-3.1-8b-instruct-q3_k_m.json",
+      "model_id": "bartowski/Meta-Llama-3.1-8B-Instruct-GGUF:Q3_K_M",
+      "status": "recovered",
+      "source": "GET https://huggingface.co/api/models/bartowski/Meta-Llama-3.1-8B-Instruct-GGUF (.sha and .cardData.base_model)",
+      "captured_at": "2026-08-05T18:01:51Z",
+      "artifact_repository": "bartowski/Meta-Llama-3.1-8B-Instruct-GGUF",
+      "revision": "bf5b95e96dac0462e2a09145ec66cae9a3f12067",
+      "revision_scope": "repository_head_at_capture",
+      "upstream_canonical_checkpoint": "meta-llama/Meta-Llama-3.1-8B-Instruct"
+    },
+    {
+      "subject": "llamacpp-meta-llama-3.1-8b-instruct-q4_k_m.json",
+      "model_id": "bartowski/Meta-Llama-3.1-8B-Instruct-GGUF:Q4_K_M",
+      "status": "recovered",
+      "source": "GET https://huggingface.co/api/models/bartowski/Meta-Llama-3.1-8B-Instruct-GGUF (.sha and .cardData.base_model)",
+      "captured_at": "2026-08-05T18:01:51Z",
+      "artifact_repository": "bartowski/Meta-Llama-3.1-8B-Instruct-GGUF",
+      "revision": "bf5b95e96dac0462e2a09145ec66cae9a3f12067",
+      "revision_scope": "repository_head_at_capture",
+      "upstream_canonical_checkpoint": "meta-llama/Meta-Llama-3.1-8B-Instruct"
+    },
+    {
+      "subject": "llamacpp-meta-llama-3.1-8b-instruct-q8_0.json",
+      "model_id": "bartowski/Meta-Llama-3.1-8B-Instruct-GGUF:Q8_0",
+      "status": "recovered",
+      "source": "GET https://huggingface.co/api/models/bartowski/Meta-Llama-3.1-8B-Instruct-GGUF (.sha and .cardData.base_model)",
+      "captured_at": "2026-08-05T18:01:51Z",
+      "artifact_repository": "bartowski/Meta-Llama-3.1-8B-Instruct-GGUF",
+      "revision": "bf5b95e96dac0462e2a09145ec66cae9a3f12067",
+      "revision_scope": "repository_head_at_capture",
+      "upstream_canonical_checkpoint": "meta-llama/Meta-Llama-3.1-8B-Instruct"
+    },
+    {
+      "subject": "mlx_lm-meta-llama-3.1-8b-instruct-4bit.json",
+      "model_id": "mlx-community/Meta-Llama-3.1-8B-Instruct-4bit",
+      "status": "recovered",
+      "source": "GET https://huggingface.co/api/models/mlx-community/Meta-Llama-3.1-8B-Instruct-4bit (.sha); GET https://huggingface.co/mlx-community/Meta-Llama-3.1-8B-Instruct-4bit/raw/241a666dad6cb93c8ff213d39a7f34a36bf26db4/README.md (conversion source statement)",
+      "captured_at": "2026-08-05T18:01:51Z",
+      "artifact_repository": "mlx-community/Meta-Llama-3.1-8B-Instruct-4bit",
+      "revision": "241a666dad6cb93c8ff213d39a7f34a36bf26db4",
+      "revision_scope": "repository_head_at_capture",
+      "upstream_canonical_checkpoint": "meta-llama/Meta-Llama-3.1-8B-Instruct"
+    },
+    {
+      "subject": "mlx_lm-mistral-7b-instruct-v0.3-4bit.json",
+      "model_id": "mlx-community/Mistral-7B-Instruct-v0.3-4bit",
+      "status": "recovered",
+      "source": "GET https://huggingface.co/api/models/mlx-community/Mistral-7B-Instruct-v0.3-4bit (.sha); GET https://huggingface.co/mlx-community/Mistral-7B-Instruct-v0.3-4bit/raw/a4b8f870474b0eb527f466a03fbc187830d271f5/README.md (conversion source statement)",
+      "captured_at": "2026-08-05T18:01:51Z",
+      "artifact_repository": "mlx-community/Mistral-7B-Instruct-v0.3-4bit",
+      "revision": "a4b8f870474b0eb527f466a03fbc187830d271f5",
+      "revision_scope": "repository_head_at_capture",
+      "upstream_canonical_checkpoint": "mistralai/Mistral-7B-Instruct-v0.3"
+    },
+    {
+      "subject": "mlx_lm-phi4-mini-4bit.json",
+      "model_id": "mlx-community/Phi-4-mini-instruct-4bit",
+      "status": "recovered",
+      "source": "GET https://huggingface.co/api/models/mlx-community/Phi-4-mini-instruct-4bit (.sha); GET https://huggingface.co/mlx-community/Phi-4-mini-instruct-4bit/raw/ac1c269cb4222a4e136a3d09edad301056c1f36a/README.md (conversion source statement)",
+      "captured_at": "2026-08-05T18:01:51Z",
+      "artifact_repository": "mlx-community/Phi-4-mini-instruct-4bit",
+      "revision": "ac1c269cb4222a4e136a3d09edad301056c1f36a",
+      "revision_scope": "repository_head_at_capture",
+      "upstream_canonical_checkpoint": "microsoft/Phi-4-mini-instruct"
+    },
+    {
+      "subject": "mlx_lm-qwen2.5-1.5b-instruct-4bit.json",
+      "model_id": "mlx-community/Qwen2.5-1.5B-Instruct-4bit",
+      "status": "recovered",
+      "source": "GET https://huggingface.co/api/models/mlx-community/Qwen2.5-1.5B-Instruct-4bit (.sha); GET https://huggingface.co/mlx-community/Qwen2.5-1.5B-Instruct-4bit/raw/8b403126fc14f14cfc99bb4cfa72ecbc129ea677/README.md (conversion source statement)",
+      "captured_at": "2026-08-05T18:01:51Z",
+      "artifact_repository": "mlx-community/Qwen2.5-1.5B-Instruct-4bit",
+      "revision": "8b403126fc14f14cfc99bb4cfa72ecbc129ea677",
+      "revision_scope": "repository_head_at_capture",
+      "upstream_canonical_checkpoint": "Qwen/Qwen2.5-1.5B-Instruct"
+    },
+    {
+      "subject": "mlx_lm-qwen2.5-7b-instruct-4bit.json",
+      "model_id": "mlx-community/Qwen2.5-7B-Instruct-4bit",
+      "status": "recovered",
+      "source": "GET https://huggingface.co/api/models/mlx-community/Qwen2.5-7B-Instruct-4bit (.sha); GET https://huggingface.co/mlx-community/Qwen2.5-7B-Instruct-4bit/raw/c26a38f6a37d0a51b4e9a1eb3026530fa35d9fed/README.md (conversion source statement)",
+      "captured_at": "2026-08-05T18:01:51Z",
+      "artifact_repository": "mlx-community/Qwen2.5-7B-Instruct-4bit",
+      "revision": "c26a38f6a37d0a51b4e9a1eb3026530fa35d9fed",
+      "revision_scope": "repository_head_at_capture",
+      "upstream_canonical_checkpoint": "Qwen/Qwen2.5-7B-Instruct"
+    },
+    {
+      "subject": "mlx_lm-qwen2.5-7b-instruct-8bit.json",
+      "model_id": "mlx-community/Qwen2.5-7B-Instruct-8bit",
+      "status": "recovered",
+      "source": "GET https://huggingface.co/api/models/mlx-community/Qwen2.5-7B-Instruct-8bit (.sha); GET https://huggingface.co/mlx-community/Qwen2.5-7B-Instruct-8bit/raw/df11cb390bd674c24a9ddedf19f05bc09f6e0148/README.md (conversion source statement)",
+      "captured_at": "2026-08-05T18:01:51Z",
+      "artifact_repository": "mlx-community/Qwen2.5-7B-Instruct-8bit",
+      "revision": "df11cb390bd674c24a9ddedf19f05bc09f6e0148",
+      "revision_scope": "repository_head_at_capture",
+      "upstream_canonical_checkpoint": "Qwen/Qwen2.5-7B-Instruct"
+    }
+  ]
+}

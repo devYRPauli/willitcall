@@ -24,6 +24,7 @@ type = "string"
 mode = "auto"
 
 [[turns]]
+response_requirement = "tool_calls"
 [[turns.messages]]
 role = "user"
 content = "Tag document doc-17 with exactly alpha, beta, and gamma in that order."

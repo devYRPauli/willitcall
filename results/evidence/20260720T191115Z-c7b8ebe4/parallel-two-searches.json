@@ -19,7 +19,7 @@
               "role": "user"
             }
           ],
-          "model": "/Users/bbadmin/gguf/watt-tool-8B.Q4_K_M.gguf",
+          "model": "watt-tool-8B.Q4_K_M.gguf",
           "seed": 42,
           "stream": false,
           "temperature": 0.0,
@@ -56,7 +56,7 @@
           "keep-alive": "timeout=5, max=100",
           "server": "llama.cpp"
         },
-        "body_raw": "{\"choices\":[{\"finish_reason\":\"stop\",\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"I cannot directly run document searches for 'alpha protocol' and 'beta protocol' as I am a text-based AI assistant and do not have the capability to access or search external documents. However, I can provide general information and definitions for these terms if you need them.\"}}],\"created\":1784574706,\"model\":\"/Users/bbadmin/gguf/watt-tool-8B.Q4_K_M.gguf\",\"system_fingerprint\":\"b10050-b15ca938a\",\"object\":\"chat.completion\",\"usage\":{\"completion_tokens\":55,\"prompt_tokens\":24,\"total_tokens\":79,\"prompt_tokens_details\":{\"cached_tokens\":5}},\"id\":\"chatcmpl-g5GQMgMZ9VdCjP3y1ohUGZOfdb1TNciu\",\"timings\":{\"cache_n\":5,\"prompt_n\":19,\"prompt_ms\":55.6,\"prompt_per_token_ms\":2.9263157894736844,\"prompt_per_second\":341.72661870503595,\"predicted_n\":55,\"predicted_ms\":610.626,\"predicted_per_token_ms\":11.10229090909091,\"predicted_per_second\":90.07150039467695}}"
+        "body_raw": "{\"choices\":[{\"finish_reason\":\"stop\",\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"I cannot directly run document searches for 'alpha protocol' and 'beta protocol' as I am a text-based AI assistant and do not have the capability to access or search external documents. However, I can provide general information and definitions for these terms if you need them.\"}}],\"created\":1784574706,\"model\":\"watt-tool-8B.Q4_K_M.gguf\",\"system_fingerprint\":\"b10050-b15ca938a\",\"object\":\"chat.completion\",\"usage\":{\"completion_tokens\":55,\"prompt_tokens\":24,\"total_tokens\":79,\"prompt_tokens_details\":{\"cached_tokens\":5}},\"id\":\"chatcmpl-g5GQMgMZ9VdCjP3y1ohUGZOfdb1TNciu\",\"timings\":{\"cache_n\":5,\"prompt_n\":19,\"prompt_ms\":55.6,\"prompt_per_token_ms\":2.9263157894736844,\"prompt_per_second\":341.72661870503595,\"predicted_n\":55,\"predicted_ms\":610.626,\"predicted_per_token_ms\":11.10229090909091,\"predicted_per_second\":90.07150039467695}}"
       },
       "retried": false
     }

@@ -20,6 +20,7 @@ mode = "named"
 name = "get_weather"
 
 [[turns]]
+response_requirement = "tool_calls"
 
 [[turns.messages]]
 role = "user"

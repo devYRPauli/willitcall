@@ -19,7 +19,7 @@
               "role": "user"
             }
           ],
-          "model": "/Users/bbadmin/gguf/watt-tool-8B.Q4_K_M.gguf",
+          "model": "watt-tool-8B.Q4_K_M.gguf",
           "seed": 42,
           "stream": false,
           "temperature": 0.0,
@@ -56,7 +56,7 @@
           "keep-alive": "timeout=5, max=100",
           "server": "llama.cpp"
         },
-        "body_raw": "{\"choices\":[{\"finish_reason\":\"stop\",\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"Ready\"}}],\"created\":1784559393,\"model\":\"/Users/bbadmin/gguf/watt-tool-8B.Q4_K_M.gguf\",\"system_fingerprint\":\"b10050-b15ca938a\",\"object\":\"chat.completion\",\"usage\":{\"completion_tokens\":2,\"prompt_tokens\":17,\"total_tokens\":19,\"prompt_tokens_details\":{\"cached_tokens\":5}},\"id\":\"chatcmpl-r3lCk5Nelr3aRrvqK0Zj1LIqpYHhgDu3\",\"timings\":{\"cache_n\":5,\"prompt_n\":12,\"prompt_ms\":54.601,\"prompt_per_token_ms\":4.550083333333333,\"prompt_per_second\":219.7761945751909,\"predicted_n\":2,\"predicted_ms\":12.152,\"predicted_per_token_ms\":6.076,\"predicted_per_second\":164.58196181698486}}"
+        "body_raw": "{\"choices\":[{\"finish_reason\":\"stop\",\"index\":0,\"message\":{\"role\":\"assistant\",\"content\":\"Ready\"}}],\"created\":1784559393,\"model\":\"watt-tool-8B.Q4_K_M.gguf\",\"system_fingerprint\":\"b10050-b15ca938a\",\"object\":\"chat.completion\",\"usage\":{\"completion_tokens\":2,\"prompt_tokens\":17,\"total_tokens\":19,\"prompt_tokens_details\":{\"cached_tokens\":5}},\"id\":\"chatcmpl-r3lCk5Nelr3aRrvqK0Zj1LIqpYHhgDu3\",\"timings\":{\"cache_n\":5,\"prompt_n\":12,\"prompt_ms\":54.601,\"prompt_per_token_ms\":4.550083333333333,\"prompt_per_second\":219.7761945751909,\"predicted_n\":2,\"predicted_ms\":12.152,\"predicted_per_token_ms\":6.076,\"predicted_per_second\":164.58196181698486}}"
       },
       "retried": false
     }

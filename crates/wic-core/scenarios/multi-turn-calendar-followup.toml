@@ -29,6 +29,7 @@ type = "string"
 mode = "auto"
 
 [[turns]]
+response_requirement = "tool_calls"
 [[turns.messages]]
 role = "user"
 content = "Check my calendar on 2026-08-11, then create event Review at the available time."
@@ -39,6 +40,7 @@ name = "get_calendar"
 date = "2026-08-11"
 
 [[turns]]
+response_requirement = "tool_calls"
 [[turns.messages]]
 role = "tool"
 content = '{"available_time":"15:30"}'

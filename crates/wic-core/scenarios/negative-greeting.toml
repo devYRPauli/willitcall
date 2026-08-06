@@ -1,5 +1,6 @@
 id = "negative-greeting"
 category = "negative_trap"
+facets = ["abstention"]
 description = "Do not call a tool for a simple greeting."
 rationale = "This asserts honoring a no-tools request for a greeting. The API request enforces tool_choice none, so tool calls are forbidden and the unscored wording of the short text reply cannot cause a false red."
 
@@ -18,6 +19,7 @@ type = "string"
 mode = "none"
 
 [[turns]]
+response_requirement = "text_without_tool_calls"
 
 [[turns.messages]]
 role = "user"

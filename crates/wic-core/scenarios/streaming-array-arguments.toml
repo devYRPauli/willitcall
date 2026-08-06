@@ -23,6 +23,7 @@ mode = "named"
 name = "fetch_records"
 
 [[turns]]
+response_requirement = "tool_calls"
 [[turns.messages]]
 role = "user"
 content = "Fetch record ids r-2, r-5, and r-9 in that order."

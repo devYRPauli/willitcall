@@ -1,0 +1,331 @@
+{
+  "records": [
+    {
+      "subject": "ollama-qwen3-0.6b.json",
+      "model_id": "qwen3:0.6b",
+      "status": "recovered",
+      "source": "ssh macstudio: shasum -a 256 saved manifest for qwen3:0.6b; jq model layer; jq .file_type from config blob sha256:b0830f4ff6a0220cfd995455206353b0ed23c0aee865218b154b7a75087b4e55",
+      "captured_at": "2026-08-05T18:01:51Z",
+      "manifest_digest": "sha256:7df6b6e09427a769808717c0a93cadc4ae99ed4eb8bf5ca557c90846becea435",
+      "model_layer_blob_digest": "sha256:7f4030143c1c477224c5434f8272c662a8b042079a0a584f0a27a1684fe2e1fa",
+      "gguf_metadata_source": "ssh macstudio python3 -: read-only Python 3 parser decoded the GGUF header directly from sha256-7f4030143c1c477224c5434f8272c662a8b042079a0a584f0a27a1684fe2e1fa; inspected general.name, general.basename, general.organization, general.finetune, general.size_label, and general.version",
+      "gguf_metadata_captured_at": "2026-08-06T02:34:30Z",
+      "gguf_metadata": {
+        "version": 3,
+        "tensor_count": 311,
+        "kv_count": 28,
+        "upstream_identity": {
+          "general.basename": "Qwen3",
+          "general.name": "Qwen3 0.6B",
+          "general.size_label": "0.6B"
+        }
+      },
+      "upstream_canonical_checkpoint": "Qwen/Qwen3-0.6B",
+      "canonical_mapping_basis": "Declared inference from GGUF upstream identity labels; the labels are not repository identifiers.",
+      "declared_quantization": "Q4_K_M"
+    },
+    {
+      "subject": "ollama-qwen3-1.7b.json",
+      "model_id": "qwen3:1.7b",
+      "status": "recovered",
+      "source": "ssh macstudio: shasum -a 256 saved manifest for qwen3:1.7b; jq model layer; jq .file_type from config blob sha256:517ccaff02fe9f99718ab2f478e611aa2813c36263eeed86c2427bc122d14ad8",
+      "captured_at": "2026-08-05T18:01:51Z",
+      "manifest_digest": "sha256:8f68893c685c3ddff2aa3fffce2aa60a30bb2da65ca488b61fff134a4d1730e7",
+      "model_layer_blob_digest": "sha256:3d0b790534fe4b79525fc3692950408dca41171676ed7e21db57af5c65ef6ab6",
+      "gguf_metadata_source": "ssh macstudio python3 -: read-only Python 3 parser decoded the GGUF header directly from sha256-3d0b790534fe4b79525fc3692950408dca41171676ed7e21db57af5c65ef6ab6; inspected general.name, general.basename, general.organization, general.finetune, general.size_label, and general.version",
+      "gguf_metadata_captured_at": "2026-08-06T02:34:30Z",
+      "gguf_metadata": {
+        "version": 3,
+        "tensor_count": 311,
+        "kv_count": 27,
+        "upstream_identity": {
+          "general.basename": "Qwen3",
+          "general.name": "Qwen3 1.7B",
+          "general.size_label": "1.7B"
+        }
+      },
+      "upstream_canonical_checkpoint": "Qwen/Qwen3-1.7B",
+      "canonical_mapping_basis": "Declared inference from GGUF upstream identity labels; the labels are not repository identifiers.",
+      "declared_quantization": "Q4_K_M"
+    },
+    {
+      "subject": "ollama-qwen3-4b.json",
+      "model_id": "qwen3:4b",
+      "status": "recovered",
+      "source": "ssh macstudio: shasum -a 256 saved manifest for qwen3:4b; jq model layer; jq .file_type from config blob sha256:e18a783aae5525fd2852fc94c985541a77e791e034abc2d3056474d59de336fc",
+      "captured_at": "2026-08-05T18:01:51Z",
+      "manifest_digest": "sha256:359d7dd4bcdab3d86b87d73ac27966f4dbb9f5efdfcc75d34a8764a09474fae7",
+      "model_layer_blob_digest": "sha256:3e4cb14174460404e7a233e531675303b2fbf7749c02f91864fe311ab6344e4f",
+      "gguf_metadata_source": "ssh macstudio python3 -: read-only Python 3 parser decoded the GGUF header directly from sha256-3e4cb14174460404e7a233e531675303b2fbf7749c02f91864fe311ab6344e4f; inspected general.name, general.basename, general.organization, general.finetune, general.size_label, and general.version",
+      "gguf_metadata_captured_at": "2026-08-06T02:34:30Z",
+      "gguf_metadata": {
+        "version": 3,
+        "tensor_count": 398,
+        "kv_count": 33,
+        "upstream_identity": {
+          "general.basename": "Qwen3",
+          "general.finetune": "Thinking",
+          "general.name": "Qwen3 4B Thinking 2507",
+          "general.size_label": "4B",
+          "general.version": "2507"
+        }
+      },
+      "upstream_canonical_checkpoint": "Qwen/Qwen3-4B-Thinking-2507",
+      "canonical_mapping_basis": "Declared inference from GGUF upstream identity labels; the labels are not repository identifiers.",
+      "declared_quantization": "Q4_K_M"
+    },
+    {
+      "subject": "ollama-qwen3-8b.json",
+      "model_id": "qwen3:8b",
+      "status": "recovered",
+      "source": "ssh macstudio: shasum -a 256 saved manifest for qwen3:8b; jq model layer; jq .file_type from config blob sha256:05a61d37b08453e59290add468e3bb2f688e23a01e967fecb0e2fa41218cea76",
+      "captured_at": "2026-08-05T18:01:51Z",
+      "manifest_digest": "sha256:500a1f067a9f782620b40bee6f7b0c89e17ae61f686b92c24933e4ca4b2b8b41",
+      "model_layer_blob_digest": "sha256:a3de86cd1c132c822487ededd47a324c50491393e6565cd14bafa40d0b8e686f",
+      "gguf_metadata_source": "ssh macstudio python3 -: read-only Python 3 parser decoded the GGUF header directly from sha256-a3de86cd1c132c822487ededd47a324c50491393e6565cd14bafa40d0b8e686f; inspected general.name, general.basename, general.organization, general.finetune, general.size_label, and general.version",
+      "gguf_metadata_captured_at": "2026-08-06T02:34:30Z",
+      "gguf_metadata": {
+        "version": 3,
+        "tensor_count": 399,
+        "kv_count": 28,
+        "upstream_identity": {
+          "general.basename": "Qwen3",
+          "general.name": "Qwen3 8B",
+          "general.size_label": "8B"
+        }
+      },
+      "upstream_canonical_checkpoint": "Qwen/Qwen3-8B",
+      "canonical_mapping_basis": "Declared inference from GGUF upstream identity labels; the labels are not repository identifiers.",
+      "declared_quantization": "Q4_K_M"
+    },
+    {
+      "subject": "ollama-qwen3-14b.json",
+      "model_id": "qwen3:14b",
+      "status": "recovered",
+      "source": "ssh macstudio: shasum -a 256 saved manifest for qwen3:14b; jq model layer; jq .file_type from config blob sha256:78b3b822087d5199783c8203553a5a92ce5eb7b683a5a81003f8efea9b399d74",
+      "captured_at": "2026-08-05T18:01:51Z",
+      "manifest_digest": "sha256:bdbd181c33f2ed1b31c972991882db3cf4d192569092138a7d29e973cd9debe8",
+      "model_layer_blob_digest": "sha256:a8cc1361f3145dc01f6d77c6c82c9116b9ffe3c97b34716fe20418455876c40e",
+      "gguf_metadata_source": "ssh macstudio python3 -: read-only Python 3 parser decoded the GGUF header directly from sha256-a8cc1361f3145dc01f6d77c6c82c9116b9ffe3c97b34716fe20418455876c40e; inspected general.name, general.basename, general.organization, general.finetune, general.size_label, and general.version",
+      "gguf_metadata_captured_at": "2026-08-06T02:34:30Z",
+      "gguf_metadata": {
+        "version": 3,
+        "tensor_count": 443,
+        "kv_count": 27,
+        "upstream_identity": {
+          "general.basename": "Qwen3",
+          "general.name": "Qwen3 14B",
+          "general.size_label": "14B"
+        }
+      },
+      "upstream_canonical_checkpoint": "Qwen/Qwen3-14B",
+      "canonical_mapping_basis": "Declared inference from GGUF upstream identity labels; the labels are not repository identifiers.",
+      "declared_quantization": "Q4_K_M"
+    },
+    {
+      "subject": "ollama-qwen2.5-7b-instruct.json",
+      "model_id": "qwen2.5:7b-instruct",
+      "status": "recovered",
+      "source": "ssh macstudio: shasum -a 256 saved manifest for qwen2.5:7b-instruct; jq model layer; jq .file_type from config blob sha256:2f15b3218f0552c60647ce60ada83632d2c09755b16259b13e3e4458e9ae419d",
+      "captured_at": "2026-08-05T18:01:51Z",
+      "manifest_digest": "sha256:845dbda0ea48ed749caafd9e6037047aa19acfcfd82e704d7ca97d631a0b697e",
+      "model_layer_blob_digest": "sha256:2bada8a7450677000f678be90653b85d364de7db25eb5ea54136ada5f3933730",
+      "gguf_metadata_source": "ssh macstudio python3 -: read-only Python 3 parser decoded the GGUF header directly from sha256-2bada8a7450677000f678be90653b85d364de7db25eb5ea54136ada5f3933730; inspected general.name, general.basename, general.organization, general.finetune, general.size_label, and general.version",
+      "gguf_metadata_captured_at": "2026-08-06T02:34:30Z",
+      "gguf_metadata": {
+        "version": 3,
+        "tensor_count": 339,
+        "kv_count": 34,
+        "upstream_identity": {
+          "general.basename": "Qwen2.5",
+          "general.finetune": "Instruct",
+          "general.name": "Qwen2.5 7B Instruct",
+          "general.size_label": "7B"
+        }
+      },
+      "upstream_canonical_checkpoint": "Qwen/Qwen2.5-7B-Instruct",
+      "canonical_mapping_basis": "Declared inference from GGUF upstream identity labels; the labels are not repository identifiers.",
+      "declared_quantization": "Q4_K_M"
+    },
+    {
+      "subject": "ollama-hermes3-8b.json",
+      "model_id": "hermes3:8b",
+      "status": "recovered",
+      "source": "ssh macstudio: shasum -a 256 saved manifest for hermes3:8b; jq model layer; jq .file_type from config blob sha256:9dfddf59cf5a85558d8b782db72c12e934b9b539ae48af03861938e4c383c167",
+      "captured_at": "2026-08-05T18:01:51Z",
+      "manifest_digest": "sha256:4f6b83f30b62bc3d0cf9be09266db222805ee815c8fd7d8b38f863f655be78b7",
+      "model_layer_blob_digest": "sha256:c8985d236593f7a17da2a3da49588aa951a9b1e57ce97753364fbf59e63af84a",
+      "gguf_metadata_source": "ssh macstudio python3 -: read-only Python 3 parser decoded the GGUF header directly from sha256-c8985d236593f7a17da2a3da49588aa951a9b1e57ce97753364fbf59e63af84a; inspected general.name, general.basename, general.organization, general.finetune, general.size_label, and general.version",
+      "gguf_metadata_captured_at": "2026-08-06T02:34:30Z",
+      "gguf_metadata": {
+        "version": 3,
+        "tensor_count": 292,
+        "kv_count": 36,
+        "upstream_identity": {
+          "general.basename": "Hermes-3-Llama-3.1",
+          "general.name": "Hermes 3 Llama 3.1 8B",
+          "general.organization": "NousResearch",
+          "general.size_label": "8B"
+        }
+      },
+      "upstream_canonical_checkpoint": "NousResearch/Hermes-3-Llama-3.1-8B",
+      "canonical_mapping_basis": "Declared inference from GGUF upstream identity labels; the labels are not repository identifiers.",
+      "declared_quantization": "Q4_0"
+    },
+    {
+      "subject": "ollama-llama3-groq-tool-use-8b.json",
+      "model_id": "llama3-groq-tool-use:8b",
+      "status": "recovered",
+      "source": "ssh macstudio: shasum -a 256 saved manifest for llama3-groq-tool-use:8b; jq model layer; jq .file_type from config blob sha256:c9300739186a798fe2514859db9235794bd09330c5b62b278a4c4ff34298661b",
+      "captured_at": "2026-08-05T18:01:51Z",
+      "manifest_digest": "sha256:36211dad2b153f09fe2b0c5f3e4e82ee83d27db68e3a00006cd934dfdc5057a4",
+      "model_layer_blob_digest": "sha256:23e78d0ea1ab895bcbe63a12422a731cfd2b1a8bd124a1c91790b2b9c3fc9d14",
+      "gguf_metadata_source": "ssh macstudio python3 -: read-only Python 3 parser decoded the GGUF header directly from sha256-23e78d0ea1ab895bcbe63a12422a731cfd2b1a8bd124a1c91790b2b9c3fc9d14; inspected general.name, general.basename, general.organization, general.finetune, general.size_label, and general.version",
+      "gguf_metadata_captured_at": "2026-08-06T02:34:30Z",
+      "gguf_metadata": {
+        "version": 3,
+        "tensor_count": 291,
+        "kv_count": 24,
+        "upstream_identity": {
+          "general.name": "Llama-3-Groq-8B-Tool-Use"
+        }
+      },
+      "upstream_canonical_checkpoint": "Groq/Llama-3-Groq-8B-Tool-Use",
+      "canonical_mapping_basis": "Declared inference from GGUF upstream identity labels; the labels are not repository identifiers.",
+      "declared_quantization": "Q4_0"
+    },
+    {
+      "subject": "ollama-llama3.1-8b.json",
+      "model_id": "llama3.1:8b",
+      "status": "recovered",
+      "source": "ssh macstudio: shasum -a 256 saved manifest for llama3.1:8b; jq model layer; jq .file_type from config blob sha256:455f34728c9b5dd3376378bfb809ee166c145b0b4c1f1a6feca069055066ef9a",
+      "captured_at": "2026-08-05T18:01:51Z",
+      "manifest_digest": "sha256:46e0c10c039e019119339687c3c1757cc81b9da49709a3b3924863ba87ca666e",
+      "model_layer_blob_digest": "sha256:667b0c1932bc6ffc593ed1d03f895bf2dc8dc6df21db3042284a6f4416b06a29",
+      "gguf_metadata_source": "ssh macstudio python3 -: read-only Python 3 parser decoded the GGUF header directly from sha256-667b0c1932bc6ffc593ed1d03f895bf2dc8dc6df21db3042284a6f4416b06a29; inspected general.name, general.basename, general.organization, general.finetune, general.size_label, and general.version",
+      "gguf_metadata_captured_at": "2026-08-06T02:34:30Z",
+      "gguf_metadata": {
+        "version": 3,
+        "tensor_count": 292,
+        "kv_count": 29,
+        "upstream_identity": {
+          "general.basename": "Meta-Llama-3.1",
+          "general.finetune": "Instruct",
+          "general.name": "Meta Llama 3.1 8B Instruct",
+          "general.size_label": "8B"
+        }
+      },
+      "upstream_canonical_checkpoint": "meta-llama/Meta-Llama-3.1-8B-Instruct",
+      "canonical_mapping_basis": "Declared inference from GGUF upstream identity labels; the labels are not repository identifiers.",
+      "declared_quantization": "Q4_K_M"
+    },
+    {
+      "subject": "ollama-mistral-7b.json",
+      "model_id": "mistral:7b",
+      "status": "recovered",
+      "source": "ssh macstudio: shasum -a 256 saved manifest for mistral:7b; jq model layer; jq .file_type from config blob sha256:1064e17101bdd2460dd5c4e03e4f5cc1b38a4dee66084dc91faba294ccb64a92",
+      "captured_at": "2026-08-05T18:01:51Z",
+      "manifest_digest": "sha256:6577803aa9a036369e481d648a2baebb381ebc6e897f2bb9a766a2aa7bfbc1cf",
+      "model_layer_blob_digest": "sha256:f5074b1221da0f5a2910d33b642efa5b9eb58cfdddca1c79e16d7ad28aa2b31f",
+      "gguf_metadata_source": "ssh macstudio python3 -: read-only Python 3 parser decoded the GGUF header directly from sha256-f5074b1221da0f5a2910d33b642efa5b9eb58cfdddca1c79e16d7ad28aa2b31f; inspected general.name, general.basename, general.organization, general.finetune, general.size_label, and general.version",
+      "gguf_metadata_captured_at": "2026-08-06T02:34:30Z",
+      "gguf_metadata": {
+        "version": 3,
+        "tensor_count": 291,
+        "kv_count": 25,
+        "upstream_identity": {
+          "general.name": "Mistral-7B-Instruct-v0.3"
+        }
+      },
+      "upstream_canonical_checkpoint": "mistralai/Mistral-7B-Instruct-v0.3",
+      "canonical_mapping_basis": "Declared inference from GGUF upstream identity labels; the labels are not repository identifiers.",
+      "declared_quantization": "Q4_K_M"
+    },
+    {
+      "subject": "ollama-phi4-mini.json",
+      "model_id": "phi4-mini:latest",
+      "status": "recovered",
+      "source": "ssh macstudio: shasum -a 256 saved manifest for phi4-mini:latest; jq model layer; jq .file_type from config blob sha256:8c2539a423c4df2d9d2609fba56e7bad554696b66ed0e280c56e0ef4a32498fa",
+      "captured_at": "2026-08-05T18:01:51Z",
+      "manifest_digest": "sha256:78fad5d182a7c33065e153a5f8ba210754207ba9d91973f57dffa7f487363753",
+      "model_layer_blob_digest": "sha256:3c168af1dea0a414299c7d9077e100ac763370e5a98b3c53801a958a47f0a5db",
+      "gguf_metadata_source": "ssh macstudio python3 -: read-only Python 3 parser decoded the GGUF header directly from sha256-3c168af1dea0a414299c7d9077e100ac763370e5a98b3c53801a958a47f0a5db; inspected general.name, general.basename, general.organization, general.finetune, general.size_label, and general.version",
+      "gguf_metadata_captured_at": "2026-08-06T02:34:30Z",
+      "gguf_metadata": {
+        "version": 3,
+        "tensor_count": 196,
+        "kv_count": 36,
+        "upstream_identity": {
+          "general.basename": "Phi-4",
+          "general.finetune": "instruct",
+          "general.name": "Phi 4 Mini Instruct",
+          "general.size_label": "mini"
+        }
+      },
+      "upstream_canonical_checkpoint": "microsoft/Phi-4-mini-instruct",
+      "canonical_mapping_basis": "Declared inference from GGUF upstream identity labels; the labels are not repository identifiers.",
+      "declared_quantization": "Q4_K_M"
+    },
+    {
+      "subject": "ollama-gemma3-4b.json",
+      "model_id": "gemma3:4b",
+      "status": "recovered",
+      "source": "ssh macstudio: shasum -a 256 saved manifest for gemma3:4b; jq model layer; jq .file_type from config blob sha256:b6ae5839783f2ba248e65e4b960ab15f9c4b7118db285827dba6cba9754759e2",
+      "captured_at": "2026-08-05T18:01:51Z",
+      "manifest_digest": "sha256:a2af6cc3eb7fa8be8504abaf9b04e88f17a119ec3f04a3addf55f92841195f5a",
+      "model_layer_blob_digest": "sha256:aeda25e63ebd698fab8638ffb778e68bed908b960d39d0becc650fa981609d25",
+      "gguf_metadata_source": "ssh macstudio python3 -: read-only Python 3 parser decoded the GGUF header directly from sha256-aeda25e63ebd698fab8638ffb778e68bed908b960d39d0becc650fa981609d25; inspected general.name, general.basename, general.organization, general.finetune, general.size_label, and general.version",
+      "gguf_metadata_captured_at": "2026-08-06T02:34:30Z",
+      "gguf_metadata": {
+        "version": 3,
+        "tensor_count": 883,
+        "kv_count": 35,
+        "upstream_identity": {}
+      },
+      "declared_quantization": "Q4_K_M"
+    },
+    {
+      "subject": "ollama-gemma3-12b.json",
+      "model_id": "gemma3:12b",
+      "status": "recovered",
+      "source": "ssh macstudio: shasum -a 256 saved manifest for gemma3:12b; jq model layer; jq .file_type from config blob sha256:6819964c2bcf53f6dd3593f9571e91cbf2bab9665493f870f96eeb29873049b4",
+      "captured_at": "2026-08-05T18:01:51Z",
+      "manifest_digest": "sha256:f4031aab637d1ffa37b42570452ae0e4fad0314754d17ded67322e4b95836f8a",
+      "model_layer_blob_digest": "sha256:e8ad13eff07a78d89926e9e8b882317d082ef5bf9768ad7b50fcdbbcd63748de",
+      "gguf_metadata_source": "ssh macstudio python3 -: read-only Python 3 parser decoded the GGUF header directly from sha256-e8ad13eff07a78d89926e9e8b882317d082ef5bf9768ad7b50fcdbbcd63748de; inspected general.name, general.basename, general.organization, general.finetune, general.size_label, and general.version",
+      "gguf_metadata_captured_at": "2026-08-06T02:34:30Z",
+      "gguf_metadata": {
+        "version": 3,
+        "tensor_count": 1065,
+        "kv_count": 36,
+        "upstream_identity": {}
+      },
+      "declared_quantization": "Q4_K_M"
+    },
+    {
+      "subject": "ollama-granite3.1-dense-8b.json",
+      "model_id": "granite3.1-dense:8b",
+      "status": "recovered",
+      "source": "ssh macstudio: shasum -a 256 saved manifest for granite3.1-dense:8b; jq model layer; jq .file_type from config blob sha256:f9cd69f4077ded7838ccb42fb335e73d5b51dc9ab9e481c7396a9c9ed24dfa34",
+      "captured_at": "2026-08-05T18:01:51Z",
+      "manifest_digest": "sha256:34d3be74ec547c3e1969a9ea125e1869f052f7cfd3d0bbbb5aa5e42ec033108c",
+      "model_layer_blob_digest": "sha256:44d19d212d76a6f3fc442e8411fdb44ea6b67ceccfb00be4b4345c9a4cf813e8",
+      "gguf_metadata_source": "ssh macstudio python3 -: read-only Python 3 parser decoded the GGUF header directly from sha256-44d19d212d76a6f3fc442e8411fdb44ea6b67ceccfb00be4b4345c9a4cf813e8; inspected general.name, general.basename, general.organization, general.finetune, general.size_label, and general.version",
+      "gguf_metadata_captured_at": "2026-08-06T02:34:30Z",
+      "gguf_metadata": {
+        "version": 3,
+        "tensor_count": 362,
+        "kv_count": 40,
+        "upstream_identity": {
+          "general.basename": "granite-3.1",
+          "general.finetune": "instruct",
+          "general.name": "Granite 3.1 8b Instruct",
+          "general.size_label": "8B"
+        }
+      },
+      "upstream_canonical_checkpoint": "ibm-granite/granite-3.1-8b-instruct",
+      "canonical_mapping_basis": "Declared inference from GGUF upstream identity labels; the labels are not repository identifiers.",
+      "declared_quantization": "Q4_K_M"
+    }
+  ]
+}
