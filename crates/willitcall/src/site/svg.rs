@@ -4,6 +4,48 @@ const DENSE_MARK_SIZE: u32 = 13;
 const AGGREGATE_MARK_SIZE: u32 = 44;
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub(super) struct FigureAccessibility<'a> {
+    pub title: &'a str,
+    pub description: &'a str,
+}
+
+/// A closed set of figure primitives. Each variant requires the same accessibility
+/// contract, and the module exposes no alternate complete-SVG renderer.
+#[allow(dead_code)] // Brief 8 constructs the first production figure.
+pub(super) enum Figure<'a> {
+    StatusMarks {
+        accessibility: FigureAccessibility<'a>,
+        width: u32,
+        height: u32,
+        marks: &'a [StatusMark<'a>],
+    },
+    AggregateMarks {
+        accessibility: FigureAccessibility<'a>,
+        width: u32,
+        height: u32,
+        marks: &'a [AggregateMark<'a>],
+    },
+}
+
+pub(super) fn render_figure(figure: Figure<'_>) -> String {
+    match figure {
+        Figure::StatusMarks {
+            accessibility,
+            width,
+            height,
+            marks,
+        } => render_status_marks(accessibility, width, height, marks),
+        Figure::AggregateMarks {
+            accessibility,
+            width,
+            height,
+            marks,
+        } => render_aggregate_marks(accessibility, width, height, marks),
+    }
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+#[allow(dead_code)] // Brief 8 maps result statuses into these production marks.
 pub(super) enum MarkState {
     Pass,
     Fail,
@@ -42,9 +84,8 @@ pub(super) struct AggregateMark<'a> {
 }
 
 /// Renders prepared 13 px status marks. Positions and statuses are supplied by the caller.
-pub(super) fn render_status_marks(
-    title: &str,
-    description: &str,
+fn render_status_marks(
+    accessibility: FigureAccessibility<'_>,
     width: u32,
     height: u32,
     marks: &[StatusMark<'_>],
@@ -67,8 +108,7 @@ pub(super) fn render_status_marks(
     }
 
     render_accessible_figure(
-        title,
-        description,
+        accessibility,
         width,
         height,
         &body,
@@ -78,9 +118,8 @@ pub(super) fn render_status_marks(
 }
 
 /// Renders prepared 44 px aggregate cells. The caller explicitly selects `no_verdict` per cell.
-pub(super) fn render_aggregate_marks(
-    title: &str,
-    description: &str,
+fn render_aggregate_marks(
+    accessibility: FigureAccessibility<'_>,
     width: u32,
     height: u32,
     marks: &[AggregateMark<'_>],
@@ -130,8 +169,7 @@ pub(super) fn render_aggregate_marks(
     }
 
     render_accessible_figure(
-        title,
-        description,
+        accessibility,
         width,
         height,
         &body,
@@ -141,7 +179,7 @@ pub(super) fn render_aggregate_marks(
 }
 
 /// Returns only the aggregate-cell overlay so dense raster renderers cannot apply it implicitly.
-pub(super) fn render_no_verdict_overlay(x: u32, y: u32) -> String {
+fn render_no_verdict_overlay(x: u32, y: u32) -> String {
     let mut overlay =
         String::from("      <g class=\"no-verdict-overlay\" aria-label=\"n=1, no verdict\">\n");
     let end = AGGREGATE_MARK_SIZE;
@@ -226,8 +264,7 @@ fn write_mark_shape(svg: &mut String, state: MarkState, x: u32, y: u32, size: u3
 }
 
 fn render_accessible_figure(
-    title: &str,
-    description: &str,
+    accessibility: FigureAccessibility<'_>,
     width: u32,
     height: u32,
     body: &str,
@@ -238,9 +275,9 @@ fn render_accessible_figure(
     write!(
         figure,
         "<figure class=\"svg-figure\">\n  <svg role=\"img\" width=\"{width}\" height=\"{height}\" viewBox=\"0 0 {width} {height}\">\n    <title>{}</title>\n    <desc>{}</desc>\n{body}  </svg>\n  <table class=\"svg-text-fallback\">\n    <caption>{}</caption>\n    <thead><tr>",
-        escape_html(title),
-        escape_html(description),
-        escape_html(title)
+        escape_html(accessibility.title),
+        escape_html(accessibility.description),
+        escape_html(accessibility.title)
     )
     .expect("write SVG figure");
     for header in headers {
@@ -280,27 +317,31 @@ mod tests {
     use super::*;
 
     fn render_one_status(state: MarkState, label: &str) -> String {
-        render_status_marks(
-            "Status figure",
-            "One prepared status mark.",
-            DENSE_MARK_SIZE,
-            DENSE_MARK_SIZE,
-            &[StatusMark {
+        render_figure(Figure::StatusMarks {
+            accessibility: FigureAccessibility {
+                title: "Status figure",
+                description: "One prepared status mark.",
+            },
+            width: DENSE_MARK_SIZE,
+            height: DENSE_MARK_SIZE,
+            marks: &[StatusMark {
                 x: 0,
                 y: 0,
                 label,
                 state,
             }],
-        )
+        })
     }
 
     fn aggregate(no_verdict: bool) -> String {
-        render_aggregate_marks(
-            "Aggregate figure",
-            "One prepared aggregate mark.",
-            AGGREGATE_MARK_SIZE,
-            AGGREGATE_MARK_SIZE,
-            &[AggregateMark {
+        render_figure(Figure::AggregateMarks {
+            accessibility: FigureAccessibility {
+                title: "Aggregate figure",
+                description: "One prepared aggregate mark.",
+            },
+            width: AGGREGATE_MARK_SIZE,
+            height: AGGREGATE_MARK_SIZE,
+            marks: &[AggregateMark {
                 x: 0,
                 y: 0,
                 label: "single call",
@@ -309,7 +350,7 @@ mod tests {
                 measured: 1,
                 no_verdict,
             }],
-        )
+        })
     }
 
     #[test]
@@ -384,7 +425,7 @@ mod tests {
 
     #[test]
     fn stylesheet_defines_light_and_dark_instrument_tokens() {
-        let style = super::super::STYLE;
+        let style = super::super::html::STYLE;
         for declaration in [
             "--design-paper: #fcfbf9",
             "--design-ink: #1c1c1c",
