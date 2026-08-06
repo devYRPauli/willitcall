@@ -4,8 +4,8 @@ use std::path::{Path, PathBuf};
 
 use wic_core::corpus::{corpus_identity, load_frozen_v1_catalog};
 use wic_core::result::{
-    parse_and_validate_measurement, Cause, IdentityStatus, Measurement, MeasurementMetadata,
-    ReplicationMode, ScenarioFailure, Status,
+    parse_and_validate_measurement, Cause, DecodeMode, IdentityStatus, Measurement,
+    MeasurementMetadata, ReplicationMode, ScenarioFailure, Status,
 };
 use wic_core::{load_scenarios_from_dir, Scenario, ScenarioCategory};
 
@@ -34,6 +34,7 @@ pub(super) struct StackRow {
     pub(super) metadata: MeasurementMetadata,
     pub(super) display_name: String,
     pub(super) endpoint_display: String,
+    pub(super) decode_mode: DecodeMode,
     pub(super) scenarios: Vec<ScenarioView>,
     pub(super) category_counts: CategoryCounts,
 }
@@ -45,6 +46,43 @@ impl StackRow {
         } else {
             self.metadata.model.canonical_id.as_deref()
         }
+    }
+}
+
+impl SiteDataset {
+    pub(super) fn replication_count(&self, row_index: usize) -> usize {
+        let row = &self.rows[row_index];
+        let (Some(replication), Some(fingerprint)) = (
+            row.metadata.replication.as_ref(),
+            row.metadata.arm_fingerprint.as_ref(),
+        ) else {
+            return 1;
+        };
+        self.rows
+            .iter()
+            .filter(|candidate| {
+                candidate.metadata.arm_fingerprint.as_ref() == Some(fingerprint)
+                    && candidate
+                        .metadata
+                        .replication
+                        .as_ref()
+                        .is_some_and(|other| {
+                            other.study_id == replication.study_id
+                                && other.arm_id == replication.arm_id
+                                && other.mode == replication.mode
+                        })
+            })
+            .map(|candidate| {
+                candidate
+                    .metadata
+                    .replication
+                    .as_ref()
+                    .expect("filtered replicated row")
+                    .run_index
+            })
+            .collect::<HashSet<_>>()
+            .len()
+            .max(1)
     }
 }
 
@@ -139,6 +177,7 @@ pub(super) struct ScenarioView {
     pub(super) cause: Option<Cause>,
     pub(super) evidence_hash: Option<String>,
     pub(super) evidence_path: Option<String>,
+    pub(super) retried: bool,
 }
 
 #[allow(dead_code)] // Rendered analysis views are introduced in brief 8.
@@ -262,15 +301,31 @@ fn stack_row(
     let category_counts = CategoryCounts::from_scenarios(&scenarios);
     let display_name = safe_display_id(&measurement.metadata.model.display_name);
     let endpoint_display = safe_display_id(&measurement.metadata.model.endpoint_id);
+    let decode_mode = effective_decode_mode(
+        measurement.metadata.server.decode_mode,
+        &measurement.metadata.server.preset_name,
+    );
     Ok(StackRow {
         file_name,
         schema_version: measurement.schema_version,
         metadata: measurement.metadata,
         display_name,
         endpoint_display,
+        decode_mode,
         scenarios,
         category_counts,
     })
+}
+
+fn effective_decode_mode(recorded: DecodeMode, server: &str) -> DecodeMode {
+    if recorded != DecodeMode::Unknown {
+        return recorded;
+    }
+    match server {
+        "llamacpp" => DecodeMode::GrammarConstrained,
+        "ollama" | "mlx_lm" => DecodeMode::UnconstrainedPostHoc,
+        _ => DecodeMode::Unknown,
+    }
 }
 
 fn join_scenarios(
@@ -318,6 +373,7 @@ fn join_scenarios(
                 cause: outcome.cause.clone(),
                 evidence_hash: outcome.evidence_hash.clone(),
                 evidence_path: outcome.evidence_path.clone(),
+                retried: outcome.retried,
             })
         })
         .collect()
@@ -422,13 +478,15 @@ fn category_index(category: ScenarioCategory) -> usize {
 
 #[cfg(test)]
 mod tests {
-    use wic_core::result::{CorpusMetadata, MeasurementScenarioOutcome, ScenarioFailure, Status};
+    use wic_core::result::{
+        CorpusMetadata, DecodeMode, MeasurementScenarioOutcome, ScenarioFailure, Status,
+    };
     use wic_core::result::{ReplicationMetadata, ReplicationMode};
     use wic_core::{ArgumentsMatch, Scenario, ScenarioCategory, ToolChoice};
 
     use super::{
-        join_scenarios, select_catalog, stack_row, study_views, Catalog, CategoryCounts,
-        CATALOG_UNAVAILABLE,
+        effective_decode_mode, join_scenarios, select_catalog, stack_row, study_views, Catalog,
+        CategoryCounts, CATALOG_UNAVAILABLE,
     };
 
     fn scenario(id: &str, category: ScenarioCategory) -> Scenario {
@@ -564,6 +622,24 @@ mod tests {
         );
         assert_eq!(counts.measurement_coverage, 0.5);
         assert_eq!(counts.macro_category_pass_rate, None);
+    }
+
+    #[test]
+    fn legacy_unknown_decode_modes_use_the_server_decode_class_for_layout() {
+        assert_eq!(
+            effective_decode_mode(DecodeMode::Unknown, "llamacpp"),
+            DecodeMode::GrammarConstrained
+        );
+        for server in ["ollama", "mlx_lm"] {
+            assert_eq!(
+                effective_decode_mode(DecodeMode::Unknown, server),
+                DecodeMode::UnconstrainedPostHoc
+            );
+        }
+        assert_eq!(
+            effective_decode_mode(DecodeMode::Unknown, "custom"),
+            DecodeMode::Unknown
+        );
     }
 
     #[test]

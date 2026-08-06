@@ -551,7 +551,7 @@ fn render_accessible_figure(
     let mut figure = String::new();
     write!(
         figure,
-        "<figure class=\"svg-figure\" data-figure-number=\"{}\">\n  <figcaption>\n    <strong>Figure {}. {}</strong>\n    <span>{}</span>\n    <span class=\"does-not-show\"><strong>What this does not show:</strong> {}</span>\n  </figcaption>\n  <div class=\"figure-scroll\">\n  <svg role=\"img\" width=\"{width}\" height=\"{height}\" viewBox=\"0 0 {width} {height}\">\n    <title>Figure {}. {}</title>\n    <desc>{}</desc>\n{body}  </svg>\n  </div>\n  <table class=\"svg-text-fallback\">\n    <caption>Figure {}. {}</caption>\n    <thead><tr>",
+        "<figure class=\"svg-figure\" data-figure-number=\"{}\">\n  <figcaption>\n    <strong>Figure {}. {}</strong>\n    <span>{}</span>\n    <span class=\"does-not-show\"><strong>What this does not show:</strong> {}</span>\n    <a class=\"figure-method-link\" href=\"#method-limitations\">Method and limitations</a>\n  </figcaption>\n  <div class=\"figure-scroll\">\n  <svg role=\"img\" width=\"{width}\" height=\"{height}\" viewBox=\"0 0 {width} {height}\">\n    <title>Figure {}. {}</title>\n    <desc>{}</desc>\n{body}  </svg>\n  </div>\n  <table class=\"svg-text-fallback\">\n    <caption>Figure {}. {}</caption>\n    <thead><tr>",
         accessibility.number,
         accessibility.number,
         escape_html(accessibility.title),
@@ -739,5 +739,10 @@ mod tests {
         ] {
             assert!(style.contains(declaration), "missing {declaration}");
         }
+        assert!(style.contains("font-family: \"IBM Plex Sans\", \"Helvetica Neue\""));
+        assert!(style.contains("font-family: \"IBM Plex Mono\""));
+        assert!(!style.contains("@import"));
+        assert!(!style.contains("fonts.googleapis"));
+        assert!(!style.contains("fonts.gstatic"));
     }
 }
