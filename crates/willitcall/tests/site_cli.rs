@@ -140,7 +140,31 @@ fn site_contract_golden_matches_post_migration_renderer() {
     );
 
     let index = fs::read(output.join("index.html")).expect("generated index");
-    assert_eq!(index, SITE_CONTRACT_GOLDEN);
+    assert_eq!(
+        normalize_build_hash(&index),
+        normalize_build_hash(SITE_CONTRACT_GOLDEN)
+    );
+}
+
+/// The colophon states which build produced the page, so it changes whenever the
+/// generator does. Comparing it here would make this golden fail on every code
+/// change and train whoever hits it to regenerate without reading the diff, which
+/// is the one thing a golden exists to prevent.
+fn normalize_build_hash(html: &[u8]) -> String {
+    let text = String::from_utf8_lossy(html);
+    let mut out = String::with_capacity(text.len());
+    let mut rest: &str = &text;
+    while let Some(start) = rest.find("Build hash <code>") {
+        let after = start + "Build hash <code>".len();
+        let Some(end) = rest[after..].find("</code>") else {
+            break;
+        };
+        out.push_str(&rest[..after]);
+        out.push_str("NORMALIZED");
+        rest = &rest[after + end..];
+    }
+    out.push_str(rest);
+    out
 }
 
 #[test]
@@ -177,6 +201,37 @@ fn analysis_views_render_the_published_observation_contract() {
     }
     assert!(!index.contains("/Users/"));
     assert!(!index.contains("<script src=\"http"));
+    assert!(!index.contains("View 50 scenarios and row metadata"));
+    assert!(!index.contains("class=\"detail-row\""));
+    assert_eq!(index.matches("class=\"detail-link\"").count(), 32);
+    assert_eq!(index.matches("class=\"stack-detail\"").count(), 32);
+    assert_eq!(index.matches("class=\"mini-raster-panel\"").count(), 6);
+    assert_eq!(index.matches("class=\"replication-note\"").count(), 32 * 6);
+    assert!(index.contains("id=\"model-search\" type=\"search\""));
+    assert!(index.contains("data-decode-mode=\"grammar_constrained\""));
+    assert!(index.contains("data-decode-mode=\"unconstrained_post_hoc\""));
+    for (id, label) in [
+        ("single_call", "Single call"),
+        ("tool_choice_modes", "Tool choice"),
+        ("negative_trap", "Correctly declines"),
+        ("multi_turn", "Multi-turn"),
+        ("parallel_calls", "Parallel calls"),
+        ("streaming", "Streaming"),
+    ] {
+        assert!(index.contains(&format!("title=\"{id}\">{label}</th>")));
+    }
+
+    let matrix = index.find("class=\"matrix\"").expect("matrix");
+    let first_figure = index.find("data-figure-number=\"1\"").expect("figure 1");
+    let second_figure = index.find("data-figure-number=\"2\"").expect("figure 2");
+    let methods = index
+        .find("id=\"method-limitations\"")
+        .expect("method section");
+    let appendix = index.find("id=\"stack-appendix\"").expect("appendix");
+    assert!(matrix < first_figure);
+    assert!(first_figure < second_figure);
+    assert!(second_figure < methods);
+    assert!(methods < appendix);
 
     assert!(svgs[0].contains("Figure 1. Scenario-status raster"));
     assert!(svgs[0].contains("single-weather: Call one weather tool with a city argument."));
@@ -320,10 +375,12 @@ fn site_generates_v1_and_v2_rows_ratios_links_and_badges() {
     assert!(output.join("style.css").is_file());
     assert!(output.join("site.js").is_file());
     assert_eq!(index.matches("class=\"result-row\"").count(), 3);
+    assert!(index.contains("id=\"model-search\" type=\"search\""));
     assert!(index.contains("data-server=\"ollama\""));
     assert!(index.contains("data-server=\"llamacpp\""));
-    assert!(index.contains("<option value=\"mlx_lm\">MLX LM</option>"));
     assert!(index.contains("data-server=\"mlx_lm\""));
+    assert!(index.contains("data-decode-mode=\"grammar_constrained\""));
+    assert!(index.contains("data-decode-mode=\"unconstrained_post_hoc\""));
     assert!(index.contains("server: MLX LM"));
     assert!(index.contains("blob-model"));
     assert!(index.contains("quant: Q4_K_M"));
@@ -357,6 +414,10 @@ fn site_generates_v1_and_v2_rows_ratios_links_and_badges() {
     assert!(index.contains("Host OS"));
     assert!(index.contains("macOS 15.5"));
     assert!(index.contains("docs/case-studies/"));
+    assert!(!index.contains("class=\"detail-row\""));
+    assert!(!index.contains("View 50 scenarios and row metadata"));
+    assert_eq!(index.matches("class=\"detail-link\"").count(), 3);
+    assert_eq!(index.matches("class=\"stack-detail\"").count(), 3);
     assert!(!index.contains("<script src=\"http"));
 
     assert!(submit.contains("cargo run -p willitcall -- run"));
@@ -458,7 +519,7 @@ fn site_uses_registry_identity_and_excludes_unresolved_rows_from_grouping() {
     let index = fs::read_to_string(output.join("index.html")).expect("generated index");
     assert!(index.contains("<strong>qwen3:14b</strong>"));
     assert!(!index.contains("<strong>filename-derived-label</strong>"));
-    assert!(index.contains("canonical id: Qwen/Qwen3-14B"));
+    assert!(index.contains("<dt>Canonical id</dt><dd><code>Qwen/Qwen3-14B</code>"));
     assert!(index.contains("quant: Q4_K_M"));
     assert!(index.contains("identity status: declared"));
     assert!(index.contains("data-cross-model-key=\"Qwen/Qwen3-14B\""));
@@ -470,7 +531,7 @@ fn site_uses_registry_identity_and_excludes_unresolved_rows_from_grouping() {
     assert!(!unresolved_group.contains("data-cross-model-key"));
     assert!(index.contains("<strong>gemma3:4b</strong>"));
     assert!(!index.contains("<strong>invented-filename-identity</strong>"));
-    assert!(index.contains("canonical id: not established"));
+    assert!(index.contains("<dt>Canonical id</dt><dd><code>not established</code>"));
     assert!(index.contains(
         "identity status: unresolved (provenance could not be established; excluded from cross-model comparison)"
     ));
@@ -543,8 +604,8 @@ fn site_uses_one_global_environment_statement_when_uniform() {
     let index = fs::read_to_string(output.join("index.html")).expect("generated index");
     assert_eq!(index.matches("Measurement environment:").count(), 1);
     assert!(index.contains("Measurement environment: Apple M4 Max, 64GB; macOS 15.5."));
-    assert!(!index.contains("<dt>Host hardware</dt>"));
-    assert!(!index.contains("<dt>Host OS</dt>"));
+    assert_eq!(index.matches("<dt>Host hardware</dt>").count(), 2);
+    assert_eq!(index.matches("<dt>Host OS</dt>").count(), 2);
 }
 
 #[test]
@@ -633,12 +694,14 @@ fn all_error_category_is_not_measurable() {
     );
 
     let index = fs::read_to_string(output.join("index.html")).expect("generated index");
+    assert!(index.contains("class=\"score not-measurable low-replication\""));
     assert!(index.contains(
-        "class=\"score not-measurable\" aria-label=\"single_call: 0 passed, 0 failed, 13 errors, 0 skipped\""
+        "aria-label=\"single_call: 0 passed, 0 failed, 13 errors, 0 skipped; n=1, no verdict\""
     ));
+    assert!(index.contains("class=\"score none-pass low-replication\""));
     assert!(index.contains(
-        "class=\"score none-pass\" aria-label=\"single_call: 0 passed, 13 failed, 0 errors, 0 skipped\""
+        "aria-label=\"single_call: 0 passed, 13 failed, 0 errors, 0 skipped; n=1, no verdict\""
     ));
     assert!(index.contains("<span class=\"measurement-state\">not measurable</span>"));
-    assert!(index.contains("<i class=\"swatch not-measurable\"></i>not measurable"));
+    assert!(index.contains("<i class=\"state-key state-error\"></i>execution / server error"));
 }

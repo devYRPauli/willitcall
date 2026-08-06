@@ -1,6 +1,11 @@
+use std::collections::{BTreeMap, BTreeSet};
 use std::fmt::Write as _;
+use std::path::Path;
 
-use wic_core::result::{CauseKind, EnvironmentMetadataV3, IdentityStatus, Status};
+use wic_core::result::{
+    ArtifactFormat, ArtifactSourceKind, CauseKind, DecodeMode, EnvironmentMetadataV3,
+    IdentityStatus, ReplicationMode, Status,
+};
 use wic_core::ScenarioCategory;
 
 use super::data::{ScenarioView, SiteDataset, StackRow, CATEGORIES};
@@ -90,11 +95,6 @@ pub(super) fn render_figure(figure: svg::Figure<'_>) -> String {
 
 pub(super) fn render_index(dataset: &SiteDataset, repo_base: &str) -> String {
     let results = &dataset.rows;
-    let scenario_count = dataset.scenario_count;
-    let case_studies_url = format!("{repo_base}/tree/main/docs/case-studies");
-    let peg_native_case_study_url = format!(
-        "{repo_base}/blob/main/docs/case-studies/2026-07-21-llamacpp-500s-on-llama-3.1-tool-calls.md"
-    );
     let uniform_environment = results
         .first()
         .and_then(|result| result.metadata.environment.as_ref())
@@ -107,88 +107,74 @@ pub(super) fn render_index(dataset: &SiteDataset, repo_base: &str) -> String {
                     .is_some_and(|candidate| same_environment(candidate, environment))
             })
         });
-    let environment_statement = uniform_environment
-        .map(render_environment_statement)
-        .unwrap_or_default();
     let mut main = String::new();
     write!(
         main,
-        r#"    <section class="methods" aria-labelledby="page-title">
-      <p class="eyebrow">Measured compatibility</p>
+        r#"    <section class="register-intro" aria-labelledby="page-title">
+      <p class="eyebrow">Measurement register</p>
       <h1 id="page-title">Tool-calling support matrix</h1>
-      <p>A cell measures the whole stack: model x quant x server x server version. It is not a property of the model alone.</p>
-      <p>Red means the combination failed as tested, not that the weights are bad. The same weights can pass on one server and fail on another; where that is proven, the cell carries a cause annotation.</p>
-      <p>Every red cell links to the full request/response transcript that produced it when the result schema supplies a transcript path. Legacy schema v1 results do not record transcript paths. See the <a href="{}">case studies under docs/case-studies/</a> for controlled comparisons.</p>
-      <p>The servers do not decode the same way. llama.cpp compiles the supplied tool definitions into a GBNF grammar and constrains decoding with it, so a call naming a function that was never supplied cannot be sampled there. Ollama and MLX LM generate unconstrained text and parse the tool call out of it afterwards. This systematically favours llama.cpp, so a llama.cpp-versus-Ollama difference is a property of the combination, not evidence of a server defect or a difference between models; the comparison that isolates the model is same-server.</p>
-      <p>Sample size and method: {} distinct scenarios are represented in this result set. Each published cell is one run. Findings in the case studies are replicated across at least five runs per arm before a verdict is drawn, so a cell tells you what one run measured and a case study tells you what held up under repetition. The current case studies cover {}.</p>
-      <h2>Excluded rows</h2>
-      <ul>
-        <li>Meta-Llama-3.1-8B-Instruct on llama.cpp (Q8_0, Q4_K_M, Q3_K_M) is excluded from the quantization conclusion because llama.cpp returns HTTP 500 on 7-9 of 50 scenarios per run for this model ("does not match the expected peg-native format"). These are server errors, not model failures, and are not comparable across arms. See the <a href="{}">peg-native case study</a>.</li>
-      </ul>
+      <p class="framing">Each row is one observed model, artifact, server, and decode stack—not a model ranking or a verdict.</p>
 {}
     </section>"#,
-        escape_html(&case_studies_url),
-        scenario_count,
-        CASE_STUDY_SAMPLE_SUMMARY,
-        escape_html(&peg_native_case_study_url),
-        environment_statement,
+        render_reading_legend(),
     )
     .expect("write HTML");
-    main.push('\n');
-    main.push('\n');
-    main.push_str(&super::analysis::render(dataset));
-    main.push('\n');
-    main.push('\n');
-    main.push_str(&render_table(
-        dataset,
-        repo_base,
-        uniform_environment.is_none(),
-    ));
+    main.push_str(&render_table(dataset, repo_base));
+    main.push_str(&super::analysis::render_primary(dataset));
+    main.push_str(&super::analysis::render_secondary(dataset));
+    main.push_str(&render_methodology(dataset, repo_base, uniform_environment));
+    main.push_str(&render_appendix(dataset, repo_base));
+
+    let footer = render_colophon(dataset, &main);
 
     render_page_shell(PageShell {
-        description:
-            "Measured tool-calling support by model, quant, server, and server version.",
+        description: "Measured tool-calling support by model, quant, server, and server version.",
         title: "willitcall support matrix",
         current_page: Page::Matrix,
         main_class: None,
         main: &main,
-        footer: "  <footer>\n    <p>Read ratios as passed scenarios / total scenarios in the category.</p>\n  </footer>\n",
+        footer: &footer,
         script: Some("  <script src=\"site.js\"></script>\n"),
     })
 }
 
-pub(super) fn render_table(
-    dataset: &SiteDataset,
-    repo_base: &str,
-    disclose_environment: bool,
-) -> String {
+fn render_reading_legend() -> String {
+    r#"      <div class="reading-key" aria-labelledby="reading-key-title">
+        <h2 id="reading-key-title">How to read this</h2>
+        <div class="mark-key" aria-label="Scenario outcome marks">
+          <span><i class="state-key state-pass"></i>pass</span>
+          <span><i class="state-key state-fail"></i>model / response failure</span>
+          <span><i class="state-key state-error"></i>execution / server error</span>
+          <span><i class="state-key state-skipped"></i>not tested</span>
+        </div>
+        <div class="method-key">
+          <span><i class="hatch-key"></i>n&lt;5, no verdict</span>
+          <span class="decode-badge grammar_constrained">grammar_constrained</span>
+          <span class="decode-badge unconstrained_post_hoc">unconstrained_post_hoc</span>
+        </div>
+      </div>
+"#
+    .to_owned()
+}
+
+pub(super) fn render_table(dataset: &SiteDataset, repo_base: &str) -> String {
     let mut html = String::new();
     write!(
         html,
         r#"    <section class="matrix" aria-labelledby="matrix-title">
       <div class="matrix-heading">
         <div>
-          <p class="eyebrow">Current results</p>
-          <h2 id="matrix-title">Scenario groups</h2>
+          <p class="eyebrow">Observed stacks</p>
+          <h2 id="matrix-title">Capability matrix</h2>
         </div>
-        <label for="server-filter">Server
-          <select id="server-filter">
-            <option value="all">All</option>
-            <option value="ollama">Ollama</option>
-            <option value="llamacpp">llama.cpp</option>
-            <option value="mlx_lm">MLX LM</option>
-          </select>
+        <label for="model-search">Find a model
+          <input id="model-search" type="search" autocomplete="off" placeholder="e.g. Qwen2.5" aria-describedby="filter-status">
         </label>
       </div>
-      <div class="legend" aria-label="Cell status legend">
-        <span><i class="swatch all-pass"></i>all pass</span>
-        <span><i class="swatch partial"></i>partial</span>
-        <span><i class="swatch none-pass"></i>none pass</span>
-        <span><i class="swatch not-measurable"></i>not measurable</span>
-      </div>
-      <p id="filter-status" class="filter-status" aria-live="polite">Showing {} result files.</p>
+      <p class="matrix-note">Ratios are passed scenarios / scenarios in the category. All published arms are hatched because they have fewer than five runs.</p>
+      <p id="filter-status" class="filter-status" aria-live="polite">Showing {} stacks.</p>
       <div class="table-scroll">
-        <table>
+        <table class="matrix-table">
           <thead>
             <tr>
               <th scope="col">Model / quant / server</th>
@@ -199,8 +185,9 @@ pub(super) fn render_table(
     for category in CATEGORIES {
         writeln!(
             html,
-            "              <th scope=\"col\"><code>{}</code></th>",
-            category
+            "              <th scope=\"col\" title=\"{}\">{}</th>",
+            category,
+            category_label(category)
         )
         .expect("write HTML");
     }
@@ -209,17 +196,32 @@ pub(super) fn render_table(
           </thead>
 "#,
     );
-
-    let column_count = 1 + CATEGORIES.len();
-    for (index, result_file) in dataset.rows.iter().enumerate() {
-        render_result_rows(
-            &mut html,
-            index,
-            result_file,
-            repo_base,
-            disclose_environment,
-            column_count,
-        );
+    for (model_key, row_indices) in grouped_row_indices(dataset) {
+        let first = &dataset.rows[row_indices[0]];
+        let model_label = model_group_label(first);
+        let search_text = model_search_text(dataset, &row_indices);
+        writeln!(
+            html,
+            "          <tbody class=\"model-group result-group\" data-model-key=\"{}\" data-model-search=\"{}\">\n            <tr class=\"model-heading\"><th colspan=\"7\" scope=\"rowgroup\"><span>Model</span> {}</th></tr>",
+            escape_html(&model_key),
+            escape_html(&search_text),
+            escape_html(&model_label),
+        )
+        .expect("write model group");
+        let mut current_band: Option<(DecodeMode, String)> = None;
+        for index in row_indices {
+            let row = &dataset.rows[index];
+            let band = (row.decode_mode, row.metadata.server.preset_name.as_str());
+            if current_band
+                .as_ref()
+                .is_none_or(|current| current.0 != band.0 || current.1 != band.1)
+            {
+                render_decode_boundary(&mut html, row.decode_mode, band.1);
+                current_band = Some((band.0, band.1.to_owned()));
+            }
+            render_result_row(&mut html, dataset, index, row, repo_base);
+        }
+        html.push_str("          </tbody>\n");
     }
 
     html.push_str(
@@ -230,19 +232,33 @@ pub(super) fn render_table(
     html
 }
 
-fn render_result_rows(
+fn render_decode_boundary(html: &mut String, decode_mode: DecodeMode, server: &str) {
+    let id = decode_mode_id(decode_mode);
+    let note = match decode_mode {
+        DecodeMode::GrammarConstrained => "tool grammar constrains generation",
+        DecodeMode::UnconstrainedPostHoc => "generated text is parsed after decoding",
+        DecodeMode::Unknown => "decode behavior was not established",
+    };
+    writeln!(
+        html,
+        "            <tr class=\"decode-band {id}\" data-decode-mode=\"{id}\" data-server-band=\"{}\"><th colspan=\"7\" scope=\"rowgroup\"><span class=\"decode-badge {id}\">{id}</span><span>{} · {note}</span></th></tr>",
+        escape_html(server),
+        escape_html(display_server(server)),
+    )
+    .expect("write decode band");
+}
+
+fn render_result_row(
     html: &mut String,
+    dataset: &SiteDataset,
     index: usize,
     result: &StackRow,
     repo_base: &str,
-    disclose_environment: bool,
-    column_count: usize,
 ) {
     let server = &result.metadata.server.preset_name;
     let server_display = display_server(server);
     let model = &result.metadata.model;
     let identity_status = display_identity_status(model.identity_status);
-    let canonical_id = result.cross_model_key().unwrap_or("not established");
     let cross_model_attribute = result
         .cross_model_key()
         .map(|key| format!(" data-cross-model-key=\"{}\"", escape_html(key)))
@@ -260,28 +276,13 @@ fn render_result_rows(
         .as_ref()
         .map(|quantization| quantization.label.as_str())
         .unwrap_or("not declared");
-    let details_id = format!("result-details-{index}");
-    let environment_metadata = if disclose_environment {
-        let environment = result.metadata.environment.as_ref();
-        let (host_hardware, host_os) = environment
-            .map(environment_display_parts)
-            .unwrap_or(("not recorded", "not recorded"));
-        format!(
-            "                    <div><dt>Host hardware</dt><dd>{}</dd></div>\n                    <div><dt>Host OS</dt><dd>{}</dd></div>\n",
-            escape_html(host_hardware),
-            escape_html(host_os)
-        )
-    } else {
-        String::new()
-    };
     write!(
         html,
-        "          <tbody class=\"result-group\" data-server=\"{}\" data-identity-status=\"{}\"{}>\n            <tr class=\"result-row\">\n              <th scope=\"row\">\n                <strong>{}</strong>\n                <span>canonical id: {}</span>\n                <span>quant: {}</span>\n                <span>server: {}</span>\n                <span>identity status: {}{}</span>\n              </th>\n",
+        "            <tr class=\"result-row\" data-server=\"{}\" data-identity-status=\"{}\"{}>\n              <th scope=\"row\">\n                <strong>{}</strong>\n                <span>quant: {} · server: {}</span>\n                <span>identity status: {}{}</span>\n                <a class=\"detail-link\" href=\"#stack-detail-{index}\">detail</a>\n              </th>\n",
         escape_html(server),
         identity_status,
         cross_model_attribute,
         escape_html(&result.display_name),
-        escape_html(canonical_id),
         escape_html(quant),
         escape_html(server_display),
         identity_status,
@@ -289,70 +290,93 @@ fn render_result_rows(
     )
     .expect("write HTML");
 
+    let replication_count = dataset.replication_count(index);
     for category in CATEGORIES {
-        render_category_cell(html, result, category, repo_base);
+        render_category_cell(html, result, category, repo_base, replication_count);
     }
+    html.push_str("            </tr>\n");
+}
 
-    write!(
-        html,
-        "            </tr>\n            <tr class=\"detail-row\">\n              <td colspan=\"{column_count}\">\n                <details id=\"{details_id}\">\n                  <summary>View {} scenarios and row metadata</summary>\n                  <dl class=\"metadata\">\n                    <div><dt>Result file</dt><dd><code>{}</code></dd></div>\n                    <div><dt>Endpoint id</dt><dd><code>{}</code></dd></div>\n                    <div><dt>Identity status</dt><dd>{}</dd></div>\n                    <div><dt>Artifact quant</dt><dd>{}</dd></div>\n                    <div><dt>Server</dt><dd>{} {}</dd></div>\n                    <div><dt>Schema</dt><dd>v{}</dd></div>\n                    <div><dt>Run time</dt><dd>{}</dd></div>\n{}                  </dl>\n                  <ol class=\"scenario-list\">\n",
-        result.scenarios.len(),
-        escape_html(&result.file_name),
-        escape_html(&result.endpoint_display),
-        identity_status,
-        escape_html(quant),
-        escape_html(server_display),
-        escape_html(
-            result
-                .metadata
-                .server
-                .reported_version
-                .as_deref()
-                .unwrap_or("version not reported")
-        ),
-        result.schema_version,
-        escape_html(&result.metadata.timestamp),
-        environment_metadata
-    )
-    .expect("write HTML");
-
-    for scenario in &result.scenarios {
-        let status = display_status(scenario.status);
-        write!(
-            html,
-            "                    <li class=\"scenario status-{status}\"><code>{}</code> <span class=\"status-label\">{status}</span>",
-            escape_html(&scenario.id)
-        )
-        .expect("write HTML");
-        if let Some(reason) = scenario.failure_reason.as_deref() {
-            write!(
-                html,
-                " <span class=\"failure-reason\">{}</span>",
-                escape_html(reason)
-            )
-            .expect("write HTML");
-        }
-        if let Some(evidence_path) = scenario.evidence_path.as_deref() {
-            let url = evidence_url(repo_base, evidence_path);
-            write!(
-                html,
-                " <a class=\"transcript\" href=\"{}\">transcript</a>",
-                escape_html(&url)
-            )
-            .expect("write HTML");
-        }
-        render_annotation(html, result.schema_version, scenario, repo_base);
-        html.push_str("</li>\n");
+fn grouped_row_indices(dataset: &SiteDataset) -> Vec<(String, Vec<usize>)> {
+    let mut groups = BTreeMap::<String, (String, Vec<usize>)>::new();
+    for (index, row) in dataset.rows.iter().enumerate() {
+        let label = model_group_label(row);
+        groups
+            .entry(label.to_ascii_lowercase())
+            .or_insert_with(|| (label, Vec::new()))
+            .1
+            .push(index);
     }
+    groups
+        .into_values()
+        .map(|(label, mut indices)| {
+            indices.sort_by_key(|index| {
+                let row = &dataset.rows[*index];
+                let quant = row
+                    .metadata
+                    .model
+                    .artifact
+                    .quantization
+                    .as_ref()
+                    .map(|value| value.label.to_ascii_lowercase())
+                    .unwrap_or_default();
+                (
+                    decode_order(row.decode_mode),
+                    row.metadata.server.preset_name.to_ascii_lowercase(),
+                    quant,
+                    row.display_name.to_ascii_lowercase(),
+                    row.file_name.clone(),
+                )
+            });
+            (label, indices)
+        })
+        .collect()
+}
 
-    html.push_str(
-        r#"                  </ol>
-                </details>
-              </td>
-            </tr>
-          </tbody>
-"#,
-    );
+fn model_group_label(row: &StackRow) -> String {
+    row.cross_model_key()
+        .unwrap_or(&row.display_name)
+        .to_owned()
+}
+
+fn model_search_text(dataset: &SiteDataset, indices: &[usize]) -> String {
+    let mut terms = BTreeSet::new();
+    for index in indices {
+        let row = &dataset.rows[*index];
+        terms.insert(row.display_name.to_ascii_lowercase());
+        terms.insert(row.endpoint_display.to_ascii_lowercase());
+        if let Some(key) = row.cross_model_key() {
+            terms.insert(key.to_ascii_lowercase());
+        }
+    }
+    terms.into_iter().collect::<Vec<_>>().join(" ")
+}
+
+fn decode_order(mode: DecodeMode) -> u8 {
+    match mode {
+        DecodeMode::GrammarConstrained => 0,
+        DecodeMode::UnconstrainedPostHoc => 1,
+        DecodeMode::Unknown => 2,
+    }
+}
+
+fn decode_mode_id(mode: DecodeMode) -> &'static str {
+    match mode {
+        DecodeMode::GrammarConstrained => "grammar_constrained",
+        DecodeMode::UnconstrainedPostHoc => "unconstrained_post_hoc",
+        DecodeMode::Unknown => "unknown",
+    }
+}
+
+fn category_label(category: ScenarioCategory) -> &'static str {
+    match category {
+        ScenarioCategory::SingleCall => "Single call",
+        ScenarioCategory::ToolChoiceModes => "Tool choice",
+        ScenarioCategory::NegativeTrap => "Correctly declines",
+        ScenarioCategory::MultiTurn => "Multi-turn",
+        ScenarioCategory::ParallelCalls => "Parallel calls",
+        ScenarioCategory::Streaming => "Streaming",
+    }
 }
 
 fn same_environment(left: &EnvironmentMetadataV3, right: &EnvironmentMetadataV3) -> bool {
@@ -378,11 +402,580 @@ fn render_environment_statement(environment: &EnvironmentMetadataV3) -> String {
     )
 }
 
+fn render_methodology(
+    dataset: &SiteDataset,
+    repo_base: &str,
+    uniform_environment: Option<&EnvironmentMetadataV3>,
+) -> String {
+    let case_studies_url = format!("{repo_base}/tree/main/docs/case-studies");
+    let peg_native_case_study_url = format!(
+        "{repo_base}/blob/main/docs/case-studies/2026-07-21-llamacpp-500s-on-llama-3.1-tool-calls.md"
+    );
+    let environment_statement = uniform_environment
+        .map(render_environment_statement)
+        .unwrap_or_default();
+    format!(
+        r#"    <section class="methods" id="method-limitations" aria-labelledby="method-title">
+      <p class="eyebrow">Calibration notes</p>
+      <h2 id="method-title">Method and limitations</h2>
+      <p>A cell measures the whole stack: model x quant x server x server version. It is not a property of the model alone.</p>
+      <p>A failed observation means the combination failed as tested, not that the weights are bad. The same weights can pass on one server and fail on another; where that is proven, the cell carries a cause annotation.</p>
+      <p>Failing observations link to the full request/response transcript when the result schema supplies a transcript path. Legacy schema v1 results do not record transcript paths. See the <a href="{}">case studies under docs/case-studies/</a> for controlled comparisons.</p>
+      <p>The servers do not decode the same way. llama.cpp compiles supplied tool definitions into a GBNF grammar and constrains decoding with it. Ollama and MLX LM generate unconstrained text and parse the tool call afterwards. A cross-band difference is therefore a property of the full stack; same-server adjacency is the valid model comparison.</p>
+      <p>Sample size and method: {} distinct scenarios are represented. Each published cell is one run. Its hatch withholds a verdict rather than hiding the observation.</p>
+      <p>Findings in the case studies are replicated across at least five runs per arm before a verdict is drawn. The current case studies cover {}.</p>
+      <h3>Excluded rows</h3>
+      <p>Meta-Llama-3.1-8B-Instruct on llama.cpp (Q8_0, Q4_K_M, Q3_K_M) is excluded from the quantization conclusion because llama.cpp returns HTTP 500 on 7-9 of 50 scenarios per run for this model ("does not match the expected peg-native format"). These are server errors, not model failures, and are not comparable across arms. See the <a href="{}">peg-native case study</a>.</p>
+{}
+    </section>
+"#,
+        escape_html(&case_studies_url),
+        dataset.scenario_count,
+        CASE_STUDY_SAMPLE_SUMMARY,
+        escape_html(&peg_native_case_study_url),
+        environment_statement,
+    )
+}
+
+fn render_appendix(dataset: &SiteDataset, repo_base: &str) -> String {
+    let mut html = String::from(
+        "    <section class=\"appendix\" id=\"stack-appendix\" aria-labelledby=\"appendix-title\">\n      <p class=\"eyebrow\">Evidence register</p>\n      <h2 id=\"appendix-title\">Per-stack appendix</h2>\n      <p>Full recorded metadata and scenario-level evidence, in the same model and decode order as the matrix.</p>\n",
+    );
+    for (_, row_indices) in grouped_row_indices(dataset) {
+        for index in row_indices {
+            render_stack_detail(&mut html, dataset, index, &dataset.rows[index], repo_base);
+        }
+    }
+    html.push_str("    </section>\n");
+    html
+}
+
+fn render_stack_detail(
+    html: &mut String,
+    dataset: &SiteDataset,
+    index: usize,
+    result: &StackRow,
+    repo_base: &str,
+) {
+    let metadata = &result.metadata;
+    let model = &metadata.model;
+    let artifact = &model.artifact;
+    let server = &metadata.server;
+    let environment = metadata.environment.as_ref();
+    writeln!(
+        html,
+        "      <article class=\"stack-detail\" id=\"stack-detail-{index}\">\n        <header><p class=\"detail-index\">Stack {:02}</p><h3><a href=\"#stack-detail-{index}\">{}</a></h3><span class=\"decode-badge {}\">{}</span></header>\n        <div class=\"stack-content\">\n        <dl class=\"metadata\">",
+        index + 1,
+        escape_html(&result.display_name),
+        decode_mode_id(result.decode_mode),
+        decode_mode_id(result.decode_mode),
+    )
+    .expect("write stack detail");
+    metadata_item(html, "Result file", &result.file_name, true);
+    metadata_item(
+        html,
+        "Schema",
+        &format!("v{}", result.schema_version),
+        false,
+    );
+    metadata_item(html, "Run id", recorded(&metadata.run_id), true);
+    metadata_item(html, "Run time", &metadata.timestamp, false);
+    metadata_item(
+        html,
+        "willitcall version",
+        &metadata.willitcall_version,
+        true,
+    );
+    metadata_item(html, "Endpoint id", &result.endpoint_display, true);
+    metadata_item(
+        html,
+        "Canonical id",
+        result.cross_model_key().unwrap_or("not established"),
+        true,
+    );
+    metadata_item(
+        html,
+        "Family id",
+        model.family_id.as_deref().unwrap_or("not recorded"),
+        true,
+    );
+    metadata_item(
+        html,
+        "Parameters",
+        &model
+            .parameter_count_b
+            .map(|value| format!("{value}B"))
+            .unwrap_or_else(|| "not recorded".to_owned()),
+        false,
+    );
+    metadata_item(
+        html,
+        "Identity status",
+        display_identity_status(model.identity_status),
+        false,
+    );
+    metadata_item(
+        html,
+        "Artifact source",
+        display_artifact_source(artifact.source_kind),
+        true,
+    );
+    metadata_item(
+        html,
+        "Artifact source id",
+        artifact
+            .source_id
+            .as_deref()
+            .map(safe_path_value)
+            .as_deref()
+            .unwrap_or("not recorded"),
+        true,
+    );
+    metadata_item(
+        html,
+        "Artifact revision",
+        artifact.revision.as_deref().unwrap_or("not recorded"),
+        true,
+    );
+    metadata_item(
+        html,
+        "Artifact sha256",
+        artifact.sha256.as_deref().unwrap_or("not recorded"),
+        true,
+    );
+    metadata_item(
+        html,
+        "Artifact format",
+        display_artifact_format(artifact.format),
+        true,
+    );
+    let quant = artifact.quantization.as_ref();
+    metadata_item(
+        html,
+        "Artifact quant",
+        quant
+            .map(|value| value.label.as_str())
+            .unwrap_or("not declared"),
+        true,
+    );
+    metadata_item(
+        html,
+        "Quant scheme",
+        quant
+            .and_then(|value| value.scheme.as_deref())
+            .unwrap_or("not recorded"),
+        true,
+    );
+    metadata_item(
+        html,
+        "Quant bits",
+        &quant
+            .and_then(|value| value.bits)
+            .map(|value| value.to_string())
+            .unwrap_or_else(|| "not recorded".to_owned()),
+        false,
+    );
+    metadata_item(html, "Server", display_server(&server.preset_name), false);
+    metadata_item(
+        html,
+        "Server version",
+        server
+            .reported_version
+            .as_deref()
+            .unwrap_or("version not reported"),
+        true,
+    );
+    metadata_item(
+        html,
+        "Decode class",
+        decode_mode_id(result.decode_mode),
+        true,
+    );
+    metadata_item(
+        html,
+        "Recorded decode mode",
+        decode_mode_id(server.decode_mode),
+        true,
+    );
+    metadata_item(
+        html,
+        "Quirk flags",
+        &list_or_not_recorded(&server.quirk_flags),
+        true,
+    );
+    metadata_item(
+        html,
+        "Chat template id",
+        server
+            .chat_template
+            .as_ref()
+            .and_then(|template| template.id.as_deref())
+            .unwrap_or("not recorded"),
+        true,
+    );
+    metadata_item(
+        html,
+        "Chat template sha256",
+        server
+            .chat_template
+            .as_ref()
+            .and_then(|template| template.sha256.as_deref())
+            .unwrap_or("not recorded"),
+        true,
+    );
+    metadata_item(
+        html,
+        "Launch config sha256",
+        server
+            .launch_config_sha256
+            .as_deref()
+            .unwrap_or("not recorded"),
+        true,
+    );
+    if let Some(corpus) = metadata.corpus.as_ref() {
+        metadata_item(html, "Corpus id", &corpus.id, true);
+        metadata_item(html, "Corpus revision", &corpus.revision, true);
+        metadata_item(html, "Corpus sha256", &corpus.sha256, true);
+        metadata_item(
+            html,
+            "Corpus scenarios",
+            &corpus.scenario_count.to_string(),
+            false,
+        );
+        metadata_item(html, "Scoring version", &corpus.scoring_version, true);
+    } else {
+        metadata_item(html, "Corpus", "not recorded", false);
+    }
+    metadata_item(
+        html,
+        "Host hardware",
+        environment
+            .map(|value| value.display_label.as_str())
+            .unwrap_or("not recorded"),
+        false,
+    );
+    metadata_item(
+        html,
+        "Host OS",
+        &environment
+            .map(environment_display_parts)
+            .map(|(_, os)| os.to_owned())
+            .unwrap_or_else(|| "not recorded".to_owned()),
+        false,
+    );
+    metadata_item(
+        html,
+        "Architecture",
+        environment
+            .and_then(|value| value.architecture.as_deref())
+            .unwrap_or("not recorded"),
+        true,
+    );
+    metadata_item(
+        html,
+        "Accelerator",
+        environment
+            .and_then(|value| value.accelerator.as_deref())
+            .unwrap_or("not recorded"),
+        true,
+    );
+    metadata_item(
+        html,
+        "Memory bytes",
+        &environment
+            .and_then(|value| value.memory_bytes)
+            .map(|value| value.to_string())
+            .unwrap_or_else(|| "not recorded".to_owned()),
+        false,
+    );
+    metadata_item(
+        html,
+        "Temperature",
+        &metadata
+            .sampling
+            .temperature
+            .map(|value| value.to_string())
+            .unwrap_or_else(|| "not recorded".to_owned()),
+        false,
+    );
+    metadata_item(
+        html,
+        "Top p",
+        &metadata
+            .sampling
+            .top_p
+            .map(|value| value.to_string())
+            .unwrap_or_else(|| "not recorded".to_owned()),
+        false,
+    );
+    metadata_item(
+        html,
+        "Seed",
+        &metadata
+            .sampling
+            .seed
+            .map(|value| value.to_string())
+            .unwrap_or_else(|| "not recorded".to_owned()),
+        false,
+    );
+    metadata_item(
+        html,
+        "Max tokens",
+        &metadata
+            .sampling
+            .max_tokens
+            .map(|value| value.to_string())
+            .unwrap_or_else(|| "not recorded".to_owned()),
+        false,
+    );
+    metadata_item(
+        html,
+        "Replication",
+        &replication_summary(result, dataset.replication_count(index)),
+        false,
+    );
+    metadata_item(
+        html,
+        "Arm fingerprint",
+        metadata
+            .arm_fingerprint
+            .as_deref()
+            .unwrap_or("not recorded"),
+        true,
+    );
+    metadata_item(
+        html,
+        "Preflight override",
+        &metadata
+            .preflight_override
+            .as_ref()
+            .map(|override_| {
+                format!(
+                    "forced={}; foreign endpoints={}",
+                    override_.forced,
+                    list_or_not_recorded(&override_.foreign_endpoints)
+                )
+            })
+            .unwrap_or_else(|| "none".to_owned()),
+        false,
+    );
+    metadata_item(
+        html,
+        "Ignored ports",
+        &metadata
+            .preflight_ignored_ports
+            .as_ref()
+            .map(|ports| {
+                ports
+                    .iter()
+                    .map(u16::to_string)
+                    .collect::<Vec<_>>()
+                    .join(", ")
+            })
+            .filter(|ports| !ports.is_empty())
+            .unwrap_or_else(|| "none".to_owned()),
+        false,
+    );
+    html.push_str("        </dl>\n        <ol class=\"scenario-list\">\n");
+    for scenario in &result.scenarios {
+        render_scenario_detail(html, result.schema_version, scenario, repo_base);
+    }
+    html.push_str("        </ol>\n        <a class=\"back-link\" href=\"#matrix-title\">Back to matrix</a>\n        </div>\n      </article>\n");
+}
+
+fn metadata_item(html: &mut String, label: &str, value: &str, code: bool) {
+    if code {
+        writeln!(
+            html,
+            "          <div><dt>{}</dt><dd><code>{}</code></dd></div>",
+            escape_html(label),
+            escape_html(value)
+        )
+        .expect("write metadata item");
+    } else {
+        writeln!(
+            html,
+            "          <div><dt>{}</dt><dd>{}</dd></div>",
+            escape_html(label),
+            escape_html(value)
+        )
+        .expect("write metadata item");
+    }
+}
+
+fn render_scenario_detail(
+    html: &mut String,
+    schema_version: u32,
+    scenario: &ScenarioView,
+    repo_base: &str,
+) {
+    let status = display_status(scenario.status);
+    write!(
+        html,
+        "          <li class=\"scenario status-{status}\"><div><code>{}</code><span class=\"status-label\">{status}</span></div><p>{}</p><p class=\"rationale\">Rationale: {}</p>",
+        escape_html(&scenario.id),
+        escape_html(&scenario.description),
+        escape_html(&scenario.rationale),
+    )
+    .expect("write scenario detail");
+    if let Some(failure) = scenario.failure_detail.as_ref() {
+        write!(
+            html,
+            " <span class=\"failure-detail\">stage: {}; code: {}; HTTP: {}; failed turn: {}</span>",
+            escape_html(&failure.stage),
+            escape_html(&failure.code),
+            failure
+                .http_status
+                .map(|value| value.to_string())
+                .unwrap_or_else(|| "not recorded".to_owned()),
+            failure
+                .failed_turn_index
+                .map(|value| value.to_string())
+                .unwrap_or_else(|| "not recorded".to_owned()),
+        )
+        .expect("write scenario failure");
+    }
+    if let Some(reason) = scenario.failure_reason.as_deref() {
+        write!(
+            html,
+            " <span class=\"failure-reason\">{}</span>",
+            escape_html(reason)
+        )
+        .expect("write failure reason");
+    }
+    if let Some(evidence_path) = scenario.evidence_path.as_deref() {
+        write!(
+            html,
+            " <a class=\"transcript\" href=\"{}\">transcript</a>",
+            escape_html(&evidence_url(repo_base, evidence_path))
+        )
+        .expect("write transcript link");
+    }
+    if let Some(evidence_hash) = scenario.evidence_hash.as_deref() {
+        write!(
+            html,
+            " <code class=\"evidence-hash\">{}</code>",
+            escape_html(evidence_hash)
+        )
+        .expect("write evidence hash");
+    }
+    if scenario.retried {
+        html.push_str(" <span class=\"badge neutral\">retried</span>");
+    }
+    render_annotation(html, schema_version, scenario, repo_base);
+    html.push_str("</li>\n");
+}
+
+fn recorded(value: &str) -> &str {
+    if value.is_empty() {
+        "not recorded"
+    } else {
+        value
+    }
+}
+
+fn safe_path_value(value: &str) -> String {
+    let path = Path::new(value);
+    if path.is_absolute() {
+        path.file_name()
+            .and_then(|component| component.to_str())
+            .unwrap_or("local artifact")
+            .to_owned()
+    } else {
+        value.to_owned()
+    }
+}
+
+fn list_or_not_recorded(values: &[String]) -> String {
+    if values.is_empty() {
+        "not recorded".to_owned()
+    } else {
+        values.join(", ")
+    }
+}
+
+fn replication_summary(result: &StackRow, count: usize) -> String {
+    result.metadata.replication.as_ref().map_or_else(
+        || format!("n={count}, no declared study arm"),
+        |replication| {
+            format!(
+                "n={count}; study={}; arm={}; run={}; mode={}",
+                replication.study_id,
+                replication.arm_id,
+                replication.run_index,
+                display_replication_mode(replication.mode)
+            )
+        },
+    )
+}
+
+fn display_replication_mode(mode: ReplicationMode) -> &'static str {
+    match mode {
+        ReplicationMode::GreedyReproducibility => "greedy_reproducibility",
+        ReplicationMode::SeedVariedVariance => "seed_varied_variance",
+    }
+}
+
+fn display_artifact_source(source: ArtifactSourceKind) -> &'static str {
+    match source {
+        ArtifactSourceKind::Huggingface => "huggingface",
+        ArtifactSourceKind::Ollama => "ollama",
+        ArtifactSourceKind::LocalFile => "local_file",
+        ArtifactSourceKind::Other => "other",
+    }
+}
+
+fn display_artifact_format(format: ArtifactFormat) -> &'static str {
+    match format {
+        ArtifactFormat::Gguf => "gguf",
+        ArtifactFormat::Mlx => "mlx",
+        ArtifactFormat::Safetensors => "safetensors",
+        ArtifactFormat::OllamaBlob => "ollama_blob",
+        ArtifactFormat::Unknown => "unknown",
+    }
+}
+
+fn render_colophon(dataset: &SiteDataset, main: &str) -> String {
+    let mut revisions = dataset
+        .rows
+        .iter()
+        .filter_map(|row| row.metadata.corpus.as_ref())
+        .map(|corpus| format!("{} {}", corpus.id, corpus.revision))
+        .collect::<BTreeSet<_>>();
+    let revision = if revisions.is_empty() {
+        "not recorded".to_owned()
+    } else {
+        revisions.pop_first().expect("non-empty revisions")
+            + &revisions
+                .into_iter()
+                .map(|value| format!(", {value}"))
+                .collect::<String>()
+    };
+    let date = dataset
+        .rows
+        .iter()
+        .filter_map(|row| row.metadata.timestamp.get(..10))
+        .max()
+        .unwrap_or("not recorded");
+    let mut hash = 0xcbf29ce484222325_u64;
+    for byte in main.bytes().chain(STYLE.bytes()).chain(SCRIPT.bytes()) {
+        hash ^= u64::from(byte);
+        hash = hash.wrapping_mul(0x100000001b3);
+    }
+    format!(
+        "  <footer class=\"colophon\"><p>Build hash <code>{hash:016x}</code> · corpus revision <code>{}</code> · data date <time datetime=\"{}\">{}</time></p></footer>\n",
+        escape_html(&revision),
+        escape_html(date),
+        escape_html(date),
+    )
+}
+
 fn render_category_cell(
     html: &mut String,
     result: &StackRow,
     category: ScenarioCategory,
     repo_base: &str,
+    replication_count: usize,
 ) {
     let scenarios = result
         .scenarios
@@ -395,7 +988,7 @@ fn render_category_cell(
     let failed = counts.failed;
     let errors = counts.errors;
     let skipped = counts.skipped;
-    let not_measurable = errors > 0 && passed + failed == 0;
+    let not_measurable = errors + skipped > 0 && passed + failed == 0;
     let class = if total == 0 {
         "untested"
     } else if not_measurable {
@@ -413,10 +1006,17 @@ fn render_category_cell(
             scenario.status != Status::Pass && scenario.evidence_path.as_deref().is_some()
         })
         .and_then(|scenario| scenario.evidence_path.as_deref());
+    let replication_class = if replication_count < 5 {
+        " low-replication"
+    } else {
+        ""
+    };
     write!(
         html,
-        "              <td class=\"score {class}\" aria-label=\"{}: {passed} passed, {failed} failed, {errors} errors, {skipped} skipped\">",
-        category
+        "              <td class=\"score {class}{replication_class}\" data-label=\"{}\" aria-label=\"{}: {passed} passed, {failed} failed, {errors} errors, {skipped} skipped; n={replication_count}{}\">",
+        category_label(category),
+        category,
+        if replication_count < 5 { ", no verdict" } else { "" },
     )
     .expect("write HTML");
     if let Some(evidence_path) = first_evidence {
@@ -434,6 +1034,13 @@ fn render_category_cell(
     }
     if not_measurable {
         html.push_str("<span class=\"measurement-state\">not measurable</span>");
+    }
+    if replication_count < 5 {
+        write!(
+            html,
+            "<span class=\"replication-note\">n={replication_count}, no verdict</span>"
+        )
+        .expect("write replication note");
     }
     html.push_str("</td>\n");
 }
@@ -577,7 +1184,7 @@ fn reference_url(repo_base: &str, reference: &str) -> String {
     }
 }
 
-fn escape_html(value: &str) -> String {
+pub(super) fn escape_html(value: &str) -> String {
     let mut escaped = String::with_capacity(value.len());
     for character in value.chars() {
         match character {
@@ -593,18 +1200,19 @@ fn escape_html(value: &str) -> String {
     escaped
 }
 
-pub(super) const SCRIPT: &str = r#"const filter = document.getElementById("server-filter");
-const groups = Array.from(document.querySelectorAll(".result-group"));
+pub(super) const SCRIPT: &str = r#"const search = document.getElementById("model-search");
+const groups = Array.from(document.querySelectorAll(".model-group"));
 const status = document.getElementById("filter-status");
 
-filter.addEventListener("change", () => {
+search.addEventListener("input", () => {
+  const query = search.value.trim().toLocaleLowerCase();
   let shown = 0;
   for (const group of groups) {
-    const visible = filter.value === "all" || group.dataset.server === filter.value;
+    const visible = !query || group.dataset.modelSearch.includes(query);
     group.hidden = !visible;
-    if (visible) shown += 1;
+    if (visible) shown += group.querySelectorAll(".result-row").length;
   }
-  status.textContent = `Showing ${shown} result ${shown === 1 ? "file" : "files"}.`;
+  status.textContent = `Showing ${shown} ${shown === 1 ? "stack" : "stacks"}.`;
 });
 "#;
 
@@ -641,7 +1249,7 @@ pub(super) const STYLE: &str = r#":root {
   --none-ink: #681f29;
   --neutral-bg: #e8edf1;
   --neutral-ink: #35434f;
-  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-family: "IBM Plex Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
   font-size: 16px;
   line-height: 1.55;
 }
@@ -864,6 +1472,244 @@ footer { padding: 1.5rem 0 3rem; color: var(--muted); border-top: 1px solid var(
   label, .filter-status { display: none; }
   .table-scroll { overflow: visible; }
   table { min-width: 0; font-size: 9pt; }
+  a { color: inherit; }
+}
+
+/* Brief 9: calibration-sheet presentation. Colour is reserved for data marks. */
+:root {
+  color-scheme: light;
+  --paper: #f8f7f3;
+  --panel: #f8f7f3;
+  --ink: var(--design-ink);
+  --muted: var(--design-grey-1);
+  --line: var(--design-grey-3);
+  --neutral-bg: #ebe9e3;
+  --neutral-ink: var(--design-ink);
+  --pass-bg: #d8e7df;
+  --pass-ink: #073e2e;
+  --partial-bg: #eee7d1;
+  --partial-ink: #403b28;
+  --none-bg: #efdcd3;
+  --none-ink: #552b1b;
+  font-family: "IBM Plex Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size: var(--type-prose);
+}
+
+body { background: var(--paper); color: var(--ink); }
+a { color: inherit; text-decoration-thickness: 1px; }
+a:focus-visible, input:focus-visible, summary:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 3px;
+}
+code, .wordmark, .ratio, input { font-family: "IBM Plex Mono", "SFMono-Regular", Consolas, monospace; }
+
+.site-header {
+  width: min(var(--measure-figure), calc(100% - 2.5rem));
+  margin-inline: auto;
+  padding: 0.8rem 0;
+  color: var(--ink);
+  background: transparent;
+  border-bottom: 1px solid var(--ink);
+}
+.wordmark, nav a, nav a[aria-current="page"] { color: var(--ink); }
+.wordmark { font-size: 0.92rem; font-weight: 600; letter-spacing: 0.08em; }
+nav a { font-size: 0.82rem; font-weight: 500; }
+
+main, footer { width: 100%; }
+.register-intro, .methods, .submit-page, .submit-page section {
+  width: min(var(--measure-prose), calc(100% - 2.5rem));
+  margin-inline: auto;
+}
+.register-intro { padding: 3.25rem 0 1.5rem; }
+.register-intro h1 { max-width: 38rem; }
+.framing { max-width: var(--measure-prose); margin: 0; font-size: 1.05rem; }
+.eyebrow { color: var(--ink); font-size: 0.7rem; font-weight: 600; }
+h1 { font-size: clamp(2rem, 5vw, 3.65rem); font-weight: 500; }
+h2 { font-size: var(--type-heading-1); font-weight: var(--type-heading-weight); letter-spacing: 0; }
+h3 { font-size: var(--type-heading-2); font-weight: var(--type-heading-weight); }
+
+.reading-key { margin-top: 1.5rem; padding: 0.9rem 0; border-block: 1px solid var(--line); }
+.reading-key h2 { margin-bottom: 0.7rem; font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.08em; }
+.mark-key, .method-key { display: flex; flex-wrap: wrap; gap: 0.55rem 1.15rem; }
+.method-key { margin-top: 0.65rem; padding-top: 0.65rem; border-top: 1px dotted var(--line); }
+.mark-key span, .method-key > span { display: inline-flex; align-items: center; gap: 0.4rem; font-size: 0.72rem; }
+.state-key, .mini-mark { position: relative; display: inline-block; width: 0.78rem; height: 0.78rem; flex: none; }
+.state-key.state-pass, .mini-mark.pass { background: var(--design-pass); }
+.state-key.state-fail, .mini-mark.fail { background: var(--design-fail); }
+.state-key.state-fail::after, .mini-mark.fail::after,
+.state-key.state-error::after, .mini-mark.error::after {
+  content: ""; position: absolute; inset: 48% -1px auto; border-top: 1.5px solid var(--design-paper); transform: rotate(45deg);
+}
+.state-key.state-error, .mini-mark.error { border: 1px solid var(--design-ink); }
+.state-key.state-error::after, .mini-mark.error::after { border-color: var(--design-ink); border-width: 1px; }
+.state-key.state-skipped, .mini-mark.skipped { border: 1px dotted var(--design-grey-2); opacity: 0.6; }
+.hatch-key { width: 1.15rem; height: 0.78rem; border: 1px dashed var(--ink); background: repeating-linear-gradient(135deg, transparent 0 3px, rgb(28 28 28 / 18%) 3px 4px); }
+.decode-badge {
+  display: inline-block;
+  padding: 0.13rem 0.38rem;
+  border: 1px solid var(--ink);
+  border-radius: 0;
+  color: var(--ink);
+  background: transparent;
+  font: 500 0.67rem/1.2 "IBM Plex Mono", "SFMono-Regular", Consolas, monospace;
+}
+.decode-badge.grammar_constrained { color: var(--paper); background: var(--ink); }
+.decode-badge.unknown { border-style: dashed; }
+
+.matrix, .analysis, .appendix {
+  width: min(var(--measure-figure), calc(100% - 2.5rem));
+  max-width: none;
+  margin: 0 auto 3.5rem;
+}
+.matrix { padding: 1rem 0 0; background: transparent; border: 0; border-top: 2px solid var(--ink); box-shadow: none; }
+.matrix-heading { align-items: start; }
+.matrix-heading h2 { margin-bottom: 0; }
+label { color: var(--ink); font-size: 0.72rem; font-weight: 600; }
+input[type="search"] {
+  display: block;
+  width: min(20rem, 70vw);
+  margin-top: 0.3rem;
+  padding: 0.5rem 0.6rem;
+  color: var(--ink);
+  background: var(--paper);
+  border: 1px solid var(--ink);
+  border-radius: 0;
+  font-size: 0.82rem;
+}
+.matrix-note, .filter-status { max-width: var(--measure-prose); color: var(--muted); font-size: 0.75rem; }
+.matrix-note { margin: 0.75rem 0 0; }
+.filter-status { margin: 0.25rem 0 0.8rem; }
+.table-scroll { border: 1px solid var(--ink); }
+.matrix-table { min-width: 68rem; font-size: var(--type-table); }
+.matrix-table th, .matrix-table td { padding: 0.58rem; border-color: var(--line); }
+.matrix-table thead th { color: var(--paper); background: var(--ink); font-size: 0.7rem; font-weight: 500; }
+.matrix-table thead th:first-child, .result-row > th { position: sticky; left: 0; z-index: 2; }
+.matrix-table thead th:first-child { z-index: 4; }
+.model-heading th { padding: 0.7rem 0.6rem 0.35rem; color: var(--ink); background: var(--paper); border-top: 2px solid var(--ink); border-bottom: 0; font: 500 0.9rem/1.3 "IBM Plex Mono", "SFMono-Regular", Consolas, monospace; }
+.model-heading th > span { margin-right: 0.6rem; color: var(--muted); font: 500 0.62rem/1 "IBM Plex Sans", sans-serif; letter-spacing: 0.08em; text-transform: uppercase; }
+.decode-band th { padding: 0.35rem 0.6rem; color: var(--muted); background: var(--neutral-bg); border-block: 1px solid var(--ink); font-size: 0.68rem; font-weight: 400; }
+.decode-band .decode-badge { margin-right: 0.7rem; }
+.result-row > th { width: 18rem; background: var(--paper); }
+.result-row > th strong { margin: 0; font: 500 0.79rem/1.3 "IBM Plex Mono", "SFMono-Regular", Consolas, monospace; }
+.result-row > th span { color: var(--muted); font-size: 0.67rem; font-weight: 400; }
+.detail-link { display: inline-block; margin-top: 0.25rem; font-size: 0.68rem; font-weight: 500; }
+.score { position: relative; min-width: 7.5rem; text-align: center; }
+.score.low-replication {
+  background-image: repeating-linear-gradient(135deg, transparent 0 5px, rgb(28 28 28 / 12%) 5px 6px);
+  background-blend-mode: multiply;
+}
+.ratio { font-size: 0.9rem; font-weight: 500; }
+.replication-note, .measurement-state, .legacy-evidence { display: block; margin-top: 0.2rem; font-size: 0.58rem; line-height: 1.2; }
+
+.analysis { border-top: 2px solid var(--ink); padding-top: 1rem; }
+.analysis-primary { margin-top: -1.5rem; }
+.analysis > p { max-width: var(--measure-prose); }
+.svg-figure { margin: 1.5rem 0 3.25rem; }
+.svg-figure figcaption { max-width: var(--measure-prose); }
+.figure-scroll { padding: 0.5rem; background: var(--design-paper); border-color: var(--ink); }
+.svg-text-fallback { display: block; min-width: 0; table-layout: fixed; }
+.figure-method-link { font-size: 0.75rem; }
+.desktop-raster { display: block; }
+.mobile-raster { display: none; }
+
+.methods { max-width: var(--measure-prose); padding: 1rem 0 3.5rem; border-top: 2px solid var(--ink); }
+.methods p:not(.eyebrow) { max-width: var(--measure-prose); font-size: 1rem; }
+.appendix { padding-top: 1rem; border-top: 2px solid var(--ink); }
+.appendix > p { max-width: var(--measure-prose); }
+.stack-detail { margin: 2rem 0 3rem; padding-top: 0.8rem; border-top: 1px solid var(--ink); }
+.stack-detail header { display: flex; align-items: baseline; flex-wrap: wrap; gap: 0.5rem 0.8rem; }
+.stack-detail header h3 { margin: 0; }
+.stack-detail header h3 a { text-underline-offset: 0.15em; }
+.stack-content { display: none; }
+.stack-detail:target { scroll-margin-top: 1rem; border-top-width: 2px; }
+.stack-detail:target .stack-content { display: block; }
+.detail-index { margin: 0; color: var(--muted); font: 500 0.65rem/1 "IBM Plex Mono", monospace; text-transform: uppercase; }
+.metadata { grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr)); gap: 1px; border: 1px solid var(--line); background: var(--line); }
+.metadata div { padding: 0.55rem; background: var(--paper); }
+.metadata dt { color: var(--muted); font-size: 0.6rem; font-weight: 600; }
+.metadata dd { font-size: 0.74rem; }
+.scenario-list { padding-left: 1.5rem; }
+.scenario { border-color: var(--line); }
+.scenario > p { margin: 0.25rem 0; max-width: var(--measure-prose); font-size: 0.78rem; }
+.scenario .rationale { color: var(--muted); }
+.failure-detail, .evidence-hash { display: inline-block; margin: 0.3rem 0 0 0.45rem; color: var(--muted); font-size: 0.68rem; }
+.evidence-hash { max-width: 100%; overflow-wrap: anywhere; word-break: break-all; }
+.badge { border-radius: 0; }
+.badge.cause, .badge.neutral, .badge.neutral.unparsed { color: var(--ink); background: var(--neutral-bg); border-color: var(--ink); }
+.back-link { font-size: 0.75rem; }
+
+.colophon {
+  width: min(var(--measure-figure), calc(100% - 2.5rem));
+  margin-inline: auto;
+  padding: 0.7rem 0;
+  color: var(--muted);
+  border-top: 1px solid var(--ink);
+  font-size: 0.66rem;
+}
+.colophon p { margin: 0; }
+
+pre { color: var(--paper); background: var(--ink); border-left: 0; }
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    color-scheme: dark;
+    --paper: var(--design-paper);
+    --panel: var(--design-paper);
+    --ink: var(--design-ink);
+    --muted: var(--design-grey-1);
+    --line: var(--design-grey-3);
+    --neutral-bg: #24262a;
+    --neutral-ink: var(--design-ink);
+    --pass-bg: #18372e;
+    --pass-ink: #c9f0df;
+    --partial-bg: #393426;
+    --partial-ink: #eee3bd;
+    --none-bg: #422a23;
+    --none-ink: #f4d2c5;
+  }
+  .score.low-replication { background-blend-mode: screen; }
+  .hatch-key { background-image: repeating-linear-gradient(135deg, transparent 0 3px, rgb(232 230 225 / 22%) 3px 4px); }
+}
+
+@media (max-width: 46rem) {
+  .site-header, .matrix-heading { align-items: flex-start; flex-direction: column; gap: 0.8rem; }
+  .site-header, .register-intro, .methods, .matrix, .analysis, .appendix, .colophon {
+    width: min(100% - 1.5rem, var(--measure-figure));
+  }
+  .register-intro { padding-top: 2.25rem; }
+  .mark-key, .method-key { display: grid; grid-template-columns: 1fr 1fr; }
+  input[type="search"] { width: min(100%, 22rem); }
+  .table-scroll { overflow: visible; border: 0; }
+  .matrix-table, .matrix-table tbody, .matrix-table tr { display: block; min-width: 0; width: 100%; }
+  .matrix-table thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
+  .model-group { margin-bottom: 1.5rem; border: 1px solid var(--ink); }
+  .model-heading th, .decode-band th { display: block; width: 100%; border-inline: 0; }
+  .result-row { display: grid !important; grid-template-columns: repeat(3, minmax(0, 1fr)); border-bottom: 1px solid var(--ink); }
+  .result-row:last-child { border-bottom: 0; }
+  .result-row > th { position: static; grid-column: 1 / -1; width: auto; border: 0; border-bottom: 1px solid var(--line); }
+  .result-row > td { display: block; min-width: 0; padding: 0.5rem 0.25rem; border-width: 0 1px 1px 0; }
+  .score::before { content: attr(data-label); display: block; min-height: 2.2em; margin-bottom: 0.25rem; color: currentColor; font-size: 0.57rem; line-height: 1.1; }
+  .ratio { font-size: 0.78rem; }
+  .analysis-primary .figure-scroll { display: none; }
+  .mobile-raster { display: block; }
+  .mini-raster-panel { margin: 1.25rem 0; overflow-x: auto; }
+  .mini-raster-panel h3 { position: sticky; left: 0; margin-bottom: 0.4rem; font-size: 0.78rem; }
+  .mini-raster-grid { display: grid; align-items: center; gap: 2px; width: max-content; font: 0.58rem/1.1 "IBM Plex Mono", monospace; }
+  .mini-raster-corner, .mini-row-label { position: sticky; left: 0; z-index: 2; width: 8.5rem; padding-right: 0.35rem; overflow: hidden; background: var(--paper); text-align: right; text-overflow: ellipsis; white-space: nowrap; }
+  .mini-column-label { width: 0.78rem; overflow: hidden; writing-mode: vertical-rl; transform: rotate(180deg); white-space: nowrap; }
+}
+
+@media print {
+  :root { color-scheme: light; --paper: #fff; --ink: #000; --muted: #333; --line: #aaa; }
+  .site-header { color: #000; background: #fff; border-color: #000; }
+  .wordmark, nav a { color: #000; }
+  label, .filter-status, .detail-link, .back-link { display: none; }
+  .table-scroll { overflow: visible; }
+  .matrix-table { min-width: 0; font-size: 7pt; }
+  .matrix-table thead th:first-child, .result-row > th { position: static; }
+  .analysis-primary .figure-scroll { display: block; }
+  .mobile-raster { display: none; }
+  .stack-content { display: block; }
   a { color: inherit; }
 }
 "#;

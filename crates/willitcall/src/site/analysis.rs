@@ -1,7 +1,7 @@
 use std::collections::BTreeMap;
 use std::fmt::Write as _;
 
-use wic_core::result::Status;
+use wic_core::result::{DecodeMode, Status};
 use wic_core::ScenarioCategory;
 
 use super::data::{SiteDataset, StackRow, CATEGORIES};
@@ -12,16 +12,24 @@ const MARK_SIZE: u32 = 13;
 const CELL_STEP: u32 = 15;
 const ROW_STEP: u32 = 16;
 
-pub(super) fn render(dataset: &SiteDataset) -> String {
+pub(super) fn render_primary(dataset: &SiteDataset) -> String {
     let mut figures = String::from(
-        "    <section class=\"analysis\" aria-labelledby=\"analysis-title\">\n      <p class=\"eyebrow\">Analysis views</p>\n      <h2 id=\"analysis-title\">Published one-run observations</h2>\n      <p>All stack and scenario orders are fixed by identity and catalog fields, never by a pass count.</p>\n",
+        "    <section class=\"analysis analysis-primary\" aria-labelledby=\"primary-analysis-title\">\n      <p class=\"eyebrow\">Scenario register</p>\n      <h2 id=\"primary-analysis-title\">All observed outcomes</h2>\n",
     );
     figures.push_str(&render_scenario_raster(dataset));
+    figures.push_str("    </section>\n");
+    figures
+}
+
+pub(super) fn render_secondary(dataset: &SiteDataset) -> String {
+    let mut figures = String::from(
+        "    <section class=\"analysis analysis-secondary\" aria-labelledby=\"analysis-title\">\n      <p class=\"eyebrow\">Analysis views</p>\n      <h2 id=\"analysis-title\">Published one-run observations</h2>\n      <p>All stack and scenario orders are fixed by identity and catalog fields, never by a pass count.</p>\n",
+    );
     figures.push_str(&render_multi_turn_raster(dataset));
     figures.push_str(&render_signature_inventory(dataset));
     figures.push_str(&render_capability_aggregate(dataset));
     figures.push_str(&render_pass_count_strip(dataset));
-    figures.push_str("    </section>");
+    figures.push_str("    </section>\n");
     figures
 }
 
@@ -91,7 +99,7 @@ fn render_scenario_raster(dataset: &SiteDataset) -> String {
     let marks = borrow_marks(&prepared);
     let texts = borrow_texts(&texts);
     let caption = "Rows are published stack runs and columns are scenario ids grouped by capability. The n=1 hatch is intentionally omitted because every raster row is a single run, so hatching every cell would encode no difference.";
-    html::render_figure(Figure::StatusRaster {
+    let mut figure = html::render_figure(Figure::StatusRaster {
         accessibility: FigureAccessibility {
             number: 1,
             title: "Scenario-status raster",
@@ -115,7 +123,86 @@ fn render_scenario_raster(dataset: &SiteDataset) -> String {
             ],
             rows: &fallback_rows,
         },
-    })
+    });
+    let mobile = render_mobile_scenario_rasters(dataset, &columns, &row_indices);
+    figure = figure.replacen(
+        "  <table class=\"svg-text-fallback\">",
+        &format!("{mobile}  <table class=\"svg-text-fallback\">"),
+        1,
+    );
+    figure
+}
+
+fn render_mobile_scenario_rasters(
+    dataset: &SiteDataset,
+    columns: &[ScenarioColumn],
+    row_indices: &[usize],
+) -> String {
+    let mut html = String::from(
+        "  <div class=\"mobile-raster\" aria-label=\"Scenario-status raster split into category panels\">\n",
+    );
+    for category in CATEGORIES {
+        let category_columns = columns
+            .iter()
+            .filter(|column| column.category == category)
+            .collect::<Vec<_>>();
+        write!(
+            html,
+            "    <section class=\"mini-raster-panel\" data-category=\"{}\"><h3 title=\"{}\">{}</h3><div class=\"mini-raster-grid\" style=\"grid-template-columns:8.5rem repeat({},0.78rem)\">\n      <span class=\"mini-raster-corner\">Stack</span>",
+            category,
+            category,
+            category_label(category),
+            category_columns.len(),
+        )
+        .expect("write mobile raster");
+        for column in &category_columns {
+            write!(
+                html,
+                "<span class=\"mini-column-label\" title=\"{}: {}\">{}</span>",
+                html::escape_html(&column.id),
+                html::escape_html(&column.description),
+                html::escape_html(&column.id),
+            )
+            .expect("write mobile raster column");
+        }
+        html.push('\n');
+        for row_index in row_indices {
+            let row = &dataset.rows[*row_index];
+            let stack = stack_label(row);
+            write!(
+                html,
+                "      <span class=\"mini-row-label\" title=\"{}\">{}</span>",
+                html::escape_html(&stack),
+                html::escape_html(&stack),
+            )
+            .expect("write mobile raster row label");
+            for column in &category_columns {
+                if let Some(status) = scenario_status(row, &column.id) {
+                    let label = format!(
+                        "{stack}; {}: {}. Rationale: {}. {}",
+                        column.id,
+                        column.description,
+                        column.rationale,
+                        status_label(status),
+                    );
+                    write!(
+                        html,
+                        "<i class=\"mini-mark {}\" role=\"img\" aria-label=\"{}\" title=\"{}\"></i>",
+                        status_label(status),
+                        html::escape_html(&label),
+                        html::escape_html(&label),
+                    )
+                    .expect("write mobile raster mark");
+                } else {
+                    html.push_str("<i class=\"mini-mark missing\" aria-hidden=\"true\"></i>");
+                }
+            }
+            html.push('\n');
+        }
+        html.push_str("    </div></section>\n");
+    }
+    html.push_str("  </div>\n");
+    html
 }
 
 fn render_multi_turn_raster(dataset: &SiteDataset) -> String {
@@ -775,13 +862,14 @@ fn stable_stack_key(row: &StackRow) -> String {
         .map(|quantization| quantization.label.as_str())
         .unwrap_or("");
     format!(
-        "{}\0{}\0{}\0{}\0{}\0{}\0{}\0{}\0{}",
+        "{}\0{}\0{}\0{}\0{}\0{}\0{}\0{}\0{}\0{}",
         model.canonical_id.as_deref().unwrap_or(""),
         row.display_name,
+        decode_order(row.decode_mode),
+        row.metadata.server.preset_name,
         artifact.source_id.as_deref().unwrap_or(""),
         artifact.sha256.as_deref().unwrap_or(""),
         quantization,
-        row.metadata.server.preset_name,
         row.metadata
             .server
             .reported_version
@@ -790,6 +878,25 @@ fn stable_stack_key(row: &StackRow) -> String {
         row.endpoint_display,
         row.file_name,
     )
+}
+
+fn decode_order(mode: DecodeMode) -> u8 {
+    match mode {
+        DecodeMode::GrammarConstrained => 0,
+        DecodeMode::UnconstrainedPostHoc => 1,
+        DecodeMode::Unknown => 2,
+    }
+}
+
+fn category_label(category: ScenarioCategory) -> &'static str {
+    match category {
+        ScenarioCategory::SingleCall => "Single call",
+        ScenarioCategory::ToolChoiceModes => "Tool choice",
+        ScenarioCategory::NegativeTrap => "Correctly declines",
+        ScenarioCategory::MultiTurn => "Multi-turn",
+        ScenarioCategory::ParallelCalls => "Parallel calls",
+        ScenarioCategory::Streaming => "Streaming",
+    }
 }
 
 fn stack_label(row: &StackRow) -> String {
