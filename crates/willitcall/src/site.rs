@@ -4,7 +4,8 @@ use std::fs;
 use std::path::{Path, PathBuf};
 
 use wic_core::result::{
-    parse_and_validate_result, CauseKind, EnvironmentMetadata, RunResult, Status,
+    parse_and_validate_measurement, CauseKind, EnvironmentMetadataV3, IdentityStatus, Measurement,
+    MeasurementScenarioOutcome, Status,
 };
 use wic_core::ScenarioCategory;
 
@@ -22,7 +23,7 @@ const CATEGORIES: [ScenarioCategory; 6] = [
 
 struct ResultFile {
     file_name: String,
-    result: RunResult,
+    result: Measurement,
 }
 
 pub(crate) fn generate(
@@ -75,7 +76,7 @@ fn read_results(directory: &Path) -> Result<Vec<ResultFile>, String> {
         .map(|path| {
             let bytes = fs::read(&path)
                 .map_err(|error| format!("failed to read result {}: {error}", path.display()))?;
-            let result = parse_and_validate_result(&bytes)
+            let result = parse_and_validate_measurement(&bytes)
                 .map_err(|error| format!("{}: {error}", path.display()))?;
             let file_name = path
                 .file_name()
@@ -107,9 +108,14 @@ fn render_index(results: &[ResultFile], repo_base: &str) -> String {
         .first()
         .and_then(|result| result.result.metadata.environment.as_ref())
         .filter(|environment| {
-            results
-                .iter()
-                .all(|result| result.result.metadata.environment.as_ref() == Some(*environment))
+            results.iter().all(|result| {
+                result
+                    .result
+                    .metadata
+                    .environment
+                    .as_ref()
+                    .is_some_and(|candidate| same_environment(candidate, environment))
+            })
         });
     let environment_statement = uniform_environment
         .map(render_environment_statement)
@@ -235,27 +241,29 @@ fn render_result_rows(
     let result = &result_file.result;
     let server = &result.metadata.server.preset_name;
     let server_display = display_server(server);
-    let model = model_label(&result_file.file_name, server);
+    let model = if result.schema_version == 3 {
+        result.metadata.model.display_name.clone()
+    } else {
+        model_label(&result_file.file_name, server)
+    };
     let quant = result
         .metadata
-        .declared_quant
-        .as_deref()
+        .model
+        .artifact
+        .quantization
+        .as_ref()
+        .map(|quantization| quantization.label.as_str())
         .unwrap_or("not declared");
     let details_id = format!("result-details-{index}");
     let environment_metadata = if disclose_environment {
         let environment = result.metadata.environment.as_ref();
+        let (host_hardware, host_os) = environment
+            .map(environment_display_parts)
+            .unwrap_or(("not recorded", "not recorded"));
         format!(
             "                    <div><dt>Host hardware</dt><dd>{}</dd></div>\n                    <div><dt>Host OS</dt><dd>{}</dd></div>\n",
-            escape_html(
-                environment
-                    .map(|environment| environment.host_hardware_class.as_str())
-                    .unwrap_or("not recorded")
-            ),
-            escape_html(
-                environment
-                    .map(|environment| environment.host_os.as_str())
-                    .unwrap_or("not recorded")
-            )
+            escape_html(host_hardware),
+            escape_html(host_os)
         )
     } else {
         String::new()
@@ -276,10 +284,11 @@ fn render_result_rows(
 
     write!(
         html,
-        "            </tr>\n            <tr class=\"detail-row\">\n              <td colspan=\"7\">\n                <details id=\"{details_id}\">\n                  <summary>View {} scenarios and row metadata</summary>\n                  <dl class=\"metadata\">\n                    <div><dt>Result file</dt><dd><code>{}</code></dd></div>\n                    <div><dt>Model id</dt><dd><code>{}</code></dd></div>\n                    <div><dt>Declared quant</dt><dd>{}</dd></div>\n                    <div><dt>Server</dt><dd>{} {}</dd></div>\n                    <div><dt>Schema</dt><dd>v{}</dd></div>\n                    <div><dt>Run time</dt><dd>{}</dd></div>\n{}                  </dl>\n                  <ol class=\"scenario-list\">\n",
+        "            </tr>\n            <tr class=\"detail-row\">\n              <td colspan=\"7\">\n                <details id=\"{details_id}\">\n                  <summary>View {} scenarios and row metadata</summary>\n                  <dl class=\"metadata\">\n                    <div><dt>Result file</dt><dd><code>{}</code></dd></div>\n                    <div><dt>Model id</dt><dd><code>{}</code></dd></div>\n                    <div><dt>Identity</dt><dd>{}</dd></div>\n                    <div><dt>Declared quant</dt><dd>{}</dd></div>\n                    <div><dt>Server</dt><dd>{} {}</dd></div>\n                    <div><dt>Schema</dt><dd>v{}</dd></div>\n                    <div><dt>Run time</dt><dd>{}</dd></div>\n{}                  </dl>\n                  <ol class=\"scenario-list\">\n",
         result.scenarios.len(),
         escape_html(&result_file.file_name),
-        escape_html(display_model_id(&result.metadata.model_id)),
+        escape_html(display_model_id(&result.metadata.model.endpoint_id)),
+        display_identity_status(result.metadata.model.identity_status),
         escape_html(quant),
         escape_html(server_display),
         escape_html(
@@ -335,11 +344,26 @@ fn render_result_rows(
     );
 }
 
-fn render_environment_statement(environment: &EnvironmentMetadata) -> String {
+fn same_environment(left: &EnvironmentMetadataV3, right: &EnvironmentMetadataV3) -> bool {
+    left.display_label == right.display_label
+        && left.os_name == right.os_name
+        && left.os_version == right.os_version
+        && left.architecture == right.architecture
+        && left.accelerator == right.accelerator
+        && left.memory_bytes == right.memory_bytes
+}
+
+fn environment_display_parts(environment: &EnvironmentMetadataV3) -> (&str, &str) {
+    environment
+        .display_label
+        .split_once("; ")
+        .unwrap_or((&environment.display_label, "not recorded"))
+}
+
+fn render_environment_statement(environment: &EnvironmentMetadataV3) -> String {
     format!(
-        "      <p>Measurement environment: {}; {}.</p>",
-        escape_html(&environment.host_hardware_class),
-        escape_html(&environment.host_os)
+        "      <p>Measurement environment: {}.</p>",
+        escape_html(&environment.display_label)
     )
 }
 
@@ -418,7 +442,7 @@ fn render_category_cell(
 fn render_annotation(
     html: &mut String,
     schema_version: u32,
-    scenario: &wic_core::result::ScenarioOutcome,
+    scenario: &MeasurementScenarioOutcome,
     repo_base: &str,
 ) {
     if let Some(cause) = scenario.cause.as_ref() {
@@ -455,6 +479,14 @@ fn render_annotation(
         && scenario.evidence_hash.is_some()
     {
         html.push_str(" <span class=\"badge neutral\">legacy evidence hash only</span>");
+    }
+}
+
+fn display_identity_status(status: IdentityStatus) -> &'static str {
+    match status {
+        IdentityStatus::Verified => "verified",
+        IdentityStatus::Declared => "declared",
+        IdentityStatus::Unresolved => "unresolved",
     }
 }
 

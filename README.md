@@ -56,6 +56,12 @@ Check a result file against the published schema:
 cargo run -p willitcall -- validate willitcall-result.json
 ```
 
+New runs use result schema v3 (`schemas/result-v3.schema.json`). The CLI resolves
+the model selector through `registry/models-v1.json` and embeds the resolved
+model and artifact metadata in the result. Legacy schema v1 and v2 files remain
+valid inputs to `validate`, `site`, `annotate`, and `rescore`; editing a legacy
+file preserves its original schema version.
+
 `--server` selects a preset (`llamacpp`, `ollama`, `mlx-lm`, `lmstudio`,
 `vllm`, `custom`). The preset only supplies request defaults; the preset name is
 recorded in the result file so results stay comparable.
@@ -126,11 +132,11 @@ model. So:
   nearly right that the parser then rejected. The `unparsed_tool_call` failure
   class exists to mark exactly that case, and the transcript shows the bytes.
 
-Each result records which side of this line its server sits on, in
-`server.quirk_flags`: `grammar_constrained_decoding` for llama.cpp,
-`unconstrained_post_hoc_parse` for Ollama and mlx-lm. LM Studio and vLLM are
-unflagged because their decode path has not been verified here; absence of a
-flag means unverified, not unconstrained.
+Each v3 result records which side of this line its server sits on in
+`metadata.server.decode_mode`, while retaining the corresponding
+`server.quirk_flags`: `grammar_constrained_decoding` for llama.cpp and
+`unconstrained_post_hoc_parse` for Ollama and mlx-lm. LM Studio and vLLM use
+`unknown` because their decode path has not been verified here.
 
 This was established the hard way. An earlier version of this project published
 a claim that Ollama discarded valid tool calls. Recovering the discarded bytes
@@ -180,10 +186,13 @@ that back it. Seed results so far cover `qwen3` at 0.6b/1.7b/4b/8b,
 1. Run the full corpus against your endpoint, one model loaded at a time.
    Running two models at once produces spurious `error` outcomes from resource
    contention, not real measurements.
-2. Run `willitcall validate` on the output. Current results are schema
-   version 2 (`schemas/result-v2.schema.json`); version 1 files are still
-   accepted.
-3. Open a pull request adding the result file **and its `evidence/` directory**
+2. Ensure the exact model selector has an entry in `registry/models-v1.json`,
+   with evidence references for every claimed identity field. An unresolved
+   entry is acceptable when provenance cannot be recovered; the result and site
+   show that status as `unresolved` rather than inferring identity from a name.
+3. Run `willitcall validate` on the schema v3 output. Legacy schema v1 and v2
+   files remain accepted, but must not be upgraded by editing them.
+4. Open a pull request adding the result file **and its `evidence/` directory**
    under `results/`, and say what hardware and server version produced it.
 
 Every scenario writes a full request/response transcript to
