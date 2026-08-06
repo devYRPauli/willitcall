@@ -249,6 +249,8 @@ struct SiteArgs {
     results: PathBuf,
     #[arg(long)]
     out: PathBuf,
+    #[arg(long)]
+    catalog: Option<PathBuf>,
     #[arg(long, default_value = "https://github.com/devYRPauli/willitcall")]
     repo_base: String,
 }
@@ -766,8 +768,13 @@ async fn execute_with_known_servers(
             Ok(0)
         }
         Command::Site(args) => {
-            let count = site::generate(&args.results, &args.out, &args.repo_base)
-                .map_err(ExecuteError::Harness)?;
+            let count = site::generate(
+                &args.results,
+                &args.out,
+                &args.repo_base,
+                args.catalog.as_deref(),
+            )
+            .map_err(ExecuteError::Harness)?;
             println!(
                 "generated {} from {count} result file{}",
                 args.out.display(),
@@ -1237,6 +1244,25 @@ mod tests {
             panic!("expected validate command");
         };
         assert_eq!(args.result_file, PathBuf::from("result.json"));
+    }
+
+    #[test]
+    fn site_subcommand_accepts_an_explicit_catalog_directory() {
+        let cli = Cli::try_parse_from([
+            "willitcall",
+            "site",
+            "--results",
+            "results",
+            "--out",
+            "site",
+            "--catalog",
+            "scenarios",
+        ])
+        .expect("site arguments should parse");
+        let Command::Site(args) = cli.command else {
+            panic!("expected site command");
+        };
+        assert_eq!(args.catalog, Some(PathBuf::from("scenarios")));
     }
 
     #[test]
