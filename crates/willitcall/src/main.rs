@@ -20,8 +20,7 @@ use wic_core::registry::ModelRegistry;
 use wic_core::result::{
     exit_code_for_totals, parse_and_validate_measurement, validate_measurement, validate_result,
     write_result_atomic, Cause, CauseKind, Measurement, PreflightOverride, QuantizationMetadata,
-    ReplicationMetadata, ReplicationMode, RunMetadataV3, RunResult, RunResultV3, ScenarioOutcomeV3,
-    ServerMetadataV3, Status,
+    RunMetadataV3, RunResult, RunResultV3, ScenarioOutcomeV3, ServerMetadataV3, Status,
 };
 use wic_core::runner::{
     contention_preflight_ignoring_ports, preflight, run_measurement, RunConfig, ServerConfig,
@@ -506,21 +505,6 @@ fn rescore(args: RescoreArgs) -> Result<(usize, Vec<String>), ExecuteError> {
 
 fn v3_wire_result(measurement: &Measurement) -> Result<RunResultV3, ExecuteError> {
     let metadata = &measurement.metadata;
-    let run_id = metadata.run_id.clone();
-    let unresolved_arm = format!("unresolved:{run_id}");
-    let replication = metadata
-        .replication
-        .clone()
-        .unwrap_or_else(|| ReplicationMetadata {
-            study_id: unresolved_arm.clone(),
-            arm_id: unresolved_arm.clone(),
-            run_index: 0,
-            mode: if metadata.sampling.temperature == Some(0.0) {
-                ReplicationMode::GreedyReproducibility
-            } else {
-                ReplicationMode::SeedVariedVariance
-            },
-        });
     let corpus = metadata.corpus.clone().ok_or_else(|| {
         ExecuteError::Harness("new run is missing required corpus metadata".to_owned())
     })?;
@@ -530,7 +514,7 @@ fn v3_wire_result(measurement: &Measurement) -> Result<RunResultV3, ExecuteError
     Ok(RunResultV3 {
         schema_version: 3,
         metadata: RunMetadataV3 {
-            run_id,
+            run_id: metadata.run_id.clone(),
             timestamp: metadata.timestamp.clone(),
             willitcall_version: metadata.willitcall_version.clone(),
             endpoint: metadata.endpoint.clone(),
@@ -546,8 +530,8 @@ fn v3_wire_result(measurement: &Measurement) -> Result<RunResultV3, ExecuteError
             },
             environment,
             sampling: metadata.sampling.clone(),
-            replication,
-            arm_fingerprint: metadata.arm_fingerprint.clone().unwrap_or(unresolved_arm),
+            replication: metadata.replication.clone(),
+            arm_fingerprint: metadata.arm_fingerprint.clone(),
             preflight_override: metadata.preflight_override.clone(),
             preflight_ignored_ports: metadata.preflight_ignored_ports.clone(),
         },

@@ -43,8 +43,8 @@ pub struct RunMetadataV3 {
     pub server: ServerMetadataV3,
     pub environment: EnvironmentMetadataV3,
     pub sampling: SamplingParams,
-    pub replication: ReplicationMetadata,
-    pub arm_fingerprint: String,
+    pub replication: Option<ReplicationMetadata>,
+    pub arm_fingerprint: Option<String>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub preflight_override: Option<PreflightOverride>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -479,8 +479,8 @@ impl From<RunResultV3> for Measurement {
                 },
                 environment: Some(metadata.environment),
                 sampling: metadata.sampling,
-                replication: Some(metadata.replication),
-                arm_fingerprint: Some(metadata.arm_fingerprint),
+                replication: metadata.replication,
+                arm_fingerprint: metadata.arm_fingerprint,
                 preflight_override: metadata.preflight_override,
                 preflight_ignored_ports: metadata.preflight_ignored_ports,
             },
@@ -1386,8 +1386,8 @@ mod tests {
         let schema: serde_json::Value =
             serde_json::from_str(include_str!("../../../schemas/result-v3.schema.json"))
                 .expect("parse v3 schema");
-        jsonschema::validator_for(&schema)
-            .expect("compile v3 schema")
+        let validator = jsonschema::validator_for(&schema).expect("compile v3 schema");
+        validator
             .validate(&v3_document)
             .expect("v3 fixture should satisfy schema");
 
@@ -1405,6 +1405,34 @@ mod tests {
                 .http_status,
             Some(400)
         );
+
+        let mut historical = v3_document.clone();
+        for pointer in [
+            "/metadata/model/family_id",
+            "/metadata/model/parameter_count_b",
+            "/metadata/model/artifact/quantization/scheme",
+            "/metadata/model/artifact/quantization/bits",
+            "/metadata/server/chat_template",
+            "/metadata/server/launch_config_sha256",
+            "/metadata/environment/os_name",
+            "/metadata/environment/os_version",
+            "/metadata/environment/architecture",
+            "/metadata/environment/accelerator",
+            "/metadata/environment/memory_bytes",
+            "/metadata/replication",
+            "/metadata/arm_fingerprint",
+        ] {
+            *historical.pointer_mut(pointer).expect("historical field") = serde_json::Value::Null;
+        }
+        validator
+            .validate(&historical)
+            .expect("historical v3 nulls should satisfy schema");
+        let historical = super::parse_and_validate_measurement(
+            &serde_json::to_vec(&historical).expect("encode historical fixture"),
+        )
+        .expect("parse historical measurement");
+        assert!(historical.metadata.replication.is_none());
+        assert!(historical.metadata.arm_fingerprint.is_none());
 
         let mut unresolved = v3_document.clone();
         unresolved["metadata"]["model"]["identity_status"] = serde_json::json!("unresolved");

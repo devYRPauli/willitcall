@@ -180,13 +180,8 @@ fn write_v3_result_fixture(path: &std::path::Path, mut scenarios: Vec<Value>) {
                 "seed": 42,
                 "max_tokens": 1024
             },
-            "replication": {
-                "study_id": "fixture-study",
-                "arm_id": "fixture-arm",
-                "run_index": 0,
-                "mode": "greedy_reproducibility"
-            },
-            "arm_fingerprint": "unresolved:fixture"
+            "replication": null,
+            "arm_fingerprint": null
         },
         "scenarios": scenarios,
         "totals": {
@@ -655,7 +650,8 @@ content = "Reply ready."
     assert_eq!(v3.schema_version, 3);
     assert_eq!(v3.metadata.model.endpoint_id, "qwen2.5:7b-instruct");
     assert_eq!(v3.metadata.model.identity_status, IdentityStatus::Declared);
-    assert!(v3.metadata.arm_fingerprint.is_some());
+    assert!(v3.metadata.replication.is_none());
+    assert!(v3.metadata.arm_fingerprint.is_none());
 
     let validation = run_binary(vec!["validate".to_owned(), v3_path.display().to_string()]).await;
     assert_eq!(
@@ -1133,6 +1129,31 @@ async fn validate_accepts_v1_v2_and_v3_fixtures() {
     let stderr = String::from_utf8_lossy(&output.stderr);
     assert!(
         stderr.contains("unsupported schema_version 4; expected 1, 2, or 3"),
+        "{stderr}"
+    );
+}
+
+#[tokio::test(flavor = "multi_thread", worker_threads = 2)]
+async fn validate_rejects_a_corrupt_document_with_a_nonzero_exit() {
+    let directory = tempfile::tempdir().expect("temp directory");
+    let path = directory.path().join("corrupt.json");
+    write_v3_result_fixture(&path, Vec::new());
+    let mut corrupt: Value =
+        serde_json::from_slice(&fs::read(&path).expect("v3 bytes")).expect("v3 JSON");
+    corrupt["totals"]["total"] = json!(1);
+    fs::write(
+        &path,
+        serde_json::to_vec_pretty(&corrupt).expect("encode corrupt result"),
+    )
+    .expect("write corrupt result");
+
+    let output = run_binary(vec!["validate".to_owned(), path.display().to_string()]).await;
+
+    assert_eq!(output.status.code(), Some(2));
+    assert!(output.stdout.is_empty());
+    let stderr = String::from_utf8_lossy(&output.stderr);
+    assert!(
+        stderr.contains("totals.total is 1 but scenarios contains 0 outcomes"),
         "{stderr}"
     );
 }

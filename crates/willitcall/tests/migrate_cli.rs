@@ -5,9 +5,7 @@ use std::process::{Command, Output};
 use serde_json::{json, Value};
 
 const REGISTRY: &[u8] = include_bytes!("../../../registry/models-v1.json");
-const RESOLVED_RESULT: &[u8] =
-    include_bytes!("../../../results/llamacpp-meta-llama-3.1-8b-instruct-q3_k_m.json");
-const UNRESOLVED_RESULT: &[u8] = include_bytes!("../../../results/ollama-gemma3-4b.json");
+const V2_RESULT_FIXTURE: &[u8] = include_bytes!("fixtures/result-v2.json");
 
 struct Fixture {
     directory: tempfile::TempDir,
@@ -144,7 +142,7 @@ fn assert_measured_facts_preserved(before: &Value, after: &Value) {
 #[test]
 fn migrates_v2_from_manifest_and_check_never_writes() {
     let fixture = Fixture::new(
-        RESOLVED_RESULT,
+        V2_RESULT_FIXTURE,
         "bartowski/Meta-Llama-3.1-8B-Instruct-GGUF:Q3_K_M",
         Some("must-not-drive-identity"),
     );
@@ -182,7 +180,7 @@ fn migrates_v2_from_manifest_and_check_never_writes() {
 #[test]
 fn second_migration_is_a_byte_identical_no_op() {
     let fixture = Fixture::new(
-        RESOLVED_RESULT,
+        V2_RESULT_FIXTURE,
         "bartowski/Meta-Llama-3.1-8B-Instruct-GGUF:Q3_K_M",
         None,
     );
@@ -198,7 +196,7 @@ fn second_migration_is_a_byte_identical_no_op() {
 #[test]
 fn refuses_an_unlisted_result_before_writing() {
     let fixture = Fixture::new(
-        RESOLVED_RESULT,
+        V2_RESULT_FIXTURE,
         "bartowski/Meta-Llama-3.1-8B-Instruct-GGUF:Q3_K_M",
         None,
     );
@@ -208,7 +206,7 @@ fn refuses_an_unlisted_result_before_writing() {
         .parent()
         .expect("result parent")
         .join("unlisted.json");
-    fs::write(&unlisted, RESOLVED_RESULT).expect("write unlisted result");
+    fs::write(&unlisted, V2_RESULT_FIXTURE).expect("write unlisted result");
 
     let output = fixture.run(&[]);
     assert_eq!(output.status.code(), Some(2));
@@ -218,7 +216,7 @@ fn refuses_an_unlisted_result_before_writing() {
 
 #[test]
 fn unresolved_registry_row_migrates_successfully() {
-    let fixture = Fixture::new(UNRESOLVED_RESULT, "gemma3:4b", Some("looks-resolved:99b"));
+    let fixture = Fixture::new(V2_RESULT_FIXTURE, "gemma3:4b", Some("looks-resolved:99b"));
 
     let output = fixture.run(&[]);
     assert_success(&output);
