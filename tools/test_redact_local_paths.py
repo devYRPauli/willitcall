@@ -189,6 +189,20 @@ class RedactLocalPathsTests(unittest.TestCase):
             fixture.ledger_path, fixture.evidence_root.parent, fixture.root
         )
 
+    def test_check_accepts_v3_owning_result_for_v2_ledger(self) -> None:
+        fixture = Fixture()
+        self.addCleanup(fixture.close)
+        fixture.redact()
+        result = json.loads(fixture.result_path.read_bytes())
+        model_id = result["metadata"].pop("model_id")
+        result["metadata"]["model"] = {"endpoint_id": model_id}
+        result["schema_version"] = 3
+        fixture.result_path.write_text(json.dumps(result, indent=2) + "\n")
+
+        redact_local_paths.check_ledger(
+            fixture.ledger_path, fixture.evidence_root, fixture.root
+        )
+
     def test_streaming_response_is_fully_clean_and_preserves_sse_bytes(self) -> None:
         fixture = Fixture(streaming=True)
         self.addCleanup(fixture.close)
