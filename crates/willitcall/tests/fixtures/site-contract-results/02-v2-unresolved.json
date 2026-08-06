@@ -1,0 +1,83 @@
+{
+  "schema_version": 2,
+  "metadata": {
+    "run_id": "site-contract-v2",
+    "timestamp": "2000-01-02T00:00:00Z",
+    "willitcall_version": "site-contract-fixture",
+    "endpoint": "https://fixture.invalid/v1",
+    "model_id": "v2-unresolved:model",
+    "declared_quant": "Q5_K_M",
+    "server": {
+      "preset_name": "mlx_lm",
+      "reported_version": "fixture-v2",
+      "quirk_flags": []
+    },
+    "environment": {
+      "host_hardware_class": "Fixture workstation",
+      "host_os": "Fixture OS v2"
+    },
+    "sampling": {
+      "temperature": 0.0,
+      "top_p": 1.0,
+      "seed": 2,
+      "max_tokens": 64
+    }
+  },
+  "scenarios": [
+    {
+      "id": "v2-pass",
+      "category": "multi_turn",
+      "status": "pass",
+      "failure_reason": null,
+      "evidence_hash": null,
+      "evidence_path": null,
+      "retried": false
+    },
+    {
+      "id": "v2-fail-with-cause",
+      "category": "multi_turn",
+      "status": "fail",
+      "failure_reason": "assistant returned no content <fixture>",
+      "failure_class": "empty_response",
+      "cause": {
+        "kind": "server-defect",
+        "reference": "docs/site-contract-cause.md",
+        "note": "fixture cause & note"
+      },
+      "evidence_hash": "sha256:v2-fail-fixture",
+      "evidence_path": "/evidence/site-contract/v2-fail.json",
+      "retried": false
+    },
+    {
+      "id": "v2-error",
+      "category": "streaming",
+      "status": "error",
+      "failure_reason": "fixture server error",
+      "evidence_hash": null,
+      "evidence_path": null,
+      "retried": false
+    },
+    {
+      "id": "v2-unparsed",
+      "category": "negative_trap",
+      "status": "fail",
+      "failure_reason": "fixture tool call was not parsed",
+      "failure_class": "unparsed_tool_call",
+      "cause": {
+        "kind": "unknown",
+        "reference": null,
+        "note": null
+      },
+      "evidence_hash": null,
+      "evidence_path": null,
+      "retried": false
+    }
+  ],
+  "totals": {
+    "total": 4,
+    "passed": 1,
+    "failed": 2,
+    "errors": 1,
+    "skipped": 0
+  }
+}

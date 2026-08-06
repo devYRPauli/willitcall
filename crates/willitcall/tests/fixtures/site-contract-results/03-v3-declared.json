@@ -1,0 +1,79 @@
+{
+  "schema_version": 3,
+  "metadata": {
+    "run_id": "site-contract-v3-declared",
+    "timestamp": "2000-01-03T00:00:00Z",
+    "willitcall_version": "site-contract-fixture",
+    "endpoint": "https://fixture.invalid/v1",
+    "model": {
+      "display_name": "/fixtures/models/declared-fixture.gguf",
+      "family_id": "fixture-declared",
+      "canonical_id": "Fixture/Declared",
+      "parameter_count_b": 1.0,
+      "endpoint_id": "/fixtures/models/declared-fixture.gguf",
+      "identity_status": "declared",
+      "artifact": {
+        "source_kind": "huggingface",
+        "source_id": "Fixture/Declared-GGUF",
+        "revision": "fixture-revision",
+        "sha256": null,
+        "format": "gguf",
+        "quantization": {
+          "label": "Q4_K_M",
+          "scheme": "k-quant",
+          "bits": 4
+        }
+      }
+    },
+    "corpus": {
+      "id": "site-contract",
+      "revision": "fixture-v1",
+      "sha256": "sha256:fixture-corpus",
+      "scenario_count": 1,
+      "scoring_version": "fixture-v1"
+    },
+    "server": {
+      "preset_name": "llamacpp",
+      "reported_version": "fixture-v3-declared",
+      "quirk_flags": ["grammar_constrained_decoding"],
+      "decode_mode": "grammar_constrained",
+      "chat_template": null,
+      "launch_config_sha256": null
+    },
+    "environment": {
+      "display_label": "Declared fixture host; Fixture OS v3",
+      "os_name": "Fixture OS",
+      "os_version": "v3",
+      "architecture": "fixture-arch",
+      "accelerator": null,
+      "memory_bytes": null
+    },
+    "sampling": {
+      "temperature": 0.0,
+      "top_p": 1.0,
+      "seed": 3,
+      "max_tokens": 64
+    },
+    "replication": null,
+    "arm_fingerprint": null
+  },
+  "scenarios": [
+    {
+      "id": "v3-declared-pass",
+      "category": "tool_choice_modes",
+      "status": "pass",
+      "failure_reason": null,
+      "failure": null,
+      "evidence_hash": null,
+      "evidence_path": null,
+      "retried": false
+    }
+  ],
+  "totals": {
+    "total": 1,
+    "passed": 1,
+    "failed": 0,
+    "errors": 0,
+    "skipped": 0
+  }
+}
