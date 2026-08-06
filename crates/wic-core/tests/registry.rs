@@ -168,7 +168,7 @@ fn published_registry_has_32_explicit_provenance_checked_mappings() {
         .iter()
         .filter(|entry| entry.identity_status == IdentityStatus::Unresolved)
         .count();
-    assert_eq!((verified, declared, unresolved), (1, 15, 16));
+    assert_eq!((verified, declared, unresolved), (1, 27, 4));
 
     let mut missing_provenance = registry_document.clone();
     missing_provenance["entries"][0]["display_name"]
