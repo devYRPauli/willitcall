@@ -1,39 +1,25 @@
-use std::collections::BTreeSet;
 use std::fmt::Write as _;
 use std::fs;
 use std::path::{Path, PathBuf};
 
-use wic_core::result::{
-    parse_and_validate_measurement, CauseKind, EnvironmentMetadataV3, IdentityStatus, Measurement,
-    MeasurementScenarioOutcome, Status,
-};
+use wic_core::result::{CauseKind, EnvironmentMetadataV3, IdentityStatus, Status};
 use wic_core::ScenarioCategory;
 
+use self::data::{ScenarioView, SiteDataset, StackRow, CATEGORIES};
+
+mod data;
 #[allow(dead_code)] // Additive primitives; later T2.2/T2.3 briefs wire them into the page.
 mod svg;
-
-const CATEGORIES: [ScenarioCategory; 6] = [
-    ScenarioCategory::SingleCall,
-    ScenarioCategory::ParallelCalls,
-    ScenarioCategory::Streaming,
-    ScenarioCategory::ToolChoiceModes,
-    ScenarioCategory::MultiTurn,
-    ScenarioCategory::NegativeTrap,
-];
-
-struct ResultFile {
-    file_name: String,
-    result: Measurement,
-}
 
 pub(crate) fn generate(
     results_directory: &Path,
     output_directory: &Path,
     repo_base: &str,
+    catalog_directory: Option<&Path>,
 ) -> Result<usize, String> {
-    let results = read_results(results_directory)?;
+    let dataset = data::load(results_directory, catalog_directory)?;
     let repo_base = repo_base.trim_end_matches('/');
-    let index = render_index(&results, repo_base);
+    let index = render_index(&dataset, repo_base);
     let submit = render_submit(repo_base);
 
     fs::create_dir_all(output_directory).map_err(|error| {
@@ -46,46 +32,7 @@ pub(crate) fn generate(
     write_site_file(output_directory.join("submit.html"), &submit)?;
     write_site_file(output_directory.join("style.css"), STYLE)?;
     write_site_file(output_directory.join("site.js"), SCRIPT)?;
-    Ok(results.len())
-}
-
-fn read_results(directory: &Path) -> Result<Vec<ResultFile>, String> {
-    let entries = fs::read_dir(directory).map_err(|error| {
-        format!(
-            "failed to read results directory {}: {error}",
-            directory.display()
-        )
-    })?;
-    let mut paths = entries
-        .map(|entry| {
-            entry
-                .map(|entry| entry.path())
-                .map_err(|error| format!("failed to read results directory entry: {error}"))
-        })
-        .collect::<Result<Vec<PathBuf>, _>>()?;
-    paths.retain(|path| {
-        path.is_file()
-            && path
-                .extension()
-                .is_some_and(|extension| extension == "json")
-    });
-    paths.sort();
-
-    paths
-        .into_iter()
-        .map(|path| {
-            let bytes = fs::read(&path)
-                .map_err(|error| format!("failed to read result {}: {error}", path.display()))?;
-            let result = parse_and_validate_measurement(&bytes)
-                .map_err(|error| format!("{}: {error}", path.display()))?;
-            let file_name = path
-                .file_name()
-                .ok_or_else(|| format!("result path {} has no file name", path.display()))?
-                .to_string_lossy()
-                .into_owned();
-            Ok(ResultFile { file_name, result })
-        })
-        .collect()
+    Ok(dataset.rows.len())
 }
 
 fn write_site_file(path: PathBuf, contents: &str) -> Result<(), String> {
@@ -93,24 +40,19 @@ fn write_site_file(path: PathBuf, contents: &str) -> Result<(), String> {
         .map_err(|error| format!("failed to write site file {}: {error}", path.display()))
 }
 
-fn render_index(results: &[ResultFile], repo_base: &str) -> String {
-    let scenario_count = results
-        .iter()
-        .flat_map(|result| result.result.scenarios.iter())
-        .map(|scenario| scenario.id.as_str())
-        .collect::<BTreeSet<_>>()
-        .len();
+fn render_index(dataset: &SiteDataset, repo_base: &str) -> String {
+    let results = &dataset.rows;
+    let scenario_count = dataset.scenario_count;
     let case_studies_url = format!("{repo_base}/tree/main/docs/case-studies");
     let peg_native_case_study_url = format!(
         "{repo_base}/blob/main/docs/case-studies/2026-07-21-llamacpp-500s-on-llama-3.1-tool-calls.md"
     );
     let uniform_environment = results
         .first()
-        .and_then(|result| result.result.metadata.environment.as_ref())
+        .and_then(|result| result.metadata.environment.as_ref())
         .filter(|environment| {
             results.iter().all(|result| {
                 result
-                    .result
                     .metadata
                     .environment
                     .as_ref()
@@ -234,15 +176,13 @@ fn render_index(results: &[ResultFile], repo_base: &str) -> String {
 fn render_result_rows(
     html: &mut String,
     index: usize,
-    result_file: &ResultFile,
+    result: &StackRow,
     repo_base: &str,
     disclose_environment: bool,
 ) {
-    let result = &result_file.result;
     let server = &result.metadata.server.preset_name;
     let server_display = display_server(server);
     let model = &result.metadata.model;
-    let model_display = display_model_id(&model.display_name);
     let identity_status = display_identity_status(model.identity_status);
     let canonical_id = result.cross_model_key().unwrap_or("not established");
     let cross_model_attribute = result
@@ -282,7 +222,7 @@ fn render_result_rows(
         escape_html(server),
         identity_status,
         cross_model_attribute,
-        escape_html(model_display),
+        escape_html(&result.display_name),
         escape_html(canonical_id),
         escape_html(quant),
         escape_html(server_display),
@@ -292,15 +232,15 @@ fn render_result_rows(
     .expect("write HTML");
 
     for category in CATEGORIES {
-        render_category_cell(html, result_file, category, repo_base);
+        render_category_cell(html, result, category, repo_base);
     }
 
     write!(
         html,
         "            </tr>\n            <tr class=\"detail-row\">\n              <td colspan=\"7\">\n                <details id=\"{details_id}\">\n                  <summary>View {} scenarios and row metadata</summary>\n                  <dl class=\"metadata\">\n                    <div><dt>Result file</dt><dd><code>{}</code></dd></div>\n                    <div><dt>Endpoint id</dt><dd><code>{}</code></dd></div>\n                    <div><dt>Identity status</dt><dd>{}</dd></div>\n                    <div><dt>Artifact quant</dt><dd>{}</dd></div>\n                    <div><dt>Server</dt><dd>{} {}</dd></div>\n                    <div><dt>Schema</dt><dd>v{}</dd></div>\n                    <div><dt>Run time</dt><dd>{}</dd></div>\n{}                  </dl>\n                  <ol class=\"scenario-list\">\n",
         result.scenarios.len(),
-        escape_html(&result_file.file_name),
-        escape_html(display_model_id(&result.metadata.model.endpoint_id)),
+        escape_html(&result.file_name),
+        escape_html(&result.endpoint_display),
         identity_status,
         escape_html(quant),
         escape_html(server_display),
@@ -382,33 +322,21 @@ fn render_environment_statement(environment: &EnvironmentMetadataV3) -> String {
 
 fn render_category_cell(
     html: &mut String,
-    result_file: &ResultFile,
+    result: &StackRow,
     category: ScenarioCategory,
     repo_base: &str,
 ) {
-    let scenarios = result_file
-        .result
+    let scenarios = result
         .scenarios
         .iter()
         .filter(|scenario| scenario.category == category)
         .collect::<Vec<_>>();
-    let total = scenarios.len();
-    let passed = scenarios
-        .iter()
-        .filter(|scenario| scenario.status == Status::Pass)
-        .count();
-    let failed = scenarios
-        .iter()
-        .filter(|scenario| scenario.status == Status::Fail)
-        .count();
-    let errors = scenarios
-        .iter()
-        .filter(|scenario| scenario.status == Status::Error)
-        .count();
-    let skipped = scenarios
-        .iter()
-        .filter(|scenario| scenario.status == Status::Skipped)
-        .count();
+    let counts = result.category_counts.for_category(category);
+    let total = counts.total();
+    let passed = counts.passed;
+    let failed = counts.failed;
+    let errors = counts.errors;
+    let skipped = counts.skipped;
     let not_measurable = errors > 0 && passed + failed == 0;
     let class = if total == 0 {
         "untested"
@@ -442,7 +370,7 @@ fn render_category_cell(
         .expect("write HTML");
     } else {
         write!(html, "<span class=\"ratio\">{passed}/{total}</span>").expect("write HTML");
-        if total > 0 && passed < total && result_file.result.schema_version == 1 {
+        if total > 0 && passed < total && result.schema_version == 1 {
             html.push_str("<span class=\"legacy-evidence\">schema v1: no transcript path</span>");
         }
     }
@@ -455,7 +383,7 @@ fn render_category_cell(
 fn render_annotation(
     html: &mut String,
     schema_version: u32,
-    scenario: &MeasurementScenarioOutcome,
+    scenario: &ScenarioView,
     repo_base: &str,
 ) {
     if let Some(cause) = scenario.cause.as_ref() {
@@ -566,17 +494,6 @@ cargo run -p willitcall -- validate "$OUT"</code></pre>
 "#,
         escape_html(&contributing_url)
     )
-}
-
-fn display_model_id(model_id: &str) -> &str {
-    let path = Path::new(model_id);
-    if path.is_absolute() {
-        path.file_name()
-            .and_then(|component| component.to_str())
-            .unwrap_or("local model")
-    } else {
-        model_id
-    }
 }
 
 fn display_server(server: &str) -> &str {
