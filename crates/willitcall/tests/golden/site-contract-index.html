@@ -33,7 +33,7 @@
         </label>
       </div>
       <div class="reading-key" aria-label="How to read the matrix">
-        <p class="reading-caption"><strong>How to read:</strong> ratios are passed scenarios / scenarios in the category; hatching means n&lt;5, so no verdict is drawn.</p>
+        <p class="reading-caption"><strong>How to read:</strong> ratios are passed scenarios / scenarios in the category.</p>
         <div class="mark-key" aria-label="Scenario outcome marks">
           <span><i class="state-key state-pass"></i>pass</span>
           <span><i class="state-key state-fail"></i>model / response failure</span>
@@ -41,12 +41,11 @@
           <span><i class="state-key state-skipped"></i>not tested</span>
         </div>
         <div class="method-key">
-          <span><i class="hatch-key"></i>n&lt;5, no verdict</span>
+          <span><i class="hatch-key"></i>n=1, no verdict: every published arm is a single run, so no cell carries a verdict; hatching marks this.</span>
           <span><i class="identity-status verified"></i>identity status</span>
         </div>
       </div>
 
-      <p class="matrix-note">Machine-readable observations: <a href="results.json">JSON</a> and <a href="results.csv">CSV</a>. Scenario rasters are on the <a href="outcomes.html">outcomes page</a>; recorded metadata and transcripts are in the <a href="appendix.html">appendix</a>.</p>
       <p id="filter-status" class="filter-status" aria-live="polite">Showing 4 stacks.</p>
       <div class="table-scroll">
         <table class="matrix-table">
@@ -61,84 +60,65 @@
               <th scope="col" title="negative_trap">Correctly declines</th>
             </tr>
           </thead>
-          <tbody class="model-group result-group" data-model-key="Fixture/Declared" data-model-search="declared-fixture.gguf fixture/declared">
-            <tr class="model-heading"><th colspan="7" scope="rowgroup"><span>Model</span> Fixture/Declared</th></tr>
+          <tbody class="model-group result-group single-row" data-model-key="Fixture/Declared" data-model-search="declared-fixture.gguf fixture/declared">
             <tr class="result-row" data-server="llamacpp" data-identity-status="declared" data-decode-mode="grammar_constrained" data-decode-source="recorded" data-cross-model-key="Fixture/Declared">
               <th scope="row">
                 <strong>declared-fixture.gguf</strong>
-                <span>quant: Q4_K_M - server: llama.cpp</span>
-                <span><span class="decode-badge grammar_constrained">grammar_constrained</span></span>
-                <span>decode provenance: recorded by run</span>
-                <span class="identity-status declared">identity status: declared</span>
-                <a class="detail-link" href="appendix.html#stack-detail-2">detail</a>
+                <div class="row-meta"><span>Q4_K_M / llama.cpp</span><span class="decode-badge grammar_constrained" title="Decode mode: grammar constrained; decode provenance: recorded by run.">grammar (run)</span><span class="identity-status declared" title="Identity status: declared.">id: declared</span><a class="detail-link" href="appendix.html#stack-detail-2">detail</a></div>
               </th>
-              <td class="score untested low-replication" data-label="Single call" aria-label="single_call: 0 passed, 0 failed, 0 errors, 0 skipped; n=1, no verdict"><span class="ratio">0/0</span><span class="replication-note">n=1, no verdict</span></td>
-              <td class="score untested low-replication" data-label="Parallel calls" aria-label="parallel_calls: 0 passed, 0 failed, 0 errors, 0 skipped; n=1, no verdict"><span class="ratio">0/0</span><span class="replication-note">n=1, no verdict</span></td>
-              <td class="score untested low-replication" data-label="Streaming" aria-label="streaming: 0 passed, 0 failed, 0 errors, 0 skipped; n=1, no verdict"><span class="ratio">0/0</span><span class="replication-note">n=1, no verdict</span></td>
-              <td class="score all-pass low-replication" data-label="Tool choice" aria-label="tool_choice_modes: 1 passed, 0 failed, 0 errors, 0 skipped; n=1, no verdict"><span class="ratio">1/1</span><span class="replication-note">n=1, no verdict</span></td>
-              <td class="score untested low-replication" data-label="Multi-turn" aria-label="multi_turn: 0 passed, 0 failed, 0 errors, 0 skipped; n=1, no verdict"><span class="ratio">0/0</span><span class="replication-note">n=1, no verdict</span></td>
-              <td class="score untested low-replication" data-label="Correctly declines" aria-label="negative_trap: 0 passed, 0 failed, 0 errors, 0 skipped; n=1, no verdict"><span class="ratio">0/0</span><span class="replication-note">n=1, no verdict</span></td>
+              <td class="score untested low-replication" data-label="Single call" aria-label="single_call: 0 passed, 0 failed, 0 errors, 0 skipped; n=1; no verdict"><span class="ratio">0/0</span></td>
+              <td class="score untested low-replication" data-label="Parallel calls" aria-label="parallel_calls: 0 passed, 0 failed, 0 errors, 0 skipped; n=1; no verdict"><span class="ratio">0/0</span></td>
+              <td class="score untested low-replication" data-label="Streaming" aria-label="streaming: 0 passed, 0 failed, 0 errors, 0 skipped; n=1; no verdict"><span class="ratio">0/0</span></td>
+              <td class="score all-pass low-replication" data-label="Tool choice" aria-label="tool_choice_modes: 1 passed, 0 failed, 0 errors, 0 skipped; n=1; no verdict"><span class="ratio">1/1</span></td>
+              <td class="score untested low-replication" data-label="Multi-turn" aria-label="multi_turn: 0 passed, 0 failed, 0 errors, 0 skipped; n=1; no verdict"><span class="ratio">0/0</span></td>
+              <td class="score untested low-replication" data-label="Correctly declines" aria-label="negative_trap: 0 passed, 0 failed, 0 errors, 0 skipped; n=1; no verdict"><span class="ratio">0/0</span></td>
             </tr>
           </tbody>
-          <tbody class="model-group result-group" data-model-key="Fixture/Verified" data-model-search="fixture/verified verified &amp; fixture verified-fixture:latest">
-            <tr class="model-heading"><th colspan="7" scope="rowgroup"><span>Model</span> Fixture/Verified</th></tr>
+          <tbody class="model-group result-group single-row" data-model-key="Fixture/Verified" data-model-search="fixture/verified verified &amp; fixture verified-fixture:latest">
             <tr class="result-row" data-server="ollama" data-identity-status="verified" data-decode-mode="unconstrained_post_hoc" data-decode-source="recorded" data-cross-model-key="Fixture/Verified">
               <th scope="row">
                 <strong>Verified &amp; Fixture</strong>
-                <span>quant: not declared - server: ollama</span>
-                <span><span class="decode-badge unconstrained_post_hoc">unconstrained_post_hoc</span></span>
-                <span>decode provenance: recorded by run</span>
-                <span class="identity-status verified">identity status: verified</span>
-                <a class="detail-link" href="appendix.html#stack-detail-3">detail</a>
+                <div class="row-meta"><span>not declared / ollama</span><span class="decode-badge unconstrained_post_hoc" title="Decode mode: unconstrained post-hoc; decode provenance: recorded by run.">post-hoc (run)</span><span class="identity-status verified" title="Identity status: verified.">id: verified</span><a class="detail-link" href="appendix.html#stack-detail-3">detail</a></div>
               </th>
-              <td class="score untested low-replication" data-label="Single call" aria-label="single_call: 0 passed, 0 failed, 0 errors, 0 skipped; n=1, no verdict"><span class="ratio">0/0</span><span class="replication-note">n=1, no verdict</span></td>
-              <td class="score untested low-replication" data-label="Parallel calls" aria-label="parallel_calls: 0 passed, 0 failed, 0 errors, 0 skipped; n=1, no verdict"><span class="ratio">0/0</span><span class="replication-note">n=1, no verdict</span></td>
-              <td class="score untested low-replication" data-label="Streaming" aria-label="streaming: 0 passed, 0 failed, 0 errors, 0 skipped; n=1, no verdict"><span class="ratio">0/0</span><span class="replication-note">n=1, no verdict</span></td>
-              <td class="score untested low-replication" data-label="Tool choice" aria-label="tool_choice_modes: 0 passed, 0 failed, 0 errors, 0 skipped; n=1, no verdict"><span class="ratio">0/0</span><span class="replication-note">n=1, no verdict</span></td>
-              <td class="score untested low-replication" data-label="Multi-turn" aria-label="multi_turn: 0 passed, 0 failed, 0 errors, 0 skipped; n=1, no verdict"><span class="ratio">0/0</span><span class="replication-note">n=1, no verdict</span></td>
-              <td class="score all-pass low-replication" data-label="Correctly declines" aria-label="negative_trap: 1 passed, 0 failed, 0 errors, 0 skipped; n=1, no verdict"><span class="ratio">1/1</span><span class="replication-note">n=1, no verdict</span></td>
+              <td class="score untested low-replication" data-label="Single call" aria-label="single_call: 0 passed, 0 failed, 0 errors, 0 skipped; n=1; no verdict"><span class="ratio">0/0</span></td>
+              <td class="score untested low-replication" data-label="Parallel calls" aria-label="parallel_calls: 0 passed, 0 failed, 0 errors, 0 skipped; n=1; no verdict"><span class="ratio">0/0</span></td>
+              <td class="score untested low-replication" data-label="Streaming" aria-label="streaming: 0 passed, 0 failed, 0 errors, 0 skipped; n=1; no verdict"><span class="ratio">0/0</span></td>
+              <td class="score untested low-replication" data-label="Tool choice" aria-label="tool_choice_modes: 0 passed, 0 failed, 0 errors, 0 skipped; n=1; no verdict"><span class="ratio">0/0</span></td>
+              <td class="score untested low-replication" data-label="Multi-turn" aria-label="multi_turn: 0 passed, 0 failed, 0 errors, 0 skipped; n=1; no verdict"><span class="ratio">0/0</span></td>
+              <td class="score all-pass low-replication" data-label="Correctly declines" aria-label="negative_trap: 1 passed, 0 failed, 0 errors, 0 skipped; n=1; no verdict"><span class="ratio">1/1</span></td>
             </tr>
           </tbody>
-          <tbody class="model-group result-group" data-model-key="legacy-unresolved.gguf" data-model-search="legacy-unresolved.gguf">
-            <tr class="model-heading"><th colspan="7" scope="rowgroup"><span>Model</span> legacy-unresolved.gguf</th></tr>
+          <tbody class="model-group result-group single-row" data-model-key="legacy-unresolved.gguf" data-model-search="legacy-unresolved.gguf">
             <tr class="result-row" data-server="ollama" data-identity-status="unresolved" data-decode-mode="unconstrained_post_hoc" data-decode-source="preset_mapping">
               <th scope="row">
                 <strong>legacy-unresolved.gguf</strong>
-                <span>quant: not declared - server: ollama</span>
-                <span><span class="decode-badge unconstrained_post_hoc">unconstrained_post_hoc</span></span>
-                <span>decode provenance: documented preset mapping</span>
-                <span class="identity-status unresolved">identity status: unresolved (provenance could not be established; excluded from cross-model comparison)</span>
-                <a class="detail-link" href="appendix.html#stack-detail-0">detail</a>
+                <div class="row-meta"><span>not declared / ollama</span><span class="decode-badge unconstrained_post_hoc" title="Decode mode: unconstrained post-hoc; decode provenance: documented preset mapping.">post-hoc (mapping)</span><span class="identity-status unresolved" title="Identity status: unresolved. Provenance could not be established; excluded from cross-model comparison.">id: unresolved</span><a class="detail-link" href="appendix.html#stack-detail-0">detail</a></div>
               </th>
-              <td class="score all-pass low-replication" data-label="Single call" aria-label="single_call: 1 passed, 0 failed, 0 errors, 0 skipped; n=1, no verdict"><span class="ratio">1/1</span><span class="replication-note">n=1, no verdict</span></td>
-              <td class="score none-pass low-replication" data-label="Parallel calls" aria-label="parallel_calls: 0 passed, 1 failed, 0 errors, 0 skipped; n=1, no verdict"><span class="ratio">0/1</span><span class="legacy-evidence">schema v1: no transcript path</span><span class="replication-note">n=1, no verdict</span></td>
-              <td class="score untested low-replication" data-label="Streaming" aria-label="streaming: 0 passed, 0 failed, 0 errors, 0 skipped; n=1, no verdict"><span class="ratio">0/0</span><span class="replication-note">n=1, no verdict</span></td>
-              <td class="score not-measurable low-replication" data-label="Tool choice" aria-label="tool_choice_modes: 0 passed, 0 failed, 0 errors, 1 skipped; n=1, no verdict"><span class="ratio">0/1</span><span class="legacy-evidence">schema v1: no transcript path</span><span class="measurement-state">not measurable</span><span class="replication-note">n=1, no verdict</span></td>
-              <td class="score untested low-replication" data-label="Multi-turn" aria-label="multi_turn: 0 passed, 0 failed, 0 errors, 0 skipped; n=1, no verdict"><span class="ratio">0/0</span><span class="replication-note">n=1, no verdict</span></td>
-              <td class="score untested low-replication" data-label="Correctly declines" aria-label="negative_trap: 0 passed, 0 failed, 0 errors, 0 skipped; n=1, no verdict"><span class="ratio">0/0</span><span class="replication-note">n=1, no verdict</span></td>
+              <td class="score all-pass low-replication" data-label="Single call" aria-label="single_call: 1 passed, 0 failed, 0 errors, 0 skipped; n=1; no verdict"><span class="ratio">1/1</span></td>
+              <td class="score none-pass low-replication" data-label="Parallel calls" aria-label="parallel_calls: 0 passed, 1 failed, 0 errors, 0 skipped; n=1; no verdict"><span class="ratio">0/1</span><span class="legacy-evidence">schema v1: no transcript path</span></td>
+              <td class="score untested low-replication" data-label="Streaming" aria-label="streaming: 0 passed, 0 failed, 0 errors, 0 skipped; n=1; no verdict"><span class="ratio">0/0</span></td>
+              <td class="score not-measurable low-replication" data-label="Tool choice" aria-label="tool_choice_modes: 0 passed, 0 failed, 0 errors, 1 skipped; n=1; no verdict"><span class="ratio">0/1</span><span class="legacy-evidence">schema v1: no transcript path</span><span class="measurement-state">not measurable</span></td>
+              <td class="score untested low-replication" data-label="Multi-turn" aria-label="multi_turn: 0 passed, 0 failed, 0 errors, 0 skipped; n=1; no verdict"><span class="ratio">0/0</span></td>
+              <td class="score untested low-replication" data-label="Correctly declines" aria-label="negative_trap: 0 passed, 0 failed, 0 errors, 0 skipped; n=1; no verdict"><span class="ratio">0/0</span></td>
             </tr>
           </tbody>
-          <tbody class="model-group result-group" data-model-key="v2-unresolved:model" data-model-search="v2-unresolved:model">
-            <tr class="model-heading"><th colspan="7" scope="rowgroup"><span>Model</span> v2-unresolved:model</th></tr>
+          <tbody class="model-group result-group single-row" data-model-key="v2-unresolved:model" data-model-search="v2-unresolved:model">
             <tr class="result-row" data-server="mlx_lm" data-identity-status="unresolved" data-decode-mode="unconstrained_post_hoc" data-decode-source="preset_mapping">
               <th scope="row">
                 <strong>v2-unresolved:model</strong>
-                <span>quant: Q5_K_M - server: MLX LM</span>
-                <span><span class="decode-badge unconstrained_post_hoc">unconstrained_post_hoc</span></span>
-                <span>decode provenance: documented preset mapping</span>
-                <span class="identity-status unresolved">identity status: unresolved (provenance could not be established; excluded from cross-model comparison)</span>
-                <a class="detail-link" href="appendix.html#stack-detail-1">detail</a>
+                <div class="row-meta"><span>Q5_K_M / MLX LM</span><span class="decode-badge unconstrained_post_hoc" title="Decode mode: unconstrained post-hoc; decode provenance: documented preset mapping.">post-hoc (mapping)</span><span class="identity-status unresolved" title="Identity status: unresolved. Provenance could not be established; excluded from cross-model comparison.">id: unresolved</span><a class="detail-link" href="appendix.html#stack-detail-1">detail</a></div>
               </th>
-              <td class="score untested low-replication" data-label="Single call" aria-label="single_call: 0 passed, 0 failed, 0 errors, 0 skipped; n=1, no verdict"><span class="ratio">0/0</span><span class="replication-note">n=1, no verdict</span></td>
-              <td class="score untested low-replication" data-label="Parallel calls" aria-label="parallel_calls: 0 passed, 0 failed, 0 errors, 0 skipped; n=1, no verdict"><span class="ratio">0/0</span><span class="replication-note">n=1, no verdict</span></td>
-              <td class="score not-measurable low-replication" data-label="Streaming" aria-label="streaming: 0 passed, 0 failed, 1 errors, 0 skipped; n=1, no verdict"><span class="ratio">0/1</span><span class="measurement-state">not measurable</span><span class="replication-note">n=1, no verdict</span></td>
-              <td class="score untested low-replication" data-label="Tool choice" aria-label="tool_choice_modes: 0 passed, 0 failed, 0 errors, 0 skipped; n=1, no verdict"><span class="ratio">0/0</span><span class="replication-note">n=1, no verdict</span></td>
-              <td class="score partial low-replication" data-label="Multi-turn" aria-label="multi_turn: 1 passed, 1 failed, 0 errors, 0 skipped; n=1, no verdict"><a class="ratio" href="https://example.invalid/willitcall/blob/main/results/evidence/site-contract/v2-fail.json" title="Open a failing transcript">1/2</a><span class="replication-note">n=1, no verdict</span></td>
-              <td class="score none-pass low-replication" data-label="Correctly declines" aria-label="negative_trap: 0 passed, 1 failed, 0 errors, 0 skipped; n=1, no verdict"><span class="ratio">0/1</span><span class="replication-note">n=1, no verdict</span></td>
+              <td class="score untested low-replication" data-label="Single call" aria-label="single_call: 0 passed, 0 failed, 0 errors, 0 skipped; n=1; no verdict"><span class="ratio">0/0</span></td>
+              <td class="score untested low-replication" data-label="Parallel calls" aria-label="parallel_calls: 0 passed, 0 failed, 0 errors, 0 skipped; n=1; no verdict"><span class="ratio">0/0</span></td>
+              <td class="score not-measurable low-replication" data-label="Streaming" aria-label="streaming: 0 passed, 0 failed, 1 errors, 0 skipped; n=1; no verdict"><span class="ratio">0/1</span><span class="measurement-state">not measurable</span></td>
+              <td class="score untested low-replication" data-label="Tool choice" aria-label="tool_choice_modes: 0 passed, 0 failed, 0 errors, 0 skipped; n=1; no verdict"><span class="ratio">0/0</span></td>
+              <td class="score partial low-replication" data-label="Multi-turn" aria-label="multi_turn: 1 passed, 1 failed, 0 errors, 0 skipped; n=1; no verdict"><a class="ratio" href="https://example.invalid/willitcall/blob/main/results/evidence/site-contract/v2-fail.json" title="Open a failing transcript">1/2</a></td>
+              <td class="score none-pass low-replication" data-label="Correctly declines" aria-label="negative_trap: 0 passed, 1 failed, 0 errors, 0 skipped; n=1; no verdict"><span class="ratio">0/1</span></td>
             </tr>
           </tbody>
         </table>
       </div>
+      <p class="matrix-note">Machine-readable observations: <a href="results.json">JSON</a> and <a href="results.csv">CSV</a>. Scenario rasters are on the <a href="outcomes.html">outcomes page</a>; recorded metadata and transcripts are in the <a href="appendix.html">appendix</a>.</p>
     </section>    <section class="analysis analysis-secondary" aria-labelledby="analysis-title">
       <p class="eyebrow">One-run observations</p>
       <h2 id="analysis-title">Observed pass counts</h2>
@@ -205,7 +185,7 @@
     </section>
 
   </main>
-  <footer class="colophon"><p>Build hash <code>b12b82024da51585</code> - corpus revision <code>site-contract fixture-v1</code> - data date <time datetime="2000-01-04">2000-01-04</time></p></footer>
+  <footer class="colophon"><p>Build hash <code>cd9434fa53fbe658</code> - corpus revision <code>site-contract fixture-v1</code> - data date <time datetime="2000-01-04">2000-01-04</time></p></footer>
   <script src="site.js"></script>
 </body>
 </html>
