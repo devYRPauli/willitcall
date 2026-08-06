@@ -5,8 +5,16 @@ const AGGREGATE_MARK_SIZE: u32 = 44;
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub(super) struct FigureAccessibility<'a> {
+    pub number: u8,
     pub title: &'a str,
     pub description: &'a str,
+    pub caption: &'a str,
+    pub does_not_show: &'a str,
+}
+
+pub(super) struct TableFallback<'a> {
+    pub headers: &'a [&'a str],
+    pub rows: &'a [Vec<String>],
 }
 
 /// A closed set of figure primitives. Each variant requires the same accessibility
@@ -25,6 +33,34 @@ pub(super) enum Figure<'a> {
         height: u32,
         marks: &'a [AggregateMark<'a>],
     },
+    StatusRaster {
+        accessibility: FigureAccessibility<'a>,
+        width: u32,
+        height: u32,
+        marks: &'a [StatusMark<'a>],
+        texts: &'a [FigureText<'a>],
+        rules: &'a [FigureRule],
+        fallback: TableFallback<'a>,
+    },
+    Bars {
+        accessibility: FigureAccessibility<'a>,
+        width: u32,
+        height: u32,
+        bars: &'a [Bar<'a>],
+        texts: &'a [FigureText<'a>],
+        rules: &'a [FigureRule],
+        fallback: TableFallback<'a>,
+    },
+    StripPlot {
+        accessibility: FigureAccessibility<'a>,
+        width: u32,
+        height: u32,
+        dots: &'a [StripDot<'a>],
+        not_fully_measurable: &'a [NotFullyMeasurableMark<'a>],
+        texts: &'a [FigureText<'a>],
+        rules: &'a [FigureRule],
+        fallback: TableFallback<'a>,
+    },
 }
 
 pub(super) fn render_figure(figure: Figure<'_>) -> String {
@@ -41,7 +77,105 @@ pub(super) fn render_figure(figure: Figure<'_>) -> String {
             height,
             marks,
         } => render_aggregate_marks(accessibility, width, height, marks),
+        Figure::StatusRaster {
+            accessibility,
+            width,
+            height,
+            marks,
+            texts,
+            rules,
+            fallback,
+        } => render_status_raster(accessibility, width, height, marks, texts, rules, fallback),
+        Figure::Bars {
+            accessibility,
+            width,
+            height,
+            bars,
+            texts,
+            rules,
+            fallback,
+        } => render_bars(accessibility, width, height, bars, texts, rules, fallback),
+        Figure::StripPlot {
+            accessibility,
+            width,
+            height,
+            dots,
+            not_fully_measurable,
+            texts,
+            rules,
+            fallback,
+        } => render_strip_plot(
+            accessibility,
+            (width, height),
+            dots,
+            not_fully_measurable,
+            texts,
+            rules,
+            fallback,
+        ),
     }
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub(super) enum TextAnchor {
+    Start,
+    Middle,
+    End,
+}
+
+impl TextAnchor {
+    fn as_str(self) -> &'static str {
+        match self {
+            Self::Start => "start",
+            Self::Middle => "middle",
+            Self::End => "end",
+        }
+    }
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub(super) struct FigureText<'a> {
+    pub x: u32,
+    pub y: u32,
+    pub text: &'a str,
+    pub class: &'static str,
+    pub anchor: TextAnchor,
+    pub rotation: Option<i16>,
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub(super) struct FigureRule {
+    pub x1: u32,
+    pub y1: u32,
+    pub x2: u32,
+    pub y2: u32,
+    pub class: &'static str,
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub(super) struct Bar<'a> {
+    pub x: u32,
+    pub y: u32,
+    pub height: u32,
+    pub track_width: u32,
+    pub value_width: u32,
+    pub label: &'a str,
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub(super) struct StripDot<'a> {
+    pub x: u32,
+    pub y: u32,
+    pub pass_count: usize,
+    pub label: &'a str,
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub(super) struct NotFullyMeasurableMark<'a> {
+    pub x: u32,
+    pub y: u32,
+    pub label: &'a str,
+    pub detail: &'a str,
 }
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
@@ -112,8 +246,10 @@ fn render_status_marks(
         width,
         height,
         &body,
-        &["Item", "Status"],
-        &rows,
+        TableFallback {
+            headers: &["Item", "Status"],
+            rows: &rows,
+        },
     )
 }
 
@@ -173,9 +309,151 @@ fn render_aggregate_marks(
         width,
         height,
         &body,
-        &["Item", "Status", "Passed / measured", "Verdict"],
-        &rows,
+        TableFallback {
+            headers: &["Item", "Status", "Passed / measured", "Verdict"],
+            rows: &rows,
+        },
     )
+}
+
+fn render_status_raster(
+    accessibility: FigureAccessibility<'_>,
+    width: u32,
+    height: u32,
+    marks: &[StatusMark<'_>],
+    texts: &[FigureText<'_>],
+    rules: &[FigureRule],
+    fallback: TableFallback<'_>,
+) -> String {
+    let mut body = String::new();
+    write_rules(&mut body, rules);
+    write_texts(&mut body, texts);
+    for mark in marks {
+        write_status_mark(&mut body, mark);
+    }
+    render_accessible_figure(accessibility, width, height, &body, fallback)
+}
+
+fn render_bars(
+    accessibility: FigureAccessibility<'_>,
+    width: u32,
+    height: u32,
+    bars: &[Bar<'_>],
+    texts: &[FigureText<'_>],
+    rules: &[FigureRule],
+    fallback: TableFallback<'_>,
+) -> String {
+    let mut body = String::new();
+    write_rules(&mut body, rules);
+    write_texts(&mut body, texts);
+    for bar in bars {
+        writeln!(
+            body,
+            "    <g class=\"capability-bar\" aria-label=\"{}\">\n      <title>{}</title>\n      <rect class=\"bar-track\" x=\"{}\" y=\"{}\" width=\"{}\" height=\"{}\" fill=\"none\" stroke=\"var(--design-grey-2, #8c8a85)\" stroke-width=\"1\" />\n      <rect class=\"bar-value\" x=\"{}\" y=\"{}\" width=\"{}\" height=\"{}\" fill=\"var(--design-pass, #00513a)\" stroke=\"var(--design-ink, #1c1c1c)\" stroke-width=\"0.75\" />\n    </g>",
+            escape_html(bar.label),
+            escape_html(bar.label),
+            bar.x,
+            bar.y,
+            bar.track_width,
+            bar.height,
+            bar.x,
+            bar.y,
+            bar.value_width,
+            bar.height,
+        )
+        .expect("write SVG bar");
+    }
+    render_accessible_figure(accessibility, width, height, &body, fallback)
+}
+
+fn render_strip_plot(
+    accessibility: FigureAccessibility<'_>,
+    size: (u32, u32),
+    dots: &[StripDot<'_>],
+    not_fully_measurable: &[NotFullyMeasurableMark<'_>],
+    texts: &[FigureText<'_>],
+    rules: &[FigureRule],
+    fallback: TableFallback<'_>,
+) -> String {
+    let (width, height) = size;
+    let mut body = String::new();
+    write_rules(&mut body, rules);
+    write_texts(&mut body, texts);
+    for dot in dots {
+        writeln!(
+            body,
+            "    <g class=\"strip-observation\" aria-label=\"{}\">\n      <title>{}</title>\n      <circle class=\"strip-dot\" data-pass-count=\"{}\" cx=\"{}\" cy=\"{}\" r=\"5\" fill=\"var(--design-pass, #00513a)\" stroke=\"var(--design-ink, #1c1c1c)\" stroke-width=\"1\" />\n    </g>",
+            escape_html(dot.label),
+            escape_html(dot.label),
+            dot.pass_count,
+            dot.x,
+            dot.y,
+        )
+        .expect("write SVG strip dot");
+    }
+    for mark in not_fully_measurable {
+        writeln!(
+            body,
+            "    <g class=\"not-fully-measurable-item\" aria-label=\"{}: {}\">\n      <title>{}: {}</title>",
+            escape_html(mark.label),
+            escape_html(mark.detail),
+            escape_html(mark.label),
+            escape_html(mark.detail),
+        )
+        .expect("write SVG not-fully-measurable mark");
+        write_mark_shape(&mut body, MarkState::Error, mark.x, mark.y, DENSE_MARK_SIZE);
+        body.push_str("    </g>\n");
+    }
+    render_accessible_figure(accessibility, width, height, &body, fallback)
+}
+
+fn write_status_mark(svg: &mut String, mark: &StatusMark<'_>) {
+    writeln!(
+        svg,
+        "    <g class=\"status-mark\" data-state=\"{}\" aria-label=\"{}: {}\">\n      <title>{}: {}</title>",
+        mark.state.label(),
+        escape_html(mark.label),
+        mark.state.label(),
+        escape_html(mark.label),
+        mark.state.label(),
+    )
+    .expect("write SVG status mark");
+    write_mark_shape(svg, mark.state, mark.x, mark.y, DENSE_MARK_SIZE);
+    svg.push_str("    </g>\n");
+}
+
+fn write_texts(svg: &mut String, texts: &[FigureText<'_>]) {
+    for text in texts {
+        write!(
+            svg,
+            "    <text class=\"{}\" x=\"{}\" y=\"{}\" text-anchor=\"{}\"",
+            text.class,
+            text.x,
+            text.y,
+            text.anchor.as_str(),
+        )
+        .expect("write SVG text");
+        if let Some(rotation) = text.rotation {
+            write!(
+                svg,
+                " transform=\"rotate({rotation} {} {})\"",
+                text.x, text.y
+            )
+            .expect("write SVG text rotation");
+        }
+        writeln!(svg, ">{}</text>", escape_html(text.text)).expect("write SVG text");
+    }
+}
+
+fn write_rules(svg: &mut String, rules: &[FigureRule]) {
+    for rule in rules {
+        writeln!(
+            svg,
+            "    <line class=\"{}\" x1=\"{}\" y1=\"{}\" x2=\"{}\" y2=\"{}\" stroke=\"var(--design-grey-3, #d5d2cc)\" stroke-width=\"1\" />",
+            rule.class, rule.x1, rule.y1, rule.x2, rule.y2
+        )
+        .expect("write SVG rule");
+    }
 }
 
 /// Returns only the aggregate-cell overlay so dense raster renderers cannot apply it implicitly.
@@ -268,24 +546,30 @@ fn render_accessible_figure(
     width: u32,
     height: u32,
     body: &str,
-    headers: &[&str],
-    rows: &[Vec<String>],
+    fallback: TableFallback<'_>,
 ) -> String {
     let mut figure = String::new();
     write!(
         figure,
-        "<figure class=\"svg-figure\">\n  <svg role=\"img\" width=\"{width}\" height=\"{height}\" viewBox=\"0 0 {width} {height}\">\n    <title>{}</title>\n    <desc>{}</desc>\n{body}  </svg>\n  <table class=\"svg-text-fallback\">\n    <caption>{}</caption>\n    <thead><tr>",
+        "<figure class=\"svg-figure\" data-figure-number=\"{}\">\n  <figcaption>\n    <strong>Figure {}. {}</strong>\n    <span>{}</span>\n    <span class=\"does-not-show\"><strong>What this does not show:</strong> {}</span>\n  </figcaption>\n  <div class=\"figure-scroll\">\n  <svg role=\"img\" width=\"{width}\" height=\"{height}\" viewBox=\"0 0 {width} {height}\">\n    <title>Figure {}. {}</title>\n    <desc>{}</desc>\n{body}  </svg>\n  </div>\n  <table class=\"svg-text-fallback\">\n    <caption>Figure {}. {}</caption>\n    <thead><tr>",
+        accessibility.number,
+        accessibility.number,
+        escape_html(accessibility.title),
+        escape_html(accessibility.caption),
+        escape_html(accessibility.does_not_show),
+        accessibility.number,
         escape_html(accessibility.title),
         escape_html(accessibility.description),
+        accessibility.number,
         escape_html(accessibility.title)
     )
     .expect("write SVG figure");
-    for header in headers {
+    for header in fallback.headers {
         write!(figure, "<th scope=\"col\">{}</th>", escape_html(header))
             .expect("write SVG fallback");
     }
     figure.push_str("</tr></thead>\n    <tbody>\n");
-    for row in rows {
+    for row in fallback.rows {
         figure.push_str("      <tr>");
         for cell in row {
             write!(figure, "<td>{}</td>", escape_html(cell)).expect("write SVG fallback");
@@ -319,8 +603,11 @@ mod tests {
     fn render_one_status(state: MarkState, label: &str) -> String {
         render_figure(Figure::StatusMarks {
             accessibility: FigureAccessibility {
+                number: 1,
                 title: "Status figure",
                 description: "One prepared status mark.",
+                caption: "One status observation.",
+                does_not_show: "Repeated-run behavior.",
             },
             width: DENSE_MARK_SIZE,
             height: DENSE_MARK_SIZE,
@@ -336,8 +623,11 @@ mod tests {
     fn aggregate(no_verdict: bool) -> String {
         render_figure(Figure::AggregateMarks {
             accessibility: FigureAccessibility {
+                number: 2,
                 title: "Aggregate figure",
                 description: "One prepared aggregate mark.",
+                caption: "One aggregate observation.",
+                does_not_show: "A ranking.",
             },
             width: AGGREGATE_MARK_SIZE,
             height: AGGREGATE_MARK_SIZE,

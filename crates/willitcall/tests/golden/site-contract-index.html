@@ -31,6 +31,390 @@
 
     </section>
 
+    <section class="analysis" aria-labelledby="analysis-title">
+      <p class="eyebrow">Analysis views</p>
+      <h2 id="analysis-title">Published one-run observations</h2>
+      <p>All stack and scenario orders are fixed by identity and catalog fields, never by a pass count.</p>
+<figure class="svg-figure" data-figure-number="1">
+  <figcaption>
+    <strong>Figure 1. Scenario-status raster</strong>
+    <span>Rows are published stack runs and columns are scenario ids grouped by capability. The n=1 hatch is intentionally omitted because every raster row is a single run, so hatching every cell would encode no difference.</span>
+    <span class="does-not-show"><strong>What this does not show:</strong> A leaderboard, an overall score, or how a stack would behave across repeated runs.</span>
+  </figcaption>
+  <div class="figure-scroll">
+  <svg role="img" width="475" height="254" viewBox="0 0 475 254">
+    <title>Figure 1. Scenario-status raster</title>
+    <desc>Four-state outcomes for every published stack and scenario. Each cell label includes the scenario description and rationale.</desc>
+    <line class="category-rule" x1="320" y1="24" x2="320" y2="244" stroke="var(--design-grey-3, #d5d2cc)" stroke-width="1" />
+    <line class="category-rule" x1="335" y1="24" x2="335" y2="244" stroke="var(--design-grey-3, #d5d2cc)" stroke-width="1" />
+    <line class="category-rule" x1="350" y1="24" x2="350" y2="244" stroke="var(--design-grey-3, #d5d2cc)" stroke-width="1" />
+    <line class="category-rule" x1="365" y1="24" x2="365" y2="244" stroke="var(--design-grey-3, #d5d2cc)" stroke-width="1" />
+    <line class="category-rule" x1="395" y1="24" x2="395" y2="244" stroke="var(--design-grey-3, #d5d2cc)" stroke-width="1" />
+    <line class="category-rule" x1="425" y1="24" x2="425" y2="244" stroke="var(--design-grey-3, #d5d2cc)" stroke-width="1" />
+    <text class="raster-column-label" x="326" y="158" text-anchor="start" transform="rotate(-60 326 158)">v1-pass</text>
+    <text class="raster-column-label" x="341" y="158" text-anchor="start" transform="rotate(-60 341 158)">v1-fail</text>
+    <text class="raster-column-label" x="356" y="158" text-anchor="start" transform="rotate(-60 356 158)">v2-error</text>
+    <text class="raster-column-label" x="371" y="158" text-anchor="start" transform="rotate(-60 371 158)">v1-skipped</text>
+    <text class="raster-column-label" x="386" y="158" text-anchor="start" transform="rotate(-60 386 158)">v3-declared-pass</text>
+    <text class="raster-column-label" x="401" y="158" text-anchor="start" transform="rotate(-60 401 158)">v2-fail-with-cause</text>
+    <text class="raster-column-label" x="416" y="158" text-anchor="start" transform="rotate(-60 416 158)">v2-pass</text>
+    <text class="raster-column-label" x="431" y="158" text-anchor="start" transform="rotate(-60 431 158)">v2-unparsed</text>
+    <text class="raster-column-label" x="446" y="158" text-anchor="start" transform="rotate(-60 446 158)">v3-verified-pass</text>
+    <text class="raster-group-label" x="327" y="16" text-anchor="middle">single_call</text>
+    <text class="raster-group-label" x="342" y="16" text-anchor="middle">parallel_calls</text>
+    <text class="raster-group-label" x="357" y="16" text-anchor="middle">streaming</text>
+    <text class="raster-group-label" x="380" y="16" text-anchor="middle">tool_choice_modes</text>
+    <text class="raster-group-label" x="410" y="16" text-anchor="middle">multi_turn</text>
+    <text class="raster-group-label" x="440" y="16" text-anchor="middle">negative_trap</text>
+    <text class="raster-row-label" x="312" y="181" text-anchor="end">legacy-unresolved.gguf | quant not declared | ollama</text>
+    <text class="raster-row-label" x="312" y="197" text-anchor="end">v2-unresolved:model | Q5_K_M | MLX LM</text>
+    <text class="raster-row-label" x="312" y="213" text-anchor="end">declared-fixture.gguf | Q4_K_M | llama.cpp</text>
+    <text class="raster-row-label" x="312" y="229" text-anchor="end">Verified &amp; Fixture | quant not declared | ollama</text>
+    <g class="status-mark" data-state="pass" aria-label="legacy-unresolved.gguf | quant not declared | ollama; v1-pass: catalog unavailable Rationale: catalog unavailable: pass">
+      <title>legacy-unresolved.gguf | quant not declared | ollama; v1-pass: catalog unavailable Rationale: catalog unavailable: pass</title>
+      <rect class="state-shape state-pass" x="321" y="171" width="11" height="11" fill="var(--design-pass, #00513a)" stroke="none" />
+    </g>
+    <g class="status-mark" data-state="fail" aria-label="legacy-unresolved.gguf | quant not declared | ollama; v1-fail: catalog unavailable Rationale: catalog unavailable: fail">
+      <title>legacy-unresolved.gguf | quant not declared | ollama; v1-fail: catalog unavailable Rationale: catalog unavailable: fail</title>
+      <rect class="state-shape state-fail" x="336" y="171" width="11" height="11" fill="var(--design-fail, #d55e00)" stroke="none" />
+      <line class="state-slash knockout-slash" x1="337" y1="172" x2="346" y2="181" stroke="var(--design-paper, #fcfbf9)" stroke-width="1.5" stroke-linecap="square" />
+    </g>
+    <g class="status-mark" data-state="skipped" aria-label="legacy-unresolved.gguf | quant not declared | ollama; v1-skipped: catalog unavailable Rationale: catalog unavailable: skipped">
+      <title>legacy-unresolved.gguf | quant not declared | ollama; v1-skipped: catalog unavailable Rationale: catalog unavailable: skipped</title>
+      <rect class="state-shape state-skipped" x="366" y="171" width="11" height="11" fill="none" stroke="var(--design-grey-2, #8c8a85)" stroke-width="0.6" stroke-dasharray="1 1.75" opacity="0.45" />
+    </g>
+    <g class="status-mark" data-state="error" aria-label="v2-unresolved:model | Q5_K_M | MLX LM; v2-error: catalog unavailable Rationale: catalog unavailable: error">
+      <title>v2-unresolved:model | Q5_K_M | MLX LM; v2-error: catalog unavailable Rationale: catalog unavailable: error</title>
+      <rect class="state-shape state-error" x="351" y="187" width="11" height="11" fill="none" stroke="var(--design-ink, #1c1c1c)" stroke-width="0.75" />
+      <line class="state-slash ink-slash" x1="352" y1="188" x2="361" y2="197" stroke="var(--design-ink, #1c1c1c)" stroke-width="1" />
+    </g>
+    <g class="status-mark" data-state="fail" aria-label="v2-unresolved:model | Q5_K_M | MLX LM; v2-fail-with-cause: catalog unavailable Rationale: catalog unavailable: fail">
+      <title>v2-unresolved:model | Q5_K_M | MLX LM; v2-fail-with-cause: catalog unavailable Rationale: catalog unavailable: fail</title>
+      <rect class="state-shape state-fail" x="396" y="187" width="11" height="11" fill="var(--design-fail, #d55e00)" stroke="none" />
+      <line class="state-slash knockout-slash" x1="397" y1="188" x2="406" y2="197" stroke="var(--design-paper, #fcfbf9)" stroke-width="1.5" stroke-linecap="square" />
+    </g>
+    <g class="status-mark" data-state="pass" aria-label="v2-unresolved:model | Q5_K_M | MLX LM; v2-pass: catalog unavailable Rationale: catalog unavailable: pass">
+      <title>v2-unresolved:model | Q5_K_M | MLX LM; v2-pass: catalog unavailable Rationale: catalog unavailable: pass</title>
+      <rect class="state-shape state-pass" x="411" y="187" width="11" height="11" fill="var(--design-pass, #00513a)" stroke="none" />
+    </g>
+    <g class="status-mark" data-state="fail" aria-label="v2-unresolved:model | Q5_K_M | MLX LM; v2-unparsed: catalog unavailable Rationale: catalog unavailable: fail">
+      <title>v2-unresolved:model | Q5_K_M | MLX LM; v2-unparsed: catalog unavailable Rationale: catalog unavailable: fail</title>
+      <rect class="state-shape state-fail" x="426" y="187" width="11" height="11" fill="var(--design-fail, #d55e00)" stroke="none" />
+      <line class="state-slash knockout-slash" x1="427" y1="188" x2="436" y2="197" stroke="var(--design-paper, #fcfbf9)" stroke-width="1.5" stroke-linecap="square" />
+    </g>
+    <g class="status-mark" data-state="pass" aria-label="declared-fixture.gguf | Q4_K_M | llama.cpp; v3-declared-pass: catalog unavailable Rationale: catalog unavailable: pass">
+      <title>declared-fixture.gguf | Q4_K_M | llama.cpp; v3-declared-pass: catalog unavailable Rationale: catalog unavailable: pass</title>
+      <rect class="state-shape state-pass" x="381" y="203" width="11" height="11" fill="var(--design-pass, #00513a)" stroke="none" />
+    </g>
+    <g class="status-mark" data-state="pass" aria-label="Verified &amp; Fixture | quant not declared | ollama; v3-verified-pass: catalog unavailable Rationale: catalog unavailable: pass">
+      <title>Verified &amp; Fixture | quant not declared | ollama; v3-verified-pass: catalog unavailable Rationale: catalog unavailable: pass</title>
+      <rect class="state-shape state-pass" x="441" y="219" width="11" height="11" fill="var(--design-pass, #00513a)" stroke="none" />
+    </g>
+  </svg>
+  </div>
+  <table class="svg-text-fallback">
+    <caption>Figure 1. Scenario-status raster</caption>
+    <thead><tr><th scope="col">Stack</th><th scope="col">Category</th><th scope="col">Scenario id</th><th scope="col">Description</th><th scope="col">Rationale</th><th scope="col">Status</th></tr></thead>
+    <tbody>
+      <tr><td>legacy-unresolved.gguf | quant not declared | ollama</td><td>single_call</td><td>v1-pass</td><td>catalog unavailable</td><td>catalog unavailable</td><td>pass</td></tr>
+      <tr><td>legacy-unresolved.gguf | quant not declared | ollama</td><td>parallel_calls</td><td>v1-fail</td><td>catalog unavailable</td><td>catalog unavailable</td><td>fail</td></tr>
+      <tr><td>legacy-unresolved.gguf | quant not declared | ollama</td><td>streaming</td><td>v2-error</td><td>catalog unavailable</td><td>catalog unavailable</td><td>not present</td></tr>
+      <tr><td>legacy-unresolved.gguf | quant not declared | ollama</td><td>tool_choice_modes</td><td>v1-skipped</td><td>catalog unavailable</td><td>catalog unavailable</td><td>skipped</td></tr>
+      <tr><td>legacy-unresolved.gguf | quant not declared | ollama</td><td>tool_choice_modes</td><td>v3-declared-pass</td><td>catalog unavailable</td><td>catalog unavailable</td><td>not present</td></tr>
+      <tr><td>legacy-unresolved.gguf | quant not declared | ollama</td><td>multi_turn</td><td>v2-fail-with-cause</td><td>catalog unavailable</td><td>catalog unavailable</td><td>not present</td></tr>
+      <tr><td>legacy-unresolved.gguf | quant not declared | ollama</td><td>multi_turn</td><td>v2-pass</td><td>catalog unavailable</td><td>catalog unavailable</td><td>not present</td></tr>
+      <tr><td>legacy-unresolved.gguf | quant not declared | ollama</td><td>negative_trap</td><td>v2-unparsed</td><td>catalog unavailable</td><td>catalog unavailable</td><td>not present</td></tr>
+      <tr><td>legacy-unresolved.gguf | quant not declared | ollama</td><td>negative_trap</td><td>v3-verified-pass</td><td>catalog unavailable</td><td>catalog unavailable</td><td>not present</td></tr>
+      <tr><td>v2-unresolved:model | Q5_K_M | MLX LM</td><td>single_call</td><td>v1-pass</td><td>catalog unavailable</td><td>catalog unavailable</td><td>not present</td></tr>
+      <tr><td>v2-unresolved:model | Q5_K_M | MLX LM</td><td>parallel_calls</td><td>v1-fail</td><td>catalog unavailable</td><td>catalog unavailable</td><td>not present</td></tr>
+      <tr><td>v2-unresolved:model | Q5_K_M | MLX LM</td><td>streaming</td><td>v2-error</td><td>catalog unavailable</td><td>catalog unavailable</td><td>error</td></tr>
+      <tr><td>v2-unresolved:model | Q5_K_M | MLX LM</td><td>tool_choice_modes</td><td>v1-skipped</td><td>catalog unavailable</td><td>catalog unavailable</td><td>not present</td></tr>
+      <tr><td>v2-unresolved:model | Q5_K_M | MLX LM</td><td>tool_choice_modes</td><td>v3-declared-pass</td><td>catalog unavailable</td><td>catalog unavailable</td><td>not present</td></tr>
+      <tr><td>v2-unresolved:model | Q5_K_M | MLX LM</td><td>multi_turn</td><td>v2-fail-with-cause</td><td>catalog unavailable</td><td>catalog unavailable</td><td>fail</td></tr>
+      <tr><td>v2-unresolved:model | Q5_K_M | MLX LM</td><td>multi_turn</td><td>v2-pass</td><td>catalog unavailable</td><td>catalog unavailable</td><td>pass</td></tr>
+      <tr><td>v2-unresolved:model | Q5_K_M | MLX LM</td><td>negative_trap</td><td>v2-unparsed</td><td>catalog unavailable</td><td>catalog unavailable</td><td>fail</td></tr>
+      <tr><td>v2-unresolved:model | Q5_K_M | MLX LM</td><td>negative_trap</td><td>v3-verified-pass</td><td>catalog unavailable</td><td>catalog unavailable</td><td>not present</td></tr>
+      <tr><td>declared-fixture.gguf | Q4_K_M | llama.cpp</td><td>single_call</td><td>v1-pass</td><td>catalog unavailable</td><td>catalog unavailable</td><td>not present</td></tr>
+      <tr><td>declared-fixture.gguf | Q4_K_M | llama.cpp</td><td>parallel_calls</td><td>v1-fail</td><td>catalog unavailable</td><td>catalog unavailable</td><td>not present</td></tr>
+      <tr><td>declared-fixture.gguf | Q4_K_M | llama.cpp</td><td>streaming</td><td>v2-error</td><td>catalog unavailable</td><td>catalog unavailable</td><td>not present</td></tr>
+      <tr><td>declared-fixture.gguf | Q4_K_M | llama.cpp</td><td>tool_choice_modes</td><td>v1-skipped</td><td>catalog unavailable</td><td>catalog unavailable</td><td>not present</td></tr>
+      <tr><td>declared-fixture.gguf | Q4_K_M | llama.cpp</td><td>tool_choice_modes</td><td>v3-declared-pass</td><td>catalog unavailable</td><td>catalog unavailable</td><td>pass</td></tr>
+      <tr><td>declared-fixture.gguf | Q4_K_M | llama.cpp</td><td>multi_turn</td><td>v2-fail-with-cause</td><td>catalog unavailable</td><td>catalog unavailable</td><td>not present</td></tr>
+      <tr><td>declared-fixture.gguf | Q4_K_M | llama.cpp</td><td>multi_turn</td><td>v2-pass</td><td>catalog unavailable</td><td>catalog unavailable</td><td>not present</td></tr>
+      <tr><td>declared-fixture.gguf | Q4_K_M | llama.cpp</td><td>negative_trap</td><td>v2-unparsed</td><td>catalog unavailable</td><td>catalog unavailable</td><td>not present</td></tr>
+      <tr><td>declared-fixture.gguf | Q4_K_M | llama.cpp</td><td>negative_trap</td><td>v3-verified-pass</td><td>catalog unavailable</td><td>catalog unavailable</td><td>not present</td></tr>
+      <tr><td>Verified &amp; Fixture | quant not declared | ollama</td><td>single_call</td><td>v1-pass</td><td>catalog unavailable</td><td>catalog unavailable</td><td>not present</td></tr>
+      <tr><td>Verified &amp; Fixture | quant not declared | ollama</td><td>parallel_calls</td><td>v1-fail</td><td>catalog unavailable</td><td>catalog unavailable</td><td>not present</td></tr>
+      <tr><td>Verified &amp; Fixture | quant not declared | ollama</td><td>streaming</td><td>v2-error</td><td>catalog unavailable</td><td>catalog unavailable</td><td>not present</td></tr>
+      <tr><td>Verified &amp; Fixture | quant not declared | ollama</td><td>tool_choice_modes</td><td>v1-skipped</td><td>catalog unavailable</td><td>catalog unavailable</td><td>not present</td></tr>
+      <tr><td>Verified &amp; Fixture | quant not declared | ollama</td><td>tool_choice_modes</td><td>v3-declared-pass</td><td>catalog unavailable</td><td>catalog unavailable</td><td>not present</td></tr>
+      <tr><td>Verified &amp; Fixture | quant not declared | ollama</td><td>multi_turn</td><td>v2-fail-with-cause</td><td>catalog unavailable</td><td>catalog unavailable</td><td>not present</td></tr>
+      <tr><td>Verified &amp; Fixture | quant not declared | ollama</td><td>multi_turn</td><td>v2-pass</td><td>catalog unavailable</td><td>catalog unavailable</td><td>not present</td></tr>
+      <tr><td>Verified &amp; Fixture | quant not declared | ollama</td><td>negative_trap</td><td>v2-unparsed</td><td>catalog unavailable</td><td>catalog unavailable</td><td>not present</td></tr>
+      <tr><td>Verified &amp; Fixture | quant not declared | ollama</td><td>negative_trap</td><td>v3-verified-pass</td><td>catalog unavailable</td><td>catalog unavailable</td><td>pass</td></tr>
+    </tbody>
+  </table>
+</figure>
+<figure class="svg-figure" data-figure-number="2">
+  <figcaption>
+    <strong>Figure 2. Multi-turn raster</strong>
+    <span>Across these published observations, multi_turn passes 1/2 (50%), and 3 of 4 rows pass none of the multi_turn scenarios.</span>
+    <span class="does-not-show"><strong>What this does not show:</strong> Why a turn failed, an isolated model or server effect, or repeated-run reliability.</span>
+  </figcaption>
+  <div class="figure-scroll">
+  <svg role="img" width="370" height="254" viewBox="0 0 370 254">
+    <title>Figure 2. Multi-turn raster</title>
+    <desc>Four-state outcomes for the multi_turn scenarios across every published stack run.</desc>
+    <line class="category-rule" x1="320" y1="24" x2="320" y2="244" stroke="var(--design-grey-3, #d5d2cc)" stroke-width="1" />
+    <text class="raster-column-label" x="326" y="158" text-anchor="start" transform="rotate(-60 326 158)">v2-fail-with-cause</text>
+    <text class="raster-column-label" x="341" y="158" text-anchor="start" transform="rotate(-60 341 158)">v2-pass</text>
+    <text class="raster-group-label" x="335" y="16" text-anchor="middle">multi_turn</text>
+    <text class="raster-row-label" x="312" y="181" text-anchor="end">legacy-unresolved.gguf | quant not declared | ollama</text>
+    <text class="raster-row-label" x="312" y="197" text-anchor="end">v2-unresolved:model | Q5_K_M | MLX LM</text>
+    <text class="raster-row-label" x="312" y="213" text-anchor="end">declared-fixture.gguf | Q4_K_M | llama.cpp</text>
+    <text class="raster-row-label" x="312" y="229" text-anchor="end">Verified &amp; Fixture | quant not declared | ollama</text>
+    <g class="status-mark" data-state="fail" aria-label="v2-unresolved:model | Q5_K_M | MLX LM; v2-fail-with-cause: catalog unavailable Rationale: catalog unavailable: fail">
+      <title>v2-unresolved:model | Q5_K_M | MLX LM; v2-fail-with-cause: catalog unavailable Rationale: catalog unavailable: fail</title>
+      <rect class="state-shape state-fail" x="321" y="187" width="11" height="11" fill="var(--design-fail, #d55e00)" stroke="none" />
+      <line class="state-slash knockout-slash" x1="322" y1="188" x2="331" y2="197" stroke="var(--design-paper, #fcfbf9)" stroke-width="1.5" stroke-linecap="square" />
+    </g>
+    <g class="status-mark" data-state="pass" aria-label="v2-unresolved:model | Q5_K_M | MLX LM; v2-pass: catalog unavailable Rationale: catalog unavailable: pass">
+      <title>v2-unresolved:model | Q5_K_M | MLX LM; v2-pass: catalog unavailable Rationale: catalog unavailable: pass</title>
+      <rect class="state-shape state-pass" x="336" y="187" width="11" height="11" fill="var(--design-pass, #00513a)" stroke="none" />
+    </g>
+  </svg>
+  </div>
+  <table class="svg-text-fallback">
+    <caption>Figure 2. Multi-turn raster</caption>
+    <thead><tr><th scope="col">Stack</th><th scope="col">Scenario id</th><th scope="col">Description</th><th scope="col">Rationale</th><th scope="col">Status</th></tr></thead>
+    <tbody>
+      <tr><td>legacy-unresolved.gguf | quant not declared | ollama</td><td>v2-fail-with-cause</td><td>catalog unavailable</td><td>catalog unavailable</td><td>not present</td></tr>
+      <tr><td>legacy-unresolved.gguf | quant not declared | ollama</td><td>v2-pass</td><td>catalog unavailable</td><td>catalog unavailable</td><td>not present</td></tr>
+      <tr><td>v2-unresolved:model | Q5_K_M | MLX LM</td><td>v2-fail-with-cause</td><td>catalog unavailable</td><td>catalog unavailable</td><td>fail</td></tr>
+      <tr><td>v2-unresolved:model | Q5_K_M | MLX LM</td><td>v2-pass</td><td>catalog unavailable</td><td>catalog unavailable</td><td>pass</td></tr>
+      <tr><td>declared-fixture.gguf | Q4_K_M | llama.cpp</td><td>v2-fail-with-cause</td><td>catalog unavailable</td><td>catalog unavailable</td><td>not present</td></tr>
+      <tr><td>declared-fixture.gguf | Q4_K_M | llama.cpp</td><td>v2-pass</td><td>catalog unavailable</td><td>catalog unavailable</td><td>not present</td></tr>
+      <tr><td>Verified &amp; Fixture | quant not declared | ollama</td><td>v2-fail-with-cause</td><td>catalog unavailable</td><td>catalog unavailable</td><td>not present</td></tr>
+      <tr><td>Verified &amp; Fixture | quant not declared | ollama</td><td>v2-pass</td><td>catalog unavailable</td><td>catalog unavailable</td><td>not present</td></tr>
+    </tbody>
+  </table>
+</figure>
+<figure class="svg-figure" data-figure-number="3">
+  <figcaption>
+    <strong>Figure 3. Outcome-signature inventory</strong>
+    <span>Each row is one distinct exact status vector; the names at right are the stack observations sharing it.</span>
+    <span class="does-not-show"><strong>What this does not show:</strong> Shared model identity, a common causal mechanism, or expected future behavior.</span>
+  </figcaption>
+  <div class="figure-scroll">
+  <svg role="img" width="873" height="265" viewBox="0 0 873 265">
+    <title>Figure 3. Outcome-signature inventory</title>
+    <desc>Distinct exact scenario-status vectors and the published stack observations sharing each vector.</desc>
+    <line class="category-rule" x1="100" y1="24" x2="100" y2="255" stroke="var(--design-grey-3, #d5d2cc)" stroke-width="1" />
+    <line class="category-rule" x1="115" y1="24" x2="115" y2="255" stroke="var(--design-grey-3, #d5d2cc)" stroke-width="1" />
+    <line class="category-rule" x1="130" y1="24" x2="130" y2="255" stroke="var(--design-grey-3, #d5d2cc)" stroke-width="1" />
+    <line class="category-rule" x1="145" y1="24" x2="145" y2="255" stroke="var(--design-grey-3, #d5d2cc)" stroke-width="1" />
+    <line class="category-rule" x1="175" y1="24" x2="175" y2="255" stroke="var(--design-grey-3, #d5d2cc)" stroke-width="1" />
+    <line class="category-rule" x1="205" y1="24" x2="205" y2="255" stroke="var(--design-grey-3, #d5d2cc)" stroke-width="1" />
+    <text class="raster-row-label" x="92" y="181" text-anchor="end">Signature 01</text>
+    <text class="signature-stack-label" x="253" y="181" text-anchor="start">Verified &amp; Fixture | quant not declared | ollama</text>
+    <text class="raster-row-label" x="92" y="201" text-anchor="end">Signature 02</text>
+    <text class="signature-stack-label" x="253" y="201" text-anchor="start">declared-fixture.gguf | Q4_K_M | llama.cpp</text>
+    <text class="raster-row-label" x="92" y="221" text-anchor="end">Signature 03</text>
+    <text class="signature-stack-label" x="253" y="221" text-anchor="start">v2-unresolved:model | Q5_K_M | MLX LM</text>
+    <text class="raster-row-label" x="92" y="241" text-anchor="end">Signature 04</text>
+    <text class="signature-stack-label" x="253" y="241" text-anchor="start">legacy-unresolved.gguf | quant not declared | ollama</text>
+    <text class="raster-column-label" x="106" y="158" text-anchor="start" transform="rotate(-60 106 158)">v1-pass</text>
+    <text class="raster-column-label" x="121" y="158" text-anchor="start" transform="rotate(-60 121 158)">v1-fail</text>
+    <text class="raster-column-label" x="136" y="158" text-anchor="start" transform="rotate(-60 136 158)">v2-error</text>
+    <text class="raster-column-label" x="151" y="158" text-anchor="start" transform="rotate(-60 151 158)">v1-skipped</text>
+    <text class="raster-column-label" x="166" y="158" text-anchor="start" transform="rotate(-60 166 158)">v3-declared-pass</text>
+    <text class="raster-column-label" x="181" y="158" text-anchor="start" transform="rotate(-60 181 158)">v2-fail-with-cause</text>
+    <text class="raster-column-label" x="196" y="158" text-anchor="start" transform="rotate(-60 196 158)">v2-pass</text>
+    <text class="raster-column-label" x="211" y="158" text-anchor="start" transform="rotate(-60 211 158)">v2-unparsed</text>
+    <text class="raster-column-label" x="226" y="158" text-anchor="start" transform="rotate(-60 226 158)">v3-verified-pass</text>
+    <text class="raster-group-label" x="107" y="16" text-anchor="middle">single_call</text>
+    <text class="raster-group-label" x="122" y="16" text-anchor="middle">parallel_calls</text>
+    <text class="raster-group-label" x="137" y="16" text-anchor="middle">streaming</text>
+    <text class="raster-group-label" x="160" y="16" text-anchor="middle">tool_choice_modes</text>
+    <text class="raster-group-label" x="190" y="16" text-anchor="middle">multi_turn</text>
+    <text class="raster-group-label" x="220" y="16" text-anchor="middle">negative_trap</text>
+    <g class="status-mark" data-state="pass" aria-label="Signature 01; v3-verified-pass: catalog unavailable Rationale: catalog unavailable: pass">
+      <title>Signature 01; v3-verified-pass: catalog unavailable Rationale: catalog unavailable: pass</title>
+      <rect class="state-shape state-pass" x="221" y="171" width="11" height="11" fill="var(--design-pass, #00513a)" stroke="none" />
+    </g>
+    <g class="status-mark" data-state="pass" aria-label="Signature 02; v3-declared-pass: catalog unavailable Rationale: catalog unavailable: pass">
+      <title>Signature 02; v3-declared-pass: catalog unavailable Rationale: catalog unavailable: pass</title>
+      <rect class="state-shape state-pass" x="161" y="191" width="11" height="11" fill="var(--design-pass, #00513a)" stroke="none" />
+    </g>
+    <g class="status-mark" data-state="error" aria-label="Signature 03; v2-error: catalog unavailable Rationale: catalog unavailable: error">
+      <title>Signature 03; v2-error: catalog unavailable Rationale: catalog unavailable: error</title>
+      <rect class="state-shape state-error" x="131" y="211" width="11" height="11" fill="none" stroke="var(--design-ink, #1c1c1c)" stroke-width="0.75" />
+      <line class="state-slash ink-slash" x1="132" y1="212" x2="141" y2="221" stroke="var(--design-ink, #1c1c1c)" stroke-width="1" />
+    </g>
+    <g class="status-mark" data-state="fail" aria-label="Signature 03; v2-fail-with-cause: catalog unavailable Rationale: catalog unavailable: fail">
+      <title>Signature 03; v2-fail-with-cause: catalog unavailable Rationale: catalog unavailable: fail</title>
+      <rect class="state-shape state-fail" x="176" y="211" width="11" height="11" fill="var(--design-fail, #d55e00)" stroke="none" />
+      <line class="state-slash knockout-slash" x1="177" y1="212" x2="186" y2="221" stroke="var(--design-paper, #fcfbf9)" stroke-width="1.5" stroke-linecap="square" />
+    </g>
+    <g class="status-mark" data-state="pass" aria-label="Signature 03; v2-pass: catalog unavailable Rationale: catalog unavailable: pass">
+      <title>Signature 03; v2-pass: catalog unavailable Rationale: catalog unavailable: pass</title>
+      <rect class="state-shape state-pass" x="191" y="211" width="11" height="11" fill="var(--design-pass, #00513a)" stroke="none" />
+    </g>
+    <g class="status-mark" data-state="fail" aria-label="Signature 03; v2-unparsed: catalog unavailable Rationale: catalog unavailable: fail">
+      <title>Signature 03; v2-unparsed: catalog unavailable Rationale: catalog unavailable: fail</title>
+      <rect class="state-shape state-fail" x="206" y="211" width="11" height="11" fill="var(--design-fail, #d55e00)" stroke="none" />
+      <line class="state-slash knockout-slash" x1="207" y1="212" x2="216" y2="221" stroke="var(--design-paper, #fcfbf9)" stroke-width="1.5" stroke-linecap="square" />
+    </g>
+    <g class="status-mark" data-state="pass" aria-label="Signature 04; v1-pass: catalog unavailable Rationale: catalog unavailable: pass">
+      <title>Signature 04; v1-pass: catalog unavailable Rationale: catalog unavailable: pass</title>
+      <rect class="state-shape state-pass" x="101" y="231" width="11" height="11" fill="var(--design-pass, #00513a)" stroke="none" />
+    </g>
+    <g class="status-mark" data-state="fail" aria-label="Signature 04; v1-fail: catalog unavailable Rationale: catalog unavailable: fail">
+      <title>Signature 04; v1-fail: catalog unavailable Rationale: catalog unavailable: fail</title>
+      <rect class="state-shape state-fail" x="116" y="231" width="11" height="11" fill="var(--design-fail, #d55e00)" stroke="none" />
+      <line class="state-slash knockout-slash" x1="117" y1="232" x2="126" y2="241" stroke="var(--design-paper, #fcfbf9)" stroke-width="1.5" stroke-linecap="square" />
+    </g>
+    <g class="status-mark" data-state="skipped" aria-label="Signature 04; v1-skipped: catalog unavailable Rationale: catalog unavailable: skipped">
+      <title>Signature 04; v1-skipped: catalog unavailable Rationale: catalog unavailable: skipped</title>
+      <rect class="state-shape state-skipped" x="146" y="231" width="11" height="11" fill="none" stroke="var(--design-grey-2, #8c8a85)" stroke-width="0.6" stroke-dasharray="1 1.75" opacity="0.45" />
+    </g>
+  </svg>
+  </div>
+  <table class="svg-text-fallback">
+    <caption>Figure 3. Outcome-signature inventory</caption>
+    <thead><tr><th scope="col">Signature</th><th scope="col">Exact status vector</th><th scope="col">Stacks sharing it</th></tr></thead>
+    <tbody>
+      <tr><td>Signature 01</td><td>v1-pass=not present; v1-fail=not present; v2-error=not present; v1-skipped=not present; v3-declared-pass=not present; v2-fail-with-cause=not present; v2-pass=not present; v2-unparsed=not present; v3-verified-pass=pass</td><td>Verified &amp; Fixture | quant not declared | ollama</td></tr>
+      <tr><td>Signature 02</td><td>v1-pass=not present; v1-fail=not present; v2-error=not present; v1-skipped=not present; v3-declared-pass=pass; v2-fail-with-cause=not present; v2-pass=not present; v2-unparsed=not present; v3-verified-pass=not present</td><td>declared-fixture.gguf | Q4_K_M | llama.cpp</td></tr>
+      <tr><td>Signature 03</td><td>v1-pass=not present; v1-fail=not present; v2-error=error; v1-skipped=not present; v3-declared-pass=not present; v2-fail-with-cause=fail; v2-pass=pass; v2-unparsed=fail; v3-verified-pass=not present</td><td>v2-unresolved:model | Q5_K_M | MLX LM</td></tr>
+      <tr><td>Signature 04</td><td>v1-pass=pass; v1-fail=fail; v2-error=not present; v1-skipped=skipped; v3-declared-pass=not present; v2-fail-with-cause=not present; v2-pass=not present; v2-unparsed=not present; v3-verified-pass=not present</td><td>legacy-unresolved.gguf | quant not declared | ollama</td></tr>
+    </tbody>
+  </table>
+</figure>
+<figure class="svg-figure" data-figure-number="4">
+  <figcaption>
+    <strong>Figure 4. Per-capability aggregate across stacks</strong>
+    <span>Each bar counts passed scenario observations across all 4 published rows. Category sizes are 13/8/8/7/7/7; every numerator and denominator is shown, and no replication filter is applied.</span>
+    <span class="does-not-show"><strong>What this does not show:</strong> A comparison of model families or servers, equal category weighting, or replicated-arm estimates.</span>
+  </figcaption>
+  <div class="figure-scroll">
+  <svg role="img" width="1240" height="335" viewBox="0 0 1240 335">
+    <title>Figure 4. Per-capability aggregate across stacks</title>
+    <desc>Six fixed-order bars counting pass, fail, error, and skipped observations in each capability category.</desc>
+    <text class="bar-category-label" x="220" y="51" text-anchor="end">single_call</text>
+    <text class="bar-value-label" x="862" y="51" text-anchor="start">passed in 1 of 1 measurements (1 scenarios per stack)</text>
+    <text class="bar-category-label" x="220" y="101" text-anchor="end">parallel_calls</text>
+    <text class="bar-value-label" x="862" y="101" text-anchor="start">passed in 0 of 1 measurements (1 scenarios per stack)</text>
+    <text class="bar-category-label" x="220" y="151" text-anchor="end">streaming</text>
+    <text class="bar-value-label" x="862" y="151" text-anchor="start">passed in 0 of 1 measurements (1 scenarios per stack)</text>
+    <text class="bar-category-label" x="220" y="201" text-anchor="end">tool_choice_modes</text>
+    <text class="bar-value-label" x="862" y="201" text-anchor="start">passed in 1 of 2 measurements (1 scenarios per stack)</text>
+    <text class="bar-category-label" x="220" y="251" text-anchor="end">multi_turn</text>
+    <text class="bar-value-label" x="862" y="251" text-anchor="start">passed in 1 of 2 measurements (2 scenarios per stack)</text>
+    <text class="bar-category-label" x="220" y="301" text-anchor="end">negative_trap</text>
+    <text class="bar-value-label" x="862" y="301" text-anchor="start">passed in 1 of 2 measurements (1 scenarios per stack)</text>
+    <g class="capability-bar" aria-label="single_call: passed in 1 of 1 measurements">
+      <title>single_call: passed in 1 of 1 measurements</title>
+      <rect class="bar-track" x="230" y="35" width="620" height="22" fill="none" stroke="var(--design-grey-2, #8c8a85)" stroke-width="1" />
+      <rect class="bar-value" x="230" y="35" width="620" height="22" fill="var(--design-pass, #00513a)" stroke="var(--design-ink, #1c1c1c)" stroke-width="0.75" />
+    </g>
+    <g class="capability-bar" aria-label="parallel_calls: passed in 0 of 1 measurements">
+      <title>parallel_calls: passed in 0 of 1 measurements</title>
+      <rect class="bar-track" x="230" y="85" width="620" height="22" fill="none" stroke="var(--design-grey-2, #8c8a85)" stroke-width="1" />
+      <rect class="bar-value" x="230" y="85" width="0" height="22" fill="var(--design-pass, #00513a)" stroke="var(--design-ink, #1c1c1c)" stroke-width="0.75" />
+    </g>
+    <g class="capability-bar" aria-label="streaming: passed in 0 of 1 measurements">
+      <title>streaming: passed in 0 of 1 measurements</title>
+      <rect class="bar-track" x="230" y="135" width="620" height="22" fill="none" stroke="var(--design-grey-2, #8c8a85)" stroke-width="1" />
+      <rect class="bar-value" x="230" y="135" width="0" height="22" fill="var(--design-pass, #00513a)" stroke="var(--design-ink, #1c1c1c)" stroke-width="0.75" />
+    </g>
+    <g class="capability-bar" aria-label="tool_choice_modes: passed in 1 of 2 measurements">
+      <title>tool_choice_modes: passed in 1 of 2 measurements</title>
+      <rect class="bar-track" x="230" y="185" width="620" height="22" fill="none" stroke="var(--design-grey-2, #8c8a85)" stroke-width="1" />
+      <rect class="bar-value" x="230" y="185" width="310" height="22" fill="var(--design-pass, #00513a)" stroke="var(--design-ink, #1c1c1c)" stroke-width="0.75" />
+    </g>
+    <g class="capability-bar" aria-label="multi_turn: passed in 1 of 2 measurements">
+      <title>multi_turn: passed in 1 of 2 measurements</title>
+      <rect class="bar-track" x="230" y="235" width="620" height="22" fill="none" stroke="var(--design-grey-2, #8c8a85)" stroke-width="1" />
+      <rect class="bar-value" x="230" y="235" width="310" height="22" fill="var(--design-pass, #00513a)" stroke="var(--design-ink, #1c1c1c)" stroke-width="0.75" />
+    </g>
+    <g class="capability-bar" aria-label="negative_trap: passed in 1 of 2 measurements">
+      <title>negative_trap: passed in 1 of 2 measurements</title>
+      <rect class="bar-track" x="230" y="285" width="620" height="22" fill="none" stroke="var(--design-grey-2, #8c8a85)" stroke-width="1" />
+      <rect class="bar-value" x="230" y="285" width="310" height="22" fill="var(--design-pass, #00513a)" stroke="var(--design-ink, #1c1c1c)" stroke-width="0.75" />
+    </g>
+  </svg>
+  </div>
+  <table class="svg-text-fallback">
+    <caption>Figure 4. Per-capability aggregate across stacks</caption>
+    <thead><tr><th scope="col">Capability</th><th scope="col">Scenarios per stack</th><th scope="col">Passed</th><th scope="col">Failed</th><th scope="col">Errors</th><th scope="col">Skipped</th><th scope="col">Total</th><th scope="col">Count statement</th></tr></thead>
+    <tbody>
+      <tr><td>single_call</td><td>1</td><td>1</td><td>0</td><td>0</td><td>0</td><td>1</td><td>passed in 1 of 1 measurements</td></tr>
+      <tr><td>parallel_calls</td><td>1</td><td>0</td><td>1</td><td>0</td><td>0</td><td>1</td><td>passed in 0 of 1 measurements</td></tr>
+      <tr><td>streaming</td><td>1</td><td>0</td><td>0</td><td>1</td><td>0</td><td>1</td><td>passed in 0 of 1 measurements</td></tr>
+      <tr><td>tool_choice_modes</td><td>1</td><td>1</td><td>0</td><td>0</td><td>1</td><td>2</td><td>passed in 1 of 2 measurements</td></tr>
+      <tr><td>multi_turn</td><td>2</td><td>1</td><td>1</td><td>0</td><td>0</td><td>2</td><td>passed in 1 of 2 measurements</td></tr>
+      <tr><td>negative_trap</td><td>1</td><td>1</td><td>1</td><td>0</td><td>0</td><td>2</td><td>passed in 1 of 2 measurements</td></tr>
+    </tbody>
+  </table>
+</figure>
+<figure class="svg-figure" data-figure-number="5">
+  <figcaption>
+    <strong>Figure 5. Observed pass-count strip plot</strong>
+    <span>Distribution of published one-run stack observations. Pass counts are plotted only when every scenario has a pass or fail verdict; rows with errors or skips are listed in the separate panel.</span>
+    <span class="does-not-show"><strong>What this does not show:</strong> A model score distribution, rankings, uncertainty, or repeated-run variability.</span>
+  </figcaption>
+  <div class="figure-scroll">
+  <svg role="img" width="920" height="184" viewBox="0 0 920 184">
+    <title>Figure 5. Observed pass-count strip plot</title>
+    <desc>One pass-count dot per fully measurable published stack observation, with error-bearing or skipped rows listed separately and not assigned a pass count.</desc>
+    <line class="strip-axis" x1="80" y1="48" x2="880" y2="48" stroke="var(--design-grey-3, #d5d2cc)" stroke-width="1" />
+    <line class="strip-tick" x1="80" y1="44" x2="80" y2="53" stroke="var(--design-grey-3, #d5d2cc)" stroke-width="1" />
+    <line class="strip-tick" x1="346" y1="44" x2="346" y2="53" stroke="var(--design-grey-3, #d5d2cc)" stroke-width="1" />
+    <line class="strip-tick" x1="613" y1="44" x2="613" y2="53" stroke="var(--design-grey-3, #d5d2cc)" stroke-width="1" />
+    <line class="strip-tick" x1="880" y1="44" x2="880" y2="53" stroke="var(--design-grey-3, #d5d2cc)" stroke-width="1" />
+    <line class="panel-rule" x1="80" y1="117" x2="880" y2="117" stroke="var(--design-grey-3, #d5d2cc)" stroke-width="1" />
+    <text class="plot-panel-label" x="80" y="20" text-anchor="start">Fully measurable observations</text>
+    <text class="strip-tick-label" x="80" y="41" text-anchor="middle">0</text>
+    <text class="strip-tick-label" x="346" y="41" text-anchor="middle">1</text>
+    <text class="strip-tick-label" x="613" y="41" text-anchor="middle">2</text>
+    <text class="strip-tick-label" x="880" y="41" text-anchor="middle">3</text>
+    <text class="plot-panel-label" x="80" y="109" text-anchor="start">Not fully measurable - pass counts withheld</text>
+    <text class="not-measurable-label" x="100" y="142" text-anchor="start">legacy-unresolved.gguf | quant not declared | ollama - 0 errors, 1 skipped; pass count not plotted</text>
+    <text class="not-measurable-label" x="100" y="162" text-anchor="start">v2-unresolved:model | Q5_K_M | MLX LM - 1 errors, 0 skipped; pass count not plotted</text>
+    <g class="strip-observation" aria-label="declared-fixture.gguf | Q4_K_M | llama.cpp: 1 passes">
+      <title>declared-fixture.gguf | Q4_K_M | llama.cpp: 1 passes</title>
+      <circle class="strip-dot" data-pass-count="1" cx="346" cy="68" r="5" fill="var(--design-pass, #00513a)" stroke="var(--design-ink, #1c1c1c)" stroke-width="1" />
+    </g>
+    <g class="strip-observation" aria-label="Verified &amp; Fixture | quant not declared | ollama: 1 passes">
+      <title>Verified &amp; Fixture | quant not declared | ollama: 1 passes</title>
+      <circle class="strip-dot" data-pass-count="1" cx="346" cy="81" r="5" fill="var(--design-pass, #00513a)" stroke="var(--design-ink, #1c1c1c)" stroke-width="1" />
+    </g>
+    <g class="not-fully-measurable-item" aria-label="legacy-unresolved.gguf | quant not declared | ollama: 0 errors, 1 skipped; pass count not plotted">
+      <title>legacy-unresolved.gguf | quant not declared | ollama: 0 errors, 1 skipped; pass count not plotted</title>
+      <rect class="state-shape state-error" x="81" y="132" width="11" height="11" fill="none" stroke="var(--design-ink, #1c1c1c)" stroke-width="0.75" />
+      <line class="state-slash ink-slash" x1="82" y1="133" x2="91" y2="142" stroke="var(--design-ink, #1c1c1c)" stroke-width="1" />
+    </g>
+    <g class="not-fully-measurable-item" aria-label="v2-unresolved:model | Q5_K_M | MLX LM: 1 errors, 0 skipped; pass count not plotted">
+      <title>v2-unresolved:model | Q5_K_M | MLX LM: 1 errors, 0 skipped; pass count not plotted</title>
+      <rect class="state-shape state-error" x="81" y="152" width="11" height="11" fill="none" stroke="var(--design-ink, #1c1c1c)" stroke-width="0.75" />
+      <line class="state-slash ink-slash" x1="82" y1="153" x2="91" y2="162" stroke="var(--design-ink, #1c1c1c)" stroke-width="1" />
+    </g>
+  </svg>
+  </div>
+  <table class="svg-text-fallback">
+    <caption>Figure 5. Observed pass-count strip plot</caption>
+    <thead><tr><th scope="col">Stack</th><th scope="col">Panel</th><th scope="col">Pass count</th><th scope="col">Failed</th><th scope="col">Errors</th><th scope="col">Skipped</th></tr></thead>
+    <tbody>
+      <tr><td>declared-fixture.gguf | Q4_K_M | llama.cpp</td><td>fully measurable</td><td>1</td><td>0</td><td>0</td><td>0</td></tr>
+      <tr><td>Verified &amp; Fixture | quant not declared | ollama</td><td>fully measurable</td><td>1</td><td>0</td><td>0</td><td>0</td></tr>
+      <tr><td>legacy-unresolved.gguf | quant not declared | ollama</td><td>not fully measurable</td><td>not plotted</td><td>1</td><td>0</td><td>1</td></tr>
+      <tr><td>v2-unresolved:model | Q5_K_M | MLX LM</td><td>not fully measurable</td><td>not plotted</td><td>2</td><td>1</td><td>0</td></tr>
+    </tbody>
+  </table>
+</figure>
+    </section>
+
     <section class="matrix" aria-labelledby="matrix-title">
       <div class="matrix-heading">
         <div>

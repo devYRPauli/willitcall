@@ -1,6 +1,7 @@
 use std::fs;
 use std::path::{Path, PathBuf};
 
+mod analysis;
 mod data;
 mod html;
 mod svg;
