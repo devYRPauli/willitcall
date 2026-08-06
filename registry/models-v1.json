@@ -233,9 +233,13 @@
         "provenance_ref": "registry/evidence/ollama-recovery.json#/records/13"
       },
       "family_id": null,
-      "canonical_id": null,
+      "canonical_id": {
+        "value": "ibm-granite/granite-3.1-8b-instruct",
+        "provenance_ref": "registry/evidence/ollama-recovery.json#/records/13",
+        "corroboration": "declared"
+      },
       "parameter_count_b": null,
-      "identity_status": "unresolved",
+      "identity_status": "declared",
       "artifact": {
         "source_kind": {
           "value": "ollama",
@@ -277,9 +281,13 @@
         "provenance_ref": "registry/evidence/ollama-recovery.json#/records/6"
       },
       "family_id": null,
-      "canonical_id": null,
+      "canonical_id": {
+        "value": "NousResearch/Hermes-3-Llama-3.1-8B",
+        "provenance_ref": "registry/evidence/ollama-recovery.json#/records/6",
+        "corroboration": "declared"
+      },
       "parameter_count_b": null,
-      "identity_status": "unresolved",
+      "identity_status": "declared",
       "artifact": {
         "source_kind": {
           "value": "ollama",
@@ -321,9 +329,13 @@
         "provenance_ref": "registry/evidence/ollama-recovery.json#/records/7"
       },
       "family_id": null,
-      "canonical_id": null,
+      "canonical_id": {
+        "value": "Groq/Llama-3-Groq-8B-Tool-Use",
+        "provenance_ref": "registry/evidence/ollama-recovery.json#/records/7",
+        "corroboration": "declared"
+      },
       "parameter_count_b": null,
-      "identity_status": "unresolved",
+      "identity_status": "declared",
       "artifact": {
         "source_kind": {
           "value": "ollama",
@@ -365,9 +377,13 @@
         "provenance_ref": "registry/evidence/ollama-recovery.json#/records/8"
       },
       "family_id": null,
-      "canonical_id": null,
+      "canonical_id": {
+        "value": "meta-llama/Meta-Llama-3.1-8B-Instruct",
+        "provenance_ref": "registry/evidence/ollama-recovery.json#/records/8",
+        "corroboration": "declared"
+      },
       "parameter_count_b": null,
-      "identity_status": "unresolved",
+      "identity_status": "declared",
       "artifact": {
         "source_kind": {
           "value": "ollama",
@@ -409,9 +425,13 @@
         "provenance_ref": "registry/evidence/ollama-recovery.json#/records/9"
       },
       "family_id": null,
-      "canonical_id": null,
+      "canonical_id": {
+        "value": "mistralai/Mistral-7B-Instruct-v0.3",
+        "provenance_ref": "registry/evidence/ollama-recovery.json#/records/9",
+        "corroboration": "declared"
+      },
       "parameter_count_b": null,
-      "identity_status": "unresolved",
+      "identity_status": "declared",
       "artifact": {
         "source_kind": {
           "value": "ollama",
@@ -723,9 +743,13 @@
         "provenance_ref": "registry/evidence/ollama-recovery.json#/records/10"
       },
       "family_id": null,
-      "canonical_id": null,
+      "canonical_id": {
+        "value": "microsoft/Phi-4-mini-instruct",
+        "provenance_ref": "registry/evidence/ollama-recovery.json#/records/10",
+        "corroboration": "declared"
+      },
       "parameter_count_b": null,
-      "identity_status": "unresolved",
+      "identity_status": "declared",
       "artifact": {
         "source_kind": {
           "value": "ollama",
@@ -1037,9 +1061,13 @@
         "provenance_ref": "registry/evidence/ollama-recovery.json#/records/5"
       },
       "family_id": null,
-      "canonical_id": null,
+      "canonical_id": {
+        "value": "Qwen/Qwen2.5-7B-Instruct",
+        "provenance_ref": "registry/evidence/ollama-recovery.json#/records/5",
+        "corroboration": "declared"
+      },
       "parameter_count_b": null,
-      "identity_status": "unresolved",
+      "identity_status": "declared",
       "artifact": {
         "source_kind": {
           "value": "ollama",
@@ -1081,9 +1109,13 @@
         "provenance_ref": "registry/evidence/ollama-recovery.json#/records/0"
       },
       "family_id": null,
-      "canonical_id": null,
+      "canonical_id": {
+        "value": "Qwen/Qwen3-0.6B",
+        "provenance_ref": "registry/evidence/ollama-recovery.json#/records/0",
+        "corroboration": "declared"
+      },
       "parameter_count_b": null,
-      "identity_status": "unresolved",
+      "identity_status": "declared",
       "artifact": {
         "source_kind": {
           "value": "ollama",
@@ -1125,9 +1157,13 @@
         "provenance_ref": "registry/evidence/ollama-recovery.json#/records/1"
       },
       "family_id": null,
-      "canonical_id": null,
+      "canonical_id": {
+        "value": "Qwen/Qwen3-1.7B",
+        "provenance_ref": "registry/evidence/ollama-recovery.json#/records/1",
+        "corroboration": "declared"
+      },
       "parameter_count_b": null,
-      "identity_status": "unresolved",
+      "identity_status": "declared",
       "artifact": {
         "source_kind": {
           "value": "ollama",
@@ -1169,9 +1205,13 @@
         "provenance_ref": "registry/evidence/ollama-recovery.json#/records/4"
       },
       "family_id": null,
-      "canonical_id": null,
+      "canonical_id": {
+        "value": "Qwen/Qwen3-14B",
+        "provenance_ref": "registry/evidence/ollama-recovery.json#/records/4",
+        "corroboration": "declared"
+      },
       "parameter_count_b": null,
-      "identity_status": "unresolved",
+      "identity_status": "declared",
       "artifact": {
         "source_kind": {
           "value": "ollama",
@@ -1213,9 +1253,13 @@
         "provenance_ref": "registry/evidence/ollama-recovery.json#/records/2"
       },
       "family_id": null,
-      "canonical_id": null,
+      "canonical_id": {
+        "value": "Qwen/Qwen3-4B-Thinking-2507",
+        "provenance_ref": "registry/evidence/ollama-recovery.json#/records/2",
+        "corroboration": "declared"
+      },
       "parameter_count_b": null,
-      "identity_status": "unresolved",
+      "identity_status": "declared",
       "artifact": {
         "source_kind": {
           "value": "ollama",
@@ -1257,9 +1301,13 @@
         "provenance_ref": "registry/evidence/ollama-recovery.json#/records/3"
       },
       "family_id": null,
-      "canonical_id": null,
+      "canonical_id": {
+        "value": "Qwen/Qwen3-8B",
+        "provenance_ref": "registry/evidence/ollama-recovery.json#/records/3",
+        "corroboration": "declared"
+      },
       "parameter_count_b": null,
-      "identity_status": "unresolved",
+      "identity_status": "declared",
       "artifact": {
         "source_kind": {
           "value": "ollama",
