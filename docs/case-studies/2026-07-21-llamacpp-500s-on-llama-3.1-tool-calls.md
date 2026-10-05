@@ -85,8 +85,10 @@ The anomaly is therefore reproducible and not fixed between b10050 and b10075.
 
 - Observed on one model family. Qwen2.5-7B and Qwen2.5-1.5B on the same server,
   version, flags and corpus never trigger it.
-- Affected scenarios skew to `multi_turn` (6 of the 8-9 errors per run), with
-  the remainder in negative-trap and parallel-call scenarios.
+- Affected scenarios skew to `multi_turn`. In the greedy runs, 6 of the 8 or 9
+  errors are `multi_turn` at Q8_0 and Q4_K_M, and 4 of the 7 at Q3_K_M. The
+  rest are negative-trap and parallel-call scenarios, plus one single-call
+  scenario at Q3_K_M.
 - This does not say Llama-3.1 cannot call tools. It says this combination
   cannot, through this server's parser. Llama-3.1 on Ollama is a separate
   published row and does not fail this way.
