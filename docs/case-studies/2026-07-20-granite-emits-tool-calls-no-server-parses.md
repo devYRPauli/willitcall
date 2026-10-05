@@ -119,7 +119,7 @@ That is a model that did not call a tool, not a call that went unparsed.
 phi4-mini's 7/50 is largely genuine failure and it should not appear in this
 finding.
 
-The original claim was generalised from a single example, which is the
+The original claim was generalized from a single example, which is the
 failure mode amendment 4 exists to prevent, and the second time this project
 has had to overturn an n=1 conclusion. The lesson is recorded here rather
 than quietly dropped, because a benchmark that hides its own corrections is
