@@ -58,10 +58,9 @@ output is wrong.
   mlx-lm swallows: it applies the same chat template with the same tools and
   generates greedily with no parsing. Switching `REPO` to the 4bit conversion
   gives the control.
-- The 7 scenarios the 8bit arm passes are the negative traps, where emitting no
-  parsed call is the correct answer. That signature - full marks precisely where
-  not calling a tool is right - is the same one that identified the granite
-  case.
+- The 8bit arm passes exactly the seven scenarios where making no call is
+  correct. That signature - full marks precisely where not calling a tool is
+  right - is the same one that identified the granite case.
 
 ## Why this matters for the quantization question
 

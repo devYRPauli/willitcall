@@ -9,10 +9,9 @@ well-formed calls, with the right function name and the right arguments, in a
 is left sitting in `content`, so the harness sees no tool call and the
 scenario fails.
 
-The seven scenarios it passes are exactly the seven negative traps, where
-emitting no parsed call is the correct answer. That is the tell: the model
-scores full marks precisely where not calling a tool is right, and zero
-elsewhere.
+The model passes exactly the seven scenarios where making no call is correct.
+That is the tell: the model scores full marks precisely where not calling a
+tool is right, and zero elsewhere.
 
 This is not the M3 finding. M3 was read as Ollama discarding a valid call from
 its own engine; that reading was disproved on 2026-07-21 (the model had put
@@ -151,8 +150,8 @@ willitcall run --endpoint http://127.0.0.1:8080/v1 \
   --model <id from /v1/models> --server llamacpp --out granite-llamacpp.json
 ```
 
-Both should report 7 passed, 43 failed, and the passing seven should be the
-negative traps.
+Both should report 7 passed and 43 failed. The passes should be exactly the
+seven scenarios where making no call is correct.
 
 ## Evidence files
 

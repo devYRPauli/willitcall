@@ -236,7 +236,7 @@ Shipped instead:
 3. **Outcome-signature inventory.** Keyed on the exact 50-status vector, valued
    by the stacks sharing it. Better than a histogram for the 7/50 cluster
    because it shows whether identical totals came from identical scenarios.
-   Granite's seven passes are exactly the negative category.
+   Granite passes exactly the seven scenarios where making no call is correct.
 4. **Per-capability aggregate across stacks.** Six bars: "passed in X of Y
    measured stacks". A count of measurements, not a ranking. This is what
    surfaces the multi-turn cliff. It is **not** filtered to n>=5 arms: with zero

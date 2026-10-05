@@ -180,8 +180,8 @@ the combined matrix.
    - Why it matters: as recorded today these cells are indistinguishable from
      "the model cannot call tools", which is false and is exactly the kind of
      misattribution amendment 2 exists to prevent. The 7 scenarios each model
-     passes are precisely the negative traps, where emitting no parsed call is
-     the correct answer.
+     passes are precisely the scenarios where making no call is the correct
+     answer.
    - Proposal: add `failure_class: "unparsed_tool_call"`, set mechanically when
      a failing scenario has no `tool_calls` AND its response content matches a
      known tool-call shape. The detection rule must be conservative and
