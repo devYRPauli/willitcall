@@ -97,8 +97,8 @@ The corpus is 50 scenarios in six categories. Each is plain TOML data in
 - `multi_turn` - the harness feeds a tool result back. The follow-up call must
   use a value that exists only in that result.
 - `tool_choice` - `auto`, `none`, `required`, and a named function.
-- `negative` - cases where the correct behavior is no tool call, and awkward
-  argument content (a 256-character token, a non-ASCII city name).
+- `negative` - cases where no tool call is correct, and awkward argument
+  content (a 256-character token, a non-ASCII city name).
 
 Scoring is deterministic. There is no LLM judge. The project publishes failure
 reasons, and a published reason has to be defensible.
@@ -164,8 +164,8 @@ When you write or review a scenario:
   A model may legitimately expand or spell other values differently.
 - Where the exact text does not matter, set `arguments_match = "ignore"` on that
   expected call. Use `"subset"` when extra arguments are acceptable.
-- Arrays are compared positionally. If order is not part of the requirement, say
-  "in that order" in the prompt, or do not use an array.
+- Arrays are compared positionally. If the order does not matter, say "in that
+  order" in the prompt, or do not use an array.
 - Do not pin an operand position for a commutative operation.
 - Do not expect a value the model has no way to know.
 

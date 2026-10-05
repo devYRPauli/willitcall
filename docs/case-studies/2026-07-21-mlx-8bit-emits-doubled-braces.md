@@ -60,8 +60,7 @@ output is wrong.
   generates greedily with no parsing. Switching `REPO` to the 4bit conversion
   gives the control.
 - The 8bit arm passes exactly the seven scenarios where making no call is
-  correct. That signature - full marks precisely where not calling a tool is
-  right - is the same one that identified the granite case.
+  correct. That signature is the same one that identified the granite case.
 
 ## Why this matters for the quantization question
 
