@@ -123,6 +123,10 @@ captured in the evidence for these runs.
 - Deterministic under greedy decoding, and the errors persist in the
   seed-varied arm at temperature 0.7, so this is not a sampling artifact.
 
+The b10050 run files are in `evidence/replication/m6-armA/`. The b10075 run
+files are in `evidence/replication/m6-armB/`. The seed-varied arm is in
+`evidence/replication/m6-armS/`.
+
 ## Environment
 
 - Host: Apple M4 Max, 64GB, macOS 26.5.2 (single host for every run)

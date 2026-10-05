@@ -45,6 +45,7 @@ output is wrong.
 - 5 runs per arm, greedy. `Qwen2.5-7B-Instruct-4bit` scored 46, 46, 46, 46, 46.
   `Qwen2.5-7B-Instruct-8bit` scored 7, 7, 7, 7, 7, with 30 scenarios classified
   `empty_response` on every run.
+- The run files for these 10 runs are in `evidence/replication/m6-mlx-repl/`.
 - mlx-lm logged `Failed to parse tool call (JSONDecodeError: Expecting property
   name enclosed in double quotes: line 1 column 2 (char 1))` 295 times across
   the 8bit runs, and 0 times across the 4bit runs. Column 2, character 1 is

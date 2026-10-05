@@ -157,6 +157,8 @@ seven scenarios where making no call is correct.
 
 - `evidence/granite-ollama-run1.json` - full result, Ollama arm, run 1
 - `evidence/granite-llamacpp-run1.json` - full result, llama.cpp arm, run 1
+- `evidence/replication/m5-replication/` - full results, all 10 replication runs
 
 Each result's `evidence_path` entries point at the per-scenario transcripts
-containing the raw request and response bodies quoted above.
+containing the raw request and response bodies quoted above. The transcripts
+are not published.
