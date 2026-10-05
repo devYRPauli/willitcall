@@ -10,8 +10,7 @@ is left sitting in `content`, so the harness sees no tool call and the
 scenario fails.
 
 The model passes exactly the seven scenarios where making no call is correct.
-That is the tell: the model scores full marks precisely where not calling a
-tool is right, and zero elsewhere.
+It fails the other 43. That is the tell.
 
 This is not the M3 finding. M3 was read as Ollama discarding a valid call from
 its own engine; that reading was disproved on 2026-07-21 (the model had put
