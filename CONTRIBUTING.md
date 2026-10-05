@@ -10,6 +10,14 @@ cargo fmt --all -- --check
 cargo clippy --workspace --all-targets -- -D warnings
 ```
 
+If you change `tools/` or a path redaction ledger, also run the two Python
+checks that CI runs:
+
+```sh
+python3 -m unittest discover -s tools -v
+python3 tools/redact_local_paths.py --check-all migrations/path-redaction --evidence-root results
+```
+
 ## Adding a scenario
 
 > **A scenario that a fully correct model could fail is a bug in the scenario. An expectation must admit EVERY correct answer, not just the one the author had in mind.**
@@ -23,6 +31,9 @@ Before submitting a scenario:
 - Never pin operand position for a commutative operation.
 - Never expect a value the model cannot know from the prompt or an earlier tool result.
 - Add a `rationale` that says what capability is asserted and why the expectation admits every correct answer.
+- Set `response_requirement` on every turn. Use `tool_calls` when the turn expects calls, and `text_without_tool_calls` when it expects none.
+
+Save the scenario as `crates/wic-core/scenarios/<id>.toml`. The file name must equal the `id` field.
 
 This example pins an opaque id and uses subset matching so an optional argument cannot cause a false failure:
 
@@ -46,6 +57,8 @@ type = "string"
 mode = "auto"
 
 [[turns]]
+response_requirement = "tool_calls"
+
 [[turns.messages]]
 role = "user"
 content = "Get record rec-17." # The expected value is literal.
@@ -60,13 +73,14 @@ record_id = "rec-17"
 
 1. Run the full scenario corpus against one loaded model at a time.
 2. Add the exact model selector to `registry/models-v1.json`. Every claimed
-   identity field needs a provenance reference. If the provenance cannot be
-   recovered, an explicit unresolved entry is acceptable and will be displayed
-   as `unresolved`; do not infer identity from the selector or result filename.
+   identity field needs a provenance reference. If you cannot recover the
+   provenance, an explicit `unresolved` entry is acceptable. The result and the
+   site show that status. Do not infer identity from the selector or the result
+   filename.
 3. Run `willitcall validate results/<file>.json`; new runs must pass as schema v3
    against `schemas/result-v3.schema.json`. The CLI continues to accept schema v1
    and v2 files without upgrading them during `annotate` or `rescore`.
-4. Open a pull request adding the file under `results/`, and state the hardware and server version used.
+4. Open a pull request that adds the file and its `evidence/` directory under `results/`. State the hardware and the server version.
 
 Never hand-edit a result file. Each scenario record carries an evidence hash, so edited results are not comparable.
 
@@ -78,4 +92,4 @@ Never hand-edit a result file. Each scenario record carries an evidence hash, so
 
 ### Failure classes
 
-`failure_class` is a single mechanical observation assigned only after a scenario fails. Its precedence is error status, then `empty_response`, then `unparsed_tool_call`, then a plain failure with no class. `empty_response` means the response had neither content nor a parsed tool call. `unparsed_tool_call` means content matched a registered tool-call shape whose function was offered and whose arguments passed that tool's parameter schema, but the server produced no parsed tool call. A `cause` is a separate human attribution.
+`failure_class` is a single mechanical observation assigned only after a scenario fails. A scenario with status `error` has no class. For a failure, `empty_response` takes precedence over `unparsed_tool_call`, and any other failure has no class. `empty_response` means the response had neither content nor a parsed tool call. `unparsed_tool_call` means the server parsed no tool call, but the content matches a registered tool-call shape. The function in that shape was offered, and its arguments pass the tool's parameter schema. A `cause` is a separate human attribution.
