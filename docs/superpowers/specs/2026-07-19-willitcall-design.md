@@ -173,15 +173,15 @@ the combined matrix.
      failure mode. That is WRONG and is retracted. Across both servers only 1
      of 86 phi4-mini failures matches any tool-call shape; the rest are prose
      refusals and narration with no call at all, so phi4-mini's 7/50 is
-     largely genuine model failure. The claim was generalised from a single
+     largely genuine model failure. The claim was generalized from a single
      example - the n=1 error amendment 4 exists to prevent. Evidence and the
      full retraction are in
      docs/case-studies/2026-07-20-granite-emits-tool-calls-no-server-parses.md.
    - Why it matters: as recorded today these cells are indistinguishable from
      "the model cannot call tools", which is false and is exactly the kind of
      misattribution amendment 2 exists to prevent. The 7 scenarios each model
-     passes are precisely the negative traps, where emitting no parsed call is
-     the correct answer.
+     passes are precisely the scenarios where making no call is the correct
+     answer.
    - Proposal: add `failure_class: "unparsed_tool_call"`, set mechanically when
      a failing scenario has no `tool_calls` AND its response content matches a
      known tool-call shape. The detection rule must be conservative and
@@ -210,12 +210,12 @@ the combined matrix.
 
 6. Measurement environment uniformity and disclosure (owner, 2026-07-20).
    M4 published rows measured on two different hosts (wave 1: 16GB MacBook;
-   waves 2-3: macstudio M4 Max 64GB) without disclosure. For a project whose
+   waves 2-3: the measurement host, M4 Max 64GB) without disclosure. For a project whose
    product is trustworthy measurement, undisclosed environment differences
    are unacceptable.
    - Result files gain environment fields (host hardware class, server
      name+version) - additive to schema v2.
-   - Wave-1 rows are RE-RUN on macstudio so every published row shares one
+   - Wave-1 rows are RE-RUN on the measurement host so every published row shares one
      measurement host; the site discloses the environment per row (or one
      global statement once uniform).
    - Going forward: mixed-host result sets are fine for the community matrix

@@ -258,9 +258,9 @@ The dedicated verify-dupes pass ran on 2026-07-20 and cleared all three gates:
    so the issue cites it directly. No merged-but-unreleased fix touches the
    qwen2.5 path.
 3. **Independent re-verification.** Every row of the table above was re-run from
-   scratch on macstudio without trusting the M3 session. All confirmed, no
-   discrepancies; the llama.cpp side came back 12/12 across both tool
-   descriptions.
+   scratch on the measurement host without trusting the M3 session. All
+   confirmed, no discrepancies; the llama.cpp side came back 12/12 across both
+   tool descriptions.
 
 The `eval_count` contradiction was folded into the same issue rather than filed
 separately: it cannot occur independently of the drop.

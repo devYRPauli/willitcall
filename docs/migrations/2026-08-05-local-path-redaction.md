@@ -35,7 +35,7 @@ python3 tools/redact_local_paths.py \
   --source-commit "$SOURCE_COMMIT" \
   --result results/<result>.json \
   --evidence-root results \
-  --ledger docs/migrations/local-path-redaction-ledgers/<run-id>.json
+  --ledger migrations/path-redaction/<run-id>.json
 ```
 
 Each per-run JSON ledger records the source commit, repository-relative result
@@ -52,11 +52,11 @@ transcript formatting, response byte, or result field changed:
 ```sh
 python3 tools/redact_local_paths.py \
   --check \
-  --ledger docs/migrations/local-path-redaction-ledgers/<run-id>.json \
+  --ledger migrations/path-redaction/<run-id>.json \
   --evidence-root results
 
 python3 tools/redact_local_paths.py \
-  --check-all docs/migrations/local-path-redaction-ledgers \
+  --check-all migrations/path-redaction \
   --evidence-root results
 ```
 

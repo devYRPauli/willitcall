@@ -116,3 +116,20 @@ jobs:
                   print(f"  {name}")
           sys.exit(1 if failed else 0)
           PY
+
+  tools:
+    runs-on: ubuntu-latest
+    env:
+      PYTHONDONTWRITEBYTECODE: 1
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # --check-all reloads each preimage with git show, so it needs history.
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Test the tools
+        run: python3 -m unittest discover -s tools -v
+      - name: Check the path redaction ledgers
+        run: python3 tools/redact_local_paths.py --check-all migrations/path-redaction --evidence-root results

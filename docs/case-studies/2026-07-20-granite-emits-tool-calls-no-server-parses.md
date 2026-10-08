@@ -9,10 +9,8 @@ well-formed calls, with the right function name and the right arguments, in a
 is left sitting in `content`, so the harness sees no tool call and the
 scenario fails.
 
-The seven scenarios it passes are exactly the seven negative traps, where
-emitting no parsed call is the correct answer. That is the tell: the model
-scores full marks precisely where not calling a tool is right, and zero
-elsewhere.
+The model passes exactly the seven scenarios where making no call is correct.
+It fails the other 43. That is the tell.
 
 This is not the M3 finding. M3 was read as Ollama discarding a valid call from
 its own engine; that reading was disproved on 2026-07-21 (the model had put
@@ -120,7 +118,7 @@ That is a model that did not call a tool, not a call that went unparsed.
 phi4-mini's 7/50 is largely genuine failure and it should not appear in this
 finding.
 
-The original claim was generalised from a single example, which is the
+The original claim was generalized from a single example, which is the
 failure mode amendment 4 exists to prevent, and the second time this project
 has had to overturn an n=1 conclusion. The lesson is recorded here rather
 than quietly dropped, because a benchmark that hides its own corrections is
@@ -151,13 +149,15 @@ willitcall run --endpoint http://127.0.0.1:8080/v1 \
   --model <id from /v1/models> --server llamacpp --out granite-llamacpp.json
 ```
 
-Both should report 7 passed, 43 failed, and the passing seven should be the
-negative traps.
+Both should report 7 passed and 43 failed. The passes should be exactly the
+seven scenarios where making no call is correct.
 
 ## Evidence files
 
 - `evidence/granite-ollama-run1.json` - full result, Ollama arm, run 1
 - `evidence/granite-llamacpp-run1.json` - full result, llama.cpp arm, run 1
+- `evidence/replication/m5-replication/` - full results, all 10 replication runs
 
 Each result's `evidence_path` entries point at the per-scenario transcripts
-containing the raw request and response bodies quoted above.
+containing the raw request and response bodies quoted above. The transcripts
+are not published.

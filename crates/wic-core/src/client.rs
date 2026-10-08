@@ -46,8 +46,8 @@ pub enum CompletionResult {
 }
 
 enum RecordedAttemptError {
-    Timeout(CapturedTurn),
-    Transport(reqwest::Error, CapturedTurn),
+    Timeout(Box<CapturedTurn>),
+    Transport(reqwest::Error, Box<CapturedTurn>),
 }
 
 #[derive(Clone)]
@@ -185,7 +185,7 @@ impl EndpointClient {
                 .await
             {
                 Err(RecordedAttemptError::Timeout(turn)) => {
-                    turns.push(turn);
+                    turns.push(*turn);
                     if attempt == 0 {
                         continue;
                     }
@@ -200,11 +200,11 @@ impl EndpointClient {
                     };
                 }
                 Err(RecordedAttemptError::Transport(_, turn)) if attempt == 0 => {
-                    turns.push(turn);
+                    turns.push(*turn);
                     continue;
                 }
                 Err(RecordedAttemptError::Transport(error, turn)) => {
-                    turns.push(turn);
+                    turns.push(*turn);
                     return CompletionResult::Error {
                         reason: format!("transport error after retry: {error}"),
                         raw_bytes: retry_raw,
@@ -294,20 +294,20 @@ impl EndpointClient {
         let mut response = match tokio::time::timeout_at(deadline, self.http.execute(request)).await
         {
             Err(_) => {
-                return Err(RecordedAttemptError::Timeout(CapturedTurn {
+                return Err(RecordedAttemptError::Timeout(Box::new(CapturedTurn {
                     request: captured_request,
                     response: None,
                     retried,
-                }));
+                })));
             }
             Ok(Err(error)) => {
                 return Err(RecordedAttemptError::Transport(
                     error,
-                    CapturedTurn {
+                    Box::new(CapturedTurn {
                         request: captured_request,
                         response: None,
                         retried,
-                    },
+                    }),
                 ));
             }
             Ok(Ok(response)) => response,
@@ -318,7 +318,7 @@ impl EndpointClient {
         loop {
             match tokio::time::timeout_at(deadline, response.chunk()).await {
                 Err(_) => {
-                    return Err(RecordedAttemptError::Timeout(CapturedTurn {
+                    return Err(RecordedAttemptError::Timeout(Box::new(CapturedTurn {
                         request: captured_request,
                         response: Some(CapturedResponse {
                             status: status.as_u16(),
@@ -326,14 +326,14 @@ impl EndpointClient {
                             body,
                         }),
                         retried,
-                    }));
+                    })));
                 }
                 Ok(Ok(Some(chunk))) => body.extend_from_slice(&chunk),
                 Ok(Ok(None)) => break,
                 Ok(Err(error)) => {
                     return Err(RecordedAttemptError::Transport(
                         error,
-                        CapturedTurn {
+                        Box::new(CapturedTurn {
                             request: captured_request,
                             response: Some(CapturedResponse {
                                 status: status.as_u16(),
@@ -341,7 +341,7 @@ impl EndpointClient {
                                 body,
                             }),
                             retried,
-                        },
+                        }),
                     ));
                 }
             }

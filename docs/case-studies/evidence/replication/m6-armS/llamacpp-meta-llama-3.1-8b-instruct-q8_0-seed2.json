@@ -1,0 +1,487 @@
+{
+  "schema_version": 2,
+  "metadata": {
+    "run_id": "20260721T151648Z-ca4933ff",
+    "timestamp": "2026-07-21T15:16:48Z",
+    "willitcall_version": "0.1.0",
+    "endpoint": "http://127.0.0.1:8080/v1",
+    "model_id": "bartowski/Meta-Llama-3.1-8B-Instruct-GGUF:Q8_0",
+    "declared_quant": "Q8_0",
+    "server": {
+      "preset_name": "llamacpp",
+      "reported_version": "b10050-b15ca938a",
+      "quirk_flags": [
+        "grammar_constrained_decoding"
+      ]
+    },
+    "environment": {
+      "host_hardware_class": "Apple M4 Max, 64GB",
+      "host_os": "macOS 26.5.2"
+    },
+    "sampling": {
+      "temperature": 0.7,
+      "top_p": 1.0,
+      "seed": 2,
+      "max_tokens": 1024
+    }
+  },
+  "scenarios": [
+    {
+      "id": "multi-turn-calendar-followup",
+      "category": "multi_turn",
+      "status": "error",
+      "failure_reason": "turn 1: server returned HTTP 500 Internal Server Error after retry",
+      "evidence_hash": "sha256:0ce51bb2387be163369c347cc4d9bb0ea660fbea6d248560d605809c31424293",
+      "evidence_path": "evidence/20260721T151648Z-ca4933ff/multi-turn-calendar-followup.json",
+      "retried": true
+    },
+    {
+      "id": "multi-turn-flight-booking",
+      "category": "multi_turn",
+      "status": "error",
+      "failure_reason": "turn 1: server returned HTTP 500 Internal Server Error after retry",
+      "evidence_hash": "sha256:956d8444e72d3c644615a9b9f46e021bcfedcb231323db3718abb9145580983d",
+      "evidence_path": "evidence/20260721T151648Z-ca4933ff/multi-turn-flight-booking.json",
+      "retried": true
+    },
+    {
+      "id": "multi-turn-inventory-order",
+      "category": "multi_turn",
+      "status": "error",
+      "failure_reason": "turn 1: server returned HTTP 500 Internal Server Error after retry",
+      "evidence_hash": "sha256:0f33da82b90ebd22dd23764cacf775df28290822013e8dedc26a03f2a967e186",
+      "evidence_path": "evidence/20260721T151648Z-ca4933ff/multi-turn-inventory-order.json",
+      "retried": true
+    },
+    {
+      "id": "multi-turn-parallel-followup",
+      "category": "multi_turn",
+      "status": "error",
+      "failure_reason": "turn 1: server returned HTTP 500 Internal Server Error after retry",
+      "evidence_hash": "sha256:70937a7d9a9db71b5c76bf4bdfe49ccfe0906d3dcc8bc0e8d1c0bfd813e46f99",
+      "evidence_path": "evidence/20260721T151648Z-ca4933ff/multi-turn-parallel-followup.json",
+      "retried": true
+    },
+    {
+      "id": "multi-turn-route",
+      "category": "multi_turn",
+      "status": "fail",
+      "failure_reason": "turn 1: wrong tool call: expected 'geocode', got 'get_route'",
+      "evidence_hash": "sha256:ca50f487f49acee05aadff73da96375d699ac20ddb96580cbdfdbd0fcc5e2ed6",
+      "evidence_path": "evidence/20260721T151648Z-ca4933ff/multi-turn-route.json",
+      "retried": false
+    },
+    {
+      "id": "multi-turn-ticket-update",
+      "category": "multi_turn",
+      "status": "error",
+      "failure_reason": "turn 1: server returned HTTP 500 Internal Server Error after retry",
+      "evidence_hash": "sha256:f8ec2b8dc2bf83a9d0f94563170769fb530d9362ccd61d501d6700b2d4838e5f",
+      "evidence_path": "evidence/20260721T151648Z-ca4933ff/multi-turn-ticket-update.json",
+      "retried": true
+    },
+    {
+      "id": "multi-turn-two-hop-chain",
+      "category": "multi_turn",
+      "status": "error",
+      "failure_reason": "turn 1: server returned HTTP 500 Internal Server Error after retry",
+      "evidence_hash": "sha256:573c3854ad1b980441fdf84450aea54996fd8ad40f8152ecfdfaa572dd9248a7",
+      "evidence_path": "evidence/20260721T151648Z-ca4933ff/multi-turn-two-hop-chain.json",
+      "retried": true
+    },
+    {
+      "id": "negative-auto-arithmetic",
+      "category": "negative_trap",
+      "status": "fail",
+      "failure_reason": "unexpected tool call emitted: 'get_weather'",
+      "evidence_hash": "sha256:3434948f8d6cc7bc8915bbe0b0c785edded13451ff7a6806c2d61466737845ef",
+      "evidence_path": "evidence/20260721T151648Z-ca4933ff/negative-auto-arithmetic.json",
+      "retried": false
+    },
+    {
+      "id": "negative-auto-knowledge",
+      "category": "negative_trap",
+      "status": "fail",
+      "failure_reason": "unexpected tool call emitted: 'lookup_order'",
+      "evidence_hash": "sha256:7b8de2e6f436172c73ea9ede2a577d8a6c7b8fe0c0d89163fbb42d314aeb674b",
+      "evidence_path": "evidence/20260721T151648Z-ca4933ff/negative-auto-knowledge.json",
+      "retried": false
+    },
+    {
+      "id": "negative-greeting",
+      "category": "negative_trap",
+      "status": "pass",
+      "failure_reason": null,
+      "evidence_hash": "sha256:73f99b6ff2f28792e08a6ac625acb1043e76d360add51ea2c641aa7ab40479f9",
+      "evidence_path": "evidence/20260721T151648Z-ca4933ff/negative-greeting.json",
+      "retried": false
+    },
+    {
+      "id": "negative-invalid-schema",
+      "category": "negative_trap",
+      "status": "fail",
+      "failure_reason": "unexpected tool call emitted: 'set_temperature_unit'",
+      "evidence_hash": "sha256:c80c0538e66e6582cd62725e2064823f5da5916637a6257cfa0a69b38cdb03f2",
+      "evidence_path": "evidence/20260721T151648Z-ca4933ff/negative-invalid-schema.json",
+      "retried": false
+    },
+    {
+      "id": "negative-long-argument",
+      "category": "negative_trap",
+      "status": "pass",
+      "failure_reason": null,
+      "evidence_hash": "sha256:2216805462cccbe2dfe586cf0b31bbbc469944f17b0febcacb0660d030afba01",
+      "evidence_path": "evidence/20260721T151648Z-ca4933ff/negative-long-argument.json",
+      "retried": false
+    },
+    {
+      "id": "negative-plain-text",
+      "category": "negative_trap",
+      "status": "error",
+      "failure_reason": "server returned HTTP 500 Internal Server Error after retry",
+      "evidence_hash": "sha256:3626d92215cc77c010d5c29d14b5e21bfdc04e9f7fc10dacf2ca7c526e5ab87d",
+      "evidence_path": "evidence/20260721T151648Z-ca4933ff/negative-plain-text.json",
+      "retried": true
+    },
+    {
+      "id": "negative-unicode-argument",
+      "category": "negative_trap",
+      "status": "pass",
+      "failure_reason": null,
+      "evidence_hash": "sha256:761d066439cadb643667639891fea5edf093f12c25d92e44bb80cc5aa699155d",
+      "evidence_path": "evidence/20260721T151648Z-ca4933ff/negative-unicode-argument.json",
+      "retried": false
+    },
+    {
+      "id": "parallel-city-time",
+      "category": "parallel_calls",
+      "status": "fail",
+      "failure_reason": "missing expected tool call: 'get_time'",
+      "evidence_hash": "sha256:6a52ba6affc516d580ec2f11ac276650d97b5841efc98c74edaa7a495cbab778",
+      "evidence_path": "evidence/20260721T151648Z-ca4933ff/parallel-city-time.json",
+      "retried": false
+    },
+    {
+      "id": "parallel-different-tools",
+      "category": "parallel_calls",
+      "status": "fail",
+      "failure_reason": "missing expected tool call: 'get_time'",
+      "evidence_hash": "sha256:50c1b4a8e467cf3e66e6006498710f0bf33399d01d2f8d75b20a5dd7704fcfd3",
+      "evidence_path": "evidence/20260721T151648Z-ca4933ff/parallel-different-tools.json",
+      "retried": false
+    },
+    {
+      "id": "parallel-three-cities",
+      "category": "parallel_calls",
+      "status": "fail",
+      "failure_reason": "missing expected tool call: 'get_weather'",
+      "evidence_hash": "sha256:a58e77d7590061f765f02d45ec2cb49d4f28d4c172473b9e635bbfbf19631f36",
+      "evidence_path": "evidence/20260721T151648Z-ca4933ff/parallel-three-cities.json",
+      "retried": false
+    },
+    {
+      "id": "parallel-three-different-tools",
+      "category": "parallel_calls",
+      "status": "fail",
+      "failure_reason": "missing expected tool call: 'get_time'",
+      "evidence_hash": "sha256:c60b1e7e2555748b0d22fd9a4a35c31c1d1afc3808ce3f2ac232c27e27e494da",
+      "evidence_path": "evidence/20260721T151648Z-ca4933ff/parallel-three-different-tools.json",
+      "retried": false
+    },
+    {
+      "id": "parallel-two-calculations",
+      "category": "parallel_calls",
+      "status": "fail",
+      "failure_reason": "missing expected tool call: 'divide'",
+      "evidence_hash": "sha256:c5b8753412cea1bfb0c76215afabd2b9100a36f3d7815f580da2af4a634311db",
+      "evidence_path": "evidence/20260721T151648Z-ca4933ff/parallel-two-calculations.json",
+      "retried": false
+    },
+    {
+      "id": "parallel-two-multiple-args",
+      "category": "parallel_calls",
+      "status": "fail",
+      "failure_reason": "missing expected tool call: 'reserve_car'",
+      "evidence_hash": "sha256:e70a941b8de9ea22c51cc2cc1e2a25f96f30d1b344698741dc1da8cd58592cc5",
+      "evidence_path": "evidence/20260721T151648Z-ca4933ff/parallel-two-multiple-args.json",
+      "retried": false
+    },
+    {
+      "id": "parallel-two-searches",
+      "category": "parallel_calls",
+      "status": "fail",
+      "failure_reason": "missing expected tool call: 'search_docs'",
+      "evidence_hash": "sha256:9aa83de6fd594ec606df7a0863e3a7a2263d5c2824fdaf8f60f9978d6c762857",
+      "evidence_path": "evidence/20260721T151648Z-ca4933ff/parallel-two-searches.json",
+      "retried": false
+    },
+    {
+      "id": "parallel-weather-and-time",
+      "category": "parallel_calls",
+      "status": "error",
+      "failure_reason": "server returned HTTP 500 Internal Server Error after retry",
+      "evidence_hash": "sha256:7be4bcb6d90a93d5a86f6680ba04396acc5c474d3a1ca1553aaa93b310b0b70d",
+      "evidence_path": "evidence/20260721T151648Z-ca4933ff/parallel-weather-and-time.json",
+      "retried": true
+    },
+    {
+      "id": "single-array-tags",
+      "category": "single_call",
+      "status": "fail",
+      "failure_reason": "schema violation: expected array for 'tags', got string",
+      "evidence_hash": "sha256:434d225006b91b2e817e8d68af662d6649866eee3e7a496b3f101242c5add2f7",
+      "evidence_path": "evidence/20260721T151648Z-ca4933ff/single-array-tags.json",
+      "retried": false
+    },
+    {
+      "id": "single-boolean-flag",
+      "category": "single_call",
+      "status": "fail",
+      "failure_reason": "schema violation: expected boolean for 'enabled', got string",
+      "evidence_hash": "sha256:04256c17aa8dc7d89617b61ef1a81a06dc3d000e94e7fffff72792293cd88e0e",
+      "evidence_path": "evidence/20260721T151648Z-ca4933ff/single-boolean-flag.json",
+      "retried": false
+    },
+    {
+      "id": "single-date-range",
+      "category": "single_call",
+      "status": "pass",
+      "failure_reason": null,
+      "evidence_hash": "sha256:0ae158de8666f09728bdac56e627cea98fdb6a1b50f3d01816becc27c51a3291",
+      "evidence_path": "evidence/20260721T151648Z-ca4933ff/single-date-range.json",
+      "retried": false
+    },
+    {
+      "id": "single-decimal-price",
+      "category": "single_call",
+      "status": "pass",
+      "failure_reason": null,
+      "evidence_hash": "sha256:be97a5c928900e12796eccb2bdc3d4ad3a8df4c4d4b0dec315aef427a3ff76da",
+      "evidence_path": "evidence/20260721T151648Z-ca4933ff/single-decimal-price.json",
+      "retried": false
+    },
+    {
+      "id": "single-empty-arguments",
+      "category": "single_call",
+      "status": "pass",
+      "failure_reason": null,
+      "evidence_hash": "sha256:0e445deef5d844feddc98697eb1e68ea3112dbed1228d915afd72859e85d1921",
+      "evidence_path": "evidence/20260721T151648Z-ca4933ff/single-empty-arguments.json",
+      "retried": false
+    },
+    {
+      "id": "single-enum-format",
+      "category": "single_call",
+      "status": "pass",
+      "failure_reason": null,
+      "evidence_hash": "sha256:21fda79962f5ad43fe3b9b0b80bb20220d50f687a3f15a439d2b3dd3832f5e86",
+      "evidence_path": "evidence/20260721T151648Z-ca4933ff/single-enum-format.json",
+      "retried": false
+    },
+    {
+      "id": "single-integer-limit",
+      "category": "single_call",
+      "status": "fail",
+      "failure_reason": "schema violation: expected integer for 'limit', got string",
+      "evidence_hash": "sha256:712dd5c8ab6a58e1a6f15e0db481a2370eb2285da593ae9d1fddef0484339ab4",
+      "evidence_path": "evidence/20260721T151648Z-ca4933ff/single-integer-limit.json",
+      "retried": false
+    },
+    {
+      "id": "single-nested-options",
+      "category": "single_call",
+      "status": "error",
+      "failure_reason": "server returned HTTP 500 Internal Server Error after retry",
+      "evidence_hash": "sha256:e56c578ff278a940a54f5ff499f31667d9f4faa6aa07bc11282727848b3a1416",
+      "evidence_path": "evidence/20260721T151648Z-ca4933ff/single-nested-options.json",
+      "retried": true
+    },
+    {
+      "id": "single-optional-omitted",
+      "category": "single_call",
+      "status": "fail",
+      "failure_reason": "schema violation: expected integer for 'limit', got null",
+      "evidence_hash": "sha256:db5d59094f93bda982aa22401c8289640c76faa3a6d4b6e0205b2307cb8cb158",
+      "evidence_path": "evidence/20260721T151648Z-ca4933ff/single-optional-omitted.json",
+      "retried": false
+    },
+    {
+      "id": "single-optional-present",
+      "category": "single_call",
+      "status": "fail",
+      "failure_reason": "schema violation: expected integer for 'limit', got string",
+      "evidence_hash": "sha256:be7368a782a3f8e6831c5438823e265b68f58566cd2e656b6fd50eb08764b64f",
+      "evidence_path": "evidence/20260721T151648Z-ca4933ff/single-optional-present.json",
+      "retried": false
+    },
+    {
+      "id": "single-string-list",
+      "category": "single_call",
+      "status": "fail",
+      "failure_reason": "schema violation: expected array for 'track_ids', got string",
+      "evidence_hash": "sha256:70e940bc09d7f5abe60b24b7282529d5d63516309b1b51c8219ad8babf93009d",
+      "evidence_path": "evidence/20260721T151648Z-ca4933ff/single-string-list.json",
+      "retried": false
+    },
+    {
+      "id": "single-weather",
+      "category": "single_call",
+      "status": "pass",
+      "failure_reason": null,
+      "evidence_hash": "sha256:f5b4c85e508eebcabb86bd9529ea76b324abe4af2216b194906e6811ff04da1d",
+      "evidence_path": "evidence/20260721T151648Z-ca4933ff/single-weather.json",
+      "retried": false
+    },
+    {
+      "id": "single-zero-and-negative",
+      "category": "single_call",
+      "status": "pass",
+      "failure_reason": null,
+      "evidence_hash": "sha256:58f94941bdfad08bdc3c111cf7424ea741ec6b7990d16509a72dd90f202f0912",
+      "evidence_path": "evidence/20260721T151648Z-ca4933ff/single-zero-and-negative.json",
+      "retried": false
+    },
+    {
+      "id": "streaming-array-arguments",
+      "category": "streaming",
+      "status": "fail",
+      "failure_reason": "schema violation: expected array for 'record_ids', got string",
+      "evidence_hash": "sha256:ee38709d57e844077e157eda549cd04f267e6d5584ce963e50799301dad65c4c",
+      "evidence_path": "evidence/20260721T151648Z-ca4933ff/streaming-array-arguments.json",
+      "retried": false
+    },
+    {
+      "id": "streaming-boolean-argument",
+      "category": "streaming",
+      "status": "pass",
+      "failure_reason": null,
+      "evidence_hash": "sha256:4354ace71a225854b16210932c1fa7edf75ef820412105581a625d27bd89c5cf",
+      "evidence_path": "evidence/20260721T151648Z-ca4933ff/streaming-boolean-argument.json",
+      "retried": false
+    },
+    {
+      "id": "streaming-empty-arguments",
+      "category": "streaming",
+      "status": "pass",
+      "failure_reason": null,
+      "evidence_hash": "sha256:4a064f8408af4f9421530236f93d942382098db7ae654916a0646a2f79501fc1",
+      "evidence_path": "evidence/20260721T151648Z-ca4933ff/streaming-empty-arguments.json",
+      "retried": false
+    },
+    {
+      "id": "streaming-enum-arguments",
+      "category": "streaming",
+      "status": "pass",
+      "failure_reason": null,
+      "evidence_hash": "sha256:9acdb686bf9267f1a395589d0922867835ed644e608468676f82164de6765205",
+      "evidence_path": "evidence/20260721T151648Z-ca4933ff/streaming-enum-arguments.json",
+      "retried": false
+    },
+    {
+      "id": "streaming-nested-arguments",
+      "category": "streaming",
+      "status": "pass",
+      "failure_reason": null,
+      "evidence_hash": "sha256:0f5b8db0f3a273f7584d86aa545d80721c86b2265fe885d12e20d990ac4ff60d",
+      "evidence_path": "evidence/20260721T151648Z-ca4933ff/streaming-nested-arguments.json",
+      "retried": false
+    },
+    {
+      "id": "streaming-parallel-three",
+      "category": "streaming",
+      "status": "fail",
+      "failure_reason": "missing expected tool call: 'get_time'",
+      "evidence_hash": "sha256:547f162a24dabff5a42cebcbfef4161cd987b9c22c0aedf47864f870ba4f98b5",
+      "evidence_path": "evidence/20260721T151648Z-ca4933ff/streaming-parallel-three.json",
+      "retried": false
+    },
+    {
+      "id": "streaming-parallel-two",
+      "category": "streaming",
+      "status": "fail",
+      "failure_reason": "missing expected tool call: 'get_time'",
+      "evidence_hash": "sha256:e0d9b37dc5d9365e1275aeb549ce18e7b55605595cabf36ce5f36952b1bb82f8",
+      "evidence_path": "evidence/20260721T151648Z-ca4933ff/streaming-parallel-two.json",
+      "retried": false
+    },
+    {
+      "id": "streaming-weather",
+      "category": "streaming",
+      "status": "pass",
+      "failure_reason": null,
+      "evidence_hash": "sha256:ef5b0d4850f5b4d0a9635d45b5bd4f9c4ca00864e0a7b19c44be2113e91e4368",
+      "evidence_path": "evidence/20260721T151648Z-ca4933ff/streaming-weather.json",
+      "retried": false
+    },
+    {
+      "id": "tool-choice-auto-call",
+      "category": "tool_choice_modes",
+      "status": "pass",
+      "failure_reason": null,
+      "evidence_hash": "sha256:220bd5ee94a3a278e6e3815da59395ba7116b310b89f3444b01a6a55ad138e42",
+      "evidence_path": "evidence/20260721T151648Z-ca4933ff/tool-choice-auto-call.json",
+      "retried": false
+    },
+    {
+      "id": "tool-choice-auto-no-call",
+      "category": "tool_choice_modes",
+      "status": "fail",
+      "failure_reason": "unexpected tool call emitted: 'get_temperature'",
+      "evidence_hash": "sha256:ef868025845faef2c340a774f4480c9b77d0d29c3046fa27d551412b0ba1b72f",
+      "evidence_path": "evidence/20260721T151648Z-ca4933ff/tool-choice-auto-no-call.json",
+      "retried": false
+    },
+    {
+      "id": "tool-choice-named",
+      "category": "tool_choice_modes",
+      "status": "pass",
+      "failure_reason": null,
+      "evidence_hash": "sha256:2521458380f0aeff569c938bb3fbf1004b4f23b107a2ae793d26888257311abb",
+      "evidence_path": "evidence/20260721T151648Z-ca4933ff/tool-choice-named.json",
+      "retried": false
+    },
+    {
+      "id": "tool-choice-named-empty",
+      "category": "tool_choice_modes",
+      "status": "pass",
+      "failure_reason": null,
+      "evidence_hash": "sha256:47eb7a6f416b01d276cb4a2fba2984608121f671f819ae08d22a9fefffe010ab",
+      "evidence_path": "evidence/20260721T151648Z-ca4933ff/tool-choice-named-empty.json",
+      "retried": false
+    },
+    {
+      "id": "tool-choice-none",
+      "category": "tool_choice_modes",
+      "status": "pass",
+      "failure_reason": null,
+      "evidence_hash": "sha256:be79febd6665dd4e4a893a325310e8c609de62941612d2f2471638011fe56a91",
+      "evidence_path": "evidence/20260721T151648Z-ca4933ff/tool-choice-none.json",
+      "retried": false
+    },
+    {
+      "id": "tool-choice-required",
+      "category": "tool_choice_modes",
+      "status": "pass",
+      "failure_reason": null,
+      "evidence_hash": "sha256:d3f7fce5bdd7c071e98fa42ea9eb65433b58bf84fb1217395c3eee6606510ee8",
+      "evidence_path": "evidence/20260721T151648Z-ca4933ff/tool-choice-required.json",
+      "retried": false
+    },
+    {
+      "id": "tool-choice-required-empty",
+      "category": "tool_choice_modes",
+      "status": "pass",
+      "failure_reason": null,
+      "evidence_hash": "sha256:2265b61da07f4d97c6f529d5b1047196fcc43f9df54b2fb7705f23ed80d6a710",
+      "evidence_path": "evidence/20260721T151648Z-ca4933ff/tool-choice-required-empty.json",
+      "retried": false
+    }
+  ],
+  "totals": {
+    "total": 50,
+    "passed": 20,
+    "failed": 21,
+    "errors": 9,
+    "skipped": 0
+  }
+}

@@ -122,6 +122,9 @@ This is deliberately narrow.
   five runs per arm, and the amendment 7 requirement that a difference-claim be
   supported by a seed-varied arm.
 
+The greedy run files are in `evidence/replication/m6-armA/`. The seed-varied
+run files are in `evidence/replication/m6-armS/`.
+
 ## Environment
 
 - Host: Apple M4 Max, 64GB, macOS 26.5.2 (single host for every run)

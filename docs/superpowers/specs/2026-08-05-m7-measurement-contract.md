@@ -29,9 +29,11 @@ chart is downstream of fixing that.
 Three further facts established during the audit:
 
 - **No published row clears amendment 4.** 32 distinct arms, none replicated.
-  The n=5 data backing the case studies lives off-repo on macstudio. Amendment 7
-  already records that the original n=5 runs measured harness determinism rather
-  than model variance.
+  The n=5 data backing the case studies was off-repo, on the measurement host.
+  Since 2026-10-05 the run files are in
+  `docs/case-studies/evidence/replication/`. The transcripts are not published.
+  Amendment 7 already records that the original n=5 runs measured harness
+  determinism rather than model variance.
 - **`declared_quant` is null for all 14 Ollama rows**, so the quant axis is
   unqueryable for the largest server bucket.
 - **`multi_turn` passes 37/224 (17%), with 22 of 32 rows scoring exactly zero.**
@@ -55,8 +57,8 @@ project exists to prevent, present in its own flagship artifact.
 
 Required: a distinct `not-measurable` cell state when
 `errors > 0 && passed + failed == 0`, an accessible label carrying all four
-counts (pass/fail/error/skipped), a legend entry, and a non-colour encoding so
-the distinction survives greyscale and colour blindness.
+counts (pass/fail/error/skipped), a legend entry, and a non-color encoding so
+the distinction survives grayscale and color blindness.
 
 ### T0.2 Absolute local paths are published
 
@@ -133,7 +135,7 @@ Model identity alone is not sufficient to identify a comparable arm.
 | Field | Why |
 |---|---|
 | `metadata.corpus.{id, revision, sha256, scenario_count}` | `--scenarios` accepts arbitrary definitions (`main.rs:416`). Matching scenario ids do not prove matching prompts or schemas. |
-| `metadata.corpus.scoring_version` | Scorer behaviour changes without scenario ids changing. Historical totals must not silently acquire new semantics. |
+| `metadata.corpus.scoring_version` | Scorer behavior changes without scenario ids changing. Historical totals must not silently acquire new semantics. |
 | `metadata.server.decode_mode` | Explicit `grammar_constrained` / `unconstrained_post_hoc` / `unknown`, replacing inference from `quirk_flags` where absence ambiguously means unverified. |
 | `metadata.server.chat_template.{id, sha256}` | The README names chat template as a stack dimension; results do not record it at all. |
 | `metadata.server.launch_config_sha256` | Same server version differs by `--jinja`, context size, cache quantization, parser flags. |
@@ -147,10 +149,10 @@ Model identity alone is not sufficient to identify a comparable arm.
 
 A deterministic migration command plus an explicit 32-entry mapping manifest.
 **Identity is never inferred from filenames** - the site's current
-filename-derived label (`site.rs:504`) is precisely the behaviour being retired.
+filename-derived label (`site.rs:504`) is precisely the behavior being retired.
 
 - Ollama rows: recover manifest digest and real quantization from saved
-  manifests or macstudio. Otherwise mark `declared` or `unresolved`.
+  manifests or the measurement host. Otherwise mark `declared` or `unresolved`.
 - HF GGUF and MLX rows: map repo to canonical checkpoint, recover an immutable
   revision. A bare repo id is not an immutable artifact.
 - Blob-path rows: the blob name already carries a sha256, but blob-to-canonical
@@ -234,16 +236,16 @@ Shipped instead:
 3. **Outcome-signature inventory.** Keyed on the exact 50-status vector, valued
    by the stacks sharing it. Better than a histogram for the 7/50 cluster
    because it shows whether identical totals came from identical scenarios.
-   Granite's seven passes are exactly the negative category.
+   Granite passes exactly the seven scenarios where making no call is correct.
 4. **Per-capability aggregate across stacks.** Six bars: "passed in X of Y
    measured stacks". A count of measurements, not a ranking. This is what
    surfaces the multi-turn cliff. It is **not** filtered to n>=5 arms: with zero
    replication in `results/`, such a filter renders empty.
 5. **Observed pass-count strip plot**, one dot per fully measurable stack,
-   error-bearing rows in a separate "not fully measurable" panel, labelled
+   error-bearing rows in a separate "not fully measurable" panel, labeled
    "distribution of published one-run stack observations".
 
-Every SVG carries `<title>`, `<desc>`, a table fallback, four-state non-colour
+Every SVG carries `<title>`, `<desc>`, a table fallback, four-state non-color
 encoding, and escaped labels. No chart library.
 
 ### T2.3 Information architecture
@@ -254,7 +256,7 @@ They are a design failure to be compiled into the page's geometry.
 - Group rows by model; nest quant and server beneath.
 - Stratify into visible `grammar_constrained` and `unconstrained_post_hoc`
   bands, each badged. The valid comparison becomes what adjacency shows; the
-  invalid one requires crossing a labelled boundary.
+  invalid one requires crossing a labeled boundary.
 - Human column labels, with the snake_case id in the tooltip.
 - Model search box.
 - Move caveat prose below the matrix; keep one sentence above it.
@@ -297,7 +299,7 @@ against the embedded corpus.
 
 | # | Item | Depends on | Acceptance |
 |---|---|---|---|
-| 1 | T0.1 errors are not failures | - | All-error cells render a distinct non-colour-coded `not measurable` state; accessible label carries all four counts; regression test covers gemma3-shaped input |
+| 1 | T0.1 errors are not failures | - | All-error cells render a distinct non-color-coded `not measurable` state; accessible label carries all four counts; regression test covers gemma3-shaped input |
 | 2 | T0.3 CI gate | - | `pages.yml` builds the site on `pull_request` without deploying; a deliberately broken generator fails the check |
 | 3 | T0.2 path redaction | - | No absolute `/Users/...` path in any result, transcript, or generated HTML; `evidence_hash` recomputed and the rehash documented; `site_cli.rs:236` assertion replaced |
 | 4 | T1.1 + T1.2 schema v3 | 3 | v3 emitted by new runs; versioned parsing accepts v1/v2/v3; local paths sanitized before serialization; validator green |

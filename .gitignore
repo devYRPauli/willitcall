@@ -1,3 +1,5 @@
 /target/
 /willitcall-result.json
 /site/
+__pycache__/
+*.pyc
