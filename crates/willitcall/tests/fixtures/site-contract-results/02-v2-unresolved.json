@@ -45,7 +45,7 @@
         "note": "fixture cause & note"
       },
       "evidence_hash": "sha256:v2-fail-fixture",
-      "evidence_path": "/evidence/site-contract/v2-fail.json",
+      "evidence_path": "evidence/site-contract/v2-fail.json",
       "retried": false
     },
     {

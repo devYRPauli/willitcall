@@ -1327,20 +1327,14 @@ fn display_status(status: Status) -> &'static str {
 }
 
 fn evidence_url(repo_base: &str, evidence_path: &str) -> String {
-    format!(
-        "{repo_base}/blob/main/results/{}",
-        evidence_path.trim_start_matches('/')
-    )
+    format!("{repo_base}/blob/main/results/{evidence_path}")
 }
 
 fn reference_url(repo_base: &str, reference: &str) -> String {
     if reference.starts_with("https://") || reference.starts_with("http://") {
         reference.to_owned()
     } else {
-        format!(
-            "{repo_base}/blob/main/{}",
-            reference.trim_start_matches('/')
-        )
+        format!("{repo_base}/blob/main/{reference}")
     }
 }
 

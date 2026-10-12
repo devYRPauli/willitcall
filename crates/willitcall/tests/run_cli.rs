@@ -278,6 +278,41 @@ async fn annotate_scenario_adds_a_cause() {
 }
 
 #[tokio::test(flavor = "multi_thread", worker_threads = 2)]
+async fn annotate_refuses_a_local_reference_and_leaves_the_result_unchanged() {
+    let directory = tempfile::tempdir().expect("temp directory");
+    let result_path = directory.path().join("result.json");
+    write_v3_result_fixture(
+        &result_path,
+        vec![scenario_fixture(
+            "empty",
+            Some("empty_response"),
+            Some("evidence/empty.json"),
+        )],
+    );
+    let before = fs::read(&result_path).expect("result bytes");
+
+    let output = run_binary(vec![
+        "annotate".to_owned(),
+        "--result".to_owned(),
+        result_path.display().to_string(),
+        "--scenario".to_owned(),
+        "empty".to_owned(),
+        "--cause".to_owned(),
+        "server-defect".to_owned(),
+        "--reference".to_owned(),
+        "/Users/alice/private/notes.md".to_owned(),
+    ])
+    .await;
+
+    assert_eq!(output.status.code(), Some(2));
+    assert_eq!(
+        String::from_utf8_lossy(&output.stderr),
+        "error: scenario \"empty\" cause reference \"/Users/alice/private/notes.md\" is not a web URL or a relative repository path\n"
+    );
+    assert_eq!(fs::read(result_path).expect("result bytes"), before);
+}
+
+#[tokio::test(flavor = "multi_thread", worker_threads = 2)]
 async fn annotate_refuses_a_non_empty_scenario_without_force() {
     let directory = tempfile::tempdir().expect("temp directory");
     let result_path = directory.path().join("result.json");

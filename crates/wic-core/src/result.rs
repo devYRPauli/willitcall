@@ -716,7 +716,14 @@ pub fn validate_result(result: &RunResult) -> Result<(), String> {
         &result.totals,
         result.scenarios.iter().map(|outcome| outcome.status),
         result.scenarios.len(),
-    )
+    )?;
+    validate_scenario_paths(result.scenarios.iter().map(|outcome| {
+        (
+            outcome.id.as_str(),
+            outcome.evidence_path.as_deref(),
+            outcome.cause.as_ref(),
+        )
+    }))
 }
 
 pub fn validate_measurement(measurement: &Measurement) -> Result<(), String> {
@@ -730,7 +737,58 @@ pub fn validate_measurement(measurement: &Measurement) -> Result<(), String> {
         &measurement.totals,
         measurement.scenarios.iter().map(|outcome| outcome.status),
         measurement.scenarios.len(),
-    )
+    )?;
+    validate_scenario_paths(measurement.scenarios.iter().map(|outcome| {
+        (
+            outcome.id.as_str(),
+            outcome.evidence_path.as_deref(),
+            outcome.cause.as_ref(),
+        )
+    }))
+}
+
+// The site publishes both fields as links and in its JSON and CSV exports, so a
+// local path in either one leaks the author's file system.
+fn validate_scenario_paths<'a>(
+    outcomes: impl Iterator<Item = (&'a str, Option<&'a str>, Option<&'a Cause>)>,
+) -> Result<(), String> {
+    for (id, evidence_path, cause) in outcomes {
+        if let Some(path) = evidence_path.filter(|path| !is_safe_evidence_path(path)) {
+            return Err(format!(
+                "scenario {id:?} evidence_path {path:?} is not a relative path under evidence/"
+            ));
+        }
+        let reference = cause.and_then(|cause| cause.reference.as_deref());
+        if let Some(reference) = reference.filter(|reference| !is_safe_reference(reference)) {
+            return Err(format!(
+                "scenario {id:?} cause reference {reference:?} is not a web URL or a relative repository path"
+            ));
+        }
+    }
+    Ok(())
+}
+
+fn is_safe_evidence_path(path: &str) -> bool {
+    path.strip_prefix("evidence/")
+        .is_some_and(is_safe_relative_path)
+}
+
+fn is_safe_reference(reference: &str) -> bool {
+    reference.starts_with("https://")
+        || reference.starts_with("http://")
+        || is_safe_relative_path(reference)
+}
+
+// Platform independent on purpose: a result written on Windows is checked on
+// Unix, where std::path does not see C:\ or \\host as absolute.
+fn is_safe_relative_path(path: &str) -> bool {
+    path.split('/').all(|part| {
+        !part.is_empty()
+            && !part.starts_with('.')
+            && part
+                .bytes()
+                .all(|byte| byte.is_ascii_alphanumeric() || matches!(byte, b'.' | b'_' | b'-'))
+    })
 }
 
 fn validate_totals(
@@ -1543,6 +1601,83 @@ mod tests {
             error,
             "invalid result document: at '/scenarios/0': \"evidence_path\" is a required property"
         );
+    }
+
+    #[test]
+    fn validators_reject_local_and_traversing_paths() {
+        let unsafe_evidence_paths = [
+            "/Users/alice/run/single-weather.json",
+            "C:\\Users\\alice\\run.json",
+            "C:/Users/alice/run.json",
+            "~/run.json",
+            "file:///Users/alice/run.json",
+            "Users/alice/run.json",
+            "evidence/../../Users/alice/run.json",
+            "evidence/..\\..\\run.json",
+            "evidence/%2e%2e/run.json",
+            "evidence//run.json",
+            "evidence/",
+            "",
+        ];
+        for path in unsafe_evidence_paths {
+            let mut result = sample_result();
+            result.scenarios[0].evidence_path = Some(path.to_owned());
+            let expected = format!(
+                "scenario \"single-weather\" evidence_path {path:?} is not a relative path under evidence/"
+            );
+            assert_eq!(super::validate_result(&result), Err(expected.clone()));
+            assert_eq!(
+                super::validate_measurement(&super::Measurement::from(result)),
+                Err(expected)
+            );
+        }
+
+        let unsafe_references = [
+            "/Users/alice/notes.md",
+            "C:\\Users\\alice\\notes.md",
+            "~/notes.md",
+            "file:///Users/alice/notes.md",
+            "../notes.md",
+            "docs/../../notes.md",
+        ];
+        for reference in unsafe_references {
+            let mut result = sample_result();
+            result.scenarios[0].cause = Some(Cause {
+                kind: CauseKind::Unknown,
+                reference: Some(reference.to_owned()),
+                note: None,
+            });
+            let expected = format!(
+                "scenario \"single-weather\" cause reference {reference:?} is not a web URL or a relative repository path"
+            );
+            assert_eq!(super::validate_result(&result), Err(expected.clone()));
+            assert_eq!(
+                super::validate_measurement(&super::Measurement::from(result)),
+                Err(expected)
+            );
+        }
+
+        for (evidence_path, reference) in [
+            (Some("evidence/empty.json"), None),
+            (None, Some("https://example.test/issue/1")),
+            (
+                None,
+                Some("docs/case-studies/2026-07-19-ollama-drops-valid-tool-calls.md"),
+            ),
+        ] {
+            let mut result = sample_result();
+            result.scenarios[0].evidence_path = evidence_path.map(str::to_owned);
+            result.scenarios[0].cause = Some(Cause {
+                kind: CauseKind::Unknown,
+                reference: reference.map(str::to_owned),
+                note: None,
+            });
+            assert_eq!(super::validate_result(&result), Ok(()));
+            assert_eq!(
+                super::validate_measurement(&super::Measurement::from(result)),
+                Ok(())
+            );
+        }
     }
 
     #[test]

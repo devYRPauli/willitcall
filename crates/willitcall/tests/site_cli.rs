@@ -538,6 +538,43 @@ fn site_never_renders_absolute_model_paths() {
 }
 
 #[test]
+fn site_refuses_a_local_evidence_path_before_writing_any_asset() {
+    let directory = tempfile::tempdir().expect("temp directory");
+    let results = directory.path().join("results");
+    let output = directory.path().join("site");
+    fs::create_dir(&results).expect("results directory");
+    write_result(
+        &results.join("leaky.json"),
+        2,
+        "fixture-model",
+        None,
+        "llamacpp",
+        None,
+        vec![scenario(
+            "single-bad",
+            "single_call",
+            "fail",
+            Some("bad"),
+            Some("/Users/someone/run/single-bad.json"),
+        )],
+    );
+
+    let generated = run_site(&results, &output, None);
+
+    assert_eq!(generated.status.code(), Some(4));
+    let stderr = String::from_utf8_lossy(&generated.stderr);
+    assert!(
+        stderr.contains(
+            "scenario \"single-bad\" evidence_path \"/Users/someone/run/single-bad.json\" is not a relative path under evidence/"
+        ),
+        "{stderr}"
+    );
+    for asset in ["index.html", "appendix.html", "results.json", "results.csv"] {
+        assert!(!output.join(asset).exists(), "{asset} was written");
+    }
+}
+
+#[test]
 fn site_uses_registry_identity_and_excludes_unresolved_rows_from_grouping() {
     let directory = tempfile::tempdir().expect("temp directory");
     let results = directory.path().join("results");
