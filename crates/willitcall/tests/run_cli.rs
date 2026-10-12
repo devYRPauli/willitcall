@@ -6,6 +6,7 @@ use std::process::Command;
 
 use serde_json::{json, Value};
 use support::{MockServer, ScriptedResponse};
+use wic_core::corpus::corpus_identity;
 use wic_core::result::{parse_and_validate_measurement, IdentityStatus, Status};
 
 fn completion(calls: Value, content: Value) -> String {
@@ -650,14 +651,15 @@ content = "Reply ready."
     assert_eq!(v3.schema_version, 3);
     assert_eq!(v3.metadata.model.endpoint_id, "qwen2.5:7b-instruct");
     assert_eq!(v3.metadata.model.identity_status, IdentityStatus::Declared);
-    assert_eq!(
-        v3.metadata
-            .corpus
-            .as_ref()
-            .expect("v3 corpus metadata")
-            .scoring_version,
-        "v2"
+    let corpus = v3.metadata.corpus.as_ref().expect("v3 corpus metadata");
+    let custom_sha256 = corpus_identity(
+        &wic_core::load_scenarios_from_dir(&scenario_path).expect("custom scenarios"),
     );
+    assert_eq!(corpus.id, "custom");
+    assert_eq!(corpus.revision, custom_sha256);
+    assert_eq!(corpus.sha256, custom_sha256);
+    assert_eq!(corpus.scenario_count, 1);
+    assert_eq!(corpus.scoring_version, "v2");
     assert!(v3.metadata.replication.is_none());
     assert!(v3.metadata.arm_fingerprint.is_none());
 

@@ -8,7 +8,7 @@ use reqwest::header::{HeaderValue, AUTHORIZATION};
 use ring::digest::{digest, SHA256};
 use serde_json::{json, Value};
 use support::{MockServer, ScriptedResponse};
-use wic_core::corpus::corpus_identity;
+use wic_core::corpus::{corpus_identity, load_frozen_v1_catalog};
 use wic_core::result::{
     write_result_atomic, DecodeMode, IdentityStatus, ReplicationMetadata, ReplicationMode,
 };
@@ -285,8 +285,8 @@ async fn structured_http_failure_is_captured_at_the_request_boundary() {
         .as_ref()
         .expect("runtime corpus metadata");
 
-    assert_eq!(corpus.id, "wic-50");
-    assert_eq!(corpus.revision, "v1");
+    assert_eq!(corpus.id, "custom");
+    assert_eq!(corpus.revision, expected_corpus_sha256);
     assert_eq!(corpus.sha256, expected_corpus_sha256);
     assert_eq!(corpus.scenario_count, 1);
     assert_eq!(corpus.scoring_version, "v2");
@@ -317,6 +317,49 @@ async fn structured_http_failure_is_captured_at_the_request_boundary() {
     assert_eq!(failure.code, "http_error");
     assert_eq!(failure.http_status, Some(400));
     assert_eq!(failure.failed_turn_index, Some(1));
+}
+
+#[tokio::test]
+async fn a_run_of_the_frozen_catalog_keeps_the_catalog_name() {
+    let catalog = load_frozen_v1_catalog().expect("frozen catalog");
+    let server = MockServer::start_scripted(
+        "fixture-model",
+        catalog
+            .scenarios
+            .iter()
+            .map(|_| ScriptedResponse::Status(400, "bad request".to_owned()))
+            .collect(),
+    )
+    .await;
+    let directory = tempfile::tempdir().expect("temp directory");
+    let config = RunConfig::new(
+        server.endpoint(),
+        "fixture-model".to_owned(),
+        Duration::from_secs(5),
+        42,
+        0.0,
+    );
+
+    let measurement = run_measurement(
+        &config,
+        &catalog.scenarios,
+        &directory.path().join("result.json"),
+    )
+    .await
+    .expect("run frozen catalog");
+    let corpus = measurement
+        .metadata
+        .corpus
+        .as_ref()
+        .expect("runtime corpus metadata");
+
+    assert_eq!(corpus.id, "wic-50");
+    assert_eq!(corpus.revision, "v1");
+    assert_eq!(
+        corpus.sha256,
+        "sha256:042f625c2f898787834524323862c42ab1dffc66fe012d27927944705159f9d8"
+    );
+    assert_eq!(corpus.scenario_count, 50);
 }
 
 fn hex(bytes: &[u8]) -> String {
