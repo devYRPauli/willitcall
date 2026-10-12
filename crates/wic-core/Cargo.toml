@@ -5,6 +5,7 @@ edition.workspace = true
 
 [dependencies]
 include_dir.workspace = true
+jsonschema.workspace = true
 reqwest.workspace = true
 ring.workspace = true
 serde.workspace = true
@@ -16,7 +17,6 @@ unicode-normalization = "0.1"
 
 [dev-dependencies]
 axum.workspace = true
-jsonschema.workspace = true
 
 [lints]
 workspace = true

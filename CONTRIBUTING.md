@@ -79,7 +79,8 @@ record_id = "rec-17"
    filename.
 3. Run `willitcall validate results/<file>.json`; new runs must pass as schema v3
    against `schemas/result-v3.schema.json`. The CLI continues to accept schema v1
-   and v2 files without upgrading them during `annotate` or `rescore`.
+   and v2 files without upgrading them during `rescore`, and v2 files during
+   `annotate`.
 4. Open a pull request that adds the file and its `evidence/` directory under `results/`. State the hardware and the server version.
 
 Never hand-edit a result file. Each scenario record carries an evidence hash, so edited results are not comparable.

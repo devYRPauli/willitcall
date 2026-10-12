@@ -359,6 +359,12 @@ fn write_updated_result(path: &Path, result: &EditableResult) -> Result<(), Exec
 
 fn annotate(args: AnnotateArgs) -> Result<usize, ExecuteError> {
     let mut result = read_result(&args.result)?;
+    if result.measurement.schema_version == 1 {
+        return Err(ExecuteError::Usage(
+            "annotate needs a schema_version 2 or 3 result; the v1 schema has no cause field"
+                .to_owned(),
+        ));
+    }
     let cause = Cause {
         kind: args.cause.into(),
         reference: args.reference,

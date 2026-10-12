@@ -60,8 +60,10 @@ cargo run -p willitcall -- validate willitcall-result.json
 New runs use result schema v3 (`schemas/result-v3.schema.json`). The CLI
 resolves the model selector through `registry/models-v1.json` and embeds the
 resolved model and artifact metadata in the result. Legacy schema v1 and v2
-files are still valid input to `validate`, `site`, `annotate`, and `rescore`.
-Editing a legacy file keeps its original schema version.
+files are still valid input to `validate`, `site`, and `rescore`, and v2 files
+to `annotate`. The v1 schema has no `cause` field. Each file must pass the
+schema of its own version. Editing a legacy file keeps its original schema
+version.
 
 `--server` selects a preset (`llamacpp`, `ollama`, `mlx-lm`, `lmstudio`,
 `vllm`, `custom`). The preset only supplies request defaults. The result file

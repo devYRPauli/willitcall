@@ -1170,6 +1170,119 @@ async fn validate_rejects_a_corrupt_document_with_a_nonzero_exit() {
 }
 
 #[tokio::test(flavor = "multi_thread", worker_threads = 2)]
+async fn validate_rejects_what_the_published_schema_rejects() {
+    type Mutation = fn(&mut Value);
+    let directory = tempfile::tempdir().expect("temp directory");
+    let cases: [(u32, &str, Mutation, &str); 5] = [
+        (
+            3,
+            "v3-failure-class-null",
+            |document| document["scenarios"][0]["failure_class"] = Value::Null,
+            "at '/scenarios/0/failure_class': null is not one of \"empty_response\" or \"unparsed_tool_call\"",
+        ),
+        (
+            3,
+            "v3-override-not-forced",
+            |document| {
+                document["metadata"]["preflight_override"] =
+                    json!({"forced": false, "foreign_endpoints": []});
+            },
+            "at '/metadata/preflight_override/forced': true was expected",
+        ),
+        (
+            3,
+            "v3-http-status-zero",
+            |document| {
+                document["scenarios"][0]["failure"] = json!({
+                    "stage": "request",
+                    "code": "http_error",
+                    "http_status": 0,
+                    "failed_turn_index": 1
+                });
+            },
+            "at '/scenarios/0/failure': {\"code\":\"http_error\",\"failed_turn_index\":1,\"http_status\":0,\"stage\":\"request\"} is not valid under any of the schemas listed in the 'anyOf' keyword",
+        ),
+        (
+            2,
+            "v2-unknown-failure-class",
+            |document| document["scenarios"][0]["failure_class"] = json!("bogus"),
+            "at '/scenarios/0/failure_class': \"bogus\" is not one of \"empty_response\" or \"unparsed_tool_call\"",
+        ),
+        (
+            1,
+            "v1-run-id",
+            |document| document["metadata"]["run_id"] = json!("20260720T120000Z-fixture"),
+            "at '/metadata': Additional properties are not allowed ('run_id' was unexpected)",
+        ),
+    ];
+
+    for (schema_version, name, mutate, expected) in cases {
+        let path = directory.path().join(format!("{name}.json"));
+        let scenarios = vec![scenario_fixture(
+            "schema-case",
+            None,
+            Some("evidence/schema-case.json"),
+        )];
+        if schema_version == 3 {
+            write_v3_result_fixture(&path, scenarios);
+        } else {
+            write_result_fixture(&path, schema_version, scenarios);
+        }
+        let valid = run_binary(vec!["validate".to_owned(), path.display().to_string()]).await;
+        assert_eq!(valid.status.code(), Some(0), "{name} before the edit");
+
+        let mut document: Value =
+            serde_json::from_slice(&fs::read(&path).expect("result bytes")).expect("result JSON");
+        mutate(&mut document);
+        fs::write(
+            &path,
+            serde_json::to_vec_pretty(&document).expect("encode result"),
+        )
+        .expect("write result");
+        let output = run_binary(vec!["validate".to_owned(), path.display().to_string()]).await;
+
+        assert_eq!(output.status.code(), Some(2), "{name}");
+        assert!(output.stdout.is_empty(), "{name}");
+        assert_eq!(
+            String::from_utf8_lossy(&output.stderr),
+            format!("error: invalid result document: {expected}\n"),
+            "{name}"
+        );
+    }
+}
+
+#[tokio::test(flavor = "multi_thread", worker_threads = 2)]
+async fn annotate_refuses_a_v1_result_and_leaves_it_unchanged() {
+    let directory = tempfile::tempdir().expect("temp directory");
+    let result_path = directory.path().join("result.json");
+    write_result_fixture(
+        &result_path,
+        1,
+        vec![scenario_fixture("legacy", None, None)],
+    );
+    let before = fs::read(&result_path).expect("result bytes");
+
+    let output = run_binary(vec![
+        "annotate".to_owned(),
+        "--result".to_owned(),
+        result_path.display().to_string(),
+        "--scenario".to_owned(),
+        "legacy".to_owned(),
+        "--cause".to_owned(),
+        "unknown".to_owned(),
+        "--force".to_owned(),
+    ])
+    .await;
+
+    assert_eq!(output.status.code(), Some(2));
+    assert_eq!(
+        String::from_utf8_lossy(&output.stderr),
+        "error: annotate needs a schema_version 2 or 3 result; the v1 schema has no cause field\n"
+    );
+    assert_eq!(fs::read(result_path).expect("result bytes"), before);
+}
+
+#[tokio::test(flavor = "multi_thread", worker_threads = 2)]
 async fn known_broken_double_encoded_arguments_are_red_with_a_precise_reason() {
     let encoded_object = serde_json::to_string(&json!({"city": "Boston"})).expect("encode object");
     let double_encoded = serde_json::to_string(&encoded_object).expect("double encode object");

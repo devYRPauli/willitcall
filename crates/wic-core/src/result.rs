@@ -10,6 +10,9 @@ use serde_json::Value;
 use crate::ScenarioCategory;
 
 pub const RESULT_SCHEMA_VERSION: u32 = 2;
+const RESULT_V1_SCHEMA: &str = include_str!("../../../schemas/result-v1.schema.json");
+const RESULT_V2_SCHEMA: &str = include_str!("../../../schemas/result-v2.schema.json");
+const RESULT_V3_SCHEMA: &str = include_str!("../../../schemas/result-v3.schema.json");
 
 #[derive(Clone, Debug, Deserialize, Serialize)]
 #[serde(deny_unknown_fields)]
@@ -639,30 +642,17 @@ pub fn parse_and_validate_result(bytes: &[u8]) -> Result<RunResult, String> {
             "unsupported schema_version {schema_version}; expected 1 or {RESULT_SCHEMA_VERSION}"
         ));
     }
-    let result: RunResultV1V2 = serde_json::from_value(document.clone())
-        .map_err(|error| format!("invalid result document: {error}"))?;
-    validate_result(&result)?;
-    if schema_version == 2 {
-        validate_v2_required_properties(&document)?;
-    }
-    Ok(result)
+    parse_legacy_result(&document, schema_version)
 }
 
 pub fn parse_and_validate_measurement(bytes: &[u8]) -> Result<Measurement, String> {
     let (document, schema_version) = inspect_result_document(bytes)?;
     let measurement = match schema_version {
-        1 | 2 => {
-            let result: RunResultV1V2 = serde_json::from_value(document.clone())
-                .map_err(|error| format!("invalid result document: {error}"))?;
-            validate_result(&result)?;
-            if schema_version == 2 {
-                validate_v2_required_properties(&document)?;
-            }
-            Measurement::from(result)
-        }
+        1 | 2 => Measurement::from(parse_legacy_result(&document, schema_version)?),
         3 => {
-            let result: RunResultV3 = serde_json::from_value(document)
+            let result = RunResultV3::deserialize(&document)
                 .map_err(|error| format!("invalid result document: {error}"))?;
+            validate_against_schema(&document, RESULT_V3_SCHEMA)?;
             let measurement = Measurement::from(result);
             validate_measurement(&measurement)?;
             measurement
@@ -689,31 +679,30 @@ fn inspect_result_document(bytes: &[u8]) -> Result<(Value, u32), String> {
     Ok((document, schema_version))
 }
 
-fn validate_v2_required_properties(document: &Value) -> Result<(), String> {
-    let metadata = document
-        .get("metadata")
-        .and_then(Value::as_object)
-        .ok_or_else(|| "invalid result document: metadata must be an object".to_owned())?;
-    if !metadata.contains_key("run_id") {
-        return Err(
-            "invalid result document: metadata.run_id is required for schema_version 2".to_owned(),
-        );
-    }
-    let scenarios = document
-        .get("scenarios")
-        .and_then(Value::as_array)
-        .ok_or_else(|| "invalid result document: scenarios must be an array".to_owned())?;
-    if scenarios.iter().any(|scenario| {
-        !scenario
-            .as_object()
-            .is_some_and(|scenario| scenario.contains_key("evidence_path"))
-    }) {
-        return Err(
-            "invalid result document: scenario evidence_path is required for schema_version 2"
-                .to_owned(),
-        );
-    }
-    Ok(())
+fn parse_legacy_result(document: &Value, schema_version: u32) -> Result<RunResultV1V2, String> {
+    let result = RunResultV1V2::deserialize(document)
+        .map_err(|error| format!("invalid result document: {error}"))?;
+    let schema = if schema_version == 1 {
+        RESULT_V1_SCHEMA
+    } else {
+        RESULT_V2_SCHEMA
+    };
+    validate_against_schema(document, schema)?;
+    validate_result(&result)?;
+    Ok(result)
+}
+
+// Serde runs first so its messages stay the same. The schema then rejects what
+// serde lets through, such as a null where the schema allows only an enum value.
+fn validate_against_schema(document: &Value, schema: &str) -> Result<(), String> {
+    let schema: Value = serde_json::from_str(schema).expect("checked-in result schema is JSON");
+    let validator = jsonschema::validator_for(&schema).expect("checked-in result schema compiles");
+    validator.validate(document).map_err(|error| {
+        format!(
+            "invalid result document: at '{}': {error}",
+            error.instance_path()
+        )
+    })
 }
 
 pub fn validate_result(result: &RunResult) -> Result<(), String> {
@@ -1535,7 +1524,10 @@ mod tests {
             &serde_json::to_vec(&missing_run_id).expect("encode result"),
         )
         .expect_err("v2 run_id is required");
-        assert!(error.contains("metadata.run_id is required"), "{error}");
+        assert_eq!(
+            error,
+            "invalid result document: at '/metadata': \"run_id\" is a required property"
+        );
 
         let mut missing_evidence_path =
             serde_json::to_value(sample_result()).expect("serialize result");
@@ -1547,7 +1539,10 @@ mod tests {
             &serde_json::to_vec(&missing_evidence_path).expect("encode result"),
         )
         .expect_err("v2 evidence_path is required");
-        assert!(error.contains("evidence_path is required"), "{error}");
+        assert_eq!(
+            error,
+            "invalid result document: at '/scenarios/0': \"evidence_path\" is a required property"
+        );
     }
 
     #[test]
