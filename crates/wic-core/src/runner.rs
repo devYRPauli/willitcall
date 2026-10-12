@@ -741,7 +741,9 @@ fn scenario_failure(
     ScenarioFailure {
         stage: stage.to_owned(),
         code: code.to_owned(),
-        http_status,
+        // RFC 9110 defines status codes 100 to 599 only, and the result schema
+        // records no other value. The evidence keeps the raw status.
+        http_status: http_status.filter(|status| (100..=599).contains(status)),
         failed_turn_index: u32::try_from(turn_index + 1).ok(),
     }
 }

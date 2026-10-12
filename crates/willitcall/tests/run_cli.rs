@@ -1205,6 +1205,87 @@ async fn validate_rejects_a_corrupt_document_with_a_nonzero_exit() {
 }
 
 #[tokio::test(flavor = "multi_thread", worker_threads = 2)]
+async fn a_status_outside_rfc_9110_still_writes_a_result_validate_accepts() {
+    let server = MockServer::start_scripted(
+        "fixture-model",
+        vec![ScriptedResponse::Status(600, "not http".to_owned())],
+    )
+    .await;
+    let directory = tempfile::tempdir().expect("temp directory");
+    let scenario_path = directory.path().join("scenarios");
+    fs::create_dir(&scenario_path).expect("scenario directory");
+    fs::write(
+        scenario_path.join("status-600.toml"),
+        r#"
+id = "status-600"
+category = "negative_trap"
+description = "Produce no tool call."
+rationale = "This fixture asserts how a status outside 100 to 599 is recorded."
+
+[[tools]]
+name = "get_weather"
+description = "Get weather."
+
+[tools.parameters]
+type = "object"
+
+[tool_choice]
+mode = "none"
+
+[[turns]]
+[[turns.messages]]
+role = "user"
+content = "Reply ready."
+"#,
+    )
+    .expect("write scenario");
+    let result_path = directory.path().join("result.json");
+
+    let run = run_binary(vec![
+        "run".to_owned(),
+        "--endpoint".to_owned(),
+        server.endpoint(),
+        "--model".to_owned(),
+        "fixture-model".to_owned(),
+        "--force".to_owned(),
+        "--scenarios".to_owned(),
+        scenario_path.display().to_string(),
+        "--out".to_owned(),
+        result_path.display().to_string(),
+    ])
+    .await;
+
+    assert_eq!(
+        run.status.code(),
+        Some(4),
+        "{}",
+        String::from_utf8_lossy(&run.stderr)
+    );
+    let result: Value =
+        serde_json::from_slice(&fs::read(&result_path).expect("result bytes")).expect("json");
+    assert_eq!(
+        result["scenarios"][0]["failure"],
+        json!({
+            "stage": "request",
+            "code": "http_error",
+            "http_status": null,
+            "failed_turn_index": 1
+        })
+    );
+    let validate = run_binary(vec![
+        "validate".to_owned(),
+        result_path.display().to_string(),
+    ])
+    .await;
+    assert_eq!(
+        validate.status.code(),
+        Some(0),
+        "{}",
+        String::from_utf8_lossy(&validate.stderr)
+    );
+}
+
+#[tokio::test(flavor = "multi_thread", worker_threads = 2)]
 async fn validate_rejects_what_the_published_schema_rejects() {
     type Mutation = fn(&mut Value);
     let directory = tempfile::tempdir().expect("temp directory");

@@ -836,10 +836,12 @@ fn validate_totals(
 }
 
 pub fn write_result_atomic(path: &Path, result: &RunResult) -> io::Result<()> {
-    atomic_write_with(path, |file| {
-        serde_json::to_writer_pretty(&mut *file, result).map_err(io::Error::other)?;
-        file.write_all(b"\n")
-    })
+    let mut bytes = serde_json::to_vec_pretty(result).map_err(io::Error::other)?;
+    bytes.push(b'\n');
+    // Check the document as every reader does, so no file is written that
+    // validate, site or annotate then refuses.
+    parse_and_validate_result(&bytes).map_err(io::Error::other)?;
+    atomic_write_with(path, |file| file.write_all(&bytes))
 }
 
 pub(crate) fn write_transcript_atomic(path: &Path, transcript: &Transcript) -> io::Result<Vec<u8>> {
@@ -1083,6 +1085,25 @@ mod tests {
         assert_eq!(super::exit_code_for_totals(&totals), 1);
         totals.errors = 1;
         assert_eq!(super::exit_code_for_totals(&totals), 4);
+    }
+
+    #[test]
+    fn atomic_write_refuses_a_document_its_schema_rejects() {
+        let directory = tempfile::tempdir().expect("temp directory");
+        let destination = directory.path().join("result.json");
+        let mut result = sample_result();
+        result.scenarios[0].failure_class = Some("bogus".to_owned());
+
+        let error = write_result_atomic(&destination, &result).expect_err("schema must refuse");
+
+        assert!(
+            error
+                .to_string()
+                .starts_with("invalid result document: at '/scenarios/0/failure_class': "),
+            "{error}"
+        );
+        assert!(!destination.exists());
+        assert_eq!(fs::read_dir(directory.path()).expect("list").count(), 0);
     }
 
     #[test]

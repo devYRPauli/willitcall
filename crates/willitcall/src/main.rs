@@ -310,6 +310,9 @@ fn read_result(path: &Path) -> Result<EditableResult, ExecuteError> {
 fn write_v3_result_atomic(path: &Path, result: &RunResultV3) -> std::io::Result<Vec<u8>> {
     let mut bytes = serde_json::to_vec_pretty(result).map_err(std::io::Error::other)?;
     bytes.push(b'\n');
+    // Check the document as every reader does, so no file is written that
+    // validate, site or annotate then refuses.
+    parse_and_validate_measurement(&bytes).map_err(std::io::Error::other)?;
     let parent = match path.parent() {
         Some(parent) if !parent.as_os_str().is_empty() => parent,
         _ => Path::new("."),
@@ -831,6 +834,31 @@ mod tests {
     use super::{
         execute_with_known_servers, resolve_endpoint, Cli, Command, ExecuteError, ServerPreset,
     };
+
+    #[test]
+    fn v3_write_refuses_a_document_its_schema_rejects() {
+        let mut result: wic_core::result::RunResultV3 = serde_json::from_str(include_str!(
+            "../tests/fixtures/site-contract-results/03-v3-declared.json"
+        ))
+        .expect("v3 fixture");
+        result.scenarios[0].failure_class = Some("bogus".to_owned());
+        let directory = tempfile::tempdir().expect("temp directory");
+        let destination = directory.path().join("result.json");
+
+        let error =
+            super::write_v3_result_atomic(&destination, &result).expect_err("schema must refuse");
+
+        assert!(
+            error
+                .to_string()
+                .starts_with("invalid result document: at '/scenarios/0/failure_class': "),
+            "{error}"
+        );
+        assert_eq!(
+            std::fs::read_dir(directory.path()).expect("list").count(),
+            0
+        );
+    }
 
     #[test]
     fn run_subcommand_parses_m0_arguments() {
