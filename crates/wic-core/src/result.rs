@@ -774,9 +774,15 @@ fn is_safe_evidence_path(path: &str) -> bool {
 }
 
 fn is_safe_reference(reference: &str) -> bool {
-    reference.starts_with("https://")
-        || reference.starts_with("http://")
-        || is_safe_relative_path(reference)
+    if reference.starts_with("https://") || reference.starts_with("http://") {
+        return true;
+    }
+    // A fragment names a section or a line, so it may follow a repository path.
+    let (path, fragment) = reference.split_once('#').unwrap_or((reference, ""));
+    is_safe_relative_path(path)
+        && fragment
+            .bytes()
+            .all(|byte| byte.is_ascii_alphanumeric() || matches!(byte, b'.' | b'_' | b'-'))
 }
 
 // Platform independent on purpose: a result written on Windows is checked on
@@ -1660,6 +1666,9 @@ mod tests {
             "file:///Users/alice/notes.md",
             "../notes.md",
             "docs/../../notes.md",
+            "/Users/alice/notes.md#intro",
+            "docs/notes.md#/Users/alice/notes.md",
+            "docs/notes.md#a#b",
         ];
         for reference in unsafe_references {
             let mut result = sample_result();
@@ -1685,6 +1694,11 @@ mod tests {
                 None,
                 Some("docs/case-studies/2026-07-19-ollama-drops-valid-tool-calls.md"),
             ),
+            (
+                None,
+                Some("docs/case-studies/2026-07-19-ollama-drops-valid-tool-calls.md#what-remains-a-genuine-ollama-defect"),
+            ),
+            (None, Some("crates/wic-core/src/runner.rs#L770")),
         ] {
             let mut result = sample_result();
             result.scenarios[0].evidence_path = evidence_path.map(str::to_owned);
