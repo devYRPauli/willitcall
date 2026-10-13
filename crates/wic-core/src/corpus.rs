@@ -8,6 +8,8 @@ use crate::Scenario;
 
 const CORPUS_FORMAT: &[u8] = b"willitcall-corpus-v1";
 const WIC_50_V1_CATALOG: &[u8] = include_bytes!("../catalogs/wic-50-v1.json");
+const WIC_50_V2_CATALOG: &[u8] = include_bytes!("../catalogs/wic-50-v2.json");
+const FROZEN_CATALOGS: [&[u8]; 2] = [WIC_50_V1_CATALOG, WIC_50_V2_CATALOG];
 
 #[derive(Debug, Deserialize, Serialize)]
 #[serde(deny_unknown_fields)]
@@ -39,6 +41,10 @@ pub fn load_catalog(bytes: &[u8]) -> Result<CorpusCatalog, CorpusCatalogError> {
 
 pub fn load_frozen_v1_catalog() -> Result<CorpusCatalog, CorpusCatalogError> {
     load_catalog(WIC_50_V1_CATALOG)
+}
+
+pub fn load_frozen_catalogs() -> Result<Vec<CorpusCatalog>, CorpusCatalogError> {
+    FROZEN_CATALOGS.into_iter().map(load_catalog).collect()
 }
 
 impl CorpusCatalog {

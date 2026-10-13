@@ -2,7 +2,7 @@ use std::collections::HashSet;
 use std::fs;
 
 use wic_core::client::ToolCall;
-use wic_core::corpus::{corpus_identity, load_frozen_v1_catalog};
+use wic_core::corpus::{corpus_identity, load_frozen_catalogs, load_frozen_v1_catalog};
 use wic_core::score::score_calls;
 use wic_core::{
     load_embedded_scenarios, ResponseRequirement, Scenario, ScenarioCategory, ScenarioFacet,
@@ -123,6 +123,28 @@ fn frozen_v1_catalog_remains_verified_and_distinct_from_the_live_corpus() {
         .iter()
         .flat_map(|scenario| &scenario.turns)
         .all(|turn| turn.response_requirement == ResponseRequirement::Either));
+}
+
+#[test]
+fn live_corpus_is_the_frozen_v2_catalog() {
+    let catalogs = load_frozen_catalogs().expect("frozen catalogs should load and verify");
+    let names = catalogs
+        .iter()
+        .map(|catalog| (catalog.id.as_str(), catalog.revision.as_str()))
+        .collect::<Vec<_>>();
+    assert_eq!(names, [("wic-50", "v1"), ("wic-50", "v2")]);
+    let hashes = catalogs
+        .iter()
+        .map(|catalog| catalog.sha256.as_str())
+        .collect::<HashSet<_>>();
+    assert_eq!(hashes.len(), catalogs.len());
+
+    let live = load_embedded_scenarios().expect("embedded scenarios should load");
+    assert_eq!(
+        corpus_identity(&live),
+        "sha256:9661db2f98e15d84a5191948478bace511572fc5d6f24ca3102025b28eccdfe5",
+        "the embedded scenarios differ from frozen wic-50 v2; freeze them as a new catalog revision"
+    );
 }
 
 fn assert_filename_matches_id(scenario: &Scenario) {
