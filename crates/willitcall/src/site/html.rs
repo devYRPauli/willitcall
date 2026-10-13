@@ -1,6 +1,5 @@
 use std::collections::{BTreeMap, BTreeSet};
 use std::fmt::Write as _;
-use std::path::Path;
 
 use wic_core::result::{
     ArtifactFormat, ArtifactSourceKind, CauseKind, DecodeMode, EnvironmentMetadataV3,
@@ -8,7 +7,9 @@ use wic_core::result::{
 };
 use wic_core::ScenarioCategory;
 
-use super::data::{DecodeModeSource, ScenarioView, SiteDataset, StackRow, CATEGORIES};
+use super::data::{
+    safe_local_value, DecodeModeSource, ScenarioView, SiteDataset, StackRow, CATEGORIES,
+};
 use super::svg;
 
 // The replicated source runs behind these two case studies live off-repository, so
@@ -694,7 +695,7 @@ fn render_stack_detail(
         artifact
             .source_id
             .as_deref()
-            .map(safe_path_value)
+            .map(|value| safe_local_value(value, "local artifact"))
             .as_deref()
             .unwrap_or("not recorded"),
         true,
@@ -1045,18 +1046,6 @@ fn recorded(value: &str) -> &str {
         "not recorded"
     } else {
         value
-    }
-}
-
-fn safe_path_value(value: &str) -> String {
-    let path = Path::new(value);
-    if path.is_absolute() {
-        path.file_name()
-            .and_then(|component| component.to_str())
-            .unwrap_or("local artifact")
-            .to_owned()
-    } else {
-        value.to_owned()
     }
 }
 

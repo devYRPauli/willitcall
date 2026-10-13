@@ -3,6 +3,7 @@ use std::fs;
 use std::path::{Path, PathBuf};
 
 use wic_core::corpus::{corpus_identity, load_frozen_v1_catalog};
+use wic_core::registry::is_local_absolute_path;
 use wic_core::result::{
     parse_and_validate_measurement, Cause, DecodeMode, IdentityStatus, Measurement,
     MeasurementMetadata, ReplicationMode, ScenarioFailure, Status,
@@ -403,8 +404,8 @@ fn stack_row(
 ) -> Result<StackRow, String> {
     let scenarios = join_scenarios(&file_name, &measurement.scenarios, catalog)?;
     let category_counts = CategoryCounts::from_scenarios(&scenarios);
-    let display_name = safe_display_id(&measurement.metadata.model.display_name);
-    let endpoint_display = safe_display_id(&measurement.metadata.model.endpoint_id);
+    let display_name = safe_local_value(&measurement.metadata.model.display_name, "local model");
+    let endpoint_display = safe_local_value(&measurement.metadata.model.endpoint_id, "local model");
     let (decode_mode, decode_mode_source) = effective_decode_mode(
         measurement.metadata.server.decode_mode,
         &measurement.metadata.server.preset_name,
@@ -564,16 +565,17 @@ struct StudyArmCandidate {
     valid: bool,
 }
 
-fn safe_display_id(value: &str) -> String {
-    let path = Path::new(value);
-    if path.is_absolute() {
-        path.file_name()
-            .and_then(|component| component.to_str())
-            .unwrap_or("local model")
-            .to_owned()
-    } else {
-        value.to_owned()
+pub(super) fn safe_local_value(value: &str, fallback: &str) -> String {
+    if !is_local_absolute_path(value) {
+        return value.to_owned();
     }
+    value
+        .trim_end_matches(['/', '\\'])
+        .rsplit(['/', '\\'])
+        .next()
+        .filter(|name| !name.is_empty() && !matches!(*name, "." | ".."))
+        .unwrap_or(fallback)
+        .to_owned()
 }
 
 fn category_index(category: ScenarioCategory) -> usize {

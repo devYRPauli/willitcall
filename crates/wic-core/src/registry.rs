@@ -364,7 +364,7 @@ fn is_safe_registry_selector(selector: &str) -> bool {
         && !is_local_absolute_path(selector)
 }
 
-fn is_local_absolute_path(selector: &str) -> bool {
+pub fn is_local_absolute_path(selector: &str) -> bool {
     let bytes = selector.as_bytes();
     selector.starts_with('/')
         || selector.starts_with("~/")

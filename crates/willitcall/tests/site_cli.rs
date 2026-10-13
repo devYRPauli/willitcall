@@ -499,6 +499,24 @@ fn site_never_renders_absolute_model_paths() {
         None,
         vec![scenario("local-file", "single_call", "pass", None, None)],
     );
+    write_result(
+        &results.join("llamacpp-windows-file.json"),
+        2,
+        "C:\\Users\\someone\\models\\windows-model.gguf",
+        None,
+        "llamacpp",
+        None,
+        vec![scenario("windows-file", "single_call", "pass", None, None)],
+    );
+    write_result(
+        &results.join("llamacpp-home-file.json"),
+        2,
+        "~/models/someone/home-model.gguf",
+        None,
+        "llamacpp",
+        None,
+        vec![scenario("home-file", "single_call", "pass", None, None)],
+    );
     for (name, model_id) in [
         ("ollama-qwen3.json", "qwen3:8b"),
         ("llamacpp-qwen.json", "Qwen/Qwen2.5-7B-Instruct-GGUF:Q4_K_M"),
@@ -527,11 +545,17 @@ fn site_never_renders_absolute_model_paths() {
         fs::read_to_string(output.join("appendix.html")).expect("generated appendix page");
     let results_json =
         fs::read_to_string(output.join("results.json")).expect("generated JSON data");
-    for generated in [&index, &appendix, &results_json] {
+    let results_csv = fs::read_to_string(output.join("results.csv")).expect("generated CSV data");
+    let outcomes =
+        fs::read_to_string(output.join("outcomes.html")).expect("generated outcomes page");
+    for generated in [&index, &appendix, &results_json, &results_csv, &outcomes] {
         assert!(!generated.contains("/Users/"));
+        assert!(!generated.contains("someone"));
     }
     assert!(appendix.contains("sha256-deadbeef"));
     assert!(appendix.contains("custom-model.gguf"));
+    assert!(appendix.contains("windows-model.gguf"));
+    assert!(appendix.contains("home-model.gguf"));
     assert!(index.contains("qwen3:8b"));
     assert!(index.contains("Qwen/Qwen2.5-7B-Instruct-GGUF:Q4_K_M"));
     assert!(index.contains("mlx-community/Qwen3-8B-4bit"));
