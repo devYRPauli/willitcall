@@ -317,22 +317,22 @@
         },
         {
           "not": {
-            "pattern": "^~[/\\\\]"
+            "pattern": "^~"
           }
         },
         {
           "not": {
-            "pattern": "^[A-Za-z]:[/\\\\]"
+            "pattern": "^[A-Za-z]:.*[/\\\\]"
           }
         },
         {
           "not": {
-            "pattern": "^\\\\\\\\"
+            "pattern": "^\\\\"
           }
         },
         {
           "not": {
-            "pattern": "^file://"
+            "pattern": "^[Ff][Ii][Ll][Ee]:"
           }
         }
       ]

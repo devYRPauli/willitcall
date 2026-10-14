@@ -1,12 +1,11 @@
 use std::fmt::Write as _;
-use std::path::Path;
 
 use serde_json::{json, Value};
 use wic_core::result::{
     ArtifactFormat, ArtifactSourceKind, CauseKind, DecodeMode, IdentityStatus, Status,
 };
 
-use super::data::{DecodeModeSource, ScenarioView, SiteDataset, StackRow};
+use super::data::{safe_local_value, DecodeModeSource, ScenarioView, SiteDataset, StackRow};
 
 pub(super) fn render_json(dataset: &SiteDataset) -> Result<String, String> {
     let stacks = dataset
@@ -46,7 +45,10 @@ fn stack_json(dataset: &SiteDataset, index: usize, row: &StackRow) -> Value {
         "identity_status": identity_status(model.identity_status),
         "artifact": {
             "source_kind": artifact_source(artifact.source_kind),
-            "source_id": artifact.source_id.as_deref().map(safe_path_value),
+            "source_id": artifact
+                .source_id
+                .as_deref()
+                .map(|value| safe_local_value(value, "local artifact")),
             "revision": artifact.revision,
             "sha256": artifact.sha256,
             "format": artifact_format(artifact.format),
@@ -218,18 +220,6 @@ fn ascii_escape(value: &str) -> String {
         }
     }
     escaped
-}
-
-fn safe_path_value(value: &str) -> String {
-    let path = Path::new(value);
-    if path.is_absolute() {
-        path.file_name()
-            .and_then(|component| component.to_str())
-            .unwrap_or("local artifact")
-            .to_owned()
-    } else {
-        value.to_owned()
-    }
 }
 
 fn identity_status(value: IdentityStatus) -> &'static str {

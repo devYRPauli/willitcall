@@ -142,6 +142,40 @@ fn registry_schema_requires_provenance_and_safe_explicit_selectors() {
 }
 
 #[test]
+fn every_local_path_form_is_an_unsafe_selector_and_keeps_only_its_file_name() {
+    for raw in [
+        "/Users/alice/models/m.gguf",
+        "\\Users\\alice\\models\\m.gguf",
+        "\\\\alice-pc\\models\\m.gguf",
+        "C:\\Users\\alice\\models\\m.gguf",
+        "C:Users\\alice\\models\\m.gguf",
+        "~/alice/models/m.gguf",
+        "~alice/models/m.gguf",
+        "file:///home/alice/models/m.gguf",
+        "FILE:/home/alice/models/m.gguf",
+    ] {
+        let model = registry(local_entry(Some(SHA256), "verified")).resolve(raw);
+        assert_eq!(model.endpoint_id, "m.gguf", "{raw}");
+        let document = registry_with_selector(raw);
+        assert!(validate_schema(&document).is_err(), "{raw}");
+        assert!(ModelRegistry::from_json(document.to_string().as_bytes()).is_err());
+    }
+    for selector in [
+        "qwen3:8b",
+        "q:8b",
+        "file-model:latest",
+        "Qwen/Qwen2.5-7B-Instruct-GGUF:Q4_K_M",
+        "mlx-community/Qwen3-8B-4bit",
+    ] {
+        let model = registry(local_entry(Some(SHA256), "verified")).resolve(selector);
+        assert_eq!(model.endpoint_id, selector);
+        let document = registry_with_selector(selector);
+        validate_schema(&document).expect("model id is a safe selector");
+        ModelRegistry::from_json(document.to_string().as_bytes()).expect("load registry");
+    }
+}
+
+#[test]
 fn published_registry_has_32_explicit_provenance_checked_mappings() {
     let repo_root = Path::new(env!("CARGO_MANIFEST_DIR")).join("../..");
     let registry_document: Value =
@@ -635,6 +669,15 @@ fn registry(entry: Value) -> ModelRegistry {
     validate_schema(&document).expect("registry fixture should satisfy schema");
     ModelRegistry::from_json(&serde_json::to_vec(&document).expect("encode registry"))
         .expect("load registry")
+}
+
+fn registry_with_selector(selector: &str) -> Value {
+    let mut document = json!({
+        "schema_version": 1,
+        "entries": [local_entry(Some(SHA256), "verified")]
+    });
+    document["entries"][0]["selectors"] = json!([selector]);
+    document
 }
 
 fn local_entry(sha256: Option<&str>, identity_status: &str) -> Value {
