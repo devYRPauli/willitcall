@@ -518,6 +518,42 @@ fn site_never_renders_absolute_model_paths() {
         vec![scenario("home-file", "single_call", "pass", None, None)],
     );
     for (name, model_id) in [
+        (
+            "llamacpp-rooted.json",
+            "\\Users\\someone\\models\\rooted-model.gguf",
+        ),
+        (
+            "llamacpp-drive.json",
+            "C:Users\\someone\\models\\drive-model.gguf",
+        ),
+        ("llamacpp-tilde.json", "~someone/models/tilde-model.gguf"),
+        (
+            "llamacpp-uri.json",
+            "FILE:/home/someone/models/uri-model.gguf",
+        ),
+    ] {
+        write_result(
+            &results.join(name),
+            2,
+            model_id,
+            None,
+            "llamacpp",
+            None,
+            vec![scenario("local-path", "single_call", "pass", None, None)],
+        );
+    }
+    let mut artifact_result: Value = serde_json::from_str(include_str!(
+        "fixtures/site-contract-results/04-v3-verified.json"
+    ))
+    .expect("parse v3 fixture");
+    artifact_result["metadata"]["model"]["artifact"]["source_id"] =
+        json!("C:\\Users\\someone\\models\\artifact-model.gguf");
+    fs::write(
+        results.join("llamacpp-artifact.json"),
+        artifact_result.to_string(),
+    )
+    .expect("write v3 result");
+    for (name, model_id) in [
         ("ollama-qwen3.json", "qwen3:8b"),
         ("llamacpp-qwen.json", "Qwen/Qwen2.5-7B-Instruct-GGUF:Q4_K_M"),
         ("mlx_lm-community.json", "mlx-community/Qwen3-8B-4bit"),
@@ -556,6 +592,16 @@ fn site_never_renders_absolute_model_paths() {
     assert!(appendix.contains("custom-model.gguf"));
     assert!(appendix.contains("windows-model.gguf"));
     assert!(appendix.contains("home-model.gguf"));
+    for file_name in [
+        "rooted-model.gguf",
+        "drive-model.gguf",
+        "tilde-model.gguf",
+        "uri-model.gguf",
+        "artifact-model.gguf",
+    ] {
+        assert!(appendix.contains(file_name), "{file_name}");
+    }
+    assert!(results_json.contains("artifact-model.gguf"));
     assert!(index.contains("qwen3:8b"));
     assert!(index.contains("Qwen/Qwen2.5-7B-Instruct-GGUF:Q4_K_M"));
     assert!(index.contains("mlx-community/Qwen3-8B-4bit"));

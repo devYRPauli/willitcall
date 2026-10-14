@@ -364,17 +364,18 @@ fn is_safe_registry_selector(selector: &str) -> bool {
         && !is_local_absolute_path(selector)
 }
 
+// A drive letter counts only with a separator later in the value, because an
+// Ollama tag such as `q:8b` has the same first two characters.
 pub fn is_local_absolute_path(selector: &str) -> bool {
     let bytes = selector.as_bytes();
-    selector.starts_with('/')
-        || selector.starts_with("~/")
-        || selector.starts_with("~\\")
-        || selector.starts_with("\\\\")
-        || selector.starts_with("file://")
-        || (bytes.len() >= 3
+    selector.starts_with(['/', '\\', '~'])
+        || selector
+            .get(..5)
+            .is_some_and(|scheme| scheme.eq_ignore_ascii_case("file:"))
+        || (bytes.len() >= 2
             && bytes[0].is_ascii_alphabetic()
             && bytes[1] == b':'
-            && matches!(bytes[2], b'/' | b'\\'))
+            && selector.contains(['/', '\\']))
 }
 
 fn is_sha256(value: &str) -> bool {
