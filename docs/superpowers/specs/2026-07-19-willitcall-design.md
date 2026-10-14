@@ -259,11 +259,11 @@ the combined matrix.
      every row, independent of model. Publishing a llamacpp-versus-ollama
      delta without it invites exactly the misreading this project already made
      once and retracted - attributing a stack property to a server defect.
-   - DECIDED: every result records the side it sits on in
-     `server.quirk_flags` (`grammar_constrained_decoding` /
-     `unconstrained_post_hoc_parse`), and the README and site methodology
-     state it in prose. Presets whose decode path has not been verified carry
-     no flag; absence means unverified, not unconstrained.
+   - DECIDED (revised in M7): the site shows the decode mode of each row, and
+     the README and site methodology state it in prose. Schema v3 can record
+     the mode in `server.decode_mode`. The published Ollama and llama.cpp rows
+     record `unknown` and empty `server.quirk_flags`, so the site reads their
+     mode from `registry/decode-modes-v1.json`. Unmapped presets stay unknown.
    - Corollary: the comparison that isolates the MODEL is same-server. A
      cross-server delta is a statement about the combination.
 
