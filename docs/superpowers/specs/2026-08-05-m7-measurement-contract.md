@@ -145,6 +145,11 @@ Model identity alone is not sufficient to identify a comparable arm.
 | `scenarios[].failure` | `{stage, code, http_status, failed_turn_index}`. `"turn 1: server returned HTTP 400"` is not queryable. Keep `failure_reason` for humans. |
 | Unique run id | `runner.rs:566` hashes timestamp, endpoint, and model selector, so two identical runs in the same second collide. Use UUIDv7 or a random nonce. |
 
+A run records the `id` and `revision` of a frozen catalog only when its corpus
+hash equals the catalog hash. Any other corpus, including an edited embedded
+set, records `id` `custom` and its hash as the `revision`. Distinct corpora
+therefore never share an `id` and `revision`.
+
 ### T1.3 Migration of the 32 published files
 
 A deterministic migration command plus an explicit 32-entry mapping manifest.

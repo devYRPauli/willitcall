@@ -10,6 +10,9 @@ use serde_json::Value;
 use crate::ScenarioCategory;
 
 pub const RESULT_SCHEMA_VERSION: u32 = 2;
+const RESULT_V1_SCHEMA: &str = include_str!("../../../schemas/result-v1.schema.json");
+const RESULT_V2_SCHEMA: &str = include_str!("../../../schemas/result-v2.schema.json");
+const RESULT_V3_SCHEMA: &str = include_str!("../../../schemas/result-v3.schema.json");
 
 #[derive(Clone, Debug, Deserialize, Serialize)]
 #[serde(deny_unknown_fields)]
@@ -639,30 +642,17 @@ pub fn parse_and_validate_result(bytes: &[u8]) -> Result<RunResult, String> {
             "unsupported schema_version {schema_version}; expected 1 or {RESULT_SCHEMA_VERSION}"
         ));
     }
-    let result: RunResultV1V2 = serde_json::from_value(document.clone())
-        .map_err(|error| format!("invalid result document: {error}"))?;
-    validate_result(&result)?;
-    if schema_version == 2 {
-        validate_v2_required_properties(&document)?;
-    }
-    Ok(result)
+    parse_legacy_result(&document, schema_version)
 }
 
 pub fn parse_and_validate_measurement(bytes: &[u8]) -> Result<Measurement, String> {
     let (document, schema_version) = inspect_result_document(bytes)?;
     let measurement = match schema_version {
-        1 | 2 => {
-            let result: RunResultV1V2 = serde_json::from_value(document.clone())
-                .map_err(|error| format!("invalid result document: {error}"))?;
-            validate_result(&result)?;
-            if schema_version == 2 {
-                validate_v2_required_properties(&document)?;
-            }
-            Measurement::from(result)
-        }
+        1 | 2 => Measurement::from(parse_legacy_result(&document, schema_version)?),
         3 => {
-            let result: RunResultV3 = serde_json::from_value(document)
+            let result = RunResultV3::deserialize(&document)
                 .map_err(|error| format!("invalid result document: {error}"))?;
+            validate_against_schema(&document, RESULT_V3_SCHEMA)?;
             let measurement = Measurement::from(result);
             validate_measurement(&measurement)?;
             measurement
@@ -689,31 +679,30 @@ fn inspect_result_document(bytes: &[u8]) -> Result<(Value, u32), String> {
     Ok((document, schema_version))
 }
 
-fn validate_v2_required_properties(document: &Value) -> Result<(), String> {
-    let metadata = document
-        .get("metadata")
-        .and_then(Value::as_object)
-        .ok_or_else(|| "invalid result document: metadata must be an object".to_owned())?;
-    if !metadata.contains_key("run_id") {
-        return Err(
-            "invalid result document: metadata.run_id is required for schema_version 2".to_owned(),
-        );
-    }
-    let scenarios = document
-        .get("scenarios")
-        .and_then(Value::as_array)
-        .ok_or_else(|| "invalid result document: scenarios must be an array".to_owned())?;
-    if scenarios.iter().any(|scenario| {
-        !scenario
-            .as_object()
-            .is_some_and(|scenario| scenario.contains_key("evidence_path"))
-    }) {
-        return Err(
-            "invalid result document: scenario evidence_path is required for schema_version 2"
-                .to_owned(),
-        );
-    }
-    Ok(())
+fn parse_legacy_result(document: &Value, schema_version: u32) -> Result<RunResultV1V2, String> {
+    let result = RunResultV1V2::deserialize(document)
+        .map_err(|error| format!("invalid result document: {error}"))?;
+    let schema = if schema_version == 1 {
+        RESULT_V1_SCHEMA
+    } else {
+        RESULT_V2_SCHEMA
+    };
+    validate_against_schema(document, schema)?;
+    validate_result(&result)?;
+    Ok(result)
+}
+
+// Serde runs first so its messages stay the same. The schema then rejects what
+// serde lets through, such as a null where the schema allows only an enum value.
+fn validate_against_schema(document: &Value, schema: &str) -> Result<(), String> {
+    let schema: Value = serde_json::from_str(schema).expect("checked-in result schema is JSON");
+    let validator = jsonschema::validator_for(&schema).expect("checked-in result schema compiles");
+    validator.validate(document).map_err(|error| {
+        format!(
+            "invalid result document: at '{}': {error}",
+            error.instance_path()
+        )
+    })
 }
 
 pub fn validate_result(result: &RunResult) -> Result<(), String> {
@@ -727,7 +716,14 @@ pub fn validate_result(result: &RunResult) -> Result<(), String> {
         &result.totals,
         result.scenarios.iter().map(|outcome| outcome.status),
         result.scenarios.len(),
-    )
+    )?;
+    validate_scenario_paths(result.scenarios.iter().map(|outcome| {
+        (
+            outcome.id.as_str(),
+            outcome.evidence_path.as_deref(),
+            outcome.cause.as_ref(),
+        )
+    }))
 }
 
 pub fn validate_measurement(measurement: &Measurement) -> Result<(), String> {
@@ -741,7 +737,64 @@ pub fn validate_measurement(measurement: &Measurement) -> Result<(), String> {
         &measurement.totals,
         measurement.scenarios.iter().map(|outcome| outcome.status),
         measurement.scenarios.len(),
-    )
+    )?;
+    validate_scenario_paths(measurement.scenarios.iter().map(|outcome| {
+        (
+            outcome.id.as_str(),
+            outcome.evidence_path.as_deref(),
+            outcome.cause.as_ref(),
+        )
+    }))
+}
+
+// The site publishes both fields as links and in its JSON and CSV exports, so a
+// local path in either one leaks the author's file system.
+fn validate_scenario_paths<'a>(
+    outcomes: impl Iterator<Item = (&'a str, Option<&'a str>, Option<&'a Cause>)>,
+) -> Result<(), String> {
+    for (id, evidence_path, cause) in outcomes {
+        if let Some(path) = evidence_path.filter(|path| !is_safe_evidence_path(path)) {
+            return Err(format!(
+                "scenario {id:?} evidence_path {path:?} is not a relative path under evidence/"
+            ));
+        }
+        let reference = cause.and_then(|cause| cause.reference.as_deref());
+        if let Some(reference) = reference.filter(|reference| !is_safe_reference(reference)) {
+            return Err(format!(
+                "scenario {id:?} cause reference {reference:?} is not a web URL or a relative repository path"
+            ));
+        }
+    }
+    Ok(())
+}
+
+fn is_safe_evidence_path(path: &str) -> bool {
+    path.strip_prefix("evidence/")
+        .is_some_and(is_safe_relative_path)
+}
+
+fn is_safe_reference(reference: &str) -> bool {
+    if reference.starts_with("https://") || reference.starts_with("http://") {
+        return true;
+    }
+    // A fragment names a section or a line, so it may follow a repository path.
+    let (path, fragment) = reference.split_once('#').unwrap_or((reference, ""));
+    is_safe_relative_path(path)
+        && fragment
+            .bytes()
+            .all(|byte| byte.is_ascii_alphanumeric() || matches!(byte, b'.' | b'_' | b'-'))
+}
+
+// Platform independent on purpose: a result written on Windows is checked on
+// Unix, where std::path does not see C:\ or \\host as absolute.
+fn is_safe_relative_path(path: &str) -> bool {
+    path.split('/').all(|part| {
+        !part.is_empty()
+            && !part.starts_with('.')
+            && part
+                .bytes()
+                .all(|byte| byte.is_ascii_alphanumeric() || matches!(byte, b'.' | b'_' | b'-'))
+    })
 }
 
 fn validate_totals(
@@ -789,10 +842,12 @@ fn validate_totals(
 }
 
 pub fn write_result_atomic(path: &Path, result: &RunResult) -> io::Result<()> {
-    atomic_write_with(path, |file| {
-        serde_json::to_writer_pretty(&mut *file, result).map_err(io::Error::other)?;
-        file.write_all(b"\n")
-    })
+    let mut bytes = serde_json::to_vec_pretty(result).map_err(io::Error::other)?;
+    bytes.push(b'\n');
+    // Check the document as every reader does, so no file is written that
+    // validate, site or annotate then refuses.
+    parse_and_validate_result(&bytes).map_err(io::Error::other)?;
+    atomic_write_with(path, |file| file.write_all(&bytes))
 }
 
 pub(crate) fn write_transcript_atomic(path: &Path, transcript: &Transcript) -> io::Result<Vec<u8>> {
@@ -1036,6 +1091,25 @@ mod tests {
         assert_eq!(super::exit_code_for_totals(&totals), 1);
         totals.errors = 1;
         assert_eq!(super::exit_code_for_totals(&totals), 4);
+    }
+
+    #[test]
+    fn atomic_write_refuses_a_document_its_schema_rejects() {
+        let directory = tempfile::tempdir().expect("temp directory");
+        let destination = directory.path().join("result.json");
+        let mut result = sample_result();
+        result.scenarios[0].failure_class = Some("bogus".to_owned());
+
+        let error = write_result_atomic(&destination, &result).expect_err("schema must refuse");
+
+        assert!(
+            error
+                .to_string()
+                .starts_with("invalid result document: at '/scenarios/0/failure_class': "),
+            "{error}"
+        );
+        assert!(!destination.exists());
+        assert_eq!(fs::read_dir(directory.path()).expect("list").count(), 0);
     }
 
     #[test]
@@ -1535,7 +1609,10 @@ mod tests {
             &serde_json::to_vec(&missing_run_id).expect("encode result"),
         )
         .expect_err("v2 run_id is required");
-        assert!(error.contains("metadata.run_id is required"), "{error}");
+        assert_eq!(
+            error,
+            "invalid result document: at '/metadata': \"run_id\" is a required property"
+        );
 
         let mut missing_evidence_path =
             serde_json::to_value(sample_result()).expect("serialize result");
@@ -1547,7 +1624,95 @@ mod tests {
             &serde_json::to_vec(&missing_evidence_path).expect("encode result"),
         )
         .expect_err("v2 evidence_path is required");
-        assert!(error.contains("evidence_path is required"), "{error}");
+        assert_eq!(
+            error,
+            "invalid result document: at '/scenarios/0': \"evidence_path\" is a required property"
+        );
+    }
+
+    #[test]
+    fn validators_reject_local_and_traversing_paths() {
+        let unsafe_evidence_paths = [
+            "/Users/alice/run/single-weather.json",
+            "C:\\Users\\alice\\run.json",
+            "C:/Users/alice/run.json",
+            "~/run.json",
+            "file:///Users/alice/run.json",
+            "Users/alice/run.json",
+            "evidence/../../Users/alice/run.json",
+            "evidence/..\\..\\run.json",
+            "evidence/%2e%2e/run.json",
+            "evidence//run.json",
+            "evidence/",
+            "",
+        ];
+        for path in unsafe_evidence_paths {
+            let mut result = sample_result();
+            result.scenarios[0].evidence_path = Some(path.to_owned());
+            let expected = format!(
+                "scenario \"single-weather\" evidence_path {path:?} is not a relative path under evidence/"
+            );
+            assert_eq!(super::validate_result(&result), Err(expected.clone()));
+            assert_eq!(
+                super::validate_measurement(&super::Measurement::from(result)),
+                Err(expected)
+            );
+        }
+
+        let unsafe_references = [
+            "/Users/alice/notes.md",
+            "C:\\Users\\alice\\notes.md",
+            "~/notes.md",
+            "file:///Users/alice/notes.md",
+            "../notes.md",
+            "docs/../../notes.md",
+            "/Users/alice/notes.md#intro",
+            "docs/notes.md#/Users/alice/notes.md",
+            "docs/notes.md#a#b",
+        ];
+        for reference in unsafe_references {
+            let mut result = sample_result();
+            result.scenarios[0].cause = Some(Cause {
+                kind: CauseKind::Unknown,
+                reference: Some(reference.to_owned()),
+                note: None,
+            });
+            let expected = format!(
+                "scenario \"single-weather\" cause reference {reference:?} is not a web URL or a relative repository path"
+            );
+            assert_eq!(super::validate_result(&result), Err(expected.clone()));
+            assert_eq!(
+                super::validate_measurement(&super::Measurement::from(result)),
+                Err(expected)
+            );
+        }
+
+        for (evidence_path, reference) in [
+            (Some("evidence/empty.json"), None),
+            (None, Some("https://example.test/issue/1")),
+            (
+                None,
+                Some("docs/case-studies/2026-07-19-ollama-drops-valid-tool-calls.md"),
+            ),
+            (
+                None,
+                Some("docs/case-studies/2026-07-19-ollama-drops-valid-tool-calls.md#what-remains-a-genuine-ollama-defect"),
+            ),
+            (None, Some("crates/wic-core/src/runner.rs#L770")),
+        ] {
+            let mut result = sample_result();
+            result.scenarios[0].evidence_path = evidence_path.map(str::to_owned);
+            result.scenarios[0].cause = Some(Cause {
+                kind: CauseKind::Unknown,
+                reference: reference.map(str::to_owned),
+                note: None,
+            });
+            assert_eq!(super::validate_result(&result), Ok(()));
+            assert_eq!(
+                super::validate_measurement(&super::Measurement::from(result)),
+                Ok(())
+            );
+        }
     }
 
     #[test]

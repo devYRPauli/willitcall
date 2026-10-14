@@ -457,10 +457,18 @@ pub async fn run_measurement(
     let catalog = load_frozen_v1_catalog().map_err(|error| io::Error::other(error.to_string()))?;
     let scenario_count = u32::try_from(scenarios.len())
         .map_err(|_| io::Error::other("scenario count does not fit in u32"))?;
+    let sha256 = corpus_identity(scenarios);
+    // Only a frozen catalog names a corpus. Any other set, including an edited
+    // embedded set, is named by its hash, so distinct corpora never share a label.
+    let (id, revision) = if sha256 == catalog.sha256 {
+        (catalog.id, catalog.revision)
+    } else {
+        ("custom".to_owned(), sha256.clone())
+    };
     let corpus = CorpusMetadata {
-        id: catalog.id,
-        revision: catalog.revision,
-        sha256: corpus_identity(scenarios),
+        id,
+        revision,
+        sha256,
         scenario_count,
         scoring_version: "v2".to_owned(),
     };
@@ -733,7 +741,9 @@ fn scenario_failure(
     ScenarioFailure {
         stage: stage.to_owned(),
         code: code.to_owned(),
-        http_status,
+        // RFC 9110 defines status codes 100 to 599 only, and the result schema
+        // records no other value. The evidence keeps the raw status.
+        http_status: http_status.filter(|status| (100..=599).contains(status)),
         failed_turn_index: u32::try_from(turn_index + 1).ok(),
     }
 }
