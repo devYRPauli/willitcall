@@ -869,3 +869,41 @@ fn all_error_category_is_not_measurable() {
     assert!(index.contains("<span class=\"measurement-state\">not measurable</span>"));
     assert!(index.contains("<i class=\"state-key state-error\"></i>execution / server error"));
 }
+
+#[test]
+fn site_joins_a_wic_50_v2_result_to_the_frozen_v2_catalog() {
+    let directory = tempfile::tempdir().expect("temp directory");
+    let results = directory.path().join("results");
+    let output = directory.path().join("site");
+    fs::create_dir(&results).expect("results directory");
+    let mut result: Value = serde_json::from_str(include_str!(
+        "fixtures/site-contract-results/04-v3-verified.json"
+    ))
+    .expect("parse v3 fixture");
+    result["metadata"]["corpus"] = json!({
+        "id": "wic-50",
+        "revision": "v2",
+        "sha256": "sha256:9661db2f98e15d84a5191948478bace511572fc5d6f24ca3102025b28eccdfe5",
+        "scenario_count": 50,
+        "scoring_version": "v2"
+    });
+    result["scenarios"][0]["id"] = json!("multi-turn-calendar-followup");
+    result["scenarios"][0]["category"] = json!("multi_turn");
+    fs::write(results.join("llamacpp-wic-50-v2.json"), result.to_string())
+        .expect("write v3 result");
+
+    let generated = run_site(&results, &output, None);
+    assert_eq!(
+        generated.status.code(),
+        Some(0),
+        "{}",
+        String::from_utf8_lossy(&generated.stderr)
+    );
+    let appendix =
+        fs::read_to_string(output.join("appendix.html")).expect("generated appendix page");
+    let results_json =
+        fs::read_to_string(output.join("results.json")).expect("generated JSON data");
+    assert!(appendix.contains("Use a calendar lookup result in a follow-up event call."));
+    assert!(!appendix.contains("catalog unavailable"));
+    assert!(!results_json.contains("catalog unavailable"));
+}

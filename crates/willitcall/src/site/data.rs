@@ -2,7 +2,7 @@ use std::collections::{BTreeMap, BTreeSet, HashMap, HashSet};
 use std::fs;
 use std::path::{Path, PathBuf};
 
-use wic_core::corpus::{corpus_identity, load_frozen_v1_catalog};
+use wic_core::corpus::{corpus_identity, load_frozen_catalogs};
 use wic_core::registry::is_local_absolute_path;
 use wic_core::result::{
     parse_and_validate_measurement, Cause, DecodeMode, IdentityStatus, Measurement,
@@ -302,11 +302,11 @@ pub(super) fn load(
     catalog_directory: Option<&Path>,
 ) -> Result<SiteDataset, String> {
     let decode_modes = DecodeModeRegistry::from_json(DECODE_MODE_REGISTRY)?;
-    let frozen = Catalog::from_scenarios(
-        load_frozen_v1_catalog()
-            .map_err(|error| format!("failed to load frozen wic-50-v1 catalog: {error}"))?
-            .scenarios,
-    )?;
+    let frozen = load_frozen_catalogs()
+        .map_err(|error| format!("failed to load frozen catalogs: {error}"))?
+        .into_iter()
+        .map(|catalog| Catalog::from_scenarios(catalog.scenarios))
+        .collect::<Result<Vec<_>, _>>()?;
     let custom = catalog_directory
         .map(|directory| {
             let scenarios = load_scenarios_from_dir(directory).map_err(|error| {
@@ -375,14 +375,17 @@ fn result_paths(directory: &Path) -> Result<Vec<PathBuf>, String> {
 fn select_catalog<'a>(
     file_name: &str,
     measurement: &Measurement,
-    frozen: &'a Catalog,
+    frozen: &'a [Catalog],
     custom: Option<&'a Catalog>,
 ) -> Result<Option<&'a Catalog>, String> {
     let Some(corpus) = measurement.metadata.corpus.as_ref() else {
         return Ok(custom);
     };
-    if corpus.sha256 == frozen.sha256 {
-        return Ok(Some(frozen));
+    if let Some(catalog) = frozen
+        .iter()
+        .find(|catalog| catalog.sha256 == corpus.sha256)
+    {
+        return Ok(Some(catalog));
     }
     let Some(custom) = custom else {
         return Ok(None);
@@ -692,7 +695,7 @@ mod tests {
             Catalog::from_scenarios(vec![scenario("custom", ScenarioCategory::SingleCall)])
                 .expect("custom catalog");
         let measurement = measurement_with_corpus("sha256:not-the-custom-catalog");
-        let error = select_catalog("result.json", &measurement, &frozen, Some(&custom))
+        let error = select_catalog("result.json", &measurement, &[frozen], Some(&custom))
             .err()
             .expect("hash mismatch should fail");
         assert!(error.contains("corpus hash mismatch"));
@@ -703,7 +706,7 @@ mod tests {
     #[test]
     fn custom_corpus_without_catalog_never_falls_back_to_frozen_catalog() {
         let frozen_scenario = scenario("same-id", ScenarioCategory::SingleCall);
-        let frozen = Catalog::from_scenarios(vec![frozen_scenario]).expect("frozen catalog");
+        let frozen = [Catalog::from_scenarios(vec![frozen_scenario]).expect("frozen catalog")];
         let measurement = measurement_with_corpus("sha256:custom-corpus");
         let selected = select_catalog("result.json", &measurement, &frozen, None)
             .expect("custom corpus without catalog is supported");
@@ -718,6 +721,20 @@ mod tests {
         assert!(views[0].definition.is_none());
         assert_eq!(views[0].description, CATALOG_UNAVAILABLE);
         assert_eq!(views[0].rationale, CATALOG_UNAVAILABLE);
+    }
+
+    #[test]
+    fn result_of_a_later_frozen_catalog_joins_that_catalog() {
+        let older = Catalog::from_scenarios(vec![scenario("older", ScenarioCategory::SingleCall)])
+            .expect("older catalog");
+        let later = Catalog::from_scenarios(vec![scenario("later", ScenarioCategory::SingleCall)])
+            .expect("later catalog");
+        let measurement = measurement_with_corpus(&later.sha256);
+        let frozen = [older, later];
+        let selected = select_catalog("result.json", &measurement, &frozen, None)
+            .expect("frozen corpus selects its catalog")
+            .expect("frozen catalog");
+        assert!(selected.scenarios.contains_key("later"));
     }
 
     #[test]

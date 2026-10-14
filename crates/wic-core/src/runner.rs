@@ -11,7 +11,7 @@ use ring::rand::{SecureRandom, SystemRandom};
 use serde_json::{json, Map, Value};
 
 use crate::client::{AssistantResponse, CompletionResult, EndpointClient, ToolCall};
-use crate::corpus::{corpus_identity, load_frozen_v1_catalog};
+use crate::corpus::{corpus_identity, load_frozen_catalogs};
 use crate::registry::ModelRegistry;
 use crate::result::{
     arm_fingerprint, redact_transcript_turn, write_transcript_atomic, CapturedTurn,
@@ -454,16 +454,18 @@ pub async fn run_measurement(
     }
 
     let totals = totals(&outcomes);
-    let catalog = load_frozen_v1_catalog().map_err(|error| io::Error::other(error.to_string()))?;
+    let catalogs = load_frozen_catalogs().map_err(|error| io::Error::other(error.to_string()))?;
     let scenario_count = u32::try_from(scenarios.len())
         .map_err(|_| io::Error::other("scenario count does not fit in u32"))?;
     let sha256 = corpus_identity(scenarios);
     // Only a frozen catalog names a corpus. Any other set, including an edited
     // embedded set, is named by its hash, so distinct corpora never share a label.
-    let (id, revision) = if sha256 == catalog.sha256 {
-        (catalog.id, catalog.revision)
-    } else {
-        ("custom".to_owned(), sha256.clone())
+    let (id, revision) = match catalogs
+        .into_iter()
+        .find(|catalog| catalog.sha256 == sha256)
+    {
+        Some(catalog) => (catalog.id, catalog.revision),
+        None => ("custom".to_owned(), sha256.clone()),
     };
     let corpus = CorpusMetadata {
         id,

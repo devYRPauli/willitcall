@@ -362,6 +362,44 @@ async fn a_run_of_the_frozen_catalog_keeps_the_catalog_name() {
     assert_eq!(corpus.scenario_count, 50);
 }
 
+#[tokio::test]
+async fn a_run_of_the_embedded_corpus_records_the_frozen_v2_catalog() {
+    let scenarios = load_embedded_scenarios().expect("embedded scenarios");
+    let server = MockServer::start_scripted(
+        "fixture-model",
+        scenarios
+            .iter()
+            .map(|_| ScriptedResponse::Status(400, "bad request".to_owned()))
+            .collect(),
+    )
+    .await;
+    let directory = tempfile::tempdir().expect("temp directory");
+    let config = RunConfig::new(
+        server.endpoint(),
+        "fixture-model".to_owned(),
+        Duration::from_secs(5),
+        42,
+        0.0,
+    );
+
+    let measurement = run_measurement(&config, &scenarios, &directory.path().join("result.json"))
+        .await
+        .expect("run embedded corpus");
+    let corpus = measurement
+        .metadata
+        .corpus
+        .as_ref()
+        .expect("runtime corpus metadata");
+
+    assert_eq!(corpus.id, "wic-50");
+    assert_eq!(corpus.revision, "v2");
+    assert_eq!(
+        corpus.sha256,
+        "sha256:9661db2f98e15d84a5191948478bace511572fc5d6f24ca3102025b28eccdfe5"
+    );
+    assert_eq!(corpus.scenario_count, 50);
+}
+
 fn hex(bytes: &[u8]) -> String {
     const DIGITS: &[u8; 16] = b"0123456789abcdef";
     let mut encoded = String::with_capacity(bytes.len() * 2);
